@@ -1,0 +1,46 @@
+[comment encoding = UTF-8 /]
+[**
+ * The documentation of the module generate.
+ */]
+[module generate('http://www.eclipse.org/emf/2002/Ecore')]
+
+[**
+ * The documentation of the template generateElement.
+ * @param aSystem
+ */]
+[query public needsMap(aClass : EClass) : Boolean =
+  aClass.eAllAttributes.eType.name.contains('EMap')->count(true) > 0 or 
+  aClass.eReferences.many->count(true) > 0 /]
+
+[template public generateClass(aClass : EClass)]
+[comment @main /]
+[file (aClass.name.concat('.java'), false, 'UTF-8')]
+[if needsMap(aClass) = true]
+import java.util.Map;
+
+[/if]
+public class [aClass.name/] {
+
+  // Atts generated directly from the forsyde Schema. 
+  [for (att : EAttribute | aClass.eAllAttributes)]
+  [comment I dont know how to make this EShit go away, so hack it is. /]
+  [if (att.eType.name.contains('Map'))]
+  Map<String, ?> [att.name/];
+  [elseif (att.eType.name.startsWith('E'))]
+  [att.eType.name.substring(2)/] [att.name/];	
+  [else]
+  [att.eType.name/] [att.name/];
+  [/if]
+  [/for]
+
+  [for (ref : EReference | aClass.eAllReferences)]
+  [if (ref.many)]
+  Map<String, [ref.eType.name/]> [ref.name/];
+  [else]
+  [ref.eType.name/] [ref.name/];	
+  [/if]
+  [/for]
+
+}
+[/file]
+[/template]
