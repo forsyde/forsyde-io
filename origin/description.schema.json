@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/ForSyDeDescription",
+  "definitions": {
+    "ForSyDeDescription": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "descriptionVersion": {
+          "type": "integer"
+        },
+        "processes": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Process"
+          }
+        },
+        "signals": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Signal"
+          }
+        },
+        "functions": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Signal"
+          }
+        }
+      },
+      "required": [
+        "processes",
+        "descriptionVersion",
+        "functions",
+        "signals"
+      ],
+      "title": "ForSyDeDescription"
+    },
+    "ProcessConstructor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string"},
+        "parameters": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "valueArguments": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "functionArguments": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/Function" }
+        }
+      },
+      "required": [
+        "name",
+        "parameters"
+      ],
+      "title": "ProcessConstructor"
+    },
+    "Process": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "constructor": {
+          "$ref": "#/definitions/ProcessConstructor"
+        },
+        "processes": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Process"
+          }
+        },
+        "internalSignals": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Signal"
+          }
+        },
+        "inputSignals": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Signal"
+          }
+        },
+        "outputSignals": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Signal"
+          }
+        }
+      },
+      "title": "Process"
+    },
+    "Function": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "arguments"
+      ],
+      "title": "Function"
+    },
+    "Signal": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "signalType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "signalType"
+      ],
+      "title": "Signal"
+    }
+  }
+}

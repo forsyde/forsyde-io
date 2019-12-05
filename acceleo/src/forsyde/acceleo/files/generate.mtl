@@ -9,33 +9,43 @@
  * @param aSystem
  */]
 [query public needsMap(aClass : EClass) : Boolean =
-  aClass.eAllAttributes.eType.name.contains('EMap')->count(true) > 0 or 
+  aClass.eAllAttributes.eGenericType.eClassifier->includes(EMap) or 
   aClass.eReferences.many->count(true) > 0 /]
 
-[template public generateClass(aClass : EClass)]
+[query public typeArguments(att: EAttribute) : String =
+  if att.eGenericType.eTypeArguments.eClassifier->size() > 0 then
+    '<' + att.eGenericType.eTypeArguments.eClassifier.instanceTypeName.replace('java.lang.', '')->asSequence()->sep(',') + '>'
+  else
+    ''
+  endif
+/]
+
+[query public packageString(c : EClass) : Sequence(String) = 
+  c.ancestors(EPackage)->reverse().name.toLower()->sep('.')/]
+
+[query public packagePath(c : EClass) : Sequence(String) = 
+  c.ancestors(EPackage)->reverse().name.toLower()->sep('/')/]
+
+[template public generateClassJava(aClass : EClass)]
 [comment @main /]
-[file (aClass.name.concat('.java'), false, 'UTF-8')]
+[file ('java/' + packagePath(aClass) + '/' + aClass.name.concat('.java'), false, 'UTF-8')]
+package [packageString(aClass)/];
+
 [if needsMap(aClass) = true]
 import java.util.Map;
 
 [/if]
-public class [aClass.name/] {
+public final class [aClass.name/] {
 
   // Atts generated directly from the forsyde Schema. 
   [for (att : EAttribute | aClass.eAllAttributes)]
-  [comment I dont know how to make this EShit go away, so hack it is. /]
-  [if (att.eType.name.contains('Map'))]
-  Map<String, ?> [att.name/];
-  [elseif (att.eType.name.startsWith('E'))]
-  [att.eType.name.substring(2)/] [att.name/];	
-  [else]
-  [att.eType.name/] [att.name/];
-  [/if]
+  public [att.eType.instanceTypeName.tokenize('.')->last()/][typeArguments(att)/] [att.name/];
   [/for]
 
+  // Refs generated directly from the forsyde Schema.
   [for (ref : EReference | aClass.eAllReferences)]
   [if (ref.many)]
-  Map<String, [ref.eType.name/]> [ref.name/];
+  public Map<String, [ref.eType.name/]> [ref.name/];
   [else]
   [ref.eType.name/] [ref.name/];	
   [/if]
