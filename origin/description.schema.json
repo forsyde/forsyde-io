@@ -6,6 +6,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "id": {"type": "string"},
         "descriptionVersion": {
           "type": "integer"
         },
@@ -15,24 +16,17 @@
             "$ref": "#/definitions/Process"
           }
         },
-        "signals": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/Signal"
-          }
-        },
         "functions": {
           "type": "object",
           "additionalProperties": {
-            "$ref": "#/definitions/Signal"
+            "$ref": "#/definitions/Function"
           }
         }
       },
       "required": [
         "processes",
         "descriptionVersion",
-        "functions",
-        "signals"
+        "functions"
       ],
       "title": "ForSyDeDescription"
     },
@@ -40,10 +34,12 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "id": {"type": "string"},
         "name": { "type": "string"},
         "parameters": {
           "type": "object",
-          "additionalProperties": { "type": "string" }
+          "properties": {},
+          "additionalProperties": true
         },
         "valueArguments": {
           "type": "object",
@@ -55,8 +51,7 @@
         }
       },
       "required": [
-        "name",
-        "parameters"
+        "name"
       ],
       "title": "ProcessConstructor"
     },
@@ -64,6 +59,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "id": {"type": "string"},
         "constructor": {
           "$ref": "#/definitions/ProcessConstructor"
         },
@@ -98,7 +94,14 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "arguments": {
+        "id": {"type": "string"},
+        "inputs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "outputs": {
           "type": "object",
           "additionalProperties": {
             "type": "string"
@@ -106,7 +109,8 @@
         }
       },
       "required": [
-        "arguments"
+        "inputs",
+        "outputs"
       ],
       "title": "Function"
     },
@@ -114,6 +118,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "id": {"type": "string"},
         "signalType": {
           "type": "string"
         }

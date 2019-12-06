@@ -12,6 +12,7 @@ plugins {
   id 'java'
   id 'idea'
   id 'eclipse'
+  id "com.jfrog.bintray" version "1.+"
 }
 
 // In this section you declare where to find the dependencies of your project
@@ -34,3 +35,30 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+bintray {   
+    user = 'rojods'
+    key = '16c433d0d69525a044eedcf4dc2391247d3d5cb5'
+    pkg {
+        repo = 'maven'
+        name = 'forsyde-model-java'
+        userOrg = 'rojods'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/bintray/gradle-bintray-plugin.git'
+        version {
+          name = '0.0.1-Alpha'
+          released = new Date()
+        }
+    }
+    publications = ['ForSyDeModelJava']
+}
+
+publishing {
+    publications {
+        ForSyDeModelJava(MavenPublication) {
+            from components.java
+            groupId 'forsyde.model'
+            artifactId 'java'
+            version '0.0.1'
+        }
+    }
+}
