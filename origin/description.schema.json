@@ -60,21 +60,6 @@
       "additionalProperties": false,
       "properties": {
         "id": {"type": "string"},
-        "constructor": {
-          "$ref": "#/definitions/ProcessConstructor"
-        },
-        "processes": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/Process"
-          }
-        },
-        "internalSignals": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/Signal"
-          }
-        },
         "inputSignals": {
           "type": "object",
           "additionalProperties": {
@@ -88,6 +73,30 @@
           }
         }
       },
+      "oneOf": [
+        { 
+          "properties": {
+            "constructor": { "$ref": "#/definitions/ProcessConstructor" } 
+          } 
+        },
+        { 
+          "properties": 
+          {
+            "processes": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/Process"
+              }
+            },
+            "internalSignals": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/Signal"
+              }
+            }
+          }
+        }
+      ],
       "title": "Process"
     },
     "Function": {

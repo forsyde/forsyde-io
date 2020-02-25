@@ -1,32 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
   elementFormDefault="qualified">
-  <xs:element name="forsyde">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="system">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="nodes">
-                <xs:complexType>
-                  <xs:sequence minOccurs="1" maxOccurs="unbounded">
-                    <xs:choice>
-                      <xs:element name="Constructor" type="Constructor"/>
-                      <xs:element name="Process" type="Process"/>
-                      <xs:element name="Signal" type="Signal"/>
-                      <xs:element name="Function" type="Function"/>
-                    </xs:choice>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element name="edges">
-              </xs:element>
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-    </xs:complexType>
+  <xs:element name="forsyde" type="ForSyDe">
   </xs:element>
+  <xs:complexType name="ForSyDe">
+    <xs:all>
+      <xs:element name="system" type="System" />
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="System">
+    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+      <xs:choice>
+        <xs:element name="Constructor" type="Constructor"/>
+        <xs:element name="Process" type="Process"/>
+        <xs:element name="Signal" type="Signal"/>
+        <xs:element name="Function" type="Function"/>
+        <xs:element name="Edge" type="Edge"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
   <xs:complexType name="Process">
     <xs:attribute name="id" type="xs:string"/>
   </xs:complexType>
