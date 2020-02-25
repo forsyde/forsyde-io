@@ -1,24 +1,30 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="forsyde"
   elementFormDefault="qualified">
   <xs:element name="forsyde">
     <xs:complexType>
-      <xs:element name="system">
-        <xs:complexType>
-          <xs:element name="nodes">
-            <xs:complexType>
-              <xs:sequence minOccurs="1" maxOccurs="unbounded">
-                <xs:element name="Process" type="forsyde:Process"/>
-                <xs:element name="Signal" type="forsyde:Signal"/>
-                <xs:element name="Function" type="forsyde:Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="edges">
-          </xs:element>
-        </xs:complexType>
-      </xs:element>
+      <xs:sequence>
+        <xs:element name="system">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="nodes">
+                <xs:complexType>
+                  <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                    <xs:choice>
+                      <xs:element name="Constructor" type="Constructor"/>
+                      <xs:element name="Process" type="Process"/>
+                      <xs:element name="Signal" type="Signal"/>
+                      <xs:element name="Function" type="Function"/>
+                    </xs:choice>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="edges">
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:complexType name="Process">
@@ -28,22 +34,30 @@
     <xs:attribute name="id" type="xs:string"/>
     <xs:attribute name="dataType" type="xs:string"/>
   </xs:complexType>
+  <xs:complexType name="Constructor">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="argument" type="KeyValue" />
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
   <xs:complexType name="Function">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:choice>
+        <xs:element name="input" type="KeyValue"/>
+        <xs:element name="output" type="KeyValue"/>
+      </xs:choice>
+    </xs:sequence>
     <xs:attribute name="id" type="xs:string"/>
     <xs:attribute name="dataType" type="xs:string"/>
-    <xs:element name="inputs">
-      <xs:sequence>
-        <xs:element type="forsyde:KeyValue"/>
-      </xs:sequence>
-    </xs:element>
-    <xs:element name="outputs">
-      <xs:sequence>
-        <xs:element type="forsyde:KeyValue"/>
-      </xs:sequence>
-    </xs:element>
   </xs:complexType>
   <xs:complexType name="KeyValue">
     <xs:attribute name="key" type="xs:string"/>
     <xs:attribute name="value" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="Edge">
+    <xs:attribute name="id" type="xs:string" />
+    <xs:attribute name="outnode" type="xs:string" />
+    <xs:attribute name="innode" type="xs:string" />
   </xs:complexType>
 </xs:schema>
