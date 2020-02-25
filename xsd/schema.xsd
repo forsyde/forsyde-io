@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="forsyde"
+  elementFormDefault="qualified">
+  <xs:element name="forsyde">
+    <xs:complexType>
+      <xs:element name="system">
+        <xs:complexType>
+          <xs:element name="nodes">
+            <xs:complexType>
+              <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                <xs:element name="Process" type="forsyde:Process"/>
+                <xs:element name="Signal" type="forsyde:Signal"/>
+                <xs:element name="Function" type="forsyde:Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="edges">
+          </xs:element>
+        </xs:complexType>
+      </xs:element>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="Process">
+    <xs:attribute name="id" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="Signal">
+    <xs:attribute name="id" type="xs:string"/>
+    <xs:attribute name="dataType" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="Function">
+    <xs:attribute name="id" type="xs:string"/>
+    <xs:attribute name="dataType" type="xs:string"/>
+    <xs:element name="inputs">
+      <xs:sequence>
+        <xs:element type="forsyde:KeyValue"/>
+      </xs:sequence>
+    </xs:element>
+    <xs:element name="outputs">
+      <xs:sequence>
+        <xs:element type="forsyde:KeyValue"/>
+      </xs:sequence>
+    </xs:element>
+  </xs:complexType>
+  <xs:complexType name="KeyValue">
+    <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/>
+  </xs:complexType>
+</xs:schema>
