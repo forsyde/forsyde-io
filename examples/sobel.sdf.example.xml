@@ -78,6 +78,12 @@
     <Execution id="/Mesh/CPU2" nature="unmanaged" kind="CPU" />
     <Execution id="/Mesh/CPU3" nature="unmanaged" kind="CPU" />
     <Communication id="/Mesh/NoC" nature="slots" kind="TDN" />
+    <!-- Conncetions between the harwdare elements -->
+    <Edge id="/Mesh/CPU0/con" outnode="/Mesh" innode="/Mesh/CPU0"/>
+    <Edge id="/Mesh/CPU1/con" outnode="/Mesh" innode="/Mesh/CPU1"/>
+    <Edge id="/Mesh/CPU2/con" outnode="/Mesh" innode="/Mesh/CPU2"/>
+    <Edge id="/Mesh/CPU3/con" outnode="/Mesh" innode="/Mesh/CPU3"/>
+    <Edge id="/Mesh/comm/con" outnode="/Mesh" innode="/Mesh/NoC"/>
   </platform>
   <extra>
     <Goal id="/sobel/goal/min" nature="min" process="/sobel" target="throughput" />
