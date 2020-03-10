@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
   <xs:element name="forsyde" type="ForSyDe">
   </xs:element>
   <!-- Types related to the sytem functional description -->
@@ -10,6 +9,7 @@
       <xs:element name="platform" type="Platform" />
       <xs:element name="extra" type="Extra" />
     </xs:all>
+    <xs:attribute name="revision" type="xs:date"/>
   </xs:complexType>
   <xs:complexType name="System">
     <xs:sequence minOccurs="1" maxOccurs="unbounded">
@@ -23,28 +23,41 @@
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="Process">
-    <xs:attribute name="id" type="xs:string"/>
+    <xs:complexContent>
+      <xs:extension base="Node">
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="Signal">
-    <xs:attribute name="id" type="xs:string"/>
-    <xs:attribute name="dataType" type="xs:string"/>
+    <xs:complexContent>
+      <xs:extension base="Node">
+        <xs:attribute name="dataType" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="Constructor">
-    <xs:sequence maxOccurs="unbounded">
-      <xs:element name="argument" type="KeyValue" />
-    </xs:sequence>
-    <xs:attribute name="id" type="xs:string"/>
-    <xs:attribute name="name" type="xs:string"/>
+    <xs:complexContent>
+      <xs:extension base="Node">
+        <xs:sequence maxOccurs="unbounded">
+          <xs:element name="argument" type="KeyValue" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="Function">
-    <xs:sequence maxOccurs="unbounded">
-      <xs:choice>
-        <xs:element name="input" type="KeyValue"/>
-        <xs:element name="output" type="KeyValue"/>
-      </xs:choice>
-    </xs:sequence>
-    <xs:attribute name="id" type="xs:string"/>
-    <xs:attribute name="dataType" type="xs:string"/>
+    <xs:complexContent>
+      <xs:extension base="Node">
+        <xs:sequence maxOccurs="unbounded">
+          <xs:choice>
+            <xs:element name="input" type="KeyValue"/>
+            <xs:element name="output" type="KeyValue"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="dataType" type="xs:string"/>
+        <xs:attribute name="constant" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="KeyValue">
     <xs:attribute name="key" type="xs:string"/>
@@ -61,24 +74,30 @@
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="Execution">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:choice>
-        <xs:element name="parameter" type="KeyValue" />
-      </xs:choice>
-    </xs:sequence>
-    <xs:attribute name="id" type="xs:string" />
-    <xs:attribute name="nature" type="xs:string" />
-    <xs:attribute name="kind" type="xs:string" />
+    <xs:complexContent>
+      <xs:extension base="Node">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+          <xs:choice>
+            <xs:element name="parameter" type="KeyValue" />
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="nature" type="xs:string" />
+        <xs:attribute name="kind" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="Communication">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:choice>
-        <xs:element name="parameter" type="KeyValue" />
-      </xs:choice>
-    </xs:sequence>
-    <xs:attribute name="id" type="xs:string" />
-    <xs:attribute name="nature" type="xs:string" />
-    <xs:attribute name="kind" type="xs:string" />
+    <xs:complexContent>
+      <xs:extension base="Node">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+          <xs:choice>
+            <xs:element name="parameter" type="KeyValue" />
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="nature" type="xs:string" />
+        <xs:attribute name="kind" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <!-- Types related to the extra functioe descriptions: goals, constraints -->
   <xs:complexType name="Extra">
@@ -89,12 +108,18 @@
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="Goal">
-    <xs:attribute name="id" type="xs:string" />
-    <xs:attribute name="nature" type="xs:string" />
-    <xs:attribute name="process" type="xs:string" />
-    <xs:attribute name="target" type="xs:string" />
+    <xs:complexContent>
+      <xs:extension base="Node">
+        <xs:attribute name="nature" type="xs:string" />
+        <xs:attribute name="process" type="xs:string" />
+        <xs:attribute name="target" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <!-- Types that are useful globally -->
+  <xs:complexType name="Node">
+    <xs:attribute name="id" type="xs:string" />
+  </xs:complexType>
   <xs:complexType name="Edge">
     <xs:attribute name="id" type="xs:string" />
     <xs:attribute name="outnode" type="xs:string" />
