@@ -39,7 +39,7 @@
     <xs:complexContent>
       <xs:extension base="Node">
         <xs:sequence maxOccurs="unbounded">
-          <xs:element name="argument" type="KeyValue" />
+          <xs:element name="context" type="Pair" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string"/>
       </xs:extension>
@@ -50,8 +50,8 @@
       <xs:extension base="Node">
         <xs:sequence maxOccurs="unbounded">
           <xs:choice>
-            <xs:element name="input" type="KeyValue"/>
-            <xs:element name="output" type="KeyValue"/>
+            <xs:element name="input" type="Pair"/>
+            <xs:element name="output" type="Pair"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="dataType" type="xs:string"/>
@@ -59,7 +59,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="KeyValue">
+  <xs:complexType name="Pair">
     <xs:attribute name="key" type="xs:string"/>
     <xs:attribute name="value" type="xs:string"/>
   </xs:complexType>
@@ -78,11 +78,9 @@
       <xs:extension base="Node">
         <xs:sequence minOccurs="0" maxOccurs="unbounded">
           <xs:choice>
-            <xs:element name="parameter" type="KeyValue" />
+            <xs:element name="parameter" type="Pair" />
           </xs:choice>
         </xs:sequence>
-        <xs:attribute name="nature" type="xs:string" />
-        <xs:attribute name="kind" type="xs:string" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -91,11 +89,9 @@
       <xs:extension base="Node">
         <xs:sequence minOccurs="0" maxOccurs="unbounded">
           <xs:choice>
-            <xs:element name="parameter" type="KeyValue" />
+            <xs:element name="parameter" type="Pair" />
           </xs:choice>
         </xs:sequence>
-        <xs:attribute name="nature" type="xs:string" />
-        <xs:attribute name="kind" type="xs:string" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

@@ -20,23 +20,23 @@
     </Function>
     <!-- Constructors and their built processes -->
     <Constructor id="/sobel/getPxSDF/cons" name="actorSDF">
-      <argument key="/getPxFunc/px/production" value="6"/>
-      <argument key="/getPxFunc/py/production" value="6"/>
+      <context key="/getPxFunc/px/production" value="6"/>
+      <context key="/getPxFunc/py/production" value="6"/>
     </Constructor>
     <Process id="/sobel/getPxSDF"/>
     <Constructor id="/sobel/gxSDF/cons" name="actorSDF">
-      <argument key="/gxFunc/x/consumption" value="6"/>
-      <argument key="/gxFunc/Gx/production" value="1"/>
+      <context key="/gxFunc/x/consumption" value="6"/>
+      <context key="/gxFunc/Gx/production" value="1"/>
     </Constructor>
     <Process id="/sobel/gxSDF"/>
     <Constructor id="/sobel/gySDF/cons" name="actorSDF">
-      <argument key="/gyFunc/y/consumption" value="6"/>
-      <argument key="/gyFunc/Gy/production" value="1"/>
+      <context key="/gyFunc/y/consumption" value="6"/>
+      <context key="/gyFunc/Gy/production" value="1"/>
     </Constructor>
     <Process id="/sobel/gySDF"/>
     <Constructor id="/sobel/absSDF/cons" name="actorSDF">
-      <argument key="/absFunc/x/consumption" value="1"/>
-      <argument key="/absFunc/y/consumption" value="0"/>
+      <context key="/absFunc/x/consumption" value="1"/>
+      <context key="/absFunc/y/consumption" value="0"/>
     </Constructor>
     <Process id="/sobel/absSDF"/>
     <!-- The composite sobel process that englobates the other processes -->
@@ -60,7 +60,7 @@
     <Edge id="/sobel/gxSDF/constructor" outnode="/sobel/gxSDF" innode="/sobel/gxSDF/cons" />
     <Edge id="/sobel/gxSDF/constructor" outnode="/sobel/gySDF" innode="/sobel/gySDF/cons" />
     <Edge id="/sobel/absSDF/constructor" outnode="/sobel/absSDF" innode="/sobel/absSDF/cons" />
-    <!-- Conections between the constructors and their arguments -->
+    <!-- Conections between the constructors and their contexts -->
     <Edge id="/sobel/getPxSDF/constructor/actee" outnode="/sobel/getPxSDF/cons" innode="/getPxFunc" />
     <Edge id="/sobel/gxSDF/constructor/actee" outnode="/sobel/gxSDF/cons" innode="/gxFunc" />
     <Edge id="/sobel/gxSDF/constructor/actee" outnode="/sobel/gySDF/cons" innode="/gyFunc" />
@@ -72,12 +72,27 @@
     <Edge id="/sobel/absSDF/parent" outnode="/sobel/absSDF" innode="/sobel" />
   </system>
   <platform>
-    <Execution id="/Mesh" nature="composite" kind="composite"/>
-    <Execution id="/Mesh/CPU0" nature="unmanaged" kind="CPU" />
-    <Execution id="/Mesh/CPU1" nature="unmanaged" kind="CPU" />
-    <Execution id="/Mesh/CPU2" nature="unmanaged" kind="CPU" />
-    <Execution id="/Mesh/CPU3" nature="unmanaged" kind="CPU" />
-    <Communication id="/Mesh/NoC" nature="slots" kind="TDN" />
+    <Execution id="/Mesh"/>
+    <Execution id="/Mesh/CPU0">
+      <parameter key="variety" value="CPU" />
+      <parameter key="OS" value="None" />
+    </Execution>
+    <Execution id="/Mesh/CPU1">
+      <parameter key="variety" value="CPU" />
+      <parameter key="OS" value="None" />
+    </Execution>
+    <Execution id="/Mesh/CPU2">
+      <parameter key="variety" value="CPU" />
+      <parameter key="OS" value="None" />
+    </Execution>
+    <Execution id="/Mesh/CPU3">
+      <parameter key="variety" value="CPU" />
+      <parameter key="OS" value="None" />
+    </Execution>
+    <Communication id="/Mesh/NoC">
+      <parameter key="variety" value="slots" />
+      <parameter key="protocol" value="TDN" />
+    </Communication>
     <!-- Conncetions between the harwdare elements -->
     <Edge id="/Mesh/CPU0/con" outnode="/Mesh" innode="/Mesh/CPU0"/>
     <Edge id="/Mesh/CPU1/con" outnode="/Mesh" innode="/Mesh/CPU1"/>
