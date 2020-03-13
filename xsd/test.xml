@@ -2,77 +2,88 @@
 <forsyde revision="2020-03-10">
   <system>
     <definitions>
-    </definitions>
-    <!-- Function/Runnables/atom/primordial atoms definition -->
-    <Function id="/getPxFunc">
+    <!-- Function/Runnables/atom/primordial atoms definition --><Function id="/getPxFunc">
       <output key="px" value="Integer" />
       <output key="py" value="Integer" />
-    </Function>
-    <Function id="/gxFunc">
+    </Function><Function id="/gxFunc">
       <input key="x" value="Integer" />
       <output key="Gx" value="Integer" />
-    </Function>
-    <Function id="/gyFunc">
+    </Function><Function id="/gyFunc">
       <output key="y" value="Integer" />
       <output key="Gy" value="Integer" />
-    </Function>
-    <Function id="/absFunc">
+    </Function><Function id="/absFunc">
       <input key="x" value="Integer" />
       <input key="y" value="Integer" />
-    </Function>
-    <!-- Constructors and their built processes -->
-    <Constructor id="/sobel/getPxSDF/cons" name="actorSDF">
-      <context key="/getPxFunc/px/production" value="6"/>
-      <context key="/getPxFunc/py/production" value="6"/>
-    </Constructor>
-    <Process id="/sobel/getPxSDF"/>
-    <Constructor id="/sobel/gxSDF/cons" name="actorSDF">
-      <context key="/gxFunc/x/consumption" value="6"/>
-      <context key="/gxFunc/Gx/production" value="1"/>
-    </Constructor>
-    <Process id="/sobel/gxSDF"/>
-    <Constructor id="/sobel/gySDF/cons" name="actorSDF">
-      <context key="/gyFunc/y/consumption" value="6"/>
-      <context key="/gyFunc/Gy/production" value="1"/>
-    </Constructor>
-    <Process id="/sobel/gySDF"/>
-    <Constructor id="/sobel/absSDF/cons" name="actorSDF">
-      <context key="/absFunc/x/consumption" value="1"/>
-      <context key="/absFunc/y/consumption" value="0"/>
-    </Constructor>
-    <Process id="/sobel/absSDF"/>
-    <!-- The composite sobel process that englobates the other processes -->
-    <Process id="/sobel"/>
-    <!-- Signals definitions -->
-    <Signal id="/sobel/px" dataType="Integer"/>
-    <Signal id="/sobel/py" dataType="Integer" />
-    <Signal id="/sobel/Gx" dataType="Integer"/>
-    <Signal id="/sobel/Gy" dataType="Integer"/>
+    </Function><!-- Constructors and their built processes --><Constructor id="/sobel/getPxSDF/cons" name="actorSDF">
+      <context key="/getPxFunc/px/production" value="6" />
+      <context key="/getPxFunc/py/production" value="6" />
+      <function key="actor" value="/getPxFunc"></function></Constructor><Constructor id="/sobel/gxSDF/cons" name="actorSDF">
+      <context key="/gxFunc/x/consumption" value="6" />
+      <context key="/gxFunc/Gx/production" value="1" /><function key="actor"
+      	value="/gxFunc">
+</function>
+</Constructor><Constructor id="/sobel/gySDF/cons" name="actorSDF">
+      <context key="/gyFunc/y/consumption" value="6" />
+      <context key="/gyFunc/Gy/production" value="1" /><function key="actor"
+      	value="/gyFunc">
+</function>
+</Constructor><Constructor id="/sobel/absSDF/cons" name="actorSDF">
+      <context key="/absFunc/x/consumption" value="1" ></context>
+      <context key="/absFunc/y/consumption" value="0" /><function key="actor"
+      	value="/absFunc">
+</function>
+</Constructor><Process id="/sobel/getPxSDF" >
+	<constructor>/sobel/getPxSDF/cons</constructor></Process><Process id="/sobel/gxSDF" >
+	<constructor>/sobel/gxSDF/cons</constructor></Process><Process id="/sobel/gySDF" >
+	<constructor>/sobel/gySDF/cons</constructor></Process><Process id="/sobel/absSDF" >
+	<constructor>/sobel/absSDF/cons</constructor><!-- The composite sobel process that englobates the other processes --></Process><Process id="/sobel" /><!-- Signals definitions --><Signal id="/sobel/px" dataType="Integer" /><Signal id="/sobel/py" dataType="Integer" /><Signal id="/sobel/Gx" dataType="Integer" /><Signal id="/sobel/Gy" dataType="Integer" /></definitions>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <!-- Conections between the signals and the processes -->
-    <Edge id="/sobel/getPxSDF/px" outnode="/sobel/getPxSDF" innode="/sobel/px" />
-    <Edge id="/sobel/getPySDF/py" outnode="/sobel/getPySDF" innode="/sobel/py" />
-    <Edge id="/sobel/gxSDF/px" outnode="/sobel/px" innode="/sobel/gxSDF" />
-    <Edge id="/sobel/gySDF/py" outnode="/sobel/py" innode="/sobel/gySDF" />
-    <Edge id="/sobel/gxSDF/Gx" outnode="/sobel/gxSDF" innode="/sobel/Gx" />
-    <Edge id="/sobel/gySDF/Gy" outnode="/sobel/gySDF" innode="/sobel/Gy" />
-    <Edge id="/sobel/absSDF/x" outnode="/sobel/Gx" innode="/sobel/absSDF" />
-    <Edge id="/sobel/absSDF/y" outnode="/sobel/Gy" innode="/sobel/absSDF" />
+    
+    
+    
+    
+    
+    
+    
+    
     <!-- Conections between the processes and their constructors -->
+    <!-- old info 
     <Edge id="/sobel/getPxSDF/constructor" outnode="/sobel/getPxSDF" innode="/sobel/getPxSDF/cons" />
     <Edge id="/sobel/gxSDF/constructor" outnode="/sobel/gxSDF" innode="/sobel/gxSDF/cons" />
     <Edge id="/sobel/gxSDF/constructor" outnode="/sobel/gySDF" innode="/sobel/gySDF/cons" />
     <Edge id="/sobel/absSDF/constructor" outnode="/sobel/absSDF" innode="/sobel/absSDF/cons" />
-    <!-- Conections between the constructors and their contexts -->
+
     <Edge id="/sobel/getPxSDF/constructor/actee" outnode="/sobel/getPxSDF/cons" innode="/getPxFunc" />
     <Edge id="/sobel/gxSDF/constructor/actee" outnode="/sobel/gxSDF/cons" innode="/gxFunc" />
     <Edge id="/sobel/gxSDF/constructor/actee" outnode="/sobel/gySDF/cons" innode="/gyFunc" />
     <Edge id="/sobel/absSDF/constructor/actee" outnode="/sobel/absSDF/cons" innode="/absFunc" />
-    <!-- Conections between the processes and their 'composite' parents -->
+
     <Edge id="/sobel/getPxSDF/parent" outnode="/sobel/getPxSDF" innode="/sobel" />
     <Edge id="/sobel/gxSDF/parent" outnode="/sobel/gxSDF" innode="/sobel" />
     <Edge id="/sobel/gySDF/parent" outnode="/sobel/gySDF" innode="/sobel" />
-    <Edge id="/sobel/absSDF/parent" outnode="/sobel/absSDF" innode="/sobel" />
-  </system>
+    <Edge id="/sobel/absSDF/parent" outnode="/sobel/absSDF" innode="/sobel" /> -->
+    <netlist><Edge id="/sobel/getPxSDF/px" outnode="/sobel/getPxSDF" innode="/sobel/px" /><Edge id="/sobel/getPySDF/py" outnode="/sobel/getPySDF" innode="/sobel/py" /><Edge id="/sobel/gxSDF/px" outnode="/sobel/px" innode="/sobel/gxSDF" /><Edge id="/sobel/gySDF/py" outnode="/sobel/py" innode="/sobel/gySDF" /><Edge id="/sobel/gxSDF/Gx" outnode="/sobel/gxSDF" innode="/sobel/Gx" /><Edge id="/sobel/gySDF/Gy" outnode="/sobel/gySDF" innode="/sobel/Gy" /><Edge id="/sobel/absSDF/x" outnode="/sobel/Gx" innode="/sobel/absSDF" /><Edge id="/sobel/absSDF/y" outnode="/sobel/Gy" innode="/sobel/absSDF" /></netlist></system>
   <platform>
     <Execution id="/Mesh"/>
     <Execution id="/Mesh/CPU0">
