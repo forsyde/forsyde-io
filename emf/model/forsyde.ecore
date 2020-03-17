@@ -2,15 +2,11 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="ForSyDe" nsURI="http://forsyde.gith.io/ForSyDe.ecore" nsPrefix="ForSyDe">
   <eClassifiers xsi:type="ecore:EClass" name="Communication" eSuperTypes="#//Element">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="group" unique="false" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFeatureMapEntry"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameter" upperBound="-1"
         eType="#//Pair" volatile="true" transient="true" derived="true" containment="true"
         resolveProxies="false"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Constructor" eSuperTypes="#//Element">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="group" unique="false" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFeatureMapEntry"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="function" upperBound="-1"
         eType="#//Pair" volatile="true" transient="true" derived="true" containment="true"
         resolveProxies="false"/>
@@ -20,8 +16,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Definitions">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="group" unique="false" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFeatureMapEntry"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="process" upperBound="-1"
         eType="#//Process" volatile="true" transient="true" derived="true" containment="true"
         resolveProxies="false"/>
@@ -41,15 +35,11 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="outnode" eType="#//IdType"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Execution" eSuperTypes="#//Element">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="group" unique="false" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFeatureMapEntry"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameter" upperBound="-1"
         eType="#//Pair" volatile="true" transient="true" derived="true" containment="true"
         resolveProxies="false"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Extra">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="group" unique="false" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFeatureMapEntry"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="goal" upperBound="-1" eType="#//Goal"
         volatile="true" transient="true" derived="true" containment="true" resolveProxies="false"/>
   </eClassifiers>
@@ -63,17 +53,12 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="revision" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Date"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//Element">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="group" unique="false" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFeatureMapEntry"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="input" upperBound="-1"
         eType="#//Pair" volatile="true" transient="true" derived="true" containment="true"
         resolveProxies="false"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="output" upperBound="-1"
         eType="#//Pair" volatile="true" transient="true" derived="true" containment="true"
         resolveProxies="false"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="constant" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"
-        unsettable="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="dataType" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Goal" eSuperTypes="#//Element">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="nature" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
@@ -98,8 +83,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Platform">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="group" unique="false" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFeatureMapEntry"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="execution" upperBound="-1"
         eType="#//Execution" volatile="true" transient="true" derived="true" containment="true"
         resolveProxies="false"/>
