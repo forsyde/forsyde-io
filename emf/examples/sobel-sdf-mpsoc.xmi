@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ForSyDe xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://forsyde.github.io/ForSyDe.ecore" xsi:schemaLocation="http://forsyde.github.io/ForSyDe.ecore http://forsyde.github.io/ForSyDe.ecore/Extra">
+  <system id="sobel">
+    <netlist>
+      <nodes id="getPx/instance" definition="getPx/process"/>
+      <nodes id="Gx/instance" definition="Gx/process"/>
+      <nodes id="Gy/instance" definition="Gy/process"/>
+      <nodes id="Abs_write/process" definition="Abs_write/process"/>
+      <nodes id="x_patch/instance" definition="x_patch/signal"/>
+      <nodes id="y_patch/instance" definition="y_patch/signal"/>
+      <nodes id="x_grad/instance" definition="x_grad/signal"/>
+      <nodes id="y_grad/instance" definition="y_grad/signal"/>
+      <nodes id="img_res/instance" definition="img_res/signal"/>
+      <nodes id="result_res/instance" definition="result_res/signal"/>
+      <edges id="output/x_patch/signal/x_patch" innode="getPx/instance" outnode="x_patch/instance"/>
+      <edges id="output/y_patch/signal/y_patch" innode="getPx/instance" outnode="y_patch/instance"/>
+      <edges id="signal/x_patch/input/x_patch" innode="x_patch/instance" outnode="Gx/instance"/>
+      <edges id="signal/y_patch/input/y_patch" innode="y_patch/instance" outnode="Gy/instance"/>
+      <edges id="output/x_grad/signal/x_grad" innode="Gx/instance" outnode="x_grad/instance"/>
+      <edges id="output/y_grad/signal/y_grad" innode="Gy/instance" outnode="y_grad/instance"/>
+      <edges id="signal/x_grad/input/x_grad" innode="x_grad/instance" outnode="Abs_write/instance"/>
+      <edges id="signal/y_grad/input/y_grad" innode="y_grad/instance" outnode="Abs_write/instance"/>
+      <edges id="signal/img_res/input/img_res" innode="img_res/instance" outnode="getPx/instance"/>
+      <edges id="signal/result_res/input/result_res" innode="result_res/instance" outnode="Abs_write/instance"/>
+    </netlist>
+    <processes id="getPx/process" constructor="getPx/constructor"/>
+    <processes id="Gx/process" constructor="Gx/constructor"/>
+    <processes id="Gy/process" constructor="Gy/constructor"/>
+    <processes id="Abs_write/process" constructor="Abs_write/constructor"/>
+    <functions id="getPx">
+      <inputs key="img_res" value="Reference"/>
+      <outputs key="x_patch" value="Integer[6]"/>
+      <outputs key="y_patch" value="Integer[6]"/>
+    </functions>
+    <functions id="Gx">
+      <inputs key="x_patch" value="Integer[6]"/>
+      <outputs key="x_grad" value="Integer"/>
+    </functions>
+    <functions id="Gy">
+      <inputs key="y_patch" value="Integer[6]"/>
+      <inputs key="y_grad" value="Integer"/>
+    </functions>
+    <functions id="Abs_write">
+      <inputs key="x_grad" value="Integer"/>
+      <inputs key="y_grad" value="Integer"/>
+      <inputs key="result_res" value="Reference"/>
+    </functions>
+    <constructors id="getPx/constructor" name="actorSDF">
+      <functions key="actor" value="getPx"/>
+    </constructors>
+    <constructors id="getPx/constructor" name="actorSDF">
+      <functions key="actor" value="Gx"/>
+    </constructors>
+    <constructors id="getPx/constructor" name="actorSDF">
+      <functions key="actor" value="Gy"/>
+    </constructors>
+    <constructors id="getPx/constructor" name="actorSDF">
+      <functions key="actor" value="Abs_write"/>
+    </constructors>
+    <signals id="x_patch/signal" dataType="Integer"/>
+    <signals id="y_patch/signal" dataType="Integer"/>
+    <signals id="x_grad/signal" dataType="Integer"/>
+    <signals id="y_grad/signal" dataType="Integer"/>
+    <signals id="img_ref/signal" dataType="Reference"/>
+    <signals id="result_res/signal" dataType="Reference"/>
+  </system>
+  <platform id="mpsoc">
+    <communicators id="TDN-Mesh">
+      <parameter key="slots" value="4"/>
+      <parameter key="round_period" value="1:ns"/>
+    </communicators>
+    <netlist>
+      <nodes id="tile00" definition="tile"/>
+      <nodes id="tile01" definition="tile"/>
+      <nodes id="tile10" definition="tile"/>
+      <nodes id="tile11" definition="tile"/>
+      <nodes id="TDN-Mesh/instance" definition="TDN-Mesh"/>
+      <edges id="tile00/network" innode="tile00/Network Interface/instance" outnode="TDN-Mesh/instance"/>
+      <edges id="tile01/network" innode="tile01/Network Interface/instance" outnode="TDN-Mesh/instance"/>
+      <edges id="tile10/network" innode="tile10/Network Interface/instance" outnode="TDN-Mesh/instance"/>
+      <edges id="tile11/network" innode="tile11/Network Interface/instance" outnode="TDN-Mesh/instance"/>
+    </netlist>
+    <subplatforms id="tile">
+      <computators id="NiosII-e">
+        <parameter key="Clock" value="50:Mhz"/>
+      </computators>
+      <communicators id="Network Interface"/>
+      <netlist>
+        <nodes id="NiosII-e/instance" definition="NiosII-e"/>
+        <nodes id="On Chip Memory/instance" definition="On Chip Memory"/>
+        <nodes id="Network Interface/instance" definition="Network Interface"/>
+        <edges id="NiosII-e/instance/memory" innode="NiosII-e/instance" outnode="On Chip Memory/instance"/>
+        <edges id="NiosII-e/instance/network" innode="NiosII-e/instance" outnode="Network Interface/instance"/>
+      </netlist>
+      <storages id="On Chip Memory"/>
+      <exportedCommunicators>Network Interface/instance</exportedCommunicators>
+    </subplatforms>
+  </platform>
+</ForSyDe>
