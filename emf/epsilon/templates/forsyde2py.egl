@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 
-_namespaces = {'ForSyDe': 'https://forsyde.github.io/ForSyDe'}        
+_namespaces = {'ForSyDe': 'https://forsyde.github.io/ForSyDe'}
 
 [%for (class in getClassesSorted()) {  %]
 [%=class.printClass()%]
@@ -26,13 +26,15 @@ _namespaces = {'ForSyDe': 'https://forsyde.github.io/ForSyDe'}
             obj = [%=class.name%]()
             obj.id = objId
             # first read all simple attributes
-            [%for (attr in class.getFeatures()
-                    .select(r : ForSyDe!EAttribute | r.upperBound = 1)) {%]
-            obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'] or None
+            [%for (attr in class.getFeatures().select(r : ForSyDe!EAttribute | r.upperBound = 1)) {%]
+            [% if (attr.lowerBound > 0) { %]
+            obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]']
+            [%} else {%]
+            obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'] if '[%=attr.name%]' in xmlTree.attrib else None  
+            [%}%]
             [%}%]
             # now list attributes
-            [%for (attr in class.getFeatures()
-                    .select(r : ForSyDe!EAttribute | r.upperBound <> 1)) {%]
+            [%for (attr in class.getFeatures().select(r : ForSyDe!EAttribute | r.upperBound <> 1)) {%]
             obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'].split(' ') or None
             [%}%]
             # read all the objects that are contained - easy recursion
@@ -90,7 +92,11 @@ _namespaces = {'ForSyDe': 'https://forsyde.github.io/ForSyDe'}
         # first read all simple attributes
         [%for (attr in class.getFeatures()
                 .select(r : ForSyDe!EAttribute | r.upperBound = 1)) {%]
-        obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'] or None
+        [% if (attr.lowerBound > 0) { %]
+        obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]']
+        [%} else {%]
+        obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'] if '[%=attr.name%]' in xmlTree.attrib else None  
+        [%}%]
         [%}%]
         # now list attributes
         [%for (attr in class.getFeatures()

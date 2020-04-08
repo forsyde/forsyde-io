@@ -13,6 +13,7 @@ plugins {
   id 'application'
 }
 
+sourceCompatibility = 1.8
 
 /*
  *oomphIde {
