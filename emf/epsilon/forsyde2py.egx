@@ -1,0 +1,9 @@
+rule ForSyDe2Python
+	transform package : ForSyDe!EPackage 
+{
+	guard : package.name = "ForSyDe"
+	
+	template : "templates/forsyde2py.egl"
+	
+	target : "../python/forsyde/model.py"
+}

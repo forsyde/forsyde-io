@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ForSyDe xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://forsyde.github.io/ForSyDe.ecore" xsi:schemaLocation="http://forsyde.github.io/ForSyDe.ecore http://forsyde.github.io/ForSyDe.ecore/Extra">
-  <system id="sobel">
+<ForSyDe xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://forsyde.github.io/ForSyDe" xsi:schemaLocation="http://forsyde.github.io/ForSyDe" revision="0.2">
+  <application id="sobel">
     <netlist>
       <nodes id="getPx/instance" definition="getPx/process"/>
       <nodes id="Gx/instance" definition="Gx/process"/>
@@ -48,13 +48,13 @@
     <constructors id="getPx/constructor" name="actorSDF">
       <functions key="actor" value="getPx"/>
     </constructors>
-    <constructors id="getPx/constructor" name="actorSDF">
+    <constructors id="Gx/constructor" name="actorSDF">
       <functions key="actor" value="Gx"/>
     </constructors>
-    <constructors id="getPx/constructor" name="actorSDF">
+    <constructors id="Gy/constructor" name="actorSDF">
       <functions key="actor" value="Gy"/>
     </constructors>
-    <constructors id="getPx/constructor" name="actorSDF">
+    <constructors id="Abs_write/constructor" name="actorSDF">
       <functions key="actor" value="Abs_write"/>
     </constructors>
     <signals id="x_patch/signal" dataType="Integer"/>
@@ -63,7 +63,7 @@
     <signals id="y_grad/signal" dataType="Integer"/>
     <signals id="img_ref/signal" dataType="Reference"/>
     <signals id="result_res/signal" dataType="Reference"/>
-  </system>
+  </application>
   <platform id="mpsoc">
     <communicators id="TDN-Mesh">
       <parameter key="slots" value="4"/>

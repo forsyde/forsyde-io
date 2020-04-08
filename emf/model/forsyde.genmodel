@@ -1,2 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI"/>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/forsyde-emf/src" modelPluginID="forsyde-emf" modelName="Forsyde"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="10.0" copyrightFields="false" operationReflection="true" importOrganizing="true">
+  <foreignModel>forsyde.ecore</foreignModel>
+  <genPackages prefix="ForSyDe" disposableProviderFactory="true" ecorePackage="forsyde.ecore#/">
+    <genClasses ecoreClass="forsyde.ecore#//ForSyDe">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//ForSyDe/application"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//ForSyDe/platform"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//ForSyDe/extras"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//ForSyDe/revision"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//ForSyDe/decisions"/>
+    </genClasses>
+    <nestedGenPackages prefix="Common" disposableProviderFactory="true" ecorePackage="forsyde.ecore#//Common">
+      <genDataTypes ecoreDataType="forsyde.ecore#//Common/IdType"/>
+      <genClasses ecoreClass="forsyde.ecore#//Common/Edge">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Common/Edge/id"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Common/Edge/innode"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Common/Edge/outnode"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Common/Edge/properties"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Common/Graph">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Common/Graph/nodes"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Common/Graph/edges"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Common/Node">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Common/Node/definition"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Common/Node/properties"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Common/Element">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Common/Element/id"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Common/Pair">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Common/Pair/key"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Common/Pair/value"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Common/Table">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Common/Table/items"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Common/Table/names"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Common/TableItem">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Common/TableItem/values"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Application" disposableProviderFactory="true" ecorePackage="forsyde.ecore#//Application">
+      <genClasses ecoreClass="forsyde.ecore#//Application/Process">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Application/Process/constructor"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Application/Signal">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Application/Signal/dataType"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Application/Application">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Application/Application/netlist"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Application/Application/processes"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Application/Application/functions"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Application/Application/constructors"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Application/Application/signals"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Application/Application/subapplications"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Application/Application/exportedSignals"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Application/Constructor">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Application/Constructor/functions"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Application/Constructor/values"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Application/Constructor/name"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference forsyde.ecore#//Application/Constructor/implementations"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Application/Function">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Application/Function/inputs"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Application/Function/outputs"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Application/Function/implementations"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Application/Implementation">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Application/Implementation/target"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Application/Implementation/source"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Platform" disposableProviderFactory="true" ecorePackage="forsyde.ecore#//Platform">
+      <genClasses ecoreClass="forsyde.ecore#//Platform/Communication">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Platform/Communication/parameter"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Platform/Computation">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Platform/Computation/parameter"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Platform/Platform">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Platform/Platform/computators"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Platform/Platform/communicators"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Platform/Platform/netlist"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Platform/Platform/subplatforms"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Platform/Platform/storages"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Platform/Platform/exportedCommunicators"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Platform/Storage">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Platform/Storage/parameter"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Extra" disposableProviderFactory="true" ecorePackage="forsyde.ecore#//Extra">
+      <genClasses ecoreClass="forsyde.ecore#//Extra/Extra">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference forsyde.ecore#//Extra/Extra/information"/>
+      </genClasses>
+      <genClasses ecoreClass="forsyde.ecore#//Extra/Goal">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Extra/Goal/nature"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Extra/Goal/process"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute forsyde.ecore#//Extra/Goal/target"/>
+      </genClasses>
+    </nestedGenPackages>
+  </genPackages>
+</genmodel:GenModel>
