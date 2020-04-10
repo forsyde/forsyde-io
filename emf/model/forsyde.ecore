@@ -197,6 +197,8 @@
             upperBound="-1" eType="#//Model/Common/Definition" eKeys="#//Model/Common/Element/id"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
+            eType="#//Model/Common/Pair" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Refinement" eSuperTypes="#//Model/Common/Element">
         <eStructuralFeatures xsi:type="ecore:EReference" name="bridgesGraph" eType="#//Model/Common/Graph"

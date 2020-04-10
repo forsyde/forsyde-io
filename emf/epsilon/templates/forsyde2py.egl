@@ -132,6 +132,35 @@ _namespaces = {'ForSyDe': 'https://forsyde.github.io/ForSyDe'}
             return cls._parseXMI(ET.parse(source).getroot())
     [%}%]
     
+    [%if(class.name = 'ForSyDe') {%]
+    def dump(self, target):
+        if isinstance(target, str):
+            with open(taget, 'w') as f:
+                content = self._dumpXMI()
+                f.write(content)
+    [%}%]
+    
+    def _dumpXMI(self, elem = ET.Element('[%=class.name%]')):
+        [%for (attr in class.getFeatures().select(f : ForSyDe!EAttribute | true)) {%]
+        elem.set('[%=attr.name%]', self.[%=attr.name%])
+        [%}%]
+        [%for (ref in class.getFeatures().select(f : ForSyDe!EReference | f.containment = false)) {%]
+        [%if (ref.upperBound = 1) {%]
+        elem.set('[%=ref.name%]', self.[%=ref.name%].id)
+        [%} else {%]
+        elem.set('[%=ref.name%]', [m.id for m in self.[%=ref.name%]].join(' '))
+        [%}%]
+        [%}%]
+        [%for (ref in class.getFeatures().select(f : ForSyDe!EReference | f.containment = true)) {%]
+        [%if (ref.upperBound = 1) {%]
+        self.[%=ref.name%]._dumpXMI(ET.SubElement(elem, '[%=ref.name%]'))
+        [%} else {%]
+        for child in self.[%=ref.name%]:
+            child._dumpXMI(ET.SubElement(elem, '[%=ref.name%]'))
+        [%}%]
+        [%}%]
+        return elem
+    
 [%}%]
 
 [%
