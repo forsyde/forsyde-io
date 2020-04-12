@@ -1,4 +1,6 @@
-import xml.etree.ElementTree as ET
+import lxml.etree as etree
+
+etree.register_namespace('ForSyDe', 'https://forsyde.github.io/ForSyDe')
 
 _namespaces = {'ForSyDe': 'https://forsyde.github.io/ForSyDe'}
 
@@ -129,34 +131,40 @@ _namespaces = {'ForSyDe': 'https://forsyde.github.io/ForSyDe'}
     @classmethod
     def parse(cls, source):
         if isinstance(source, str):
-            return cls._parseXMI(ET.parse(source).getroot())
+            return cls._parseXMI(etree.parse(source).getroot())
     [%}%]
     
     [%if(class.name = 'ForSyDe') {%]
     def dump(self, target):
         if isinstance(target, str):
-            with open(taget, 'w') as f:
-                content = self._dumpXMI()
-                f.write(content)
+            content = self._dumpXMI(elem = etree.Element('[%=class.name%]', nsmap=_namespaces))
+            tree = etree.ElementTree(content)
+            tree.write(target, pretty_print=True, encoding='utf-8', xml_declaration=True)                
     [%}%]
     
-    def _dumpXMI(self, elem = ET.Element('[%=class.name%]')):
+    def _dumpXMI(self, elem = etree.Element('[%=class.name%]')):
         [%for (attr in class.getFeatures().select(f : ForSyDe!EAttribute | true)) {%]
-        elem.set('[%=attr.name%]', self.[%=attr.name%])
+        if self.[%=attr.name%]:
+            elem.set('[%=attr.name%]', str(self.[%=attr.name%]))
         [%}%]
         [%for (ref in class.getFeatures().select(f : ForSyDe!EReference | f.containment = false)) {%]
         [%if (ref.upperBound = 1) {%]
         elem.set('[%=ref.name%]', self.[%=ref.name%].id)
         [%} else {%]
-        elem.set('[%=ref.name%]', [m.id for m in self.[%=ref.name%]].join(' '))
+        elem.set('[%=ref.name%]', ' '.join([m.id for m in self.[%=ref.name%]]))
         [%}%]
         [%}%]
         [%for (ref in class.getFeatures().select(f : ForSyDe!EReference | f.containment = true)) {%]
         [%if (ref.upperBound = 1) {%]
-        self.[%=ref.name%]._dumpXMI(ET.SubElement(elem, '[%=ref.name%]'))
+        [%if (ref.lowerBound = 0) {%]
+        if self.[%=ref.name%]:
+            self.[%=ref.name%]._dumpXMI(etree.SubElement(elem, '[%=ref.name%]'))
+        [%} else {%]
+        self.[%=ref.name%]._dumpXMI(etree.SubElement(elem, '[%=ref.name%]'))
+        [%}%]
         [%} else {%]
         for child in self.[%=ref.name%]:
-            child._dumpXMI(ET.SubElement(elem, '[%=ref.name%]'))
+            child._dumpXMI(etree.SubElement(elem, '[%=ref.name%]'))
         [%}%]
         [%}%]
         return elem

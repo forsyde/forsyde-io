@@ -1,0 +1,3 @@
+[submodule "emf/python"]
+	path = emf/python
+	url = git@gitr.sys.kth.se:jordao/forsyde-python-model.git

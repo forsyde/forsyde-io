@@ -5,5 +5,5 @@ rule ForSyDe2Python
 	
 	template : "templates/forsyde2py.egl"
 	
-	target : "../python/forsyde/model.py"
+	target : "../python/forsyde/python/model.py"
 }
