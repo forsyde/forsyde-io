@@ -1,3 +1,4 @@
 [submodule "python"]
 	path = python
 	url = git@gitr.sys.kth.se:jordao/forsyde-python-model.git
+  branch = master
