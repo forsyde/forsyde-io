@@ -1,17 +1,25 @@
 import lxml.etree as etree
 
+[%for (imp in package.getImports()) { %]
+from [%=imp.getPackagePath()%] import *
+[%}%]
+
 etree.register_namespace('ForSyDe', 'https://forsyde.github.io/ForSyDe')
 
 _namespaces = {'ForSyDe': 'https://forsyde.github.io/ForSyDe'}
 
-[%for (class in getClassesSorted()) {  %]
+[%for (class in package.getClassesSorted()) {  %]
 [%=class.printClass()%]
     '''This class has been generated automatically from the ForSyDe Metaschema.
     Particular comments follow wherever pertinent.'''
 
-    def __init__(self):
+    def __init__(self,
+            [%for (att in class.getFeatures().select(a : ForSyDe!EAttribute | true)) { %]
+            [%=att.name%]=[%if(att.defaultValueLiteral.isDefined()){%][%=att.defaultValueLiteral%][%}else{%]None[%}%],
+            [%}%]
+        ):
         [%for (att in class.getFeatures().select(a : ForSyDe!EAttribute | true)) { %]
-        [%=att.printAttrAssign('self.')%]
+        self.[%=att.name%]=[%=att.name%]
         [%}%]
         [%for (ref in class.getFeatures().select(a : ForSyDe!EReference | true)) { %]
         [%=ref.printRefAssign('self.')%]
@@ -127,14 +135,14 @@ _namespaces = {'ForSyDe': 'https://forsyde.github.io/ForSyDe'}
         return obj
         [%}%]
         
-    [%if(class.name = 'ForSyDe') {%]
+    [%if(class.name = 'ForSyDeIO') {%]
     @classmethod
     def parse(cls, source):
         if isinstance(source, str):
             return cls._parseXMI(etree.parse(source).getroot())
     [%}%]
     
-    [%if(class.name = 'ForSyDe') {%]
+    [%if(class.name = 'ForSyDeIO') {%]
     def dump(self, target):
         if isinstance(target, str):
             content = self._dumpXMI(elem = etree.Element('[%=class.name%]', nsmap=_namespaces))
@@ -173,9 +181,9 @@ _namespaces = {'ForSyDe': 'https://forsyde.github.io/ForSyDe'}
 
 [%
 
-operation getClassesSorted() : Sequence {
+operation ForSyDe!EPackage getClassesSorted() : Sequence {
     var sorted = new Sequence;
-    for(class in ForSyDe!EClass.allInstances()) {
+    for(class in package.getEClassifiers().select(f : ForSyDe!EClass | true)) {
         sorted = addClassSorted(class, sorted);
     }
     return sorted;
@@ -230,6 +238,38 @@ operation ForSyDe!EReference printRefAssign(prefix: String) {
         out.println(self.eType.name + '()');
     } else if (self.upperBound <> 1) {
         out.println('[]');
+    }
+}
+
+@cached
+operation ForSyDe!EPackage getPackageChildren() : Sequence {
+    var seq = new Sequence;
+    for (child in self.getESubpackages()) {
+        seq.add(child);
+        seq.addAll(child.getPackageChildren());
+    }
+    return seq;
+}
+
+@cached
+operation ForSyDe!EPackage getImports() : Set {
+	var imp = new Set;
+	for (class in self.getClassesSorted()) { 
+		for (ref in class.getFeatures().select(a : ForSyDe!EReference | true)) {
+			if (ref.getEReferenceType().getEPackage() <> self) {
+			    imp.add(ref.getEReferenceType().getEPackage());
+			}
+		}
+	}
+	return imp;
+}
+
+@cached
+operation ForSyDe!EPackage getPackagePath() : String {
+    if (self.getESuperPackage().isDefined()) {
+        return self.getESuperPackage().getPackagePath() + "." + self.name;
+    } else {
+    	return self.name;
     }
 }
 %]

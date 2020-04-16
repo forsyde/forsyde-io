@@ -2,19 +2,6 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="ForSyDe" nsURI="https://forsyde.github.io/ForSyDe" nsPrefix="">
   <eSubpackages name="Model" nsURI="https://forsyde.github.io/ForSyDe/Model">
-    <eClassifiers xsi:type="ecore:EClass" name="ForSyDe">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="application" lowerBound="1"
-          upperBound="-1" eType="#//Model/Application/Application" containment="true"
-          resolveProxies="false"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="platform" upperBound="-1"
-          eType="#//Model/Platform/Platform" containment="true" resolveProxies="false"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="extras" eType="#//Model/Extra/Extra"
-          containment="true" resolveProxies="false"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="revision" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
-          defaultValueLiteral="0.3"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="refinement" eType="#//Model/Refinement/Refinement"
-          containment="true"/>
-    </eClassifiers>
     <eSubpackages name="Common" nsURI="https://forsyde.github.io/ForSyDe/Model/Common"
         nsPrefix="">
       <eClassifiers xsi:type="ecore:EClass" name="Edge" eSuperTypes="#//Model/Common/Element">
@@ -83,7 +70,7 @@
             lowerBound="1" eType="#//Model/Common/Graph" containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="processes" ordered="false"
             upperBound="-1" eType="#//Model/Application/Process" volatile="true" derived="true"
-            containment="true" resolveProxies="false"/>
+            containment="true" resolveProxies="false" eKeys="#//Model/Common/Element/id"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="functions" ordered="false"
             upperBound="-1" eType="#//Model/Application/Function" volatile="true"
             derived="true" containment="true" resolveProxies="false"/>
@@ -206,6 +193,21 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="bridgesDefinitions"
             upperBound="-1" eType="#//Model/Refinement/Bridge" containment="true"
             eKeys="#//Model/Common/Element/id"/>
+      </eClassifiers>
+    </eSubpackages>
+    <eSubpackages name="IO" nsURI="https://forsyde.github.io/ForSyDe/IO">
+      <eClassifiers xsi:type="ecore:EClass" name="ForSyDeIO">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="applications" lowerBound="1"
+            upperBound="-1" eType="#//Model/Application/Application" containment="true"
+            resolveProxies="false"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="platforms" upperBound="-1"
+            eType="#//Model/Platform/Platform" containment="true" resolveProxies="false"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="extras" eType="#//Model/Extra/Extra"
+            containment="true" resolveProxies="false"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="revision" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
+            defaultValueLiteral="0.3"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="refinement" eType="#//Model/Refinement/Refinement"
+            containment="true"/>
       </eClassifiers>
     </eSubpackages>
   </eSubpackages>

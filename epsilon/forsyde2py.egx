@@ -1,9 +1,33 @@
-rule ForSyDe2Python
+rule MakePackageLeaf
 	transform package : ForSyDe!EPackage 
 {
-	guard : package.name = "ForSyDe"
+
+    guard : package.getEClassifiers().size() > 0
 	
 	template : "templates/forsyde2py.egl"
 	
-	target : "../python/forsyde/python/model.py"
+	target : "../python/" + package.getPackagePath().concat("/") + ".py"
+}
+
+rule MakePackageInit
+	transform package : ForSyDe!EPackage 
+{
+
+    guard : package.getESubpackages().size() > 0 and package.name <> "ForSyDe"
+	
+	template : "templates/forsyde2py_init.egl"
+	
+	target : "../python/" + package.getPackagePath().concat("/") + "/__init__.py"
+}
+
+operation ForSyDe!EPackage getPackagePath() : Sequence {
+    if (self.getESuperPackage().isDefined()) {
+        var seq = self.getESuperPackage().getPackagePath();
+        seq.add(self.name);
+        return seq;
+    } else {
+    	var seq = new Sequence;
+    	seq.add(self.name);
+    	return seq;
+    }
 }
