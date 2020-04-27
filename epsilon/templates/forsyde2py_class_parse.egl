@@ -1,0 +1,109 @@
+@classmethod
+[%if(class.getFeatures().exists(a : ForSyDe!EAttribute | a.name = 'id')) {%]
+def _parseXMI(cls, xmlTree, model=dict(), delayed=dict()):
+    '''This class has the ID property, therefore the code has intricacies with the delayed feature'''
+    # check if it exists
+    objId = xmlTree.attrib['id']
+    if not objId in model:
+        # proceed with parsing
+        obj = [%=class.name%]()
+        obj.id = objId
+        # first read all simple attributes
+        [%for (attr in class.getFeatures().select(r : ForSyDe!EAttribute | r.upperBound = 1)) {%]
+        [% if (attr.lowerBound > 0) { %]
+        obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]']
+        [%} else {%]
+        obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'] if '[%=attr.name%]' in xmlTree.attrib else None  
+        [%}%]
+        [%}%]
+        # now list attributes
+        [%for (attr in class.getFeatures().select(r : ForSyDe!EAttribute | r.upperBound <> 1)) {%]
+        obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'].split(' ') or None
+        [%}%]
+        # read all the objects that are contained - easy recursion
+        [%for (ref in class.getFeatures().select(r : ForSyDe!EReference | r.containment)) {%]
+        [%if (ref.upperBound = 1) {%]
+        [%if (ref.lowerBound = 0) {%]
+        if xmlTree.find('ForSyDe:[%=ref.name%]', _namespaces) != None:
+            obj.[%=ref.name%] = [%=ref.eType.name%]._parseXMI(
+              xmlTree.find('ForSyDe:[%=ref.name%]', _namespaces), model, delayed)
+        [%} else {%]
+        obj.[%=ref.name%] = [%=ref.eType.name%]._parseXMI(
+          xmlTree.find('ForSyDe:[%=ref.name%]', _namespaces), model, delayed)
+        [%}%]
+        [%} else {%]
+        for child in xmlTree.findall('ForSyDe:[%=ref.name%]', _namespaces):
+            obj.[%=ref.name%].append([%=ref.eType.name%]._parseXMI(
+              xmlTree.find('ForSyDe:[%=ref.name%]', _namespaces), model, delayed))
+        [%}%]
+        [%}%]
+        # objects not contained... must delay their references.
+        [%for (ref in class.getFeatures()
+                .select(r : ForSyDe!EReference | r.containment = false)) {%]
+        if '[%=ref.name%]' in xmlTree.attrib:
+            [%if (ref.upperBound = 1) {%]
+            childId = xmlTree.attrib['[%=ref.name%]']
+            if childId in model:
+                obj.[%=ref.name%] = model[childId]
+            else:
+                delayed[childId] = (obj, '[%=ref.name%]')  
+            [%} else {%]
+            for childId in xmlTree.attrib['[%=ref.name%]'].split(' '):
+                if childId in model:
+                    obj.[%=ref.name%] = model[childId]
+                else:
+                    delayed[childId] = (obj, '[%=ref.name%]')
+        [%}%]
+        [%}%]
+        # done! now register the model and go forward.
+        model[obj.id]= obj
+    # now update any object waiting for self
+    # using some reflection for now, but later this can be changed.
+    if objId in delayed:
+        parent = delayed[objId][0]
+        attr =  delayed[objId][1]
+        if isinstance(getattr(parent, attr), list):
+            getattr(parent, attr).append(model[objId])
+        else:
+            setattr(parent, attr, model[objId])
+    return model[objId]
+[%} else {%]
+def _parseXMI(cls, xmlTree, model=dict(), delayed=dict()):    
+    '''This class does not have ID, so it is assumed that it only contains other classes.'''
+    # proceed with parsing
+    obj = [%=class.name%]()
+    # first read all simple attributes
+    [%for (attr in class.getFeatures()
+            .select(r : ForSyDe!EAttribute | r.upperBound = 1)) {%]
+    [% if (attr.lowerBound > 0) { %]
+    obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]']
+    [%} else {%]
+    obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'] if '[%=attr.name%]' in xmlTree.attrib else None  
+    [%}%]
+    [%}%]
+    # now list attributes
+    [%for (attr in class.getFeatures()
+            .select(r : ForSyDe!EAttribute | r.upperBound <> 1)) {%]
+    obj.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'].split(' ') or None
+    [%}%]
+    # read all the objects that are contained - easy recursion
+    [%for (ref in class.getFeatures()
+            .select(r : ForSyDe!EReference | r.containment)) {%]
+    [%if (ref.upperBound = 1) {%]
+    [%if (ref.lowerBound = 0) {%]
+    if xmlTree.find('ForSyDe:[%=ref.name%]', _namespaces) != None:
+        obj.[%=ref.name%] = [%=ref.eType.name%]._parseXMI(
+          xmlTree.find('ForSyDe:[%=ref.name%]', _namespaces), model, delayed)
+    [%} else {%]
+    obj.[%=ref.name%] = [%=ref.eType.name%]._parseXMI(
+      xmlTree.find('ForSyDe:[%=ref.name%]', _namespaces), model, delayed)
+    [%}%]
+    [%} else {%]
+    for child in xmlTree.findall('ForSyDe:[%=ref.name%]', _namespaces):
+        obj.[%=ref.name%].append([%=ref.eType.name%]._parseXMI(
+          xmlTree.find('ForSyDe:[%=ref.name%]', _namespaces), model, delayed))
+    [%}%]
+    [%}%]
+    # done!
+    return obj
+[%}%]

@@ -11,6 +11,7 @@ plugins {
   id 'eclipse'
   id 'idea'
   id 'application'
+  id "org.xtext.xtend" version "2.0.8"
 }
 
 sourceCompatibility = 1.8
@@ -61,6 +62,8 @@ dependencies {
     implementation 'org.eclipse.epsilon:epsilon-emf:1.5.1'
     implementation 'org.eclipse.epsilon:epsilon-workflow:1.5.1'
     implementation 'org.eclipse.epsilon:epsilon-workflow-emf:1.5.1'
+
+		implementation 'org.eclipse.xtend:org.eclipse.xtend.lib:2.21.0'
 
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the

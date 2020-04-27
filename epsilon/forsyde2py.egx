@@ -1,23 +1,25 @@
-rule MakePackageLeaf
-	transform package : ForSyDe!EPackage 
+rule Package
+	transform package : ForSyDe!EPackage
 {
-
-    guard : package.getEClassifiers().size() > 0
+	guard : package.getESubpackages().size() > 0 and 
+			package.getEClassifiers().size() > 0 and
+			package.getPackagePath().size() > 1
 	
-	template : "templates/forsyde2py.egl"
-	
-	target : "../python/" + package.getPackagePath().concat("/") + ".py"
-}
-
-rule MakePackageInit
-	transform package : ForSyDe!EPackage 
-{
-
-    guard : package.getESubpackages().size() > 0 and package.name <> "ForSyDe"
-	
-	template : "templates/forsyde2py_init.egl"
+	template : "templates/forsyde2py_package.egl"
 	
 	target : "../python/" + package.getPackagePath().concat("/") + "/__init__.py"
+}
+
+rule PackageLeaf
+	transform package : ForSyDe!EPackage 
+{
+
+    guard : package.getEClassifiers().size() > 0 and
+    		package.getESubpackages().size() = 0
+	
+	template : "templates/forsyde2py_package.egl"
+	
+	target : "../python/" + package.getPackagePath().concat("/") + ".py"
 }
 
 operation ForSyDe!EPackage getPackagePath() : Sequence {
@@ -30,4 +32,9 @@ operation ForSyDe!EPackage getPackagePath() : Sequence {
     	seq.add(self.name);
     	return seq;
     }
+}
+
+operation Sequence dropLast() : Sequence {
+	self.removeAt(self.size()-1);
+	return self;
 }

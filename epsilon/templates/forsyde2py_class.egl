@@ -1,0 +1,49 @@
+[%if (class.eSuperTypes.size() > 0) { %]
+class [%=class.name%]([%=class.eSuperTypes.name.concat(',')%])
+[% } else { %]
+class [%=class.name%]():
+[% } %]
+    '''This class has been generated automatically from the ForSyDe Component Metaschema.
+    Particular comments follow wherever pertinent.'''
+
+    def __init__(self,
+            [*Generate the attributes with their default values*]
+            [%for (att in class.getFeatures().select(a : ForSyDe!EAttribute | true)) { %]
+            [%if(att.defaultValue.isDefined()) {%]
+            [%if(att.getEAttributeType().isKindOf(ForSyDe!EEnum)) {%]
+            [%=att.name%]=[%=att.getEAttributeType().name%].[%=att.defaultValue%],
+            [%} else {%]
+            [%=att.name%]=[%=att.defaultValue%],
+            [%}%]
+            [%}else{%]
+            [%=att.name%]=None,
+            [%}%]
+            [%}%]
+            [*Generate referneces with their default values *]
+            [%for (ref in class.getFeatures().select(a : ForSyDe!EReference | true)) { %]
+            [%if (ref.lowerBound = 0 and ref.upperBound = 1) {%]
+            [%=ref.name%]=None,
+            [%} else if (ref.lowerBound = 1 and ref.upperBound = 1) {%]
+            [%=ref.name%]=[%=ref.eType.name%](),
+            [%} else {%]
+            [%=ref.name%]=[],
+            [%}%]
+            [%}%]
+        ):
+        [*Instantiate all these injected stuff *]
+        [%for (a in class.getFeatures()) { %]
+        self.[%=a.name%] = [%=a.name%]
+        [%}%]
+
+        
+[%
+@cached
+operation ForSyDe!EClass getFeatures() : OrderedSet {
+    var features = new OrderedSet;
+    for(super in self.eSuperTypes) {
+        features.addAll(super.getFeatures());
+    }
+    features.addAll(self.eStructuralFeatures);
+    return features;
+}
+%]

@@ -1,0 +1,139 @@
+[%if(package.eClassifiers.exists(e : ForSyDe!EEnum | true)) {%]
+from enum import Enum
+[%}%]
+
+import lxml.etree as etree
+
+[%for (imp in package.getImports()) { %]
+from [%=imp.getPackagePath()%] import *
+[%}%]
+
+etree.register_namespace('ForSyDe', 'https://forsyde.github.io/ForSyDe')
+
+_namespaces = {'ForSyDe': 'https://forsyde.github.io/ForSyDe'}
+
+[%for (enum in package.eClassifiers.select(e : ForSyDe!EEnum | true)) {%]
+[%
+var enumTemplate := TemplateFactory.load('templates/forsyde2py_enum.egl');
+enumTemplate.populate('enum', enum);
+%]
+[%=enumTemplate.process()%]
+[%}%]
+
+[%for (class in package.getClassesSorted()) {  %]
+[%
+var classTemplate := TemplateFactory.load('templates/forsyde2py_class.egl');
+classTemplate.populate('class', class);
+%]
+[%=classTemplate.process()%]
+        
+    [%if(class.name = 'ForSyDeIO') {%]
+    @classmethod
+    def parse(cls, source):
+        if isinstance(source, str):
+            return cls._parseXMI(etree.parse(source).getroot())
+    [%}%]
+    
+    [%if(class.name = 'ForSyDeIO') {%]
+    def dump(self, target):
+        if isinstance(target, str):
+            content = self._dumpXMI(elem = etree.Element('[%=class.name%]', nsmap=_namespaces))
+            tree = etree.ElementTree(content)
+            tree.write(target, pretty_print=True, encoding='utf-8', xml_declaration=True)                
+    [%}%]
+    
+[%}%]
+
+[%
+
+operation ForSyDe!EPackage getClassesSorted() : Sequence {
+    var sorted = new Sequence;
+    for(class in package.getEClassifiers().select(f : ForSyDe!EClass | true)) {
+        sorted = addClassSorted(class, sorted);
+    }
+    return sorted;
+}
+
+operation addClassSorted(class : ForSyDe!EClass, sorted: Sequence) : Sequence {
+    if (sorted.exists(c : ForSyDe!EClass | c.eSuperTypes.isDefined() and c.eSuperTypes.contains(class))) {
+        var newSorted = new Sequence;
+        newSorted.add(class);
+        newSorted.addAll(sorted);
+        return newSorted;
+    } else {
+        sorted.add(class);
+        return sorted;
+    }
+}
+
+operation ForSyDe!EAttribute printAttrAssign(prefix: String) {
+    out.print(prefix + self.name + ' = ');
+    if (self.defaultValueLiteral <> null) {
+        out.println(self.defaultValueLiteral);
+    } else {
+        out.println('None');
+    }
+}
+ 
+operation ForSyDe!EClass printClass() {
+    out.print('class ');
+    out.print(self.name); 
+    if (self.eSuperTypes.size() > 0) {
+        out.print('(' + self.eSuperTypes.name.concat(', ') + ')');
+    }
+    out.println(':');
+}
+
+operation ForSyDe!EReference printRefAssign(prefix: String) {
+    out.print(prefix + self.name + ' = ');
+    if (self.lowerBound = 0 and self.upperBound = 1) {
+        out.println('None');
+    } else if (self.lowerBound = 1 and self.upperBound = 1) {
+        out.println(self.eType.name + '()');
+    } else if (self.upperBound <> 1) {
+        out.println('[]');
+    }
+}
+
+@cached
+operation ForSyDe!EPackage getPackageChildren() : Sequence {
+    var seq = new Sequence;
+    for (child in self.getESubpackages()) {
+        seq.add(child);
+        seq.addAll(child.getPackageChildren());
+    }
+    return seq;
+}
+
+@cached
+operation ForSyDe!EClass getFeatures() : OrderedSet {
+    var features = new OrderedSet;
+    for(super in self.eSuperTypes) {
+        features.addAll(super.getFeatures());
+    }
+    features.addAll(self.eStructuralFeatures);
+    return features;
+}
+
+@cached
+operation ForSyDe!EPackage getImports() : Set {
+	var imp = new Set;
+	for (class in self.getClassesSorted()) { 
+		for (ref in class.getFeatures().select(a : ForSyDe!EReference | true)) {
+			if (ref.getEReferenceType().getEPackage() <> self) {
+			    imp.add(ref.getEReferenceType().getEPackage());
+			}
+		}
+	}
+	return imp;
+}
+
+@cached
+operation ForSyDe!EPackage getPackagePath() : String {
+    if (self.getESuperPackage().isDefined()) {
+        return self.getESuperPackage().getPackagePath() + "." + self.name;
+    } else {
+    	return self.name;
+    }
+}
+%]
