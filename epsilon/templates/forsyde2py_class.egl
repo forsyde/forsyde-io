@@ -1,40 +1,69 @@
+[%
+var parseTemplate := TemplateFactory.load('templates/forsyde2py_class_parse.egl');
+parseTemplate.populate('class', class);
+
+var dumpTemplate := TemplateFactory.load('templates/forsyde2py_class_dump.egl');
+dumpTemplate.populate('class', class); 
+%]
 [%if (class.eSuperTypes.size() > 0) { %]
-class [%=class.name%]([%=class.eSuperTypes.name.concat(',')%])
+class [%=class.name%]([%=class.eSuperTypes.name.concat(',')%]):
 [% } else { %]
 class [%=class.name%]():
 [% } %]
     '''This class has been generated automatically from the ForSyDe Component Metaschema.
     Particular comments follow wherever pertinent.'''
 
-    def __init__(self,
+    def __init__(self
             [*Generate the attributes with their default values*]
             [%for (att in class.getFeatures().select(a : ForSyDe!EAttribute | true)) { %]
             [%if(att.defaultValue.isDefined()) {%]
             [%if(att.getEAttributeType().isKindOf(ForSyDe!EEnum)) {%]
-            [%=att.name%]=[%=att.getEAttributeType().name%].[%=att.defaultValue%],
+            ,[%=att.name%]=[%=att.getEAttributeType().name%].[%=att.defaultValue%]
             [%} else {%]
-            [%=att.name%]=[%=att.defaultValue%],
+            ,[%=att.name%]=[%=att.defaultValue%]
             [%}%]
             [%}else{%]
-            [%=att.name%]=None,
+            ,[%=att.name%]=None
             [%}%]
             [%}%]
             [*Generate referneces with their default values *]
             [%for (ref in class.getFeatures().select(a : ForSyDe!EReference | true)) { %]
             [%if (ref.lowerBound = 0 and ref.upperBound = 1) {%]
-            [%=ref.name%]=None,
+            ,[%=ref.name%]=None
             [%} else if (ref.lowerBound = 1 and ref.upperBound = 1) {%]
-            [%=ref.name%]=[%=ref.eType.name%](),
+            ,[%=ref.name%]=[%=ref.eType.name%]()
             [%} else {%]
-            [%=ref.name%]=[],
+            ,[%=ref.name%]=[]
             [%}%]
             [%}%]
         ):
+        [* pass stuff to parent constructors *]
+        [%for (parent in class.eSuperTypes) {%]
+        [%=parent.name%].__init__(self[%=',' + parent.getFeatures().collect(e | e.name + '=' + e.name).concat(',')%])
+        [%}%]
         [*Instantiate all these injected stuff *]
-        [%for (a in class.getFeatures()) { %]
+        [%for (a in class.eStructuralFeatures) { %]
         self.[%=a.name%] = [%=a.name%]
         [%}%]
-
+    
+    [%=parseTemplate.process()%]
+    
+    [%if(class.name = 'ForSyDeIO') {%]
+    @classmethod
+    def parse(cls, source):
+        if isinstance(source, str):
+            return cls._parseXMI(etree.parse(source).getroot())
+    [%}%]
+    
+    [%=dumpTemplate.process()%]
+    
+    [%if(class.name = 'ForSyDeIO') {%]
+    def dump(self, target):
+        if isinstance(target, str):
+            content = self._dumpXMI(elem = etree.Element('[%=class.name%]', nsmap=_namespaces))
+            tree = etree.ElementTree(content)
+            tree.write(target, pretty_print=True, encoding='utf-8', xml_declaration=True)                
+    [%}%]
         
 [%
 @cached

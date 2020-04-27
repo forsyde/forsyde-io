@@ -24,3 +24,15 @@ def _dumpXMI(self, elem = etree.Element('[%=class.name%]')):
     [%}%]
     [%}%]
     return elem
+
+[%
+@cached
+operation ForSyDe!EClass getFeatures() : OrderedSet {
+    var features = new OrderedSet;
+    for(super in self.eSuperTypes) {
+        features.addAll(super.getFeatures());
+    }
+    features.addAll(self.eStructuralFeatures);
+    return features;
+}
+%]
