@@ -1,4 +1,8 @@
 def _parseXMI_inplace(self, xmlTree, model=dict()):
+    '''
+    This method modifies properties inplace for the object so that parsing can be done with fewer
+    lines of code through inheritance.
+    '''
     # call all parents parsers
     [%for (parent in class.eSuperTypes) {%]
     super([%=parent.name%], self)._parseXMI_inplace(xmlTree, model)
@@ -74,7 +78,9 @@ def _parseXMI_inplace(self, xmlTree, model=dict()):
 @classmethod
 [%if(class.getFeatures().exists(a : ForSyDe!EAttribute | a.name = 'identifier')) {%]
 def _parseXMI(cls, xmlTree, model=dict()):
-    '''This class has the ID property'''
+    '''
+    This class has the ID property
+    '''
     # If the object exists, populate it, otherwise create a new one
     obj = None
     objId = xmlTree.attrib['id']
@@ -87,7 +93,9 @@ def _parseXMI(cls, xmlTree, model=dict()):
     return obj
 [%} else {%]
 def _parseXMI(cls, xmlTree, model=dict()):
-    '''This class has no ID property'''
+    '''
+    This class has no ID property
+    '''
     # Just create and return it as it cannot be traced without ID
     obj = [%=class.name%]()
     obj._parseXMI_inplace(xmlTree, model)

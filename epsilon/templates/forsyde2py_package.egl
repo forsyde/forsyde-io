@@ -14,9 +14,7 @@ from [%=imp.getPackagePath()%] import *
 etree.register_namespace('ForSyDe', 'https://forsyde.github.io/ForSyDe')
 
 _namespaces = {
-[%for (pack in package.getAllParentsAndSelf()) {%]
-    '[%=pack.nsPrefix%]': '[%=pack.nsUri%]'
-[%}%]
+[%=package.getAllParentsAndSelf().collect(p | "'" + p.nsPrefix + "': '" + p.nsUri + "'").concat(',\n')%]
 }
 
 [%for (enum in package.eClassifiers.select(e : ForSyDe!EEnum | true)) {%]
@@ -31,24 +29,18 @@ _namespaces = {
 [*Here it finishes*]
 [%
 
-operation ForSyDe!EPackage getClassesSorted() : Sequence {
-    var sorted = new Sequence;
-    for(class in package.getEClassifiers().select(f : ForSyDe!EClass | true)) {
-        sorted = addClassSorted(class, sorted);
+operation ForSyDe!EPackage getClassesSorted() : OrderedSet {
+    var valueMap = new Map;
+    var classes = self.getEClassifiers().select(f : ForSyDe!EClass | true);
+    // STOPPED HERE, MUST MAKE CONSTRUCTOR REFERENCES WORK
+    for(i in Sequence{1..classes.size()-1}) {
+	    for(class in classes) {
+	    	var depsNum = classes.select(c | c.eAllSuperTypes.isDefined() and c.eAllSuperTypes.contains(class))
+	    					.collect(c | valueMap.get(c)).max();
+	    	valueMap.put(class, depsNum + 1);
+	    }
     }
-    return sorted;
-}
-
-operation addClassSorted(class : ForSyDe!EClass, sorted: Sequence) : Sequence {
-    if (sorted.exists(c : ForSyDe!EClass | c.eSuperTypes.isDefined() and c.eSuperTypes.contains(class))) {
-        var newSorted = new Sequence;
-        newSorted.add(class);
-        newSorted.addAll(sorted);
-        return newSorted;
-    } else {
-        sorted.add(class);
-        return sorted;
-    }
+    return classes.sortBy(c | valueMap.get(c)).invert().asOrderedSet();
 }
 
 @cached
@@ -74,10 +66,12 @@ operation ForSyDe!EClass getFeatures() : OrderedSet {
 @cached
 operation ForSyDe!EPackage getImports() : Set {
 	var imp = new Set;
-	for (class in self.getClassesSorted()) { 
-		for (ref in class.getFeatures().select(a : ForSyDe!EReference | true)) {
-			if (ref.getEReferenceType().getEPackage() <> self) {
-			    imp.add(ref.getEReferenceType().getEPackage());
+	for (class in self.getEClassifiers().select(f : ForSyDe!EClass | true)) { 
+		for (subpack in class.getFeatures()
+				.collect(ref : ForSyDe!EReference | ref.getEReferenceType().getEPackage())) {
+			if (subpack <> self) {
+				imp.add(subpack);
+			    //imp.addAll(subpack.getImports());
 			}
 		}
 	}

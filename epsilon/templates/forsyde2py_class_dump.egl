@@ -7,7 +7,7 @@ def _dumpXMI(self, elem = etree.Element('[%=class.name%]')):
     [%if (ref.upperBound = 1) {%]
     elem.set('[%=ref.name%]', self.[%=ref.name%].id)
     [%} else {%]
-    elem.set('[%=ref.name%]', ' '.join([m.id for m in self.[%=ref.name%]]))
+    elem.set('[%=ref.name%]', ' '.join([m.identifier for m in self.[%=ref.name%]]))
     [%}%]
     [%}%]
     [%for (ref in class.getFeatures().select(f : ForSyDe!EReference | f.containment = true)) {%]
