@@ -2,18 +2,6 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="ForSyDe" nsURI="https://forsyde.github.io/ForSyDe" nsPrefix="ForSyDe">
   <eSubpackages name="Model" nsURI="https://forsyde.github.io/ForSyDe/Model" nsPrefix="ForSyDe.Model">
-    <eClassifiers xsi:type="ecore:EClass" name="ForSyDeIO">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="applications" upperBound="-1"
-          eType="#//Model/Application/Application" containment="true" resolveProxies="false"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="platforms" upperBound="-1"
-          eType="#//Model/Platform/Platform" containment="true" resolveProxies="false"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="extras" eType="#//Model/Extra/Extra"
-          containment="true" resolveProxies="false"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="revision" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
-          defaultValueLiteral="0.4.1"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="refinement" eType="#//Model/Refinement/Refinement"
-          containment="true"/>
-    </eClassifiers>
     <eSubpackages name="Common" nsURI="https://forsyde.github.io/ForSyDe/Model/Common"
         nsPrefix="ForSyDe.Model.Common">
       <eClassifiers xsi:type="ecore:EClass" name="Edge" eSuperTypes="#//Model/Common/Element">
@@ -134,7 +122,7 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="implementations" ordered="false"
             upperBound="-1" eType="#//Model/Application/Implementation" eKeys="#//Model/Common/Element/identifier"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="moc" ordered="false"
-            lowerBound="1" eType="#//Model/Application/MoC" defaultValueLiteral="DE"/>
+            lowerBound="1" eType="#//Model/Application/MoC" defaultValueLiteral=""/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//Model/Common/Definition">
         <eStructuralFeatures xsi:type="ecore:EReference" name="inputs" upperBound="-1"
@@ -143,8 +131,8 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="outputs" upperBound="-1"
             eType="#//Model/Common/NamedDefinitionReference" volatile="true" derived="true"
             containment="true" resolveProxies="false"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="implementations" lowerBound="1"
-            upperBound="-1" eType="#//Model/Application/Implementation" eKeys="#//Model/Common/Element/identifier"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="implementations" upperBound="-1"
+            eType="#//Model/Application/Implementation" eKeys="#//Model/Common/Element/identifier"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Implementation" eSuperTypes="#//Model/Common/Definition">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="target" lowerBound="1"
@@ -226,7 +214,7 @@
         nsPrefix="ForSyDe.Model.Refinement">
       <eClassifiers xsi:type="ecore:EClass" name="Binding" eSuperTypes="#//Model/Common/Definition">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" lowerBound="1"
-            eType="#//Model/Refinement/BindingCategory"/>
+            eType="#//Model/Refinement/BindingCategory" defaultValueLiteral="0"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="maleable" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"
             defaultValueLiteral="false"/>
@@ -250,6 +238,19 @@
         <eLiterals name="OSEKScheduler"/>
       </eClassifiers>
     </eSubpackages>
-    <eSubpackages name="IO" nsURI="https://forsyde.github.io/ForSyDe/IO" nsPrefix="ForSyDe.Model.IO"/>
+    <eSubpackages name="IO" nsURI="https://forsyde.github.io/ForSyDe/IO" nsPrefix="ForSyDe.Model.IO">
+      <eClassifiers xsi:type="ecore:EClass" name="ForSyDeIO">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="applications" upperBound="-1"
+            eType="#//Model/Application/Application" containment="true" resolveProxies="false"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="platforms" upperBound="-1"
+            eType="#//Model/Platform/Platform" containment="true" resolveProxies="false"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="extras" eType="#//Model/Extra/Extra"
+            containment="true" resolveProxies="false"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="revision" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
+            defaultValueLiteral="0.4.1"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="refinement" eType="#//Model/Refinement/Refinement"
+            containment="true"/>
+      </eClassifiers>
+    </eSubpackages>
   </eSubpackages>
 </ecore:EPackage>

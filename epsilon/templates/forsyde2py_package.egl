@@ -11,10 +11,8 @@ import lxml.etree as etree
 from [%=imp.getPackagePath()%] import *
 [%}%]
 
-etree.register_namespace('ForSyDe', 'https://forsyde.github.io/ForSyDe')
-
 _namespaces = {
-[%=package.getAllParentsAndSelf().collect(p | "'" + p.nsPrefix + "': '" + p.nsUri + "'").concat(',\n')%]
+[%=package.getAllParentsAndChildren().collect(p | "'" + p.nsPrefix + "': '" + p.nsUri + "'").concat(',\n')%]
 }
 
 [%for (enum in package.eClassifiers.select(e : ForSyDe!EEnum | true)) {%]
@@ -88,6 +86,13 @@ operation ForSyDe!EPackage getPackagePath() : String {
 }
 
 @cached
+operation ForSyDe!EPackage getAllParentsAndChildren() : Set {
+	var set = self. getAllParentsAndSelf();
+	set.addAll(self.getAllChildrenAndSelf());
+	return set;
+}
+
+@cached
 operation ForSyDe!EPackage getAllParentsAndSelf() : Set {
 	var set : Set;
 	if (self.getESuperPackage().isDefined()) {
@@ -97,5 +102,19 @@ operation ForSyDe!EPackage getAllParentsAndSelf() : Set {
     }
     set.add(self);
     return set;
+}
+
+@cached
+operation ForSyDe!EPackage getAllChildrenAndSelf() : Set {
+	var set : Set;
+	if (self.eSubpackages.size() > 0) {
+		for(sub in self.eSubpackages) {
+			set.addAll(sub.getAllChildrenAndSelf());
+		}
+	} else {
+		set = new Set;	
+	}
+	set.add(self);
+	return set;
 }
 %]

@@ -13,5 +13,5 @@ Pragmatically, the "meta-model" is described in Ecore, the core part of the Ecli
      close to functional (Algebraic data types like) description.
   2. The semantic versioning `x.y.z` has the following mentality for this project:
      - if `x` goes up, it means that _major_ scientific concepts have been implemented. Therefore, backwards compatibility is likely jeopardized.
-     - if `y` goes up, it means that _minor_ scientific concepts have been implemented. Therefore, backwards compatibility is partially assured and require investigation.
+     - if `y` goes up, it means that _minor_ scientific concepts have been implemented. Therefore, backwards compatibility is partially assured and requires investigation.
      - if `z` goes up, it means that _no_ scientific concepts have been implemented, but only facilities for the end user/designer. Therefore, backwards compatibility should be maintained.

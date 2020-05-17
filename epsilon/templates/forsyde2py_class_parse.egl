@@ -3,37 +3,73 @@ def _parseXMI_inplace(self, xmlTree, model=dict()):
     This method modifies properties inplace for the object so that parsing can be done with fewer
     lines of code through inheritance.
     '''
+    # debug
+    #print(xmlTree)
+    #for child in xmlTree.findall('*', _namespaces):
+    #    print(child)
     # call all parents parsers
     [%for (parent in class.eSuperTypes) {%]
-    super([%=parent.name%], self)._parseXMI_inplace(xmlTree, model)
+    [%=parent.name%]._parseXMI_inplace(self, xmlTree, model)
     [%}%]
-    # first read all simple attributes
-    [%for (attr in class.eStructuralFeatures.select(r : ForSyDe!EAttribute | r.upperBound = 1 and r.lowerBound = 0)) {%]
+    # first read all enum attributes
+    [%for (attr in class.eStructuralFeatures.select(r : ForSyDe!EAttribute | r.eType.isKindOf(ForSyDe!EEnum))) {%]
+    [%if (attr.upperBound = 1 and attr.lowerBound = 0) {%]
     # attribute [%=attr.name%] can be null
     self.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'] if '[%=attr.name%]' in xmlTree.attrib else None
-    [%}%]
-    [%for (attr in class.eStructuralFeatures.select(r : ForSyDe!EAttribute | r.upperBound = 1 and r.lowerBound = 1)) {%]
+    [%} else if (attr.upperBound = 1 and attr.lowerBound = 1 and attr.eType.defaultValue.isDefined() = false) {%]
     # attribute [%=attr.name%] can never be null, so raise error if it is
     self.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]']
+    [%} else if (attr.upperBound = 1 and attr.lowerBound = 1 and attr.eType.defaultValue.isDefined()) {%]
+    # attribute [%=attr.name%] can never be null, but has default value
+    if '[%=attr.name%]' in xmlTree.attrib:
+        self.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]']
+    else:
+        self.[%=attr.name%] = [%=attr.eType.name%].[%=attr.eType.defaultValue%]
+    [%} else {%]
+    # reference [%=ref.name%] is a list
+    for child in xmlTree.findall('{*}[%=ref.name%]', _namespaces):
+        self.[%=ref.name%].append([%=ref.eType.name%]._parseXMI(child, model))    
     [%}%]
-    [%for (attr in class.eStructuralFeatures.select(r : ForSyDe!EAttribute | r.upperBound <> 1)) {%]
+    [%}%]
+    # then all simple attributes
+    [%for (attr in class.eStructuralFeatures.select(r : ForSyDe!EAttribute | r.eType.isKindOf(ForSyDe!EEnum) = false)) {%]
+    [%if (attr.upperBound = 1 and attr.lowerBound = 0) {%]
+    # attribute [%=attr.name%] can be null
+    self.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'] if '[%=attr.name%]' in xmlTree.attrib else None
+    [%} else if (attr.upperBound = 1 and attr.lowerBound = 1 and attr.defaultValueLiteral.isDefined() = false) {%]
+    # attribute [%=attr.name%] can never be null, so raise error if it is
+    self.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]']
+    [%} else if (attr.upperBound = 1 and attr.lowerBound = 1 and attr.defaultValueLiteral.isDefined()) {%]
+    # attribute [%=attr.name%] can never be null, but has default value
+    if '[%=attr.name%]' in xmlTree.attrib:
+        self.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]']
+    else:
+    	[%if (attr.defaultValueLiteral = 'false') {%]
+    	self.[%=attr.name%] = True
+    	[%} else if (attr.defaultValueLiteral = 'true') {%]
+    	self.[%=attr.name%] = False
+    	[%} else {%]
+        self.[%=attr.name%] = [%=attr.defaultValueLiteral%]
+        [%}%]
+    [%} else {%]
     # attribute [%=attr.name%] is a list
-    self.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'].split(' ') or None
+    self.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'].split(' ') if '[%=attr.name%]' in xmlTree.attrib else []
+    [%}%]
     [%}%]
     # read all the objects that are contained - easy recursion
     [%for (ref in class.eStructuralFeatures.select(r : ForSyDe!EReference | r.containment)) {%]
     [%if (ref.upperBound = 1 and ref.lowerBound = 0) {%]
     # reference [%=ref.name%] can be null
-    if xmlTree.find('ForSyDe.Model:[%=ref.name%]', _namespaces) != None:
-        child = xmlTree.find('ForSyDe.Model:[%=ref.name%]', _namespaces)
+    if xmlTree.find('{*}[%=ref.name%]', _namespaces) != None:
+        child = xmlTree.find('{*}[%=ref.name%]', _namespaces)
         self.[%=ref.name%] = [%=ref.eType.name%]._parseXMI(child, model)
     [%} else if (ref.upperBound = 1 and ref.lowerBound = 1) {%]
     # reference [%=ref.name%] cannot be null
-    child = xmlTree.find('ForSyDe.Model:[%=ref.name%]', _namespaces)
+    child = xmlTree.find('{*}[%=ref.name%]', _namespaces)
     self.[%=ref.name%] = [%=ref.eType.name%]._parseXMI(child, model)
     [%} else {%]
     # reference [%=ref.name%] is a list
-    for child in xmlTree.findall('ForSyDe.Model:[%=ref.name%]', _namespaces):
+    for child in xmlTree.findall('{*}[%=ref.name%]', _namespaces):
         self.[%=ref.name%].append([%=ref.eType.name%]._parseXMI(child, model))
     [%}%]
     [%}%]
@@ -48,7 +84,7 @@ def _parseXMI_inplace(self, xmlTree, model=dict()):
         if childId in model:
             childObj = model[childId]
         else:
-            childObj = [%=ref.eType.name%](id = childId)
+            childObj = [%=ref.eType.name%](identifier = childId)
             model[childId] = childObj
         self.[%=ref.name%] = childObj     
     [%} else if (ref.lowerBound = 1 and ref.upperBound = 1) {%]
@@ -58,9 +94,20 @@ def _parseXMI_inplace(self, xmlTree, model=dict()):
     if childId in model:
         childObj = model[childId]
     else:
-        childObj = [%=ref.eType.name%](id = childId)
+        childObj = [%=ref.eType.name%](identifier = childId)
         model[childId] = childObj
-    self.[%=ref.name%] = childObj     
+    self.[%=ref.name%] = childObj
+    [%} else if(ref.lowerBound = 0 and ref.upperBound = -1) {%]
+    # reference [%=ref.name%] is a list and can be null
+    if '[%=ref.name%]' in xmlTree.attrib:
+        for childId in xmlTree.attrib['[%=ref.name%]'].split(' '):
+            childObj = None
+            if childId in model:
+                childObj = model[childId]
+            else:
+                childObj = [%=ref.eType.name%](identifier = childId)
+                model[childId] = childObj
+            self.[%=ref.name%].append(childObj)     
     [%} else {%]
     # reference [%=ref.name%] is a list
     for childId in xmlTree.attrib['[%=ref.name%]'].split(' '):
@@ -68,7 +115,7 @@ def _parseXMI_inplace(self, xmlTree, model=dict()):
         if childId in model:
             childObj = model[childId]
         else:
-            childObj = [%=ref.eType.name%](id = childId)
+            childObj = [%=ref.eType.name%](identifier = childId)
             model[childId] = childObj
         self.[%=ref.name%].append(childObj) 
     [%}%]
@@ -83,12 +130,15 @@ def _parseXMI(cls, xmlTree, model=dict()):
     '''
     # If the object exists, populate it, otherwise create a new one
     obj = None
-    objId = xmlTree.attrib['id']
+    objId = xmlTree.attrib['identifier']
     if objId in model:
         obj = model[objId]
+        if not isinstance(model[objId], [%=class.name%]):
+            # equivalent to casting in static languages, since this is a supertype, should be safe
+            obj.__class__ = [%=class.name%]
     else:
-        obj = [%=class.name%](id = objId)
-        model[obj.id]= obj
+        obj = [%=class.name%](identifier = objId)
+        model[objId]= obj
     obj._parseXMI_inplace(xmlTree, model)
     return obj
 [%} else {%]
