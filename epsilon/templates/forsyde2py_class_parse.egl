@@ -15,14 +15,26 @@ def _parseXMI_inplace(self, xmlTree, model=dict()):
     [%for (attr in class.eStructuralFeatures.select(r : ForSyDe!EAttribute | r.eType.isKindOf(ForSyDe!EEnum))) {%]
     [%if (attr.upperBound = 1 and attr.lowerBound = 0) {%]
     # attribute [%=attr.name%] can be null
-    self.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]'] if '[%=attr.name%]' in xmlTree.attrib else None
+    if '[%=attr.name%]' in xmlTree.attrib and '[%=attr.name%]' in [%=attr.eType.name%]:
+        self.[%=attr.name%] = [%=attr.eType.name%][xmlTree.attrib['[%=attr.name%]']]
+    elif '[%=attr.name%]' in xmlTree.attrib and isinstance(xmlTree.attrib['[%=attr.name%]'], int):
+        self.[%=attr.name%] = [%=attr.eType.name%](xmlTree.attrib['[%=attr.name%]'])
+    else:
+        self.[%=attr.name%] = None
     [%} else if (attr.upperBound = 1 and attr.lowerBound = 1 and attr.eType.defaultValue.isDefined() = false) {%]
     # attribute [%=attr.name%] can never be null, so raise error if it is
-    self.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]']
+    if '[%=attr.name%]' in xmlTree.attrib and '[%=attr.name%]' in [%=attr.eType.name%]:
+        self.[%=attr.name%] = [%=attr.eType.name%][xmlTree.attrib['[%=attr.name%]']]
+    elif '[%=attr.name%]' in xmlTree.attrib and isinstance(xmlTree.attrib['[%=attr.name%]'], int):
+        self.[%=attr.name%] = [%=attr.eType.name%](xmlTree.attrib['[%=attr.name%]'])
+    else:
+        raise AttributeError('[%=attr.name%]:[%=attr.eType.name%] is missing for {0}'.format(self))
     [%} else if (attr.upperBound = 1 and attr.lowerBound = 1 and attr.eType.defaultValue.isDefined()) {%]
     # attribute [%=attr.name%] can never be null, but has default value
-    if '[%=attr.name%]' in xmlTree.attrib:
-        self.[%=attr.name%] = xmlTree.attrib['[%=attr.name%]']
+    if '[%=attr.name%]' in xmlTree.attrib and '[%=attr.name%]' in [%=attr.eType.name%]:
+        self.[%=attr.name%] = [%=attr.eType.name%][xmlTree.attrib['[%=attr.name%]']]
+    elif '[%=attr.name%]' in xmlTree.attrib and isinstance(xmlTree.attrib['[%=attr.name%]'], int):
+        self.[%=attr.name%] = [%=attr.eType.name%](xmlTree.attrib['[%=attr.name%]'])
     else:
         self.[%=attr.name%] = [%=attr.eType.name%].[%=attr.eType.defaultValue%]
     [%} else {%]
