@@ -14,8 +14,7 @@ public class PythonGenerator {
         module.parse(new File("epsilon/forsyde2py.egx").getAbsoluteFile());
 
         if (!module.getParseProblems().isEmpty()) {
-          System.out.println("Syntax errors found. Exiting.");
-          return;
+          System.out.println("Syntax errors found.");
         }
 
         // Load the XML document

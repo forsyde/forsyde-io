@@ -1,15 +1,3 @@
-rule Package
-	transform package : ForSyDe!EPackage
-{
-	guard : package.getESubpackages().size() > 0 and 
-			package.getEClassifiers().size() > 0 and
-			package.getPackagePath().size() > 1
-	
-	template : "templates/forsyde2py_package.egl"
-	
-	target : "../python/" + package.getPackagePath().concat("/") + "/__init__.py"
-}
-
 rule PackageLeaf
 	transform package : ForSyDe!EPackage 
 {
@@ -17,9 +5,9 @@ rule PackageLeaf
     guard : package.getEClassifiers().size() > 0 and
     		package.getESubpackages().size() = 0
 	
-	template : "templates/forsyde2py_package.egl"
+	template : "templates/forsyde2hs_package.egl"
 	
-	target : "../python/" + package.getPackagePath().concat("/") + ".py"
+	target : "../haskell/" + package.getPackagePath().concat("/") + ".hs"
 }
 
 operation ForSyDe!EPackage getPackagePath() : Sequence {

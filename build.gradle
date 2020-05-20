@@ -59,6 +59,7 @@ dependencies {
     // EMF libraries
     implementation group: 'org.eclipse.emf', name: 'org.eclipse.emf.ecore', version: '2.21.0'
     implementation group: 'org.eclipse.emf', name: 'org.eclipse.emf.ecore.xmi', version: '2.16.0'
+    implementation group: 'org.eclipse.emf', name: 'org.eclipse.emf.common', version: '2.18.0'
     // The production code uses the SLF4J logging API at compile time
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'org.eclipse.epsilon:epsilon-core:1.5.1'
@@ -76,5 +77,5 @@ dependencies {
 }
 
 application {
-    mainClassName = "forsyde.schema.generators.Main"
+    mainClassName = "forsyde.io.generators.Main"
 }

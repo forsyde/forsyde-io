@@ -22,7 +22,7 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="edges" upperBound="-1"
             eType="#//Model/Common/Edge" containment="true" resolveProxies="false"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EDataType" name="IdType" instanceClassName="java.lang.String"/>
+      <eClassifiers xsi:type="ecore:EDataType" name="IdType" instanceTypeName="String"/>
       <eClassifiers xsi:type="ecore:EClass" name="Node" eSuperTypes="#//Model/Common/Element">
         <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
             eType="#//Model/Common/Pair" containment="true"/>
@@ -42,8 +42,6 @@
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="custom" upperBound="-1"
-            eType="#//Model/Common/Pair" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Table" eSuperTypes="#//Model/Common/Element">
         <eStructuralFeatures xsi:type="ecore:EReference" name="entries" upperBound="-1"
