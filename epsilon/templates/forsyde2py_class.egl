@@ -7,6 +7,9 @@ dumpTemplate.populate('class', class);
 
 var copyTemplate := TemplateFactory.load('templates/forsyde2py_class_copy.egl');
 copyTemplate.populate('class', class);
+
+var iterateTemplate := TemplateFactory.load('templates/forsyde2py_class_iterate.egl');
+iterateTemplate.populate('class', class);
 %]
 [%if (class.eSuperTypes.size() > 0) { %]
 class [%=class.name%]([%=class.eSuperTypes.name.concat(',')%]):
@@ -146,6 +149,8 @@ class [%=class.name%]():
     [%}%]
     
     [%=copyTemplate.process()%]
+    
+    [%=iterateTemplate.process()%]
         
 [%
 @cached

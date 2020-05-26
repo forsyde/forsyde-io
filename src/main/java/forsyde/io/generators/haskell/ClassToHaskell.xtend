@@ -35,7 +35,17 @@ class ClassToHaskell {
 	}
 	
 	
-	
+	/**
+	 * This function returns in a certain order all the features (Atts, refs) of a certain class.
+	 * The reason for it being so big is that there are a few cases to consider while generating Haskell
+	 * code. For instance, if the data element has reference to another, then we must generate some sort
+	 * of IdType there, whereas if the data element has no reference, then it is enough to generate a 
+	 * full composition of types. Furthermore, to maintain "inheritance", classes and instance must be
+	 * generated to make it easier for later functions to use these OOP-based datatypes.
+	 * 
+	 * The main idea is simple though: for all cases, generate the definition strings that should be used
+	 * and then return an iterator that goes through all of them.
+	 */
 	static def getFeaturesNames(EClass cls) {
 		val attSingle = cls.EAttributes
 			.filter[e | e.upperBound == 1]

@@ -229,11 +229,11 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EEnum" name="BindingCategory">
         <eLiterals name="Custom"/>
-        <eLiterals name="PreemptiveFixedPriorityScheduler"/>
-        <eLiterals name="StaticCyclicSchedule"/>
-        <eLiterals name="SporadicTask"/>
-        <eLiterals name="TriggeredTask"/>
-        <eLiterals name="OSEKScheduler"/>
+        <eLiterals name="PreemptiveFixedPriorityScheduler" value="1"/>
+        <eLiterals name="StaticCyclicSchedule" value="3"/>
+        <eLiterals name="SporadicTask" value="4"/>
+        <eLiterals name="TriggeredTask" value="5"/>
+        <eLiterals name="OSEKScheduler" value="2"/>
       </eClassifiers>
     </eSubpackages>
     <eSubpackages name="IO" nsURI="https://forsyde.github.io/ForSyDe/IO" nsPrefix="ForSyDe.Model.IO">

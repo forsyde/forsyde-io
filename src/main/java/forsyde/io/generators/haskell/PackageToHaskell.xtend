@@ -14,10 +14,18 @@ class PackageToHaskell {
 	'''
 	module «pac.packageSequence.map[name].join('.')» where (
 	  «pac.exports.map[name].join(',\n')»
-	)
+	) where
+	
+	«FOR i : pac.necessaryImports»
+	import «i.packageSequence.map[name].join('.')»
+	«ENDFOR»
 	
 	«FOR t : pac.dataTypes»
 	type «t.name» = «t.instanceTypeName»
+	«ENDFOR»
+	
+	«FOR e : pac.enums»
+	«EnumToHaskell.toText(e)»
 	«ENDFOR»
 	
 	«FOR c : pac.classes»
@@ -29,6 +37,17 @@ class PackageToHaskell {
 		return pac.classes + pac.dataTypes
 	}
 	
+	static def Iterable<EPackage> necessaryImports(EPackage pac) {
+		return pac.classes.flatMap[c | c.necessaryImports]
+			.reject[p | p == pac].toSet
+	}
+	
+	static def Iterable<EPackage> necessaryImports(EClass cls) {
+		return cls.EReferences.map[r | r.EType.EPackage] +
+			cls.EAttributes.map[a | a.EType.EPackage]
+			.reject[e | e.name == 'type'] //take away 'default' type java package
+	}
+	
 	static def Iterable<EClass> getClasses(EPackage pac) {
 		return pac.EClassifiers.filter[c | c instanceof EClass]
 			.map[c | c as EClass]
@@ -38,6 +57,11 @@ class PackageToHaskell {
 		return pac.EClassifiers.filter[c | c instanceof EDataType]
 			.filter[c | !(c instanceof EEnum)]
 			.map[c | c as EDataType]
+	}
+	
+	static def Iterable<EEnum> getEnums(EPackage pac) {
+		return pac.EClassifiers.filter[c | c instanceof EEnum]
+			.map[c | c as EEnum]
 	}
 	
 	static def List<EPackage> getPackageSequence(EPackage pac) {
