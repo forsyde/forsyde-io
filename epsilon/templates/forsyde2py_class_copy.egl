@@ -1,0 +1,49 @@
+def _copy_inplace(self, obj):
+    '''
+    This function copies all elements from self to obj that are not references recursively.
+    '''
+    [%for (att in class.eStructuralFeatures.select(a : ForSyDe!EAttribute | true)) {%]
+    obj.[%=att.name%] = self.[%=att.name%]
+    [%}%]
+    # if the child has id, simply do a shallow copy
+    [%for (a in class.eStructuralFeatures.select(a : ForSyDe!EReference | a.eType.hasId() = true)) {%]
+    obj.[%=a.name%] = self.[%=a.name%]
+    [%}%]
+    # if the child has no id, simply do a deep copy
+    [%for (a in class.eStructuralFeatures.select(a : ForSyDe!EReference | a.eType.hasId() = false)) {%]
+    [%if (a.upperBound > -1) {%]
+    # is not a list, just clone
+    obj.[%=a.name%] = self.[%=a.name%].clone()
+    [%} else {%]
+    # is a list, recreate one with clones
+    obj.[%=a.name%] = [o.clone() for o in self.[%=a.name%]]
+    [%}%]
+    [%}%]
+
+def copy(self):
+    '''
+    This function copies all elements that are not references recursively.
+    '''
+    obj = [%=class.name%]()
+    [%for (p in class.eSuperTypes) {%]
+    [%=p.name%]._copy_inplace(self, obj)
+    [%}%]
+    self._copy_inplace(obj)
+    # return built object
+    return obj
+    
+[%
+operation ForSyDe!EClass hasId() : Boolean {
+	return self.getFeatures().exists(a | a.name = 'identifier');
+}
+
+@cached
+operation ForSyDe!EClass getFeatures() : OrderedSet {
+    var features = new OrderedSet;
+    for(super in self.eSuperTypes) {
+        features.addAll(super.getFeatures());
+    }
+    features.addAll(self.eStructuralFeatures);
+    return features;
+}
+%]
