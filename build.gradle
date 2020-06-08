@@ -16,35 +16,6 @@ plugins {
 
 sourceCompatibility = 1.8
 
-/*
- *oomphIde {
- *  repo 'https://download.eclipse.org/tools/orbit/downloads/drops/R20200224183213/repository'
- *  iu 'org.apache.commons.math3'
- *}
- */
-
-/*
- *oomphIde {
- *  repo 'https://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/'
- *  iu 'org.eclipse.xtext.xbase.lib'
- *}
- */
-
-/*
- *oomphIde {
- *  repo 'http://download.eclipse.org/modeling/emf/emf/builds/release'
- *  iu 'org.eclipse.emf.ecore.xcore.lib'
- *  iu 'org.eclipse.emf.workspace'
- *}
- */
-
-/*
- *oomphIde {
- *  repo 'https://download.eclipse.org/sphinx/releases/0.11.x/'
- *  iu 'org.eclipse.sphinx.emf'
- *}
- */
-
 // In this section you declare where to find the dependencies of your project
 repositories {
     // Use 'jcenter' for resolving your dependencies.
@@ -53,20 +24,21 @@ repositories {
     mavenCentral()
 }
 
-
 // In this section you declare the dependencies for your production and test code
 dependencies {
-    // EMF libraries
+    // EMF libraries to navigate the ForSyDe EMF
     implementation group: 'org.eclipse.emf', name: 'org.eclipse.emf.ecore', version: '2.21.0'
     implementation group: 'org.eclipse.emf', name: 'org.eclipse.emf.ecore.xmi', version: '2.16.0'
     implementation group: 'org.eclipse.emf', name: 'org.eclipse.emf.common', version: '2.18.0'
     // The production code uses the SLF4J logging API at compile time
     implementation 'org.slf4j:slf4j-api:1.7.25'
+    // Epsilon for the current python generation
     implementation 'org.eclipse.epsilon:epsilon-core:1.5.1'
     implementation 'org.eclipse.epsilon:epsilon-emf:1.5.1'
     implementation 'org.eclipse.epsilon:epsilon-workflow:1.5.1'
     implementation 'org.eclipse.epsilon:epsilon-workflow-emf:1.5.1'
 
+    // libraries required for some minimal XTend stuff.
 		implementation 'org.eclipse.xtend:org.eclipse.xtend.lib:2.21.0'
 
     // Declare the dependency for your favourite test framework you want to use in your tests.
