@@ -11,10 +11,10 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			PythonGenerator pythonGenerator = new PythonGenerator();
-			//HaskellGenerator haskellGenerator = new HaskellGenerator();
+			HaskellGenerator haskellGenerator = new HaskellGenerator();
 			
 			pythonGenerator.generate();
-			//haskellGenerator.generate();
+			haskellGenerator.generate();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
