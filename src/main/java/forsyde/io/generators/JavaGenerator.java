@@ -32,7 +32,7 @@ public class JavaGenerator {
 		
 		EPackage ForSyDe = (EPackage) fecore.getContents().get(0);
 		
-		final String packageRoot = "java/src/main/java";
+		final String packageRoot = "java-io/src/main/java";
 		
 		ForSyDe.eAllContents().forEachRemaining(elem -> {
 			if (elem instanceof EClass) {
