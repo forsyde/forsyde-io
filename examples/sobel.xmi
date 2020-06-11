@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ForSyDe.Model.IO:ForSyDeIO xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ForSyDe.Model.Application="https://forsyde.github.io/ForSyDe/Model/Application" xmlns:ForSyDe.Model.IO="https://forsyde.github.io/ForSyDe/IO">
+  <applications xsi:type="ForSyDe.Model.Application:CompoundProcess" identifier="sobel">
+    <netlist>
+      <nodes identifier="absProcNode" definition="absProc" inPorts="&absFuncX"/>
+    </netlist>
+  </applications>
+  <applications xsi:type="ForSyDe.Model.Application:PrimitiveProcess" identifier="absProc" constructor="absProcCons">
+    <inPorts identifier="&amp;absFuncX"/>
+  </applications>
+  <definitions xsi:type="ForSyDe.Model.Application:Function" identifier="absFunc">
+    <inputs identifier="absFuncX"/>
+  </definitions>
+  <definitions xsi:type="ForSyDe.Model.Application:SDFComb" identifier="absProcCons" actor="absFunc"/>
+</ForSyDe.Model.IO:ForSyDeIO>

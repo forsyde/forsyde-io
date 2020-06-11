@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ForSyDe.Model.IO:ForSyDeIO xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ForSyDe.Model.Application="https://forsyde.github.io/ForSyDe/Model/Application" xmlns:ForSyDe.Model.IO="https://forsyde.github.io/ForSyDe/IO" xsi:schemaLocation="https://forsyde.github.io/ForSyDe/Model/Application ../model/forsyde.ecore#//Model/Application https://forsyde.github.io/ForSyDe/IO ../model/forsyde.ecore#//Model/IO">
+  <applications xsi:type="ForSyDe.Model.Application:CompoundProcess" identifier="dumbSumSY">
+    <inPorts identifier="in1" definer="vIn"/>
+    <inPorts identifier="in2" definer="vIn2"/>
+    <outPorts identifier="out1" definer="delayed"/>
+    <netlist>
+      <vertexes identifier="sumVertex" definition="sumFuncProc">
+        <inPorts identifier="vIn" definer="procIn"/>
+        <inPorts identifier="vIn2" definer="procIn2"/>
+        <outPorts identifier="vOut" definer="procOut"/>
+      </vertexes>
+      <vertexes identifier="delayVertex" definition="delay0">
+        <inPorts identifier="vDIn" definer="inD"/>
+        <outPorts identifier="vDOut" definer="delayed"/>
+      </vertexes>
+      <vertexes identifier="delayedSigVertex" definition="delayedSig"/>
+      <edges identifier="delayedSigEdge" fromVertex="sumVertex" toVertex="sumVertex" toPort="inD" fromPort="vOut" definition="delayedSig"/>
+    </netlist>
+  </applications>
+  <applications xsi:type="ForSyDe.Model.Application:PrimitiveProcess" identifier="sumFuncProc" constructor="sumFuncCons">
+    <inPorts identifier="procIn"/>
+    <inPorts identifier="procIn2"/>
+    <outPorts identifier="procOut"/>
+  </applications>
+  <applications xsi:type="ForSyDe.Model.Application:PrimitiveProcess" identifier="delay0" constructor="delayCons">
+    <inPorts identifier="inD"/>
+    <outPorts identifier="delayed"/>
+  </applications>
+  <definitions xsi:type="ForSyDe.Model.Application:SYComb" identifier="sumFuncCons" function="sumFunc"/>
+  <definitions xsi:type="ForSyDe.Model.Application:Function" identifier="sumFunc">
+    <inputs identifier="L"/>
+    <inputs identifier="R"/>
+    <outputs identifier="S"/>
+  </definitions>
+  <definitions xsi:type="ForSyDe.Model.Application:SYDelay" identifier="delayCons" value="&quot;0&quot;"/>
+  <definitions xsi:type="ForSyDe.Model.Application:Signal" identifier="delayedSig" dataType="Int32"/>
+  <definitions xsi:type="ForSyDe.Model.Application:DataType" identifier="Int32" sizeValue="4" category="Integer"/>
+</ForSyDe.Model.IO:ForSyDeIO>
