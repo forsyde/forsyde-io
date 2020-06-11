@@ -11,6 +11,8 @@
             eType="#//Model/Core/Vertex" eKeys="#//Model/Core/Identifiable/identifier"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toPort" eType="#//Model/Core/Port"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="fromPort" eType="#//Model/Core/Port"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="definition" eType="#//Model/Core/Definition"
+            eKeys="#//Model/Core/Identifiable/identifier"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Graph" eSuperTypes="#//Model/Core/Identifiable">
         <eStructuralFeatures xsi:type="ecore:EReference" name="vertexes" upperBound="-1"
@@ -23,9 +25,9 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="definition" ordered="false"
             lowerBound="1" eType="#//Model/Core/Definition" eKeys="#//Model/Core/Identifiable/identifier"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="inPorts" upperBound="-1"
-            eType="#//Model/Core/Port"/>
+            eType="#//Model/Core/Port" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="outPorts" upperBound="-1"
-            eType="#//Model/Core/Port"/>
+            eType="#//Model/Core/Port" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Identifiable" eSuperTypes="#//Model/Core/Customizable">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="identifier" ordered="false"
@@ -65,7 +67,10 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="element" lowerBound="1"
             eType="#//Model/Core/Identifiable" eKeys="#//Model/Core/Identifiable/identifier"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Model/Core/Identifiable"/>
+      <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Model/Core/Identifiable">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="definer" eType="#//Model/Core/Port"
+            eKeys="#//Model/Core/Identifiable/identifier"/>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Customizable">
         <eStructuralFeatures xsi:type="ecore:EReference" name="custom" upperBound="-1"
             eType="#//Model/Core/Pair" containment="true"/>
@@ -168,7 +173,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="AbstractProcess" eSuperTypes="#//Model/Core/Definition">
         <eStructuralFeatures xsi:type="ecore:EReference" name="inPorts" upperBound="-1"
             eType="#//Model/Core/Port" containment="true"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="ourPorts" upperBound="-1"
+        <eStructuralFeatures xsi:type="ecore:EReference" name="outPorts" upperBound="-1"
             eType="#//Model/Core/Port" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="SYComb" eSuperTypes="#//Model/Core/Definition">
