@@ -14,6 +14,13 @@ plugins {
   id "org.xtext.xtend" version "2.0.8"
 }
 
+ext {
+  artifactName = 'forsyde-io'
+}
+
+group = 'forsyde'
+version = '0.4.2'
+
 sourceCompatibility = 1.8
 
 // In this section you declare where to find the dependencies of your project
@@ -50,4 +57,10 @@ dependencies {
 
 application {
     mainClassName = "forsyde.io.generators.Main"
+}
+
+eclipse {
+  project {
+    name = artifactName
+  }
 }

@@ -9,8 +9,11 @@ import java.nio.file.attribute.FileAttribute;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -18,11 +21,12 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 
 import forsyde.io.generators.java.ClassToJava;
+import forsyde.io.generators.java.EnumToJava;
 import forsyde.io.generators.utils.Packages;
 
 public class JavaGenerator {
 	
-	public void generate() {
+	public void generate() throws IOException {
 		ResourceSet resourceSet = new ResourceSetImpl();
 		
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
@@ -34,26 +38,36 @@ public class JavaGenerator {
 		
 		final String packageRoot = "java-io/src/main/java";
 		
-		ForSyDe.eAllContents().forEachRemaining(elem -> {
+		// the main reason to use this sort of iteration instead of the 'forEach' is that I wanted
+		// to add the throws declaration in the generate signature
+		for (TreeIterator<EObject> iterator = ForSyDe.eAllContents(); iterator.hasNext();) {
+			EObject elem = iterator.next();
 			if (elem instanceof EClass) {
 				EClass cls = (EClass) elem;
 				final CharSequence produced = ClassToJava.toText(cls);
-				System.out.println(produced);
+				// System.out.println(produced);
 				final String filePath = Packages.getPackageSequence(cls.getEPackage()).stream()
 						.map(p -> p.getName())
 						.reduce((s1, s2) -> s1 + '/' + s2)
 						.orElseThrow();
 				final Path fileDir = Paths.get(packageRoot, filePath);
 				final Path fileTotal = Paths.get(packageRoot, filePath, cls.getName() + ".java");
-				try {
-					Files.createDirectories(fileDir);
-					Files.writeString(fileTotal, produced);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Files.createDirectories(fileDir);
+				Files.writeString(fileTotal, produced);
+			} else if (elem instanceof EEnum) {
+				EEnum enu = (EEnum) elem;
+				final CharSequence produced = EnumToJava.toText(enu);
+				// System.out.println(produced);
+				final String filePath = Packages.getPackageSequence(enu.getEPackage()).stream()
+						.map(p -> p.getName())
+						.reduce((s1, s2) -> s1 + '/' + s2)
+						.orElseThrow();
+				final Path fileDir = Paths.get(packageRoot, filePath);
+				final Path fileTotal = Paths.get(packageRoot, filePath, enu.getName() + ".java");
+				Files.createDirectories(fileDir);
+				Files.writeString(fileTotal, produced);
 			}
-		});
+		}
 
 	}
 	

@@ -141,7 +141,7 @@
             defaultValueLiteral="0"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="sizeUnit" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
-            defaultValueLiteral=""/>
+            defaultValueLiteral="&quot;B&quot;"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
@@ -155,11 +155,11 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="SDFComb" eSuperTypes="#//Model/Application/Constructor">
         <eStructuralFeatures xsi:type="ecore:EReference" name="actor" lowerBound="1"
-            eType="#//Model/Core/Definition" eKeys="#//Model/Core/Identifiable/identifier"/>
+            eType="#//Model/Application/Function" eKeys="#//Model/Core/Identifiable/identifier"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="SDFDelay" eSuperTypes="#//Model/Application/Constructor">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//AnySimpleType"/>
+            eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="CompoundProcess" eSuperTypes="#//Model/Application/AbstractProcess">
         <eStructuralFeatures xsi:type="ecore:EReference" name="netlist" ordered="false"
@@ -173,6 +173,10 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="SYComb" eSuperTypes="#//Model/Core/Definition">
         <eStructuralFeatures xsi:type="ecore:EReference" name="function" eType="#//Model/Application/Function"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="SYDelay" eSuperTypes="#//Model/Application/Constructor">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
     </eSubpackages>
     <eSubpackages name="Platform" nsURI="https://forsyde.github.io/ForSyDe/Model/Platform"
@@ -226,21 +230,20 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="processingUnit" lowerBound="1"
             eType="#//Model/Core/Definition" eKeys="#//Model/Core/Identifiable/identifier"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="wcet" lowerBound="1"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Int"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
             defaultValueLiteral="0"/>
       </eClassifiers>
     </eSubpackages>
     <eSubpackages name="Refinement" nsURI="https://forsyde.github.io/ForSyDe/Model/Refinement"
         nsPrefix="ForSyDe.Model.Refinement">
       <eClassifiers xsi:type="ecore:EClass" name="Binding" eSuperTypes="#//Model/Core/Definition">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" lowerBound="1"
-            eType="#//Model/Refinement/BindingCategory" defaultValueLiteral="Custom"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="maleable" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"
             defaultValueLiteral="false"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="instanceable" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"
             defaultValueLiteral="false"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" eType="#//Model/Refinement/BindingCategory"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Refinement" eSuperTypes="#//Model/Core/Identifiable">
         <eStructuralFeatures xsi:type="ecore:EReference" name="bindingsGraph" eType="#//Model/Core/Graph"
@@ -257,6 +260,8 @@
         <eLiterals name="TriggeredTask" value="5"/>
         <eLiterals name="OSEKScheduler" value="2"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="SporadicTask" eSuperTypes="#//Model/Refinement/Binding"/>
+      <eClassifiers xsi:type="ecore:EClass" name="TriggeredTask" eSuperTypes="#//Model/Refinement/Binding"/>
     </eSubpackages>
     <eSubpackages name="IO" nsURI="https://forsyde.github.io/ForSyDe/IO" nsPrefix="ForSyDe.Model.IO">
       <eClassifiers xsi:type="ecore:EClass" name="ForSyDeIO">
@@ -267,7 +272,7 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="extras" eType="#//Model/Extra/Extra"
             containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="revision" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
-            defaultValueLiteral="0.4.1"/>
+            defaultValueLiteral="&quot;0.4.1&quot;"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="refinement" eType="#//Model/Refinement/Refinement"
             containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="definitions" upperBound="-1"

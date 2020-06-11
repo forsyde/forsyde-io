@@ -99,14 +99,23 @@ class ClassToJava {
 	// if the parsing is done in random order rather than document order, this might be wrong!!
 	public void parseInPlace(Element elem, Map<String, Object> elemMap) {
 		
-		«FOR a : cls.EAttributes»
-		this.«a.name» = elem.getAttribute("«a.name»");
-		«ENDFOR»
-		
 		«IF !cls.ESuperTypes.empty»
 		// if there are super classes, use them
 		super.parseInPlace(elem, elemMap);
 		«ENDIF»
+		
+		«FOR a : cls.EAttributes»
+		«IF a.EType.name == "Integer"»
+		this.«a.name» = Integer.valueOf(elem.getAttribute("«a.name»"));
+		«ELSEIF a.EType.name == "Boolean"»
+		this.«a.name» = Boolean.valueOf(elem.getAttribute("«a.name»"));
+		«ELSEIF a.EType.name == "String"»
+		this.«a.name» = elem.getAttribute("«a.name»");
+		«ELSE»
+		// assumed this is a enum, so take the value out of it.
+		this.«a.name» = «a.EType.name».valueOf(elem.getAttribute("«a.name»"));
+		«ENDIF»
+		«ENDFOR»
 		
 		«FOR r : cls.EReferences»
 		«IF r.containment»
