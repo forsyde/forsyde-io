@@ -123,6 +123,10 @@
       <eClassifiers xsi:type="ecore:EClass" name="Constructor" eSuperTypes="#//Model/Core/Definition">
         <eStructuralFeatures xsi:type="ecore:EReference" name="implementations" ordered="false"
             upperBound="-1" eType="#//Model/Application/Implementation" eKeys="#//Model/Core/Identifiable/identifier"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="inPorts" upperBound="-1"
+            eType="#//Model/Core/Port" containment="true"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="outPorts" upperBound="-1"
+            eType="#//Model/Core/Port" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//Model/Core/Definition">
         <eStructuralFeatures xsi:type="ecore:EReference" name="inputs" upperBound="-1"
@@ -271,7 +275,7 @@
     <eSubpackages name="IO" nsURI="https://forsyde.github.io/ForSyDe/IO" nsPrefix="ForSyDe.Model.IO">
       <eClassifiers xsi:type="ecore:EClass" name="ForSyDeIO">
         <eStructuralFeatures xsi:type="ecore:EReference" name="applications" upperBound="-1"
-            eType="#//Model/Application/AbstractProcess" containment="true" resolveProxies="false"/>
+            eType="#//Model/Core/Vertex" containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="platforms" upperBound="-1"
             eType="#//Model/Platform/Platform" containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="extras" eType="#//Model/Extra/Extra"

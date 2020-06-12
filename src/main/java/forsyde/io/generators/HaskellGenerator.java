@@ -28,7 +28,7 @@ public class HaskellGenerator {
 				if (pac.getEClassifiers().stream()
 						.filter(c -> !(c instanceof EPackage))
 						.count() > 0L) {
-					System.out.println(PackageToHaskell.toText(pac));
+					//System.out.println(PackageToHaskell.toText(pac));
 				}
 			}
 		});
