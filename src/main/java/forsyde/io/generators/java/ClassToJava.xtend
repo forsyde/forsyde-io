@@ -23,9 +23,19 @@ class ClassToJava {
 		import java.util.Map;
 		import org.w3c.dom.*;
 		
-		«FOR i : cls.necessaryImports»
+		«FOR i : cls.necessaryImports.filter[e | e != cls.EPackage]»
 		import «i.packageSequence.map[name].join('.')».*;
 		«ENDFOR»
+		«FOR i : cls.allSubclasses.map[e | e.EPackage].toSet»
+		«IF !cls.necessaryImports.filter[e | e != cls.EPackage].contains(i)»
+		import «i.packageSequence.map[name].join('.')».*;
+		«ENDIF»
+		«ENDFOR»
+«««		This needs to here for the updatehook feature
+		«IF !cls.necessaryImports.map[name].contains("Core") && 
+			!cls.EAllAttributes.filter[e | e.name == "identifier"].empty»
+		import ForSyDe.Model.Core.*;
+		«ENDIF»
 		
 		«IF cls.EAllSuperTypes.length > 0»
 		public class «cls.name» extends «cls.EAllSuperTypes.reverseView.head.name» {
@@ -36,9 +46,9 @@ class ClassToJava {
 			// attributes of the model
 			«FOR a : cls.EAttributes»
 			«IF a.defaultValueLiteral === null»
-			«a.EAttributeType.properName» «a.name»;
+			public «a.EAttributeType.properName» «a.name»;
 			«ELSE»
-			«a.EAttributeType.properName» «a.name» = «a.defaultValueLiteral»;
+			public «a.EAttributeType.properName» «a.name» = «a.defaultValueLiteral»;
 			«ENDIF»
 			«ENDFOR»
 			
@@ -80,6 +90,7 @@ class ClassToJava {
 		return cls.EPackage.eAllContents.filter[c | c instanceof EClass]
 		.map[c | c as EClass]
 		.filter[c | cls.isSuperTypeOf(c)]
+		.reject[c | c == cls]
 		.toSet
 	}
 	
@@ -104,6 +115,18 @@ class ClassToJava {
 		return Packages.getPackageSequence(pac)
 	}
 	
+	static def Iterable<EClass> getAllSubclasses(EClass cls) {
+		var pac = cls.EPackage;
+		if (pac.ESuperPackage != null) {
+			pac = pac.ESuperPackage; 
+		}
+		return pac.eAllContents.filter[e | e instanceof EClass]
+			.map[e | e as EClass]
+			.filter[c | cls.isSuperTypeOf(c)]
+			.filter[c | c != cls]
+			.toSet
+	}
+	
 	static def  Iterable<EPackage> necessaryImports(EClass cls) {
 		val i = Packages.necessaryImports(cls)
 		val s = i.toSet
@@ -115,11 +138,11 @@ class ClassToJava {
 	static def parseCode(EClass cls) 
 	'''
 	// if the parsing is done in random order rather than document order, this might be wrong!!
-	public void parseInPlace(Element elem, Map<String, Object> elemMap) {
+	public void parseInPlace(Element elem, Map<String, Map<String, Object>> requests, Map<String, Object> built) {
 		
 		«IF !cls.ESuperTypes.empty»
 		// if there are super classes, use them
-		super.parseInPlace(elem, elemMap);
+		super.parseInPlace(elem, requests, built);
 		«ENDIF»
 		
 		«FOR a : cls.EAttributes»
@@ -141,22 +164,14 @@ class ClassToJava {
 			«IF r.lowerBound == 1 && r.upperBound == 1»
 			// element cannot be null, raise exception	
 			Element contained«r.name» = (Element) elem.getElementsByTagName("«r.name»").item(0);			
-			«FOR subcls : r.EReferenceType.subClassesInPackage»
-			if (contained«r.name».getAttribute("type").contains("«subcls.name»"))
-				this.«r.name» = «subcls.name».parse(contained«r.name», elemMap);
-			«ENDFOR»
+			this.«r.name» = «r.EReferenceType.name».parse(contained«r.name», requests, built);
 			if (!contained«r.name».hasAttribute("type"))
-				this.«r.name» = «r.EReferenceType.name».parse(contained«r.name», elemMap);
+				this.«r.name» = «r.EReferenceType.name».parse(contained«r.name», requests, built);
 			«ELSEIF r.lowerBound == 0 && r.upperBound == 1»
 			// element can be null, just ignore it in such case.
 			if (elem.getElementsByTagName("«r.name»").getLength() > 0) {
 				Element contained«r.name» = (Element) elem.getElementsByTagName("«r.name»").item(0);			
-				«FOR subcls : r.EReferenceType.subClassesInPackage»
-				if (contained«r.name».getAttribute("type").contains("«subcls.name»"))
-					this.«r.name» = «subcls.name».parse(contained«r.name», elemMap);
-				«ENDFOR»
-				if (!contained«r.name».hasAttribute("type"))
-					this.«r.name» = «r.EReferenceType.name».parse(contained«r.name», elemMap);
+				this.«r.name» = «r.EReferenceType.name».parse(contained«r.name», requests, built);
 			}
 			«ELSE»
 			// a list of references
@@ -165,12 +180,7 @@ class ClassToJava {
 				Node node = contained«r.name».item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {  
 					Element child = (Element) contained«r.name».item(i);
-					«FOR subcls : r.EReferenceType.subClassesInPackage»
-					if (child.getAttribute("type").contains("«subcls.name»"))
-						this.«r.name».add(«subcls.name».parse(child, elemMap));
-					«ENDFOR»
-					if (!child.hasAttribute("type"))
-						this.«r.name».add(«r.EReferenceType.name».parse(child, elemMap));
+					this.«r.name».add(«r.EReferenceType.name».parse(child, requests, built));
 				}
 			}
 			«ENDIF»
@@ -178,31 +188,24 @@ class ClassToJava {
 			// not contained in XML
 			«IF r.upperBound == 1»	
 			String refId«r.name» = elem.getAttribute("«r.name»");
-			if (elemMap.containsKey(refId«r.name»)) {
-				«FOR subcls : r.EReferenceType.subClassesInPackage»
-				if (elemMap.get(refId«r.name») instanceof «subcls.name»)
-					this.«r.name» = («subcls.name») elemMap.get(refId«r.name»);
-				«ENDFOR»
-				else
-					this.«r.name» = («r.EType.name») elemMap.get(refId«r.name»);
-			} else {
-				this.«r.name» = new «r.EType.name»();
-				elemMap.put(refId«r.name», this.«r.name»);
+			if (built.containsKey(refId«r.name»)) {
+				this.«r.name» = («r.EType.name») built.get(refId«r.name»);
+			} else if(!refId«r.name».isEmpty()) {
+				if (!requests.containsKey(refId«r.name»)) {
+					requests.put(refId«r.name», new HashMap<>());
+				}
+				requests.get(refId«r.name»).put("«r.name»", this);
 			}
 			«ELSE»
 			String[] refIds«r.name» = elem.getAttribute("«r.name»").split(" ");
 			for(int i = 0; i < refIds«r.name».length; i++) {
-				if (elemMap.containsKey(refIds«r.name»[i])) {
-					«FOR subcls : r.EReferenceType.subClassesInPackage»
-					if (elemMap.get(refId«r.name») instanceof «subcls.name»)
-						this.«r.name».add((«subcls.name») elemMap.get(refIds«r.name»[i]));
-					«ENDFOR»
-					else
-						this.«r.name».add((«r.EType.name») elemMap.get(refIds«r.name»[i]));
-				} else {
-					«r.EType.name» obj = new «r.EType.name»();
-					this.«r.name».add(obj);
-					elemMap.put(refIds«r.name»[i], obj);
+				if (built.containsKey(refIds«r.name»[i])) {
+					this.«r.name».add((«r.EReferenceType.name») built.get(refIds«r.name»[i]));
+				} else if(!refIds«r.name»[i].isEmpty()) {
+					if (!requests.containsKey(refIds«r.name»[i])) {
+						requests.put(refIds«r.name»[i], new HashMap<>());
+					}
+					requests.get(refIds«r.name»[i]).put("«r.name»", this);
 				}
 			}
 			«ENDIF»
@@ -210,23 +213,45 @@ class ClassToJava {
 		«ENDFOR»
 	}
 	
-	static public «cls.name» parse(Element elem, Map<String, Object> elemMap) {
-		«cls.name» obj;
-		«IF !cls.EAllAttributes.map[name].filter[a | a == "identifier"].empty»
-		String ident = elem.getAttribute("identifier");
-		if (elemMap.containsKey(ident)) {
-			obj = («cls.name») elemMap.get(ident);
-		} else {
-			obj = new «cls.name»();
-			elemMap.put(ident, obj);	
+	static public «cls.name» parse(Element elem, Map<String, Map<String, Object>> requests, Map<String, Object> built) {
+		String trueType = elem.getAttribute("xsi:type");
+		«FOR subcls : cls.allSubclasses SEPARATOR ' else'»
+		if (trueType != null && trueType.endsWith("«subcls.name»")) {
+			// upcast to the right type «subcls.name»
+			return «subcls.name».parse(elem, requests, built);
 		}
-		«ELSE»
-		obj = new «cls.name»();
+		«ENDFOR»
+		«cls.name» obj = new «cls.name»();
+		obj.parseInPlace(elem, requests, built);
+		«IF !cls.EAllAttributes.map[name].filter[a | a == "identifier"].empty»
+		built.put(obj.identifier, obj);
+		if (requests.containsKey(obj.identifier)) {
+			Map<String, Object> atts = requests.get(obj.identifier);
+			for(String attName : atts.keySet()) {
+				Identifiable requester = (Identifiable) atts.get(attName);
+				requester.updateHook(attName, obj);
+			}
+			requests.get(obj.identifier).clear();
+			requests.remove(obj.identifier);
+		}
 		«ENDIF»
-		obj.parseInPlace(elem, elemMap);
 		return obj;
 	}
-	'''
 	
+	public void updateHook(String att, Object obj) {
+		switch (att) {
+			«FOR r : cls.EReferences»
+			case "«r.name»":
+				«IF r.upperBound == 1»
+				// element cannot be null, raise exception
+				this.«r.name» = («r.EReferenceType.name») obj;			
+				«ELSE»
+				this.«r.name».add((«r.EReferenceType.name») obj);
+				«ENDIF»
+				break;
+			«ENDFOR»
+		}
+	}
+	'''
 	
 }
