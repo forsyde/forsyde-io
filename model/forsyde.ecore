@@ -11,8 +11,6 @@
             eType="#//Model/Core/Vertex" eKeys="#//Model/Core/Identifiable/identifier"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toPort" eType="#//Model/Core/Port"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="fromPort" eType="#//Model/Core/Port"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="definition" eType="#//Model/Core/Definition"
-            eKeys="#//Model/Core/Identifiable/identifier"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Graph" eSuperTypes="#//Model/Core/Identifiable">
         <eStructuralFeatures xsi:type="ecore:EReference" name="vertexes" upperBound="-1"
@@ -277,13 +275,13 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="applications" upperBound="-1"
             eType="#//Model/Core/Vertex" containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="platforms" upperBound="-1"
-            eType="#//Model/Platform/Platform" containment="true" resolveProxies="false"/>
+            eType="#//Model/Core/Vertex" containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="extras" eType="#//Model/Extra/Extra"
             containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="revision" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
             defaultValueLiteral="&quot;0.4.1&quot;"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="refinement" eType="#//Model/Refinement/Refinement"
-            containment="true"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="refinement" upperBound="-1"
+            eType="#//Model/Core/Vertex" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="definitions" upperBound="-1"
             eType="#//Model/Core/Definition" containment="true"/>
       </eClassifiers>

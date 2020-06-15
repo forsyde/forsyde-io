@@ -15,12 +15,7 @@ class ClassToJava {
 		package «cls.EPackage.packageSequence.map[p | p.name].join('.')»;
 		
 		// General imports
-		import java.util.ArrayList;
-		import java.util.List;
-		import java.util.HashMap;
-		import java.util.Map;
-		import java.util.Set;
-		import java.util.HashSet;
+		import java.util.*;
 		import java.util.stream.Stream;
 		
 		«IF cls.name == "ForSyDeIO"»
@@ -45,7 +40,7 @@ class ClassToJava {
 «««		import «i.packageSequence.map[name].join('.')».*;
 «««		«ENDIF»
 «««		«ENDFOR»
-«««		This needs to here for the updatehook feature
+«««		This needs to here for the updateReference feature
 		«IF !cls.necessaryImports.map[name].contains("Core") && 
 			!cls.EAllAttributes.filter[e | e.name == "identifier"].empty»
 		import ForSyDe.Model.Core.*;
@@ -100,11 +95,17 @@ class ClassToJava {
 			
 			«parseCodeInPlace(cls)»
 			
-			«updateHook(cls)»
+			«updateReference(cls)»
 			
 			«streamContained(cls)»
 			
+			«getReferences(cls)»
+			
 			«shallowCopy(cls)»
+			
+			«containedCopy(cls)»
+			
+			«toString(cls)»
 		
 		}
 		'''
@@ -167,6 +168,17 @@ class ClassToJava {
 		return pacIm;
 	}
 	
+	static def toString(EClass cls)
+	'''
+	public String toString() {
+		«IF cls.EAllAttributes.exists[e | e.name == 'identifier']»
+		return "{«cls.name» : " + identifier + "}";
+		«ELSE»
+		return "{«cls.name» : " + hashCode() + "}";
+		«ENDIF»
+	}
+	'''
+	
 	static def parseCodeInPlace(EClass cls)
 	'''
 	// if the parsing is done in random order rather than document order, this might be wrong!!
@@ -207,10 +219,10 @@ class ClassToJava {
 			}
 			«ELSE»
 			// a list of references
-			NodeList contained«r.name» = elem.getElementsByTagName("«r.name»");
+			NodeList contained«r.name» = elem.getChildNodes();
 			for (int i = 0; i < contained«r.name».getLength(); i++) {
 				Node node = contained«r.name».item(i);
-				if (node.getNodeType() == Node.ELEMENT_NODE) {  
+				if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName() == "«r.name»") {  
 					Element child = (Element) contained«r.name».item(i);
 					this.«r.name».add(«r.EReferenceType.name».parse(child, built));
 				}
@@ -270,9 +282,9 @@ class ClassToJava {
 	}
 	'''
 	
-	static def updateHook(EClass cls)
+	static def updateReference(EClass cls)
 	'''
-	public void updateHook(Identifiable obj) {
+	public void updateReference(Identifiable obj) {
 		if (attrIdRequests.containsKey(obj.identifier)) {
 			String att = attrIdRequests.get(obj.identifier);
 			switch (att) {
@@ -295,11 +307,14 @@ class ClassToJava {
 	static def streamContained(EClass cls)
 	'''
 	public Stream<Identifiable> streamContained() {
-		«IF cls.EAllAttributes.map[name].contains("identifier")»
+		«IF cls.ESuperTypes.flatMap[t | t.EAllAttributes].exists[a | a.name == "identifier"]»
+		Stream<Identifiable> s = super.streamContained();
+		«ELSEIF cls.EAllAttributes.map[name].contains("identifier")»
 		Stream<Identifiable> s = Stream.of(this);
 		«ELSE»
 		Stream<Identifiable> s = Stream.empty();
 		«ENDIF»
+		
 		«FOR r : cls.EReferences»
 			«IF r.containment»
 				«IF r.upperBound == 1»
@@ -309,6 +324,24 @@ class ClassToJava {
 				for («r.EReferenceType.name» d : this.«r.name») {
 					s = Stream.concat(s, d.streamContained());
 				}
+				«ENDIF»
+			«ENDIF»
+		«ENDFOR»
+		return s;
+	}
+	'''
+	
+	static def getReferences(EClass cls)
+	'''
+	public Stream<Identifiable> getReferences() {
+		Stream<Identifiable> s = Stream.empty();
+		«FOR r : cls.EReferences»
+			«IF !r.containment»
+				«IF r.upperBound == 1»
+				if (this.«r.name» != null)
+					s = Stream.concat(s, Stream.of(this.«r.name»));
+				«ELSE»
+				s = Stream.concat(s, this.«r.name».stream());
 				«ENDIF»
 			«ENDIF»
 		«ENDFOR»
@@ -326,7 +359,12 @@ class ClassToJava {
 		copy.«a.name» = this.«a.name»;
 		«ENDFOR»
 		«FOR r : cls.EReferences»
+		«IF r.upperBound == 1»
 		copy.«r.name» = this.«r.name»;
+		«ELSE»
+		// clone the list but not the objects themselves
+		copy.«r.name» = new ArrayList<«r.EReferenceType.name»>(this.«r.name»);
+		«ENDIF»
 		«ENDFOR»
 	}
 	
@@ -337,17 +375,33 @@ class ClassToJava {
 	}
 	'''
 	
-	static def containedCopy(EClass cls)
+		static def containedCopy(EClass cls)
 	'''
 	protected void containedCopyInPlace(«cls.name» copy) {
 		«IF !cls.ESuperTypes.empty»
-		super.shallowCopyInPlace(copy);
+		super.containedCopyInPlace(copy);
 		«ENDIF»
 		«FOR a : cls.EAttributes»
 		copy.«a.name» = this.«a.name»;
 		«ENDFOR»
-		«FOR r : cls.EReferences»
+		«FOR r : cls.EReferences.filter[r | r.containment == false]»
+		«IF r.upperBound == 1»
 		copy.«r.name» = this.«r.name»;
+		«ELSE»
+		// clone the list but not the objects themselves
+		copy.«r.name» = new ArrayList<«r.EReferenceType.name»>(this.«r.name»);
+		«ENDIF»
+		«ENDFOR»
+		«FOR r : cls.EReferences.filter[r | r.containment]»
+		«IF r.upperBound == 1»
+		copy.«r.name» = this.«r.name».containedCopy();
+		«ELSE»
+		// clone the list contained
+		copy.«r.name» = new ArrayList<«r.EReferenceType.name»>();
+		for («r.EReferenceType.name» c : «r.name») {
+			copy.«r.name».add(c.containedCopy());
+		}
+		«ENDIF»
 		«ENDFOR»
 	}
 	
@@ -357,7 +411,7 @@ class ClassToJava {
 		return copy;
 	}
 	'''
-	
+		
 	static def mainClassExtraCode(EClass cls)
 	'''
 	// interface method for the main IO class
@@ -372,7 +426,7 @@ class ClassToJava {
 		// make all missing connections
 		forsyde.streamContained().forEach(i -> {
 			forsyde.streamContained().forEach(j -> {
-				i.updateHook(j);
+				i.updateReference(j);
 			});
 		});
 		return forsyde;

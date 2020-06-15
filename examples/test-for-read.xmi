@@ -1,30 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ForSyDe.Model.IO:ForSyDeIO xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ForSyDe.Model.Application="https://forsyde.github.io/ForSyDe/Model/Application" xmlns:ForSyDe.Model.IO="https://forsyde.github.io/ForSyDe/IO" xsi:schemaLocation="https://forsyde.github.io/ForSyDe/Model/Application https://forsyde.github.io/ForSyDe/IO#//Model/Application">
+  <applications identifier="delayChainSYV" definition="delayChainSyProc"/>
   <definitions xsi:type="ForSyDe.Model.Application:CompoundProcess" identifier="delayChainSyProc">
     <inPorts identifier="in" definer="d1in"/>
     <outPorts identifier="out" definer="d3out"/>
     <netlist identifier="delayChainNetlist">
-      <vertexes identifier="d1" definition="delaySYCons">
+      <vertexes identifier="d1" definition="delaySYProc">
         <inPorts identifier="d1in"/>
         <outPorts identifier="d1out"/>
       </vertexes>
-      <vertexes identifier="d2" definition="delaySYCons">
+      <vertexes identifier="d2" definition="delaySYProc">
         <inPorts identifier="d2in"/>
         <outPorts identifier="d2out"/>
       </vertexes>
-      <vertexes identifier="d3" definition="delaySYCons">
+      <vertexes identifier="d3" definition="delaySYProc">
         <inPorts identifier="d3in"/>
-        <inPorts identifier="d3out"/>
+        <outPorts identifier="d3out"/>
       </vertexes>
-      <edges identifier="d1d2" fromVertex="d1" toVertex="d2" toPort="d2in" fromPort="d1out" definition="signalDelay"/>
-      <edges identifier="d2d3" fromVertex="d2" toVertex="d3" toPort="d3in" fromPort="d2out" definition="signalDelay"/>
+      <vertexes identifier="sig1" definition="signalDelay">
+        <inPorts identifier="sig1In"/>
+        <outPorts identifier="sig1Out"/>
+      </vertexes>
+      <vertexes identifier="sig2" definition="signalDelay">
+        <inPorts identifier="sig2In"/>
+        <outPorts identifier="sig2Out"/>
+      </vertexes>
+      <edges identifier="d1sig1" fromVertex="d1" toVertex="sig1" toPort="sig1In" fromPort="d1out"/>
+      <edges identifier="sig1d2" fromVertex="sig1" toVertex="d2" toPort="d2in" fromPort="sig1Out"/>
+      <edges identifier="d2sig2" fromVertex="d2" toVertex="sig2" toPort="sig2In" fromPort="d2out"/>
+      <edges identifier="sig2d3" fromVertex="sig2" toVertex="d3" toPort="d3in" fromPort="sig2Out"/>
     </netlist>
   </definitions>
   <definitions xsi:type="ForSyDe.Model.Application:PrimitiveProcess" identifier="delaySYProc" constructor="delaySYCons">
     <inPorts identifier="delayInProc" definer="delayInCons"/>
-    <inPorts identifier="delayOutProc" definer="delayOutCons"/>
+    <outPorts identifier="delayOutProc" definer="delayOutCons"/>
   </definitions>
-  <applications identifier="delayChainSYV" definition="delayChainSyProc"/>
   <definitions xsi:type="ForSyDe.Model.Application:SYDelay" identifier="delaySYCons" value="&quot;0&quot;">
     <inPorts identifier="delayInCons"/>
     <outPorts identifier="delayOutCons"/>
