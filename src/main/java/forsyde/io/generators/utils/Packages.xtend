@@ -9,13 +9,13 @@ class Packages {
 	
 	static def List<EPackage> getPackageSequence(EPackage pac) {
 		switch pac {
-			case pac.eContainer === null : {
+			case pac.ESuperPackage === null : {
 				val seq = new ArrayList();
 				seq.add(pac)
 				return seq
 			}
 			default : {
-				val seq = (pac.eContainer as EPackage).packageSequence
+				val seq = pac.ESuperPackage.packageSequence
 				seq.add(pac)
 				return seq
 			}

@@ -7,6 +7,8 @@ import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.EAttribute
+import org.eclipse.emf.ecore.EClassifier
 
 class ClassToJava {
 	
@@ -33,7 +35,7 @@ class ClassToJava {
 		
 		// imports for other classes
 		«FOR i : cls.necessaryImports.filter[e | e != cls.EPackage]»
-		import «i.packageSequence.map[name].join('.')».*;
+		import «i.packageSequence.map[p | p.name].join('.')».*;
 		«ENDFOR»
 «««		«FOR i : cls.allSubclasses.map[e | e.EPackage].toSet»
 «««		«IF !cls.necessaryImports.filter[e | e != cls.EPackage].contains(i)»
@@ -50,17 +52,20 @@ class ClassToJava {
 		 * This class has been automatically generated from ForSyDe-IO generation routines. Special comments follow whenever pertinent.
 		 */
 		«IF cls.EAllSuperTypes.length > 0»
-		public class «cls.name» extends «cls.EAllSuperTypes.reverseView.head.name» {
+		public class «cls.name» «FOR tparam : cls.ETypeParameters BEFORE '<' SEPARATOR ', ' AFTER '>'»«tparam.name»«ENDFOR»
+			extends «cls.EAllSuperTypes.reverseView.head.name» {
 		«ELSE»
-		public class «cls.name» {
+		public class «cls.name»	«FOR tparam : cls.ETypeParameters BEFORE '<' SEPARATOR ', ' AFTER '>'»«tparam.name»«ENDFOR» {
 		«ENDIF»
 			
 			// attributes of the model
 			«FOR a : cls.EAttributes»
-			«IF a.defaultValueLiteral === null»
-			public «a.EAttributeType.properName» «a.name»;
+			«IF a.upperBound !== 1»
+			public List<«a.typeName»> «a.name»;
+			«ELSEIF a.defaultValueLiteral !== null && !a.defaultValueLiteral.empty»
+			public «a.typeName» «a.name» = «a.defaultValueLiteral»;
 			«ELSE»
-			public «a.EAttributeType.properName» «a.name» = «a.defaultValueLiteral»;
+			public «a.typeName» «a.name»;
 			«ENDIF»
 			«ENDFOR»
 			
@@ -74,6 +79,15 @@ class ClassToJava {
 			«ENDFOR»
 			
 			public «cls.name»() {
+				«IF !cls.allSubclasses.empty»
+				super();
+				«ENDIF»
+				«FOR a : cls.EAttributes»
+				«IF a.upperBound !== 1»
+				«a.name» = new ArrayList<>();
+				«ELSE»
+				«ENDIF»
+				«ENDFOR»
 				«FOR r : cls.EReferences»
 				«IF r.upperBound !== 1»
 				«r.name» = new ArrayList<>();
@@ -91,9 +105,9 @@ class ClassToJava {
 			protected Map<String, String> attrIdRequests = new HashMap<>();
 			«ENDIF»
 		
-			«parseCode(cls)»
+			«parseCodeXMI(cls)»
 			
-			«parseCodeInPlace(cls)»
+			«parseCodeInPlaceXMI(cls)»
 			
 			«updateReference(cls)»
 			
@@ -109,6 +123,13 @@ class ClassToJava {
 		
 		}
 		'''
+	}
+	
+	static def getTypeName(EAttribute a) {
+		if (a.EGenericType !== null && a.EGenericType.ETypeParameter !== null) {
+			return a.EGenericType.ETypeParameter.name.proper;
+		} else
+			return a.EType.name.proper;
 	}
 	
 	static def getIdAttr(EClass cls) {
@@ -138,10 +159,10 @@ class ClassToJava {
 		.empty
 	}
 	
-	static def String getProperName(EDataType dt) {
-		switch (dt.name) {
+	static def String getProper(String name) {
+		switch (name) {
 			case 'AnySimpleType': return 'Object'
-			default: return dt.name			
+			default: return name			
 		}		
 	}
 	
@@ -179,26 +200,29 @@ class ClassToJava {
 	}
 	'''
 	
-	static def parseCodeInPlace(EClass cls)
+	static def parseCodeInPlaceXMI(EClass cls)
 	'''
 	// if the parsing is done in random order rather than document order, this might be wrong!!
-	public void parseInPlace(Element elem, Map<String, Identifiable> built) {
+	public void parseInPlaceXMI(Element elem, Map<String, Identifiable> built) {
 		
 		«IF !cls.ESuperTypes.empty»
 		// if there are super classes, use them
-		super.parseInPlace(elem, built);
+		super.parseInPlaceXMI(elem, built);
 		«ENDIF»
 		
 		«FOR a : cls.EAttributes»
-		«IF a.EType.name == "Integer"»
-		this.«a.name» = Integer.valueOf(elem.getAttribute("«a.name»"));
-		«ELSEIF a.EType.name == "Boolean"»
-		this.«a.name» = Boolean.valueOf(elem.getAttribute("«a.name»"));
+		«IF a.upperBound == -1»
+		for (String s : elem.getAttribute("«a.name»").split(" ")) {
+			«IF a.EType.name != "String"»
+			this.«a.name» = «a.typeName».valueOf(elem.getAttribute("«a.name»"));
+			«ENDIF»
+			this.«a.name».add(s);	
+		}
 		«ELSEIF a.EType.name == "String"»
 		this.«a.name» = elem.getAttribute("«a.name»");
 		«ELSE»
 		// assumed this is a enum, so take the value out of it.
-		this.«a.name» = «a.EType.name».valueOf(elem.getAttribute("«a.name»"));
+		this.«a.name» = «a.typeName».valueOf(elem.getAttribute("«a.name»"));
 		«ENDIF»
 		«ENDFOR»
 		
@@ -208,14 +232,14 @@ class ClassToJava {
 			«IF r.lowerBound == 1 && r.upperBound == 1»
 			// element cannot be null, raise exception	
 			Element contained«r.name» = (Element) elem.getElementsByTagName("«r.name»").item(0);			
-			this.«r.name» = «r.EReferenceType.name».parse(contained«r.name», built);
+			this.«r.name» = «r.EReferenceType.name».parseXMI(contained«r.name», built);
 			if (!contained«r.name».hasAttribute("type"))
-				this.«r.name» = «r.EReferenceType.name».parse(contained«r.name», built);
+				this.«r.name» = «r.EReferenceType.name».parseXMI(contained«r.name», built);
 			«ELSEIF r.lowerBound == 0 && r.upperBound == 1»
 			// element can be null, just ignore it in such case.
 			if (elem.getElementsByTagName("«r.name»").getLength() > 0) {
 				Element contained«r.name» = (Element) elem.getElementsByTagName("«r.name»").item(0);			
-				this.«r.name» = «r.EReferenceType.name».parse(contained«r.name», built);
+				this.«r.name» = «r.EReferenceType.name».parseXMI(contained«r.name», built);
 			}
 			«ELSE»
 			// a list of references
@@ -224,7 +248,7 @@ class ClassToJava {
 				Node node = contained«r.name».item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName() == "«r.name»") {  
 					Element child = (Element) contained«r.name».item(i);
-					this.«r.name».add(«r.EReferenceType.name».parse(child, built));
+					this.«r.name».add(«r.EReferenceType.name».parseXMI(child, built));
 				}
 			}
 			«ENDIF»
@@ -263,18 +287,20 @@ class ClassToJava {
 	}
 	'''
 		
-	static def parseCode(EClass cls) 
+	static def parseCodeXMI(EClass cls) 
 	'''
-	static public «cls.name» parse(Element elem, Map<String, Identifiable> built) {
+	static public «cls.name» parseXMI(Element elem, Map<String, Identifiable> built) {
+		«IF !cls.allSubclasses.empty»
 		String trueType = elem.getAttribute("xsi:type");
+		«ENDIF»
 		«FOR subcls : cls.allSubclasses SEPARATOR ' else'»
 		if (trueType != null && trueType.endsWith("«subcls.name»")) {
 			// upcast to the right type «subcls.name»
-			return «subcls.name».parse(elem, built);
+			return «subcls.name».parseXMI(elem, built);
 		}
 		«ENDFOR»
 		«cls.name» obj = new «cls.name»();
-		obj.parseInPlace(elem, built);
+		obj.parseInPlaceXMI(elem, built);
 		«IF !cls.EAllAttributes.map[name].filter[a | a == "identifier"].empty»
 		built.put(obj.identifier, obj);
 		«ENDIF»
@@ -415,14 +441,14 @@ class ClassToJava {
 	static def mainClassExtraCode(EClass cls)
 	'''
 	// interface method for the main IO class
-	static public ForSyDeIO parseXML(File file) throws IOException, ParserConfigurationException, SAXException {
+	static public ForSyDeIO parseXMI(File file) throws IOException, ParserConfigurationException, SAXException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document document = builder.parse(file);
 		Element rootElement = document.getDocumentElement();
 		HashMap<String, Identifiable> built = new HashMap<>();
 		// first pass, put everything in memory
-		ForSyDeIO forsyde = ForSyDeIO.parse(rootElement, built);
+		ForSyDeIO forsyde = ForSyDeIO.parseXMI(rootElement, built);
 		// make all missing connections
 		forsyde.streamContained().forEach(i -> {
 			forsyde.streamContained().forEach(j -> {
@@ -437,11 +463,11 @@ class ClassToJava {
 	 */
 	public void canonicalize() {
 		streamContained()
-		.filter(d -> d instanceof Definition)
-		.map(d -> (Definition) d)
+		.filter(d -> d instanceof Identifiable)
+		.map(d -> (Identifiable) d)
 		.forEach(d -> {
-			if (!definitions.contains(d))
-				definitions.add(d);
+			if (!elements.contains(d))
+				elements.add(d);
 		});
 	}
 	'''
