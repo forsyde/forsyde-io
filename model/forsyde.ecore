@@ -40,12 +40,6 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="columns" upperBound="-1"
             eType="#//Model/Core/TableColumn" containment="true"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="TableEntry">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="values" unique="false"
-            upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="references" upperBound="-1"
-            eType="#//Model/Core/Identifiable" eKeys="#//Model/Core/Identifiable/identifier"/>
-      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Model/Core/Identifiable">
         <eStructuralFeatures xsi:type="ecore:EReference" name="definer" eType="#//Model/Core/Identifiable"
             eKeys="#//Model/Core/Identifiable/identifier"/>
@@ -72,7 +66,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ConstructedProcess" eSuperTypes="#//Model/Core/Vertex">
         <eStructuralFeatures xsi:type="ecore:EReference" name="constructor" ordered="false"
-            lowerBound="1" eType="#//Model/Application/Constructor" containment="true"
+            lowerBound="1" eType="#//Model/Application/PrimitiveFunction" containment="true"
             eKeys="#//Model/Core/Identifiable/identifier"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="CompoundProcess" eSuperTypes="#//Model/Core/Graph"/>
@@ -80,7 +74,7 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="descriptors" ordered="false"
             upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="Constructor" eSuperTypes="#//Model/Core/Identifiable">
+      <eClassifiers xsi:type="ecore:EClass" name="PrimitiveFunction" eSuperTypes="#//Model/Core/Identifiable">
         <eStructuralFeatures xsi:type="ecore:EReference" name="implementations" ordered="false"
             upperBound="-1" eType="#//Model/Application/Implementation" eKeys="#//Model/Core/Identifiable/identifier"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="inPorts" upperBound="-1"
@@ -88,7 +82,7 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="outPorts" upperBound="-1"
             eType="#//Model/Core/Port" containment="true"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//Model/Core/Identifiable">
+      <eClassifiers xsi:type="ecore:EClass" name="NativeFunction" eSuperTypes="#//Model/Core/Identifiable">
         <eStructuralFeatures xsi:type="ecore:EReference" name="inputs" upperBound="-1"
             eType="#//Model/Core/Port" volatile="true" derived="true" containment="true"
             resolveProxies="false"/>
@@ -104,22 +98,22 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="source" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="DESchedulable" eSuperTypes="#//Model/Application/Constructor">
+      <eClassifiers xsi:type="ecore:EClass" name="DESchedulable" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EReference" name="runnable" lowerBound="1"
-            eType="#//Model/Application/Function" eKeys="#//Model/Core/Identifiable/identifier"/>
+            eType="#//Model/Application/NativeFunction" eKeys="#//Model/Core/Identifiable/identifier"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SDFComb" eSuperTypes="#//Model/Application/Constructor">
+      <eClassifiers xsi:type="ecore:EClass" name="SDFComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EReference" name="actor" lowerBound="1"
-            eType="#//Model/Application/Function" eKeys="#//Model/Core/Identifiable/identifier"/>
+            eType="#//Model/Application/NativeFunction" eKeys="#//Model/Core/Identifiable/identifier"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SDFDelay" eSuperTypes="#//Model/Application/Constructor">
+      <eClassifiers xsi:type="ecore:EClass" name="SDFDelay" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SYComb" eSuperTypes="#//Model/Application/Constructor">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="function" eType="#//Model/Application/Function"/>
+      <eClassifiers xsi:type="ecore:EClass" name="SYComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="function" eType="#//Model/Application/NativeFunction"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SYDelay" eSuperTypes="#//Model/Application/Constructor">
+      <eClassifiers xsi:type="ecore:EClass" name="SYDelay" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>

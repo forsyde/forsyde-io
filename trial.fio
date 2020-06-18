@@ -1,0 +1,39 @@
+-- definining a type to be used, initially, a couple 'typeclasses' are enough
+uint8_t := type Integer { size := 8_b } -- could be 1_B also.
+bool_t := type Bit { size := 1_b }
+
+-- declare a function that is native, that is, external and computes stuff
+-- at first thought, the names of inputs and outputs should match with the code
+bool2int := function native (boolIn : bool_t) returns (intOut : uint8_t)
+summer := function native (left : uint8_t, right : uint8_t) returns (sum : uint8_t)
+identity := function native (idIn : uint8_t) returns (idOut : uint8_t)
+
+-- define the process constructors as primitive functions, i.e. ones that ForSyDe takes
+-- care of synthetizing, optimizing etc
+-- the types of the processes are not here, i.e. like haskell could do, but this is just too much
+-- for a first front end
+SYComb := function primitive (comb : function) returns (syProv : process)
+SYDelay := function primitive (initialVal : any) returns (delayProc : process)
+
+-- build up some process networks
+-- directly built process
+bool2IntSY := SYComb (bool2int)
+
+-- process built via network spec
+mealySY := process (x : uint8_t) returns (y : uint8_t) {
+  outSY := SYComb (identity)
+  summerSY := SYComb (summer)
+  feedback := SYDelay (0)
+  outSY.idOut -> y
+  x -> summer.left
+  feedback.output -> summer.right
+  summer.sum -> feedback.input
+  summer.sum -> outSY.idIn
+}
+
+-- the top level process
+sillySY := process (x : bool_t) returns (y : uint8_t) {
+  x -> bool2IntSY.boolIn
+  bool2IntSY.intOut -> mealySY.x
+  mealySY.y -> y
+}
