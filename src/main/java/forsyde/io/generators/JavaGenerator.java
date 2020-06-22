@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 
 import forsyde.io.generators.java.ClassToJava;
+import forsyde.io.generators.java.ClassXMISerializerToJava;
 import forsyde.io.generators.java.EnumToJava;
 import forsyde.io.generators.utils.Packages;
 
@@ -37,6 +38,7 @@ public class JavaGenerator {
 		EPackage ForSyDe = (EPackage) fecore.getContents().get(0);
 		
 		final String packageRoot = "java-io/src/main/java";
+		String ioPath = null;
 		
 		// the main reason to use this sort of iteration instead of the 'forEach' is that I wanted
 		// to add the throws declaration in the generate signature
@@ -52,6 +54,9 @@ public class JavaGenerator {
 						.orElseThrow();
 				final Path fileDir = Paths.get(packageRoot, filePath);
 				final Path fileTotal = Paths.get(packageRoot, filePath, cls.getName() + ".java");
+				if (cls.getName().equals("ForSyDeIO")) {
+					ioPath = filePath;
+				}
 				Files.createDirectories(fileDir);
 				Files.writeString(fileTotal, produced);
 			} else if (elem instanceof EEnum) {
@@ -64,11 +69,16 @@ public class JavaGenerator {
 						.orElseThrow();
 				final Path fileDir = Paths.get(packageRoot, filePath);
 				final Path fileTotal = Paths.get(packageRoot, filePath, enu.getName() + ".java");
-				Files.createDirectories(fileDir);
+				
 				Files.writeString(fileTotal, produced);
 			}
 		}
-
+		// add the XMI serializer and deserializer, should go in the same pacakge as ForSyDeIO
+		final Path ioTotal = Paths.get(packageRoot, ioPath, "ForSyDeIOXMIDriver.java");
+		final CharSequence produced = ClassXMISerializerToJava.toText(ForSyDe);
+		Files.createDirectories(Paths.get(packageRoot, ioPath));
+		Files.writeString(ioTotal, produced);
+		
 	}
 	
 }

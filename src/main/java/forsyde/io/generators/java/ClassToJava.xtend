@@ -96,20 +96,20 @@ class ClassToJava {
 				«ENDFOR»
 			}
 			
-			«IF cls.name == "ForSyDeIO"»
-			«mainClassExtraCode(cls)»
-			«ENDIF»
+«««			«IF cls.name == "ForSyDeIO"»
+«««			«mainClassExtraCode(cls)»
+«««			«ENDIF»
 			
-			// for parsing: remember where to update Ids later
-			«IF cls.ESuperTypes.empty»
-			protected Map<String, String> attrIdRequests = new HashMap<>();
-			«ENDIF»
+«««			// for parsing: remember where to update Ids later
+«««			«IF cls.ESuperTypes.empty»
+«««			protected Map<String, String> attrIdRequests = new HashMap<>();
+«««			«ENDIF»
 		
-			«parseCodeXMI(cls)»
-			
-			«parseCodeInPlaceXMI(cls)»
-			
-			«updateReference(cls)»
+«««			«parseCodeXMI(cls)»
+«««			
+«««			«parseCodeInPlaceXMI(cls)»
+«««			
+«««			«updateReference(cls)»
 			
 			«streamContained(cls)»
 			
