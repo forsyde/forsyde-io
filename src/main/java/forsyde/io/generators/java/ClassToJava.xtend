@@ -28,11 +28,11 @@ class ClassToJava {
 		import javax.xml.parsers.DocumentBuilder;
 		import javax.xml.parsers.DocumentBuilderFactory;
 		import javax.xml.parsers.ParserConfigurationException;
-		«ENDIF»
 		
 		// required import for parsing and writing
 		import org.w3c.dom.*;
-		
+		«ENDIF»
+				
 		// imports for other classes
 		«FOR i : cls.necessaryImports.filter[e | e != cls.EPackage]»
 		import «i.packageSequence.map[p | p.name].join('.')».*;

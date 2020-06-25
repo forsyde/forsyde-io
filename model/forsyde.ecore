@@ -98,24 +98,32 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="source" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="DESchedulable" eSuperTypes="#//Model/Application/PrimitiveFunction">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="runnable" lowerBound="1"
-            eType="#//Model/Application/NativeFunction" eKeys="#//Model/Core/Identifiable/identifier"/>
-      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="SDFComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EReference" name="actor" lowerBound="1"
             eType="#//Model/Application/NativeFunction" eKeys="#//Model/Core/Identifiable/identifier"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SDFDelay" eSuperTypes="#//Model/Application/PrimitiveFunction">
+      <eClassifiers xsi:type="ecore:EClass" name="SDFPrefix" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="SYComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EReference" name="function" eType="#//Model/Application/NativeFunction"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SYDelay" eSuperTypes="#//Model/Application/PrimitiveFunction">
+      <eClassifiers xsi:type="ecore:EClass" name="SYPrefix" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="DEPrefix" eSuperTypes="#//Model/Application/PrimitiveFunction">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="initializer" lowerBound="1"
+            eType="#//Model/Application/NativeFunction" eKeys="#//Model/Core/Identifiable/identifier"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="DEValueComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="combinator" eType="#//Model/Application/NativeFunction"
+            eKeys="#//Model/Core/Identifiable/identifier"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="DETagComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="combinator" eType="#//Model/Application/NativeFunction"
+            eKeys="#//Model/Core/Identifiable/identifier"/>
       </eClassifiers>
     </eSubpackages>
     <eSubpackages name="Platform" nsURI="https://forsyde.github.io/ForSyDe/Model/Platform"
@@ -149,14 +157,6 @@
     </eSubpackages>
     <eSubpackages name="Refinement" nsURI="https://forsyde.github.io/ForSyDe/Model/Refinement"
         nsPrefix="ForSyDe.Model.Refinement">
-      <eClassifiers xsi:type="ecore:EEnum" name="BindingCategory">
-        <eLiterals name="Custom"/>
-        <eLiterals name="PreemptiveFixedPriorityScheduler" value="1"/>
-        <eLiterals name="StaticCyclicSchedule" value="3"/>
-        <eLiterals name="SporadicTask" value="4"/>
-        <eLiterals name="TriggeredTask" value="5"/>
-        <eLiterals name="OSEKScheduler" value="2"/>
-      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="SporadicTask" eSuperTypes="#//Model/Core/Vertex"/>
       <eClassifiers xsi:type="ecore:EClass" name="TriggeredTask" eSuperTypes="#//Model/Core/Vertex"/>
       <eClassifiers xsi:type="ecore:EClass" name="StaticCyclicSchedule" eSuperTypes="#//Model/Core/Vertex"/>

@@ -77,7 +77,7 @@ class ClassXMISerializerToJava {
 			NodeList contained = elem.getChildNodes();
 			for (int i = 0; i < contained.getLength(); i++) {
 				Node node = contained.item(i);
-				if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals(name)) {  
+				if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName() == name) {  
 					Element child = (Element) contained.item(i);
 					children.add(child);
 				}
@@ -130,7 +130,7 @@ class ClassXMISerializerToJava {
 		List<String> reqIds = new ArrayList<>();
 		List<String> reqNames = new ArrayList<>();
 		«ENDIF»
-		«FOR r : cls.EReferences»
+		«FOR r : cls.EAllReferences»
 		«IF r.containment»
 			// contained in XML	
 			«IF r.lowerBound == 1 && r.upperBound == 1»
