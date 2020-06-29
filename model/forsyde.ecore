@@ -38,18 +38,20 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Table" eSuperTypes="#//Model/Core/Identifiable">
         <eStructuralFeatures xsi:type="ecore:EReference" name="columns" upperBound="-1"
-            eType="#//Model/Core/TableColumn" containment="true"/>
+            eType="#//Model/Core/Identifiable" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Model/Core/Identifiable">
         <eStructuralFeatures xsi:type="ecore:EReference" name="definer" eType="#//Model/Core/Identifiable"
             eKeys="#//Model/Core/Identifiable/identifier"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="TableColumn">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" ordered="false"
-            lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eClassifiers xsi:type="ecore:EClass" name="TableValueColumn" eSuperTypes="#//Model/Core/Identifiable">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="values" upperBound="-1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeName" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="TableReferenceColumn" eSuperTypes="#//Model/Core/Identifiable">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="references" upperBound="-1"
+            eType="#//Model/Core/Identifiable" eKeys="#//Model/Core/Identifiable/identifier"/>
       </eClassifiers>
     </eSubpackages>
     <eSubpackages name="Application" nsURI="https://forsyde.github.io/ForSyDe/Model/Application"
@@ -157,28 +159,36 @@
     </eSubpackages>
     <eSubpackages name="Refinement" nsURI="https://forsyde.github.io/ForSyDe/Model/Refinement"
         nsPrefix="ForSyDe.Model.Refinement">
-      <eClassifiers xsi:type="ecore:EClass" name="SporadicTask" eSuperTypes="#//Model/Core/Vertex"/>
+      <eClassifiers xsi:type="ecore:EClass" name="SporadicTask" eSuperTypes="#//Model/Core/Vertex">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="minArrival" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TriggeredTask" eSuperTypes="#//Model/Core/Vertex"/>
       <eClassifiers xsi:type="ecore:EClass" name="StaticCyclicSchedule" eSuperTypes="#//Model/Core/Vertex"/>
+      <eClassifiers xsi:type="ecore:EClass" name="FixedPriorityScheduler" eSuperTypes="#//Model/Core/Vertex">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="preemptive" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"
+            defaultValueLiteral="true"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="CustomScheduler" eSuperTypes="#//Model/Core/Vertex"/>
+      <eClassifiers xsi:type="ecore:EClass" name="RoundRobinScheduler" eSuperTypes="#//Model/Core/Vertex"/>
     </eSubpackages>
     <eSubpackages name="IO" nsURI="https://forsyde.github.io/ForSyDe/IO" nsPrefix="ForSyDe.Model.IO">
       <eClassifiers xsi:type="ecore:EClass" name="ForSyDeIO">
         <eStructuralFeatures xsi:type="ecore:EReference" name="applications" upperBound="-1"
-            eType="#//Model/Core/Vertex" containment="true" resolveProxies="false"/>
+            eType="#//Model/Core/Identifiable" containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="platforms" upperBound="-1"
-            eType="#//Model/Core/Vertex" containment="true" resolveProxies="false"/>
+            eType="#//Model/Core/Identifiable" containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="extras" eType="#//Model/Extra/Extra"
             containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="revision" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
             defaultValueLiteral="&quot;0.5.0&quot;"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="staticRefinement" upperBound="-1"
-            eType="#//Model/Core/Vertex" containment="true"/>
+            eType="#//Model/Core/Identifiable" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
             eType="#//Model/Core/Identifiable" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="tables" upperBound="-1"
             eType="#//Model/Core/Table" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="maleableRefinement"
-            upperBound="-1" eType="#//Model/Core/Vertex" containment="true"/>
+            upperBound="-1" eType="#//Model/Core/Identifiable" containment="true"/>
       </eClassifiers>
     </eSubpackages>
   </eSubpackages>

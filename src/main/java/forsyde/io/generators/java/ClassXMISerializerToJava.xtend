@@ -205,6 +205,10 @@ class ClassXMISerializerToJava {
 	
 	'''
 	
+	static def dumpClass(EClass cls)
+	'''
+	'''
+	
 	static def List<EPackage> getPackageSequence(EPackage pac) {
 		return Packages.getPackageSequence(pac)
 	}
