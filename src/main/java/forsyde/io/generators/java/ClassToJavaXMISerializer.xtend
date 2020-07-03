@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.EClassifier
 import java.util.List
 import forsyde.io.generators.utils.Packages
 
-class ClassXMISerializerToJava {
+class ClassToJavaXMISerializer {
 	
 	static def toText(EPackage root)
 	'''
@@ -19,10 +19,17 @@ class ClassXMISerializerToJava {
 	import java.io.File;
 	import java.io.IOException;
 	import java.util.*;
+	import java.util.stream.Collectors;
 	
 	import javax.xml.parsers.DocumentBuilder;
 	import javax.xml.parsers.DocumentBuilderFactory;
 	import javax.xml.parsers.ParserConfigurationException;
+	import javax.xml.transform.OutputKeys;
+	import javax.xml.transform.Transformer;
+	import javax.xml.transform.TransformerException;
+	import javax.xml.transform.TransformerFactory;
+	import javax.xml.transform.dom.DOMSource;
+	import javax.xml.transform.stream.StreamResult;
 	
 	//required import for parsing and writing
 	import org.w3c.dom.*;
@@ -51,6 +58,28 @@ class ClassXMISerializerToJava {
 			return model;
 		}
 		
+		public void dump(ForSyDeIO forsyde, String fileName) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+			dump(forsyde, new File(fileName));
+		}
+		
+		public void dump(ForSyDeIO forsyde, File file) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+			model = forsyde;
+			
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document = builder.newDocument();
+			
+			Element root = dumpForSyDeIO(forsyde, "ForSyDe:ForSyDeIO", document);
+			document.appendChild(root);
+			
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	        Transformer transformer = transformerFactory.newTransformer();
+	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	        DOMSource domSource = new DOMSource(document);
+	        StreamResult streamResult = new StreamResult(file);
+	        transformer.transform(domSource, streamResult);
+		}
+		
 		protected ForSyDeIO parseDFS(Document document) {
 			ForSyDeIO parsed;
 			Element rootElement = document.getDocumentElement();
@@ -61,16 +90,18 @@ class ClassXMISerializerToJava {
 			
 			// make all missing connections
 			for (Identifiable obj : built.values()) {
-				«FOR cls : root.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass]
-					.filter[c | !c.EAllAttributes.filter[a | a.name == "identifier"].empty].toSet
-				SEPARATOR ' else '»
-				if (obj instanceof «cls.name») {
-					postParse«cls.name»(obj, built, requestsIds, requestsNames);
-				}
-				«ENDFOR»
-			}		
+«««				«FOR cls : root.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass]
+«««					.filter[c | !c.EAllAttributes.exists[a | a.name == "identifier"]].toSet
+«««				SEPARATOR ' else ' AFTER ' else '»
+«««				if (obj instanceof «cls.name») {
+«««					postParse«cls.name»(obj, built, requestsIds, requestsNames);
+«««				}
+«««				«ENDFOR»
+				postParseIdentifiable(obj, built, requestsIds, requestsNames);
+			}
 			return parsed;
 		}
+
 		
 		protected List<Element> getChildrenOfName(Element elem, String name) {
 			List<Element> children = new ArrayList<>();
@@ -91,8 +122,10 @@ class ClassXMISerializerToJava {
 		«IF !cls.EAllAttributes.filter[e | e.name == "identifier"].empty»
 		«postParseClass(cls)»
 		«ENDIF»
-		«ENDFOR»
 		
+		«dumpClass(cls)»
+		
+		«ENDFOR»
 	}
 	'''
 	
@@ -178,35 +211,96 @@ class ClassXMISerializerToJava {
 	static def postParseClass(EClass cls)
 	'''
 	protected void postParse«cls.name»(Identifiable obj, Map<String, Identifiable> built, HashMap<Identifiable, List<String>> requestsIds, HashMap<Identifiable, List<String>> requestsNames) {
-		«cls.name» elem = («cls.name») obj;
-
-		«FOR r : cls.EReferences»
-		«IF !r.containment»
-			// not contained in XML
-			«IF r.upperBound == 1»
-			int idx«r.name» = requestsNames.get(elem).indexOf("«r.name»");
-			String ref«r.name» = requestsIds.get(elem).get(idx«r.name»);
-			elem.«r.name» = («r.EReferenceType.name») built.get(ref«r.name»);
-			requestsNames.get(elem).remove(idx«r.name»);
-			requestsIds.get(elem).remove(idx«r.name»);
-			«ELSE»
-			int idx«r.name» = requestsNames.get(elem).indexOf("«r.name»");
-			while (idx«r.name» > 0) {
-				idx«r.name» = requestsNames.get(elem).indexOf("«r.name»");
+		
+		«FOR c : cls.allSubclasses SEPARATOR ' else ' AFTER ' else '»
+		if (obj instanceof «c.name») {
+			postParse«c.name»((«c.name») obj, built, requestsIds, requestsNames);
+		}
+		«ENDFOR»
+		// these braces are harmless. They appear here as a by product of automatic code generation.
+		{
+			«cls.name» elem = («cls.name») obj;
+			«FOR r : cls.EReferences»
+			«IF !r.containment»
+				// not contained in XML
+				«IF r.upperBound == 1»
+				int idx«r.name» = requestsNames.get(elem).indexOf("«r.name»");
 				String ref«r.name» = requestsIds.get(elem).get(idx«r.name»);
-				elem.«r.name».add((«r.EReferenceType.name») built.get(ref«r.name»));
+				elem.«r.name» = («r.EReferenceType.name») built.get(ref«r.name»);
 				requestsNames.get(elem).remove(idx«r.name»);
 				requestsIds.get(elem).remove(idx«r.name»);
-			}
+				«ELSE»
+				int idx«r.name» = requestsNames.get(elem).indexOf("«r.name»");
+				while (idx«r.name» > 0) {
+					idx«r.name» = requestsNames.get(elem).indexOf("«r.name»");
+					String ref«r.name» = requestsIds.get(elem).get(idx«r.name»);
+					elem.«r.name».add((«r.EReferenceType.name») built.get(ref«r.name»));
+					requestsNames.get(elem).remove(idx«r.name»);
+					requestsIds.get(elem).remove(idx«r.name»);
+				}
+				«ENDIF»
 			«ENDIF»
-		«ENDIF»
-		«ENDFOR»
+			«ENDFOR»
+		}
 	}
 	
 	'''
 	
 	static def dumpClass(EClass cls)
 	'''
+	protected Element dump«cls.name»(«cls.name» obj, String name, Document document) {
+		
+		«FOR c : cls.allSubclasses SEPARATOR ' else '»
+		if (obj instanceof «c.name») {
+			return dump«c.name»((«c.name») obj, name, document);
+		}
+		«ENDFOR»
+		
+		Element current = document.createElementNS("https://forsyde.github.io/ForSyDe", name);
+		
+		«FOR a : cls.EAllAttributes»
+			«IF a.upperBound == 1 && a.lowerBound == 1»
+			current.setAttribute("«a.name»", obj.«a.name».toString());
+			«ELSEIF a.upperBound == 1 && a.lowerBound == 0»
+			if (obj.«a.name» != null)
+				current.setAttribute("«a.name»", obj.«a.name».toString());
+			«ELSE»
+			current.setAttribute("«a.name»", obj.«a.name».stream().map(e -> e.toString()).collect(Collectors.joining(" ")));
+			«ENDIF»
+		«ENDFOR»
+		
+		«FOR r : cls.EAllReferences»
+			«IF r.containment»
+				«IF r.upperBound == 1 && r.lowerBound == 1»
+				Element child«r.name» = dump«r.EReferenceType.name»(obj.«r.name», "«r.name»", document);
+				current.appendChild(child«r.name»);
+				«ELSEIF r.upperBound == 1 && r.lowerBound == 0»
+				if (obj.«r.name» != null) {
+					Element child«r.name» = dump«r.EReferenceType.name»(obj.«r.name», "«r.name»", document);
+					current.appendChild(child«r.name»);
+				}
+				«ELSE»
+				for («r.EReferenceType.name» c : obj.«r.name») {
+					Element child = dump«r.EReferenceType.name»(c, "«r.name»", document);
+					current.appendChild(child);
+				}
+				«ENDIF»
+			«ELSE»
+				«IF r.upperBound == 1 && r.lowerBound == 1»
+				current.setAttribute("«r.name»", obj.«r.name».identifier.toString());
+				«ELSEIF r.upperBound == 1 && r.lowerBound == 0»
+				if (obj.«r.name» != null)
+					current.setAttribute("«r.name»", obj.«r.name».identifier.toString());
+				«ELSE»
+				current.setAttribute("«r.name»", obj.«r.name».stream().map(e -> e.identifier.toString()).collect(Collectors.joining(" ")));
+				«ENDIF»
+			«ENDIF»
+		«ENDFOR»
+
+		current.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:type", "«cls.name»");
+		
+		return current;
+	}
 	'''
 	
 	static def List<EPackage> getPackageSequence(EPackage pac) {

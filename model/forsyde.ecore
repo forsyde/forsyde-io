@@ -8,8 +8,6 @@
       <eClassifiers xsi:type="ecore:EClass" name="Customizable">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="customAttributes" upperBound="-1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="customReferences" upperBound="-1"
-            eType="#//Model/Core/Customizable" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Identifiable" eSuperTypes="#//Model/Core/Customizable">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="identifier" ordered="false"
@@ -108,6 +106,10 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="SYClock" eSuperTypes="#//Model/Application/PrimitiveFunction">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="rate" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="phase" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="SYComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EReference" name="function" eType="#//Model/Application/NativeFunction"/>
       </eClassifiers>
@@ -145,12 +147,6 @@
     </eSubpackages>
     <eSubpackages name="Extra" nsURI="https://forsyde.github.io/ForSyDe/Model/Extra"
         nsPrefix="ForSyDe.Model.Extra">
-      <eClassifiers xsi:type="ecore:EClass" name="Extra">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="information" upperBound="-1"
-            eType="#//Model/Core/Table" containment="true"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="wcet" eType="#//Model/Core/Table"
-            containment="true" eKeys="#//Model/Core/Identifiable/identifier"/>
-      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Goal" eSuperTypes="#//Model/Core/Identifiable">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="nature" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="process" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
@@ -177,8 +173,6 @@
             eType="#//Model/Core/Identifiable" containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="platforms" upperBound="-1"
             eType="#//Model/Core/Identifiable" containment="true" resolveProxies="false"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="extras" eType="#//Model/Extra/Extra"
-            containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="revision" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
             defaultValueLiteral="&quot;0.5.0&quot;"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="staticRefinement" upperBound="-1"

@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 
 import forsyde.io.generators.java.ClassToJava;
-import forsyde.io.generators.java.ClassXMISerializerToJava;
+import forsyde.io.generators.java.ClassToJavaXMISerializer;
 import forsyde.io.generators.java.EnumToJava;
 import forsyde.io.generators.utils.Packages;
 
@@ -75,7 +75,7 @@ public class JavaGenerator {
 		}
 		// add the XMI serializer and deserializer, should go in the same pacakge as ForSyDeIO
 		final Path ioTotal = Paths.get(packageRoot, ioPath, "ForSyDeIOXMIDriver.java");
-		final CharSequence produced = ClassXMISerializerToJava.toText(ForSyDe);
+		final CharSequence produced = ClassToJavaXMISerializer.toText(ForSyDe);
 		Files.createDirectories(Paths.get(packageRoot, ioPath));
 		Files.writeString(ioTotal, produced);
 		

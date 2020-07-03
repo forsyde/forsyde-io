@@ -102,7 +102,7 @@
             identifier="dOut"
             definer="dOutC"/>
         <constructor
-            xsi:type="ForSyDe.Model.Application:SYDelay"
+            xsi:type="ForSyDe.Model.Application:SYPrefix"
             identifier="delaySYCon"
             value="0">
           <inPorts
@@ -117,13 +117,46 @@
       <vertexes
           xsi:type="ForSyDe.Model.Application:Signal"
           identifier="nextToDelaySig"/>
+      <edges
+          identifier="stateSY/to/nextStateSig"
+          fromVertex="stateSY"
+          toVertex="nextStateSig"
+          fromPort="statePNext"/>
+      <edges
+          identifier="nextStateSig/to/outputSY"
+          fromVertex="nextStateSig"
+          toVertex="outputSY"
+          toPort="outInP"/>
+      <edges
+          identifier="nextStateSig/to/delaySY"
+          fromVertex="nextStateSig"
+          toVertex="delaySY"
+          toPort="dIn"/>
+      <edges
+          identifier="delaySY/to/nextToDelaySig"
+          fromVertex="delaySY"
+          toVertex="nextToDelaySig"
+          fromPort="dOut"/>
+      <edges
+          identifier="nextToDelaySig/to/stateSY"
+          fromVertex="nextToDelaySig"
+          toVertex="stateSY"
+          toPort="statePCur"/>
     </vertexes>
     <vertexes
         xsi:type="ForSyDe.Model.Application:Signal"
         identifier="convertedSig"/>
+    <edges identifier="boolt2intSY/to/convertedSig"
+        fromVertex="bool2intSY"
+        toVertex="convertedSig"
+        fromPort="bool2IntPOut"/>
+    <edges identifier="convertedSig/to/mealySY"
+        fromVertex="convertedSig"
+        toVertex="mealySY"
+        toPort="mealySYin"/>
   </applications>
   <elements
-      xsi:type="ForSyDe.Model.Application:Function"
+      xsi:type="ForSyDe.Model.Application:NativeFunction"
       identifier="bool2int">
     <inputs
         identifier="boolIn"
@@ -133,7 +166,7 @@
         definer="Int8"/>
   </elements>
   <elements
-      xsi:type="ForSyDe.Model.Application:Function"
+      xsi:type="ForSyDe.Model.Application:NativeFunction"
       identifier="stateFunc">
     <inputs
         identifier="curState"
@@ -146,7 +179,7 @@
         definer="Int8"/>
   </elements>
   <elements
-      xsi:type="ForSyDe.Model.Application:Function"
+      xsi:type="ForSyDe.Model.Application:NativeFunction"
       identifier="outputFunc">
     <inputs
         identifier="outIn"
