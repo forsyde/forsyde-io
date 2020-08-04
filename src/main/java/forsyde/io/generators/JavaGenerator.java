@@ -33,7 +33,7 @@ public class JavaGenerator {
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
 			.put("ecore", new EcoreResourceFactoryImpl());
 		
-		Resource fecore = resourceSet.getResource(URI.createFileURI("model/forsyde.ecore"), true);
+		Resource fecore = resourceSet.getResource(URI.createFileURI("ecore/forsyde.ecore"), true);
 		
 		EPackage ForSyDe = (EPackage) fecore.getContents().get(0);
 		
