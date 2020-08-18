@@ -15,9 +15,7 @@
             iD="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Vertex" eSuperTypes="#//Model/Core/Identifiable">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="inPorts" upperBound="-1"
-            eType="#//Model/Core/Port" containment="true"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="outPorts" upperBound="-1"
+        <eStructuralFeatures xsi:type="ecore:EReference" name="ports" upperBound="-1"
             eType="#//Model/Core/Port" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Edge" eSuperTypes="#//Model/Core/Identifiable">
@@ -77,9 +75,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="PrimitiveFunction" eSuperTypes="#//Model/Core/Identifiable">
         <eStructuralFeatures xsi:type="ecore:EReference" name="implementations" ordered="false"
             upperBound="-1" eType="#//Model/Application/Implementation" eKeys="#//Model/Core/Identifiable/identifier"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="inPorts" upperBound="-1"
-            eType="#//Model/Core/Port" containment="true"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="outPorts" upperBound="-1"
+        <eStructuralFeatures xsi:type="ecore:EReference" name="ports" upperBound="-1"
             eType="#//Model/Core/Port" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="NativeFunction" eSuperTypes="#//Model/Core/Identifiable">
@@ -105,10 +101,6 @@
       <eClassifiers xsi:type="ecore:EClass" name="SDFPrefix" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SYClock" eSuperTypes="#//Model/Application/PrimitiveFunction">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="rate" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="phase" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="SYComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EReference" name="function" eType="#//Model/Application/NativeFunction"/>

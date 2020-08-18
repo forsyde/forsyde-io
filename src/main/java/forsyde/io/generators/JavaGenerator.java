@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 
 import forsyde.io.generators.java.ClassToJava;
+import forsyde.io.generators.java.ClassToJavaFlatIRSerializer;
 import forsyde.io.generators.java.ClassToJavaXMISerializer;
 import forsyde.io.generators.java.EnumToJava;
 import forsyde.io.generators.utils.Packages;
@@ -74,11 +75,16 @@ public class JavaGenerator {
 			}
 		}
 		// add the XMI serializer and deserializer, should go in the same pacakge as ForSyDeIO
-		final Path ioTotal = Paths.get(packageRoot, ioPath, "ForSyDeIOXMIDriver.java");
-		final CharSequence produced = ClassToJavaXMISerializer.toText(ForSyDe);
+		final Path ioTotalXMI = Paths.get(packageRoot, ioPath, "ForSyDeIOXMIDriver.java");
+		final CharSequence producedXMI = ClassToJavaXMISerializer.toText(ForSyDe);
 		Files.createDirectories(Paths.get(packageRoot, ioPath));
-		Files.writeString(ioTotal, produced);
-		
+		Files.writeString(ioTotalXMI, producedXMI);
+		// add the FlatIR serializer and deserializer, should go in the same pacakge as ForSyDeIO
+		// after some thoughts it seems it is quite unnecessary to define another format.
+//		final Path ioTotalFlat = Paths.get(packageRoot, ioPath, "ForSyDeIOFlatIRDriver.java");
+//		final CharSequence producedFlat = ClassToJavaFlatIRSerializer.toText(ForSyDe);
+//		Files.createDirectories(Paths.get(packageRoot, ioPath));
+//		Files.writeString(ioTotalFlat, producedFlat);
 	}
 	
 }
