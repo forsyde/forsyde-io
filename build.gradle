@@ -19,7 +19,7 @@ ext {
 }
 
 group = 'forsyde'
-version = '0.4.2'
+version = '0.4.3'
 
 sourceCompatibility = 1.8
 
@@ -64,3 +64,23 @@ eclipse {
     name = artifactName
   }
 }
+
+task replaceEcoreIOVersion {
+	def pattern = ~/(<.*name="version"(.|\n)*defaultValueLiteral=)"(.+)"/
+	def replaced = file('./ecore/forsyde.ecore').text.replaceFirst(pattern, '$1"' + project.version + '"')
+	file('./ecore/forsyde.ecore').text = replaced 
+}
+
+task replaceJavaIOVersion {
+	def replaced = file('./java-io/build.gradle').text.replaceFirst(/version = '.+'/, "version = '${version}'")
+	file('./java-io/build.gradle').text = replaced 
+}
+
+task replacePythonIOVersion {
+	def replaced = file('./python-io/setup.py').text.replaceFirst(/version='.+'/, "version='${version}'")
+	file('./python-io/setup.py').text = replaced
+}
+
+tasks.run.dependsOn replaceEcoreIOVersion
+tasks.run.dependsOn replaceJavaIOVersion
+tasks.run.dependsOn replacePythonIOVersion
