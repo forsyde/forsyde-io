@@ -203,7 +203,7 @@ class ClassToJava {
 	static def parseCodeInPlaceXMI(EClass cls)
 	'''
 	// if the parsing is done in random order rather than document order, this might be wrong!!
-	public void parseInPlaceXMI(Element elem, Map<String, Identifiable> built) {
+	public void parseInPlaceXMI(Element elem, Map<String, NamedItem> built) {
 		
 		«IF !cls.ESuperTypes.empty»
 		// if there are super classes, use them
@@ -289,7 +289,7 @@ class ClassToJava {
 		
 	static def parseCodeXMI(EClass cls) 
 	'''
-	static public «cls.name» parseXMI(Element elem, Map<String, Identifiable> built) {
+	static public «cls.name» parseXMI(Element elem, Map<String, NamedItem> built) {
 		«IF !cls.allSubclasses.empty»
 		String trueType = elem.getAttribute("xsi:type");
 		«ENDIF»
@@ -310,7 +310,7 @@ class ClassToJava {
 	
 	static def updateReference(EClass cls)
 	'''
-	public void updateReference(Identifiable obj) {
+	public void updateReference(NamedItem obj) {
 		if (attrIdRequests.containsKey(obj.identifier)) {
 			String att = attrIdRequests.get(obj.identifier);
 			switch (att) {
@@ -332,13 +332,13 @@ class ClassToJava {
 	
 	static def streamContained(EClass cls)
 	'''
-	public Stream<Identifiable> streamContained() {
+	public Stream<NamedItem> streamContained() {
 		«IF cls.ESuperTypes.flatMap[t | t.EAllAttributes].exists[a | a.name == "identifier"]»
-		Stream<Identifiable> s = super.streamContained();
+		Stream<NamedItem> s = super.streamContained();
 		«ELSEIF cls.EAllAttributes.map[name].contains("identifier")»
-		Stream<Identifiable> s = Stream.of(this);
+		Stream<NamedItem> s = Stream.of(this);
 		«ELSE»
-		Stream<Identifiable> s = Stream.empty();
+		Stream<NamedItem> s = Stream.empty();
 		«ENDIF»
 		
 		«FOR r : cls.EReferences»
@@ -359,8 +359,8 @@ class ClassToJava {
 	
 	static def getReferences(EClass cls)
 	'''
-	public Stream<Identifiable> getReferences() {
-		Stream<Identifiable> s = Stream.empty();
+	public Stream<NamedItem> getReferences() {
+		Stream<NamedItem> s = Stream.empty();
 		«FOR r : cls.EReferences»
 			«IF !r.containment»
 				«IF r.upperBound == 1»
@@ -446,7 +446,7 @@ class ClassToJava {
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document document = builder.parse(file);
 		Element rootElement = document.getDocumentElement();
-		HashMap<String, Identifiable> built = new HashMap<>();
+		HashMap<String, NamedItem> built = new HashMap<>();
 		// first pass, put everything in memory
 		ForSyDeIO forsyde = ForSyDeIO.parseXMI(rootElement, built);
 		// make all missing connections
@@ -463,8 +463,8 @@ class ClassToJava {
 	 */
 	public void canonicalize() {
 		streamContained()
-		.filter(d -> d instanceof Identifiable)
-		.map(d -> (Identifiable) d)
+		.filter(d -> d instanceof NamedItem)
+		.map(d -> (NamedItem) d)
 		.forEach(d -> {
 			if (!elements.contains(d))
 				elements.add(d);

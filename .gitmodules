@@ -8,3 +8,6 @@
 [submodule "python-io"]
 	path = python-io
 	url = git@gitr.sys.kth.se:jordao/forsyde-python-model.git
+[submodule "haskell-io"]
+	path = haskell-io
+	url = ./haskell-io

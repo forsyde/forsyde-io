@@ -83,13 +83,13 @@ class ClassToJavaXMISerializer {
 		protected ForSyDeIO parseDFS(Document document) {
 			ForSyDeIO parsed;
 			Element rootElement = document.getDocumentElement();
-			HashMap<String, Identifiable> built = new HashMap<>();
-			HashMap<Identifiable, List<String>> requestsIds = new HashMap<>();
-			HashMap<Identifiable, List<String>> requestsNames = new HashMap<>();
+			HashMap<String, NamedItem> built = new HashMap<>();
+			HashMap<NamedItem, List<String>> requestsIds = new HashMap<>();
+			HashMap<NamedItem, List<String>> requestsNames = new HashMap<>();
 			parsed = parseForSyDeIO(rootElement, built, requestsIds, requestsNames);
 			
 			// make all missing connections
-			for (Identifiable obj : built.values()) {
+			for (NamedItem obj : built.values()) {
 «««				«FOR cls : root.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass]
 «««					.filter[c | !c.EAllAttributes.exists[a | a.name == "identifier"]].toSet
 «««				SEPARATOR ' else ' AFTER ' else '»
@@ -97,7 +97,7 @@ class ClassToJavaXMISerializer {
 «««					postParse«cls.name»(obj, built, requestsIds, requestsNames);
 «««				}
 «««				«ENDFOR»
-				postParseIdentifiable(obj, built, requestsIds, requestsNames);
+				postParseNamedItem(obj, built, requestsIds, requestsNames);
 			}
 			return parsed;
 		}
@@ -131,7 +131,7 @@ class ClassToJavaXMISerializer {
 	
 	static def parseClass(EClass cls)
 	'''
-	protected «cls.name» parse«cls.name»(Element elem, Map<String, Identifiable> built, HashMap<Identifiable, List<String>> requestsIds, HashMap<Identifiable, List<String>> requestsNames) {
+	protected «cls.name» parse«cls.name»(Element elem, Map<String, NamedItem> built, HashMap<NamedItem, List<String>> requestsIds, HashMap<NamedItem, List<String>> requestsNames) {
 		«IF !cls.allSubclasses.empty»
 		String trueType = elem.getAttribute("xsi:type");
 		«ENDIF»
@@ -210,7 +210,7 @@ class ClassToJavaXMISerializer {
 	
 	static def postParseClass(EClass cls)
 	'''
-	protected void postParse«cls.name»(Identifiable obj, Map<String, Identifiable> built, HashMap<Identifiable, List<String>> requestsIds, HashMap<Identifiable, List<String>> requestsNames) {
+	protected void postParse«cls.name»(NamedItem obj, Map<String, NamedItem> built, HashMap<NamedItem, List<String>> requestsIds, HashMap<NamedItem, List<String>> requestsNames) {
 		
 		«FOR c : cls.allSubclasses SEPARATOR ' else ' AFTER ' else '»
 		if (obj instanceof «c.name») {
