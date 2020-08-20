@@ -1,7 +1,3 @@
-[submodule "python"]
-	path = python
-	url = git@gitr.sys.kth.se:jordao/forsyde-python-model.git
-  branch = master
 [submodule "java-io"]
 	path = java-io
 	url = git@gitr.sys.kth.se:jordao/forsyde-java-model.git
@@ -10,4 +6,4 @@
 	url = git@gitr.sys.kth.se:jordao/forsyde-python-model.git
 [submodule "haskell-io"]
 	path = haskell-io
-	url = ./haskell-io
+	url = git@gitr.sys.kth.se:jordao/forsyde-io-haskell.git
