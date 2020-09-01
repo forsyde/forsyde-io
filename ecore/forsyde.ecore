@@ -5,26 +5,20 @@
     <eSubpackages name="Core" nsURI="https://forsyde.github.io/ForSyDe/Model/Core"
         nsPrefix="ForSyDe.Model.Core">
       <eClassifiers xsi:type="ecore:EDataType" name="IdType" instanceTypeName="String"/>
-      <eClassifiers xsi:type="ecore:EClass" name="Item">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="customAttributes" upperBound="-1"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="NamedItem" eSuperTypes="#//Model/Core/Item">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="identifier" ordered="false"
-            lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
+      <eClassifiers xsi:type="ecore:EDataType" name="PortType" instanceTypeName="String"/>
+      <eClassifiers xsi:type="ecore:EClass" name="Vertex">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="identifier" eType="#//Model/Core/IdType"
             iD="true"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="ports" upperBound="-1"
+            eType="#//Model/Core/PortType"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="Vertex" eSuperTypes="#//Model/Core/NamedItem">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="ports" upperBound="-1"
-            eType="#//Model/Core/Port" containment="true"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="Edge" eSuperTypes="#//Model/Core/NamedItem">
+      <eClassifiers xsi:type="ecore:EClass" name="Edge">
         <eStructuralFeatures xsi:type="ecore:EReference" name="fromVertex" lowerBound="1"
-            eType="#//Model/Core/Vertex" eKeys="#//Model/Core/NamedItem/identifier"/>
+            eType="#//Model/Core/Vertex"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toVertex" lowerBound="1"
-            eType="#//Model/Core/Vertex" eKeys="#//Model/Core/NamedItem/identifier"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="toPort" eType="#//Model/Core/Port"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="fromPort" eType="#//Model/Core/Port"/>
+            eType="#//Model/Core/Vertex"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="toPort" eType="#//Model/Core/PortType"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="fromPort" eType="#//Model/Core/PortType"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Graph" eSuperTypes="#//Model/Core/Vertex">
         <eStructuralFeatures xsi:type="ecore:EReference" name="vertexes" upperBound="-1"
@@ -32,27 +26,25 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="edges" upperBound="-1"
             eType="#//Model/Core/Edge" containment="true" resolveProxies="false"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="Table" eSuperTypes="#//Model/Core/NamedItem">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="columns" upperBound="-1"
-            eType="#//Model/Core/NamedItem" containment="true"/>
+      <eClassifiers xsi:type="ecore:EClass" name="Table">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="valueColumns" upperBound="-1"
+            eType="#//Model/Core/TableValueColumn" containment="true"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="referenceColumns" upperBound="-1"
+            eType="#//Model/Core/TableReferenceColumn" containment="true"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Model/Core/NamedItem">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="definer" eType="#//Model/Core/NamedItem"
-            eKeys="#//Model/Core/NamedItem/identifier"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="TableValueColumn" eSuperTypes="#//Model/Core/NamedItem">
+      <eClassifiers xsi:type="ecore:EClass" name="TableValueColumn">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="values" upperBound="-1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeName" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="TableReferenceColumn" eSuperTypes="#//Model/Core/NamedItem">
+      <eClassifiers xsi:type="ecore:EClass" name="TableReferenceColumn">
         <eStructuralFeatures xsi:type="ecore:EReference" name="references" upperBound="-1"
-            eType="#//Model/Core/NamedItem" eKeys="#//Model/Core/NamedItem/identifier"/>
+            eType="#//Model/Core/Vertex"/>
       </eClassifiers>
     </eSubpackages>
     <eSubpackages name="Application" nsURI="https://forsyde.github.io/ForSyDe/Model/Application"
         nsPrefix="ForSyDe.Model.Application">
-      <eClassifiers xsi:type="ecore:EClass" name="DataType" eSuperTypes="#//Model/Core/NamedItem"/>
+      <eClassifiers xsi:type="ecore:EClass" name="DataType"/>
       <eClassifiers xsi:type="ecore:EClass" name="SingularDataType" eSuperTypes="#//Model/Application/DataType">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
@@ -61,44 +53,29 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1"
-            eType="#//Model/Application/SingularDataType" containment="true" eKeys="#//Model/Core/NamedItem/identifier"/>
+            eType="#//Model/Application/SingularDataType" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ConstructedProcess" eSuperTypes="#//Model/Core/Vertex">
         <eStructuralFeatures xsi:type="ecore:EReference" name="constructor" ordered="false"
-            lowerBound="1" eType="#//Model/Application/PrimitiveFunction" containment="true"
-            eKeys="#//Model/Core/NamedItem/identifier"/>
+            lowerBound="1" eType="#//Model/Application/PrimitiveFunction" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="CompoundProcess" eSuperTypes="#//Model/Core/Graph"/>
       <eClassifiers xsi:type="ecore:EClass" name="Signal" eSuperTypes="#//Model/Core/Vertex">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="descriptors" ordered="false"
             upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="PrimitiveFunction" eSuperTypes="#//Model/Core/NamedItem">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="implementations" ordered="false"
-            upperBound="-1" eType="#//Model/Application/Implementation" eKeys="#//Model/Core/NamedItem/identifier"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="ports" upperBound="-1"
-            eType="#//Model/Core/Port" containment="true"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="NativeFunction" eSuperTypes="#//Model/Core/NamedItem">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="inputs" upperBound="-1"
-            eType="#//Model/Core/Port" volatile="true" derived="true" containment="true"
-            resolveProxies="false"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="outputs" upperBound="-1"
-            eType="#//Model/Core/Port" volatile="true" derived="true" containment="true"
-            resolveProxies="false"/>
+      <eClassifiers xsi:type="ecore:EClass" name="PrimitiveFunction" eSuperTypes="#//Model/Core/Vertex"/>
+      <eClassifiers xsi:type="ecore:EClass" name="NativeFunction" eSuperTypes="#//Model/Core/Vertex">
         <eStructuralFeatures xsi:type="ecore:EReference" name="implementations" upperBound="-1"
-            eType="#//Model/Application/Implementation" eKeys="#//Model/Core/NamedItem/identifier"/>
+            eType="#//Model/Application/Implementation"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="Implementation" eSuperTypes="#//Model/Core/NamedItem">
+      <eClassifiers xsi:type="ecore:EClass" name="Implementation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="target" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="source" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SDFComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="actor" lowerBound="1"
-            eType="#//Model/Application/NativeFunction" eKeys="#//Model/Core/NamedItem/identifier"/>
-      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="SDFComb" eSuperTypes="#//Model/Application/PrimitiveFunction"/>
       <eClassifiers xsi:type="ecore:EClass" name="SDFPrefix" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
@@ -112,15 +89,19 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DEPrefix" eSuperTypes="#//Model/Application/PrimitiveFunction">
         <eStructuralFeatures xsi:type="ecore:EReference" name="initializer" lowerBound="1"
-            eType="#//Model/Application/NativeFunction" eKeys="#//Model/Core/NamedItem/identifier"/>
+            eType="#//Model/Application/NativeFunction"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DEValueComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="combinator" eType="#//Model/Application/NativeFunction"
-            eKeys="#//Model/Core/NamedItem/identifier"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="combinator" eType="#//Model/Application/NativeFunction"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DETagComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="combinator" eType="#//Model/Application/NativeFunction"
-            eKeys="#//Model/Core/NamedItem/identifier"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="combinator" eType="#//Model/Application/NativeFunction"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="Implements" eSuperTypes="#//Model/Core/Edge"/>
+      <eClassifiers xsi:type="ecore:EClass" name="Constructs" eSuperTypes="#//Model/Core/Edge"/>
+      <eClassifiers xsi:type="ecore:EClass" name="Types" eSuperTypes="#//Model/Core/Edge">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="argument" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
     </eSubpackages>
     <eSubpackages name="Platform" nsURI="https://forsyde.github.io/ForSyDe/Model/Platform"
@@ -141,14 +122,14 @@
     </eSubpackages>
     <eSubpackages name="Extra" nsURI="https://forsyde.github.io/ForSyDe/Model/Extra"
         nsPrefix="ForSyDe.Model.Extra">
-      <eClassifiers xsi:type="ecore:EClass" name="Goal" eSuperTypes="#//Model/Core/NamedItem">
+      <eClassifiers xsi:type="ecore:EClass" name="Goal">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="nature" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="process" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="target" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Throughput" eSuperTypes="#//Model/Extra/Goal">
         <eStructuralFeatures xsi:type="ecore:EReference" name="application" lowerBound="1"
-            eType="#//Model/Core/Vertex" eKeys="#//Model/Core/NamedItem/identifier"/>
+            eType="#//Model/Core/Vertex"/>
       </eClassifiers>
     </eSubpackages>
     <eSubpackages name="Refinement" nsURI="https://forsyde.github.io/ForSyDe/Model/Refinement"
@@ -167,20 +148,14 @@
     </eSubpackages>
     <eSubpackages name="IO" nsURI="https://forsyde.github.io/ForSyDe/IO" nsPrefix="ForSyDe.Model.IO">
       <eClassifiers xsi:type="ecore:EClass" name="ForSyDeIO">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="applications" upperBound="-1"
-            eType="#//Model/Core/NamedItem" containment="true" resolveProxies="false"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="platforms" upperBound="-1"
-            eType="#//Model/Core/NamedItem" containment="true" resolveProxies="false"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="version" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
             defaultValueLiteral="&quot;0.4.3&quot;"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="staticRefinement" upperBound="-1"
-            eType="#//Model/Core/NamedItem" containment="true"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
-            eType="#//Model/Core/NamedItem" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="tables" upperBound="-1"
             eType="#//Model/Core/Table" containment="true"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="maleableRefinement"
-            upperBound="-1" eType="#//Model/Core/NamedItem" containment="true"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="vertexes" upperBound="-1"
+            eType="#//Model/Core/Vertex" containment="true"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="edges" upperBound="-1"
+            eType="#//Model/Core/Edge" containment="true"/>
       </eClassifiers>
     </eSubpackages>
   </eSubpackages>
