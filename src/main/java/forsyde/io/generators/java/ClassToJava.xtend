@@ -20,6 +20,17 @@ class ClassToJava {
 		import java.util.*;
 		import java.util.stream.Stream;
 		
+		// serialization
+		import javax.xml.bind.annotation.XmlAttribute;
+		import javax.xml.bind.annotation.XmlElement;
+		import javax.xml.bind.annotation.XmlElementWrapper;
+		
+		import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+		import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+		import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+		import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+		
+		
 		«IF cls.name == "ForSyDeIO"»
 		// additional imports for the main IO class
 		import org.xml.sax.SAXException;
@@ -51,6 +62,10 @@ class ClassToJava {
 		/**
 		 * This class has been automatically generated from ForSyDe-IO generation routines. Special comments follow whenever pertinent.
 		 */
+		«IF cls.EAllAttributes.exists[att | att.name == "identifier"]»
+		@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "identifier")
+		«ENDIF»
+		@JacksonXmlRootElement(localName = "«cls.name»", namespace = "ForSyDeIO")
 		«IF cls.EAllSuperTypes.length > 0»
 		public class «cls.name» «FOR tparam : cls.ETypeParameters BEFORE '<' SEPARATOR ', ' AFTER '>'»«tparam.name»«ENDFOR»
 			extends «cls.EAllSuperTypes.reverseView.head.name» {
@@ -60,20 +75,24 @@ class ClassToJava {
 			
 			// attributes of the model
 			«FOR a : cls.EAttributes»
+			@XmlAttribute(name = "«a.name»")
 			«IF a.upperBound !== 1»
 			public List<«a.typeName»> «a.name»;
 			«ELSEIF a.defaultValueLiteral !== null && !a.defaultValueLiteral.empty»
 			public «a.typeName» «a.name» = «a.defaultValueLiteral»;
 			«ELSE»
-			public «a.typeName» «a.name»;
+			public «a. typeName» «a.name»;
 			«ENDIF»
 			«ENDFOR»
 			
 			// references of the model
 			«FOR r : cls.EReferences»
 			«IF r.upperBound !== 1»
+			@JacksonXmlElementWrapper(localName = "«r.name»", useWrapping = true)
+			@XmlAttribute(name = "«r.EType.name»")
 			public List<«r.EType.name»> «r.name»;
 			«ELSE»
+			@XmlAttribute(name = "«r.EType.name»")
 			public «r.EType.name» «r.name»;
 			«ENDIF»
 			«ENDFOR»
@@ -111,9 +130,9 @@ class ClassToJava {
 «««			
 «««			«updateReference(cls)»
 			
-			«streamContained(cls)»
+«««			«streamContained(cls)»
 			
-			«getReferences(cls)»
+«««			«getReferences(cls)»
 			
 			«shallowCopy(cls)»
 			
@@ -128,6 +147,8 @@ class ClassToJava {
 	static def getTypeName(EAttribute a) {
 		if (a.EGenericType !== null && a.EGenericType.ETypeParameter !== null) {
 			return a.EGenericType.ETypeParameter.name.proper;
+		} else if (a.EType.instanceTypeName !== null) {
+			return a.EType.instanceTypeName;
 		} else
 			return a.EType.name.proper;
 	}

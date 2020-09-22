@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 
 import forsyde.io.generators.java.ClassToJava;
-import forsyde.io.generators.java.ClassToJavaFlatIRSerializer;
 import forsyde.io.generators.java.ClassToJavaXMISerializer;
 import forsyde.io.generators.java.EnumToJava;
 import forsyde.io.generators.utils.Packages;
