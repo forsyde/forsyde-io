@@ -55,54 +55,40 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1"
             eType="#//Model/Application/SingularDataType" containment="true"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="ConstructedProcess" eSuperTypes="#//Model/Core/Vertex">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="constructor" ordered="false"
-            lowerBound="1" eType="#//Model/Application/PrimitiveFunction" containment="true"/>
-      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="ConstructedProcess" eSuperTypes="#//Model/Core/Vertex"/>
       <eClassifiers xsi:type="ecore:EClass" name="CompoundProcess" eSuperTypes="#//Model/Core/Graph"/>
       <eClassifiers xsi:type="ecore:EClass" name="Signal" eSuperTypes="#//Model/Core/Vertex">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="descriptors" ordered="false"
             upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="PrimitiveFunction" eSuperTypes="#//Model/Core/Vertex"/>
-      <eClassifiers xsi:type="ecore:EClass" name="NativeFunction" eSuperTypes="#//Model/Core/Vertex">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="implementations" upperBound="-1"
-            eType="#//Model/Application/Implementation"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="Implementation">
+      <eClassifiers xsi:type="ecore:EClass" name="NativeFunction" eSuperTypes="#//Model/Core/Vertex"/>
+      <eClassifiers xsi:type="ecore:EClass" name="Implementation" eSuperTypes="#//Model/Core/Vertex">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="target" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="source" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SDFComb" eSuperTypes="#//Model/Application/PrimitiveFunction"/>
-      <eClassifiers xsi:type="ecore:EClass" name="SDFPrefix" eSuperTypes="#//Model/Application/PrimitiveFunction">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eClassifiers xsi:type="ecore:EClass" name="SDFComb" eSuperTypes="#//Model/Core/Vertex"/>
+      <eClassifiers xsi:type="ecore:EClass" name="SDFPrefix" eSuperTypes="#//Model/Core/Vertex">
+        <eTypeParameters name="prefixDataType"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="prefix" lowerBound="1">
+          <eGenericType eTypeParameter="#//Model/Application/SDFPrefix/prefixDataType"/>
+        </eStructuralFeatures>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SYComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="function" eType="#//Model/Application/NativeFunction"/>
+      <eClassifiers xsi:type="ecore:EClass" name="SYComb" eSuperTypes="#//Model/Core/Vertex"/>
+      <eClassifiers xsi:type="ecore:EClass" name="SYPrefix" eSuperTypes="#//Model/Core/Vertex">
+        <eTypeParameters name="prefixDataType"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="prefix" lowerBound="1">
+          <eGenericType eTypeParameter="#//Model/Application/SYPrefix/prefixDataType"/>
+        </eStructuralFeatures>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SYPrefix" eSuperTypes="#//Model/Application/PrimitiveFunction">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="DEPrefix" eSuperTypes="#//Model/Application/PrimitiveFunction">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="initializer" lowerBound="1"
-            eType="#//Model/Application/NativeFunction"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="DEValueComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="combinator" eType="#//Model/Application/NativeFunction"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="DETagComb" eSuperTypes="#//Model/Application/PrimitiveFunction">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="combinator" eType="#//Model/Application/NativeFunction"/>
-      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="DEPrefix" eSuperTypes="#//Model/Core/Vertex"/>
+      <eClassifiers xsi:type="ecore:EClass" name="DEValueComb" eSuperTypes="#//Model/Core/Vertex"/>
+      <eClassifiers xsi:type="ecore:EClass" name="DETagComb" eSuperTypes="#//Model/Core/Vertex"/>
       <eClassifiers xsi:type="ecore:EClass" name="Implements" eSuperTypes="#//Model/Core/Edge"/>
       <eClassifiers xsi:type="ecore:EClass" name="Constructs" eSuperTypes="#//Model/Core/Edge"/>
-      <eClassifiers xsi:type="ecore:EClass" name="Types" eSuperTypes="#//Model/Core/Edge">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="argument" lowerBound="1"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="Types" eSuperTypes="#//Model/Core/Edge"/>
+      <eClassifiers xsi:type="ecore:EClass" name="Takes" eSuperTypes="#//Model/Core/Edge"/>
     </eSubpackages>
     <eSubpackages name="Platform" nsURI="https://forsyde.github.io/ForSyDe/Model/Platform"
         nsPrefix="ForSyDe.Model.Platform">

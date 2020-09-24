@@ -23,30 +23,38 @@ class ClassToJava {
 		// serialization
 		import javax.xml.bind.annotation.XmlAttribute;
 		import javax.xml.bind.annotation.XmlElement;
+		import javax.xml.bind.annotation.XmlElementRef;
 		import javax.xml.bind.annotation.XmlElementWrapper;
+		import javax.xml.bind.annotation.XmlRootElement;
+		import javax.xml.bind.annotation.XmlAccessType;
+		import javax.xml.bind.annotation.XmlAccessorType;
 		
 		import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 		import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 		import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 		import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+		import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 		
 		
 		«IF cls.name == "ForSyDeIO"»
-		// additional imports for the main IO class
-		import org.xml.sax.SAXException;
-		import java.io.File;
-		import java.io.IOException;
-		import javax.xml.parsers.DocumentBuilder;
-		import javax.xml.parsers.DocumentBuilderFactory;
-		import javax.xml.parsers.ParserConfigurationException;
-		
-		// required import for parsing and writing
-		import org.w3c.dom.*;
+«««		// additional imports for the main IO class
+«««		import org.xml.sax.SAXException;
+«««		import java.io.File;
+«««		import java.io.IOException;
+«««		import javax.xml.parsers.DocumentBuilder;
+«««		import javax.xml.parsers.DocumentBuilderFactory;
+«««		import javax.xml.parsers.ParserConfigurationException;
+«««		
+«««		// required import for parsing and writing
+«««		import org.w3c.dom.*;
 		«ENDIF»
 				
 		// imports for other classes
-		«FOR i : cls.necessaryImports.filter[e | e != cls.EPackage]»
-		import «i.packageSequence.map[p | p.name].join('.')».*;
+		«FOR i : cls.superClassTree.filter[c | c != cls]»
+		import «i.EPackage.packageSequence.map[p | p.name].join('.')».«i.name»;
+		«ENDFOR»
+		«FOR i : cls.EReferences.map[r | r.EType as EClass].filter[c | c != cls]»
+		import «i.EPackage.packageSequence.map[p | p.name].join('.')».«i.name»;
 		«ENDFOR»
 «««		«FOR i : cls.allSubclasses.map[e | e.EPackage].toSet»
 «««		«IF !cls.necessaryImports.filter[e | e != cls.EPackage].contains(i)»
@@ -54,10 +62,10 @@ class ClassToJava {
 «««		«ENDIF»
 «««		«ENDFOR»
 «««		This needs to here for the updateReference feature
-		«IF !cls.necessaryImports.map[name].contains("Core") && 
-			!cls.EAllAttributes.filter[e | e.name == "identifier"].empty»
-		import ForSyDe.Model.Core.*;
-		«ENDIF»
+«««		«IF !cls.necessaryImports.map[name].contains("Core") && 
+«««			!cls.EAllAttributes.filter[e | e.name == "identifier"].empty»
+«««		import ForSyDe.Model.Core.*;
+«««		«ENDIF»
 		
 		/**
 		 * This class has been automatically generated from ForSyDe-IO generation routines. Special comments follow whenever pertinent.
@@ -65,7 +73,8 @@ class ClassToJava {
 		«IF cls.EAllAttributes.exists[att | att.name == "identifier"]»
 		@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "identifier")
 		«ENDIF»
-		@JacksonXmlRootElement(localName = "«cls.name»", namespace = "ForSyDeIO")
+		@XmlAccessorType(XmlAccessType.FIELD)
+		@XmlRootElement(name = "«cls.name»", namespace = "ForSyDeIO")
 		«IF cls.EAllSuperTypes.length > 0»
 		public class «cls.name» «FOR tparam : cls.ETypeParameters BEFORE '<' SEPARATOR ', ' AFTER '>'»«tparam.name»«ENDFOR»
 			extends «cls.EAllSuperTypes.reverseView.head.name» {
@@ -87,12 +96,13 @@ class ClassToJava {
 			
 			// references of the model
 			«FOR r : cls.EReferences»
+			@XmlElementRef
+			@XmlElementWrapper(name = "«r.name»")
 			«IF r.upperBound !== 1»
-			@JacksonXmlElementWrapper(localName = "«r.name»", useWrapping = true)
-			@XmlAttribute(name = "«r.EType.name»")
+«««			@XmlAttribute(name = "«r.EType.name»")
 			public List<«r.EType.name»> «r.name»;
 			«ELSE»
-			@XmlAttribute(name = "«r.EType.name»")
+«««			@XmlAttribute(name = "«r.EType.name»")
 			public «r.EType.name» «r.name»;
 			«ENDIF»
 			«ENDFOR»
@@ -114,6 +124,27 @@ class ClassToJava {
 				«ENDIF»
 				«ENDFOR»
 			}
+			
+			«IF cls.EAllAttributes.exists[att | att.name == "identifier"]»
+			public «cls.name»(String identifier) {
+				«IF !cls.allSubclasses.empty»
+				super();
+				«ENDIF»
+				this.identifier = identifier;
+				«FOR a : cls.EAttributes»
+				«IF a.upperBound !== 1»
+				«a.name» = new ArrayList<>();
+				«ELSE»
+				«ENDIF»
+				«ENDFOR»
+				«FOR r : cls.EReferences»
+				«IF r.upperBound !== 1»
+				«r.name» = new ArrayList<>();
+				«ELSE»
+				«ENDIF»
+				«ENDFOR»
+			}
+			«ENDIF»
 			
 «««			«IF cls.name == "ForSyDeIO"»
 «««			«mainClassExtraCode(cls)»
@@ -142,6 +173,22 @@ class ClassToJava {
 		
 		}
 		'''
+	}
+	
+	static def Iterable<EClass> getSuperClassTree(EClass cls)  {
+		if (cls.ESuperTypes.empty) {
+			return Set.of(cls);
+		} else {
+			val supers = cls.ESuperTypes.flatMap[s | s.superClassTree].toSet
+			supers.add(cls);
+			return supers;
+		}
+	}
+	
+	static def Iterable<EClass> getAllReferencesClasses(EClass cls) {
+		val refs = cls.superClassTree.toSet
+		refs.addAll(cls.EReferences.map[r | r.EType as EClass].toSet)
+		return refs
 	}
 	
 	static def getTypeName(EAttribute a) {

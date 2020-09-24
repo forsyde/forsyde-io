@@ -74,10 +74,10 @@ public class JavaGenerator {
 			}
 		}
 		// add the XMI serializer and deserializer, should go in the same pacakge as ForSyDeIO
-		final Path ioTotalXMI = Paths.get(packageRoot, ioPath, "ForSyDeIOXMIDriver.java");
-		final CharSequence producedXMI = ClassToJavaXMISerializer.toText(ForSyDe);
-		Files.createDirectories(Paths.get(packageRoot, ioPath));
-		Files.writeString(ioTotalXMI, producedXMI);
+//		final Path ioTotalXMI = Paths.get(packageRoot, ioPath, "ForSyDeIOXMIDriver.java");
+//		final CharSequence producedXMI = ClassToJavaXMISerializer.toText(ForSyDe);
+//		Files.createDirectories(Paths.get(packageRoot, ioPath));
+//		Files.writeString(ioTotalXMI, producedXMI);
 		// add the FlatIR serializer and deserializer, should go in the same pacakge as ForSyDeIO
 		// after some thoughts it seems it is quite unnecessary to define another format.
 //		final Path ioTotalFlat = Paths.get(packageRoot, ioPath, "ForSyDeIOFlatIRDriver.java");
