@@ -89,6 +89,8 @@
       <eClassifiers xsi:type="ecore:EClass" name="Constructs" eSuperTypes="#//Model/Core/Edge"/>
       <eClassifiers xsi:type="ecore:EClass" name="Types" eSuperTypes="#//Model/Core/Edge"/>
       <eClassifiers xsi:type="ecore:EClass" name="Takes" eSuperTypes="#//Model/Core/Edge"/>
+      <eClassifiers xsi:type="ecore:EClass" name="Writes" eSuperTypes="#//Model/Core/Edge"/>
+      <eClassifiers xsi:type="ecore:EClass" name="Reads" eSuperTypes="#//Model/Core/Edge"/>
     </eSubpackages>
     <eSubpackages name="Platform" nsURI="https://forsyde.github.io/ForSyDe/Model/Platform"
         nsPrefix="ForSyDe.Model.Platform">

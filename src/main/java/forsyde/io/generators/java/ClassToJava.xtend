@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EClassifier
+import java.util.HashSet
 
 class ClassToJava {
 	
@@ -24,12 +25,18 @@ class ClassToJava {
 		import javax.xml.bind.annotation.XmlAttribute;
 		import javax.xml.bind.annotation.XmlElement;
 		import javax.xml.bind.annotation.XmlElementRef;
+		import javax.xml.bind.annotation.XmlElementRefs;
 		import javax.xml.bind.annotation.XmlElementWrapper;
 		import javax.xml.bind.annotation.XmlRootElement;
 		import javax.xml.bind.annotation.XmlAccessType;
 		import javax.xml.bind.annotation.XmlAccessorType;
 		
 		import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+		import com.fasterxml.jackson.annotation.JsonSubTypes;
+		import com.fasterxml.jackson.annotation.JsonTypeInfo;
+		import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+		import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+		import com.fasterxml.jackson.annotation.JsonIdentityReference;
 		import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 		import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 		import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
@@ -50,10 +57,7 @@ class ClassToJava {
 		«ENDIF»
 				
 		// imports for other classes
-		«FOR i : cls.superClassTree.filter[c | c != cls]»
-		import «i.EPackage.packageSequence.map[p | p.name].join('.')».«i.name»;
-		«ENDFOR»
-		«FOR i : cls.EReferences.map[r | r.EType as EClass].filter[c | c != cls]»
+		«FOR i : cls.allRequiredClasses.filter[c | c != cls]»
 		import «i.EPackage.packageSequence.map[p | p.name].join('.')».«i.name»;
 		«ENDFOR»
 «««		«FOR i : cls.allSubclasses.map[e | e.EPackage].toSet»
@@ -73,8 +77,7 @@ class ClassToJava {
 		«IF cls.EAllAttributes.exists[att | att.name == "identifier"]»
 		@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "identifier")
 		«ENDIF»
-		@XmlAccessorType(XmlAccessType.FIELD)
-		@XmlRootElement(name = "«cls.name»", namespace = "ForSyDeIO")
+		@JacksonXmlRootElement(localName = "«cls.name»", namespace = "ForSyDeIO")
 		«IF cls.EAllSuperTypes.length > 0»
 		public class «cls.name» «FOR tparam : cls.ETypeParameters BEFORE '<' SEPARATOR ', ' AFTER '>'»«tparam.name»«ENDFOR»
 			extends «cls.EAllSuperTypes.reverseView.head.name» {
@@ -84,7 +87,7 @@ class ClassToJava {
 			
 			// attributes of the model
 			«FOR a : cls.EAttributes»
-			@XmlAttribute(name = "«a.name»")
+			@JacksonXmlProperty(localName = "«a.name»", isAttribute = true)
 			«IF a.upperBound !== 1»
 			public List<«a.typeName»> «a.name»;
 			«ELSEIF a.defaultValueLiteral !== null && !a.defaultValueLiteral.empty»
@@ -96,8 +99,19 @@ class ClassToJava {
 			
 			// references of the model
 			«FOR r : cls.EReferences»
-			@XmlElementRef
-			@XmlElementWrapper(name = "«r.name»")
+			«IF r.containment == false»
+			@JsonIdentityReference(alwaysAsId = true)
+			«ENDIF»
+			@JsonTypeInfo(use = Id.NAME, include = As.WRAPPER_OBJECT)
+			«IF (r.EType as EClass).allSubclasses.isEmpty == false»
+			@JsonSubTypes({
+				«FOR sub : (r.EType as EClass).allSubclasses SEPARATOR ','»
+				@JsonSubTypes.Type(name = "«sub.name»", value = «sub.name».class)
+				«ENDFOR»			
+			})
+«««			@JacksonXmlElementWrapper(localName = "«r.name»", useWrapping = false)
+«««			@JacksonXmlProperty(localName = "«r.name»")
+			«ENDIF»
 			«IF r.upperBound !== 1»
 «««			@XmlAttribute(name = "«r.EType.name»")
 			public List<«r.EType.name»> «r.name»;
@@ -165,14 +179,91 @@ class ClassToJava {
 			
 «««			«getReferences(cls)»
 			
-			«shallowCopy(cls)»
+«««			«shallowCopy(cls)»
 			
-			«containedCopy(cls)»
+«««			«containedCopy(cls)»
+
+«««			«toBuilderText(cls)»
 			
 			«toString(cls)»
 		
 		}
 		'''
+	}
+	
+	static def toBuilderText(EClass cls)
+	'''
+	«IF cls.EAllSuperTypes.length > 0»
+	static public class Builder «FOR tparam : cls.ETypeParameters BEFORE '<' SEPARATOR ', ' AFTER '>'»«tparam.name»«ENDFOR»
+		extends «cls.EAllSuperTypes.reverseView.head.name».Builder {
+	«ELSE»
+	static public class Builder	«FOR tparam : cls.ETypeParameters BEFORE '<' SEPARATOR ', ' AFTER '>'»«tparam.name»«ENDFOR» {
+	«ENDIF»
+		
+		private «cls.name» toBuild;
+		
+		// attributes of the model
+		«FOR a : cls.EAttributes»
+		«IF a.upperBound !== 1»
+		public Builder set«a.name.toFirstUpper»(List<«a.typeName»> «a.name») {
+			toBuild.«a.name» = «a.name»;
+			return self();
+		}
+		
+		«ELSE»
+		public Builder set«a.name.toFirstUpper»(«a.typeName» «a.name») {
+			toBuild.«a.name» = «a.name»;
+			return self();
+		}
+		«ENDIF»
+		«ENDFOR»
+		
+		«FOR r : cls.EReferences»
+		«IF r.upperBound !== 1»
+		public Builder set«r.name.toFirstUpper»(List<«r.EType.name»> «r.name») {
+			toBuild.«r.name» = «r.name»;
+			return self();
+		}
+		
+		«ELSE»
+		public Builder set«r.name.toFirstUpper»(«r.EType.name» «r.name») {
+			toBuild.«r.name» = «r.name»;
+			return self();
+		}
+		«ENDIF»
+		«ENDFOR»
+		
+		«IF cls.EAllSuperTypes.length > 0»
+		@Override
+		protected  «cls.name».Builder self() {
+			return this;
+		}
+		
+		@Override
+		«ELSE»
+		protected «cls.name».Builder self() {
+			return this;
+		}
+
+		«ENDIF»
+		public «cls.name» build() {
+			return toBuild;
+		}
+		
+		 
+	}
+	
+	static public «cls.name».Builder builder() {
+		return new Builder();
+	}	
+	'''
+	
+	static def allRequiredClasses(EClass cls) {
+		val required = new HashSet<EClass>();
+		required.addAll(cls.superClassTree);
+		required.addAll(cls.allReferencesClasses);
+		required.addAll(cls.EReferences.map[r | r.EType as EClass].flatMap[r | r.allSubclasses]);
+		return required;
 	}
 	
 	static def Iterable<EClass> getSuperClassTree(EClass cls)  {
@@ -186,7 +277,7 @@ class ClassToJava {
 	}
 	
 	static def Iterable<EClass> getAllReferencesClasses(EClass cls) {
-		val refs = cls.superClassTree.toSet
+		val refs = new HashSet<EClass>();
 		refs.addAll(cls.EReferences.map[r | r.EType as EClass].toSet)
 		return refs
 	}
