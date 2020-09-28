@@ -65,15 +65,29 @@ eclipse {
   }
 }
 
+task clearPackageOutJavaIO(type: Delete) {
+  delete './packages-out/java-io'
+  followSymlinks = true
+}
+
+task makePackageOutJavaIO(type: Copy) {
+	dependsOn clearPackageOutJavaIO
+	from './packages-in/java-io'
+	into './packages-out/java-io'
+}
+
 task replaceEcoreIOVersion {
 	def pattern = ~/(<.*name="version"(.|\n)*defaultValueLiteral=)"(.+)"/
 	def replaced = file('./ecore/forsyde.ecore').text.replaceFirst(pattern, '$1"&quot;' + project.version + '&quot;"')
 	file('./ecore/forsyde.ecore').text = replaced 
 }
 
-task replaceJavaIOVersion {
-	def replaced = file('./java-io/build.gradle').text.replaceFirst(/version = '.+'/, "version = '${version}'")
-	file('./java-io/build.gradle').text = replaced 
+task replaceJavaIOVersion() {
+	dependsOn makePackageOutJavaIO
+	doLast {
+		def replaced = file('./packages-out/java-io/build.gradle').text.replaceFirst(/version = '.+'/, "version = '${version}'")
+		file('./packages-out/java-io/build.gradle').text = replaced
+	} 
 }
 
 task replacePythonIOVersion {

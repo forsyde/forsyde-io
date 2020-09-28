@@ -22,15 +22,15 @@ class ClassToJava {
 		import java.util.stream.Stream;
 		
 		// serialization
-		import javax.xml.bind.annotation.XmlAttribute;
-		import javax.xml.bind.annotation.XmlElement;
-		import javax.xml.bind.annotation.XmlElementRef;
-		import javax.xml.bind.annotation.XmlElementRefs;
-		import javax.xml.bind.annotation.XmlElementWrapper;
-		import javax.xml.bind.annotation.XmlRootElement;
-		import javax.xml.bind.annotation.XmlAccessType;
-		import javax.xml.bind.annotation.XmlAccessorType;
-		
+«««		import javax.xml.bind.annotation.XmlAttribute;
+«««		import javax.xml.bind.annotation.XmlElement;
+«««		import javax.xml.bind.annotation.XmlElementRef;
+«««		import javax.xml.bind.annotation.XmlElementRefs;
+«««		import javax.xml.bind.annotation.XmlElementWrapper;
+«««		import javax.xml.bind.annotation.XmlRootElement;
+«««		import javax.xml.bind.annotation.XmlAccessType;
+«««		import javax.xml.bind.annotation.XmlAccessorType;
+«««		
 		import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 		import com.fasterxml.jackson.annotation.JsonSubTypes;
 		import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -193,17 +193,18 @@ class ClassToJava {
 	
 	static def toBuilderText(EClass cls)
 	'''
-	«IF cls.EAllSuperTypes.length > 0»
-	static public class Builder «FOR tparam : cls.ETypeParameters BEFORE '<' SEPARATOR ', ' AFTER '>'»«tparam.name»«ENDFOR»
-		extends «cls.EAllSuperTypes.reverseView.head.name».Builder {
-	«ELSE»
+«««	«IF cls.EAllSuperTypes.length > 0»
+«««	static public class Builder «FOR tparam : cls.ETypeParameters BEFORE '<' SEPARATOR ', ' AFTER '>'»«tparam.name»«ENDFOR»
+«««		extends «cls.EAllSuperTypes.reverseView.head.name».Builder {
+«««	«ELSE»
+«««	static public class Builder	«FOR tparam : cls.ETypeParameters BEFORE '<' SEPARATOR ', ' AFTER '>'»«tparam.name»«ENDFOR» {
+«««	«ENDIF»
 	static public class Builder	«FOR tparam : cls.ETypeParameters BEFORE '<' SEPARATOR ', ' AFTER '>'»«tparam.name»«ENDFOR» {
-	«ENDIF»
 		
 		private «cls.name» toBuild;
 		
 		// attributes of the model
-		«FOR a : cls.EAttributes»
+		«FOR a : cls.EAllAttributes»
 		«IF a.upperBound !== 1»
 		public Builder set«a.name.toFirstUpper»(List<«a.typeName»> «a.name») {
 			toBuild.«a.name» = «a.name»;
@@ -218,7 +219,7 @@ class ClassToJava {
 		«ENDIF»
 		«ENDFOR»
 		
-		«FOR r : cls.EReferences»
+		«FOR r : cls.EAllReferences»
 		«IF r.upperBound !== 1»
 		public Builder set«r.name.toFirstUpper»(List<«r.EType.name»> «r.name») {
 			toBuild.«r.name» = «r.name»;
@@ -233,19 +234,23 @@ class ClassToJava {
 		«ENDIF»
 		«ENDFOR»
 		
-		«IF cls.EAllSuperTypes.length > 0»
-		@Override
-		protected  «cls.name».Builder self() {
-			return this;
-		}
-		
-		@Override
-		«ELSE»
+«««		«IF cls.EAllSuperTypes.length > 0»
+«««		@Override
+«««		protected  «cls.name».Builder self() {
+«««			return this;
+«««		}
+«««		
+«««		@Override
+«««		«ELSE»
+«««		protected «cls.name».Builder self() {
+«««			return this;
+«««		}
+«««
+«««		«ENDIF»
 		protected «cls.name».Builder self() {
 			return this;
 		}
 
-		«ENDIF»
 		public «cls.name» build() {
 			return toBuild;
 		}
@@ -263,7 +268,7 @@ class ClassToJava {
 		required.addAll(cls.superClassTree);
 		required.addAll(cls.allReferencesClasses);
 		required.addAll(cls.EReferences.map[r | r.EType as EClass].flatMap[r | r.allSubclasses]);
-		return required;
+		return required.filter[c | c.EPackage != cls.EPackage];
 	}
 	
 	static def Iterable<EClass> getSuperClassTree(EClass cls)  {

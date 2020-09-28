@@ -37,7 +37,7 @@ public class JavaGenerator {
 		
 		EPackage ForSyDe = (EPackage) fecore.getContents().get(0);
 		
-		final String packageRoot = "java-io/src/main/java";
+		final String packageRoot = "packages-out/java-io/src/main/java";
 		String ioPath = null;
 		
 		// the main reason to use this sort of iteration instead of the 'forEach' is that I wanted

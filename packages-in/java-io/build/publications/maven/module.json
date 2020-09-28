@@ -1,0 +1,90 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "forsyde",
+    "module": "forsyde-io-java",
+    "version": "0.4.3",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.0.1",
+      "buildId": "gvnv4hgcu5fybejmpxwqt5zdyi"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "forsyde-io-java-0.4.3.jar",
+          "url": "forsyde-io-java-0.4.3.jar",
+          "size": 73483,
+          "sha512": "c0cf9a859b71f6db60bef4759d43756cf2dbd66320e50bae9afd4d6fd38f98cf3b8496f4fa60d5c2c8526a06b87d9391efa9c934a15606525391f514ce6f6b04",
+          "sha256": "f7ccd3fc1af706afacbcaba22f0156c470a8b7ad1afbadc4e22b8a0e5dbc9587",
+          "sha1": "59c9ecc3f39318b5ca68b7b8d2813e8334193826",
+          "md5": "de2c5db3ac967c7f68ecfe102985283f"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.slf4j",
+          "module": "slf4j-api",
+          "version": {
+            "requires": "1.7.25"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "forsyde-io-java-0.4.3.jar",
+          "url": "forsyde-io-java-0.4.3.jar",
+          "size": 73483,
+          "sha512": "c0cf9a859b71f6db60bef4759d43756cf2dbd66320e50bae9afd4d6fd38f98cf3b8496f4fa60d5c2c8526a06b87d9391efa9c934a15606525391f514ce6f6b04",
+          "sha256": "f7ccd3fc1af706afacbcaba22f0156c470a8b7ad1afbadc4e22b8a0e5dbc9587",
+          "sha1": "59c9ecc3f39318b5ca68b7b8d2813e8334193826",
+          "md5": "de2c5db3ac967c7f68ecfe102985283f"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "forsyde-io-java-0.4.3-sources.jar",
+          "url": "forsyde-io-java-0.4.3-sources.jar",
+          "size": 37374,
+          "sha512": "a5fc64a728561cb5ec5356e4e1a37c213ff995e023a31826e232771a42ba2c7e9148cc71d19963567b5b818338fe1ec006c94db1aae551cd9aa40d9f7e38c253",
+          "sha256": "72fa1cfdb0233b6a0a54333cee9ddcac79725c1e6d01f430389b14dd794822d4",
+          "sha1": "5f6fbc5aa183815aefdfb75d0dedb31d42594d4d",
+          "md5": "c8c0834955e4ba113743e6453e1fdf6b"
+        }
+      ]
+    }
+  ]
+}
