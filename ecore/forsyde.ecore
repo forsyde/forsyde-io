@@ -19,6 +19,8 @@
             eType="#//Model/Core/Vertex"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="toPort" eType="#//Model/Core/PortType"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="fromPort" eType="#//Model/Core/PortType"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="identifier" lowerBound="1"
+            eType="#//Model/Core/IdType"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Graph" eSuperTypes="#//Model/Core/Vertex">
         <eStructuralFeatures xsi:type="ecore:EReference" name="vertexes" upperBound="-1"
@@ -115,10 +117,7 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="process" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="target" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="Throughput" eSuperTypes="#//Model/Extra/Goal">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="application" lowerBound="1"
-            eType="#//Model/Core/Vertex"/>
-      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="Throughput" eSuperTypes="#//Model/Extra/Goal"/>
     </eSubpackages>
     <eSubpackages name="Refinement" nsURI="https://forsyde.github.io/ForSyDe/Model/Refinement"
         nsPrefix="ForSyDe.Model.Refinement">
