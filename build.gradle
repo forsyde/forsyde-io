@@ -14,6 +14,13 @@ plugins {
   id "org.xtext.xtend" version "2.0.8"
 }
 
+ext {
+  artifactName = 'forsyde-io'
+}
+
+group = 'forsyde'
+version = '0.5.0'
+
 sourceCompatibility = 1.8
 
 // In this section you declare where to find the dependencies of your project
@@ -51,3 +58,43 @@ dependencies {
 application {
     mainClassName = "forsyde.io.generators.Main"
 }
+
+eclipse {
+  project {
+    name = artifactName
+  }
+}
+
+task clearPackageOutJavaIO(type: Delete) {
+  delete './packages-out/java-io'
+  followSymlinks = true
+}
+
+task makePackageOutJavaIO(type: Copy) {
+	dependsOn clearPackageOutJavaIO
+	from './packages-in/java-io'
+	into './packages-out/java-io'
+}
+
+task replaceEcoreIOVersion {
+	def pattern = ~/(<.*name="version"(.|\n)*defaultValueLiteral=)"(.+)"/
+	def replaced = file('./ecore/forsyde.ecore').text.replaceFirst(pattern, '$1"&quot;' + project.version + '&quot;"')
+	file('./ecore/forsyde.ecore').text = replaced 
+}
+
+task replaceJavaIOVersion() {
+	dependsOn makePackageOutJavaIO
+	doLast {
+		def replaced = file('./packages-out/java-io/build.gradle').text.replaceFirst(/version = '.+'/, "version = '${version}'")
+		file('./packages-out/java-io/build.gradle').text = replaced
+	} 
+}
+
+task replacePythonIOVersion {
+	def replaced = file('./python-io/setup.py').text.replaceFirst(/version='.+'/, "version='${version}'")
+	file('./python-io/setup.py').text = replaced
+}
+
+tasks.run.dependsOn replaceEcoreIOVersion
+tasks.run.dependsOn replaceJavaIOVersion
+tasks.run.dependsOn replacePythonIOVersion

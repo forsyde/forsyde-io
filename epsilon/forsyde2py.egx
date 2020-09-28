@@ -19,7 +19,7 @@ rule PackageLeaf
 	
 	template : "templates/forsyde2py_package.egl"
 	
-	target : "../python/" + package.getPackagePath().concat("/") + ".py"
+	target : "../python-io/" + package.getPackagePath().concat("/") + ".py"
 }
 
 operation ForSyDe!EPackage getPackagePath() : Sequence {

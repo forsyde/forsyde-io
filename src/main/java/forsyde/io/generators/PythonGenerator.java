@@ -19,7 +19,7 @@ public class PythonGenerator {
 
         // Load the XML document
 		EmfModel model = new EmfModel();
-        model.setModelFile("model/forsyde.ecore");
+        model.setModelFile("ecore/forsyde.ecore");
         model.setName("ForSyDe");
         model.load();
 

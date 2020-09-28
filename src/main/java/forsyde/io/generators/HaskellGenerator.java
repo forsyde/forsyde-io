@@ -17,7 +17,7 @@ public class HaskellGenerator {
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
 			.put("ecore", new EcoreResourceFactoryImpl());
 		
-		Resource fecore = resourceSet.getResource(URI.createFileURI("model/forsyde.ecore"), true);
+		Resource fecore = resourceSet.getResource(URI.createFileURI("ecore/forsyde.ecore"), true);
 		
 		EPackage ForSyDe = (EPackage) fecore.getContents().get(0);
 		
@@ -28,7 +28,7 @@ public class HaskellGenerator {
 				if (pac.getEClassifiers().stream()
 						.filter(c -> !(c instanceof EPackage))
 						.count() > 0L) {
-					System.out.println(PackageToHaskell.toText(pac));
+					//System.out.println(PackageToHaskell.toText(pac));
 				}
 			}
 		});

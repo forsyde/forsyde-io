@@ -12,9 +12,11 @@ public class Main {
 		try {
 			PythonGenerator pythonGenerator = new PythonGenerator();
 			HaskellGenerator haskellGenerator = new HaskellGenerator();
+			JavaGenerator javaGenerator = new JavaGenerator();
 			
 			pythonGenerator.generate();
 			haskellGenerator.generate();
+			javaGenerator.generate();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

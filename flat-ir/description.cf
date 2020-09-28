@@ -1,0 +1,20 @@
+LTotal. Model ::= [Stm] ;
+
+[] . [Stm] ::= ;
+(:). [Stm] ::= Stm ";" [Stm] ;
+(:). [Stm] ::= Stm "\n" [Stm] ;
+
+LStmElem. Stm ::= "@elem" ElemDef [Stm] "@endelem";
+LStmPort. Stm ::= "@port" ElemPort ;
+LStmAttr. Stm ::= "@attr" ElemAttr ;
+LStmLink. Stm ::= "@link" LinkDef ;
+
+LElemDef. ElemDef ::= "id" Ident "," "type" Ident ;
+LElemPort. ElemPort ::= "id" Ident ;
+LElemPortDefined. ElemPort ::= "id" Ident "," "definer" Ident ;
+LElemAttr. ElemAttr ::= "name" Ident "," "value" AttrValue ;
+LElemAttrValueInt. AttrValue ::= Integer ;
+LElemAttrValueDouble. AttrValue ::= Double ;
+LElemAttrValueString. AttrValue ::= String ;
+
+LLink. LinkDef ::= "id" Ident "," "in" Ident "," "out" Ident "," "pin" Ident "," "pout" Ident "," ;
