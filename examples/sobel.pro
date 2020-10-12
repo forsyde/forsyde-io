@@ -1,5 +1,5 @@
 % compound processes
-vertex(sobel, processT).
+vertex('sobel', processT).
 % constructed processes
 vertex(getPx, processT).
 vertex(gx, processT).
@@ -32,11 +32,11 @@ port(gy, constructor, vertexT).
 port(abs, constructor, vertexT).
 port(abs, output, sobelOutT).
 
-port(sobel, input, sobelInT).
-port(sobel, output, sobelOutT).
+port('sobel', input, sobelInT).
+port('sobel', output, sobelOutT).
 
-edge(sobel, getPx, input, input, expandsT).
-edge(sobel, abs, output, output, expandsT).
+edge('sobel', getPx, input, input, expandsT).
+edge('sobel', abs, output, output, expandsT).
 edge(getPxC, getPx, constructed, constructor, constructsT).
 edge(gxC, gx, constructed, constructor, constructsT).
 edge(gyC, gy, constructed, constructor, constructsT).
