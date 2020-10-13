@@ -44,18 +44,20 @@ public class ForSyDeModelWriter {
 		}
 		for(Edge e : model.edgeSet()) {
 			String interpolated = "edge('" 
-					+ e.outNodeId
+					+ e.sourceNodeId
 					+ "', '" 
-					+ e.inNodeId
+					+ e.targetNodeId
 					+ "', '"
-					+ e.outNodePortId.orElse("None")
+					+ e.sourceNodePortId.orElse("None")
 					+ "', '"
-					+ e.inNodePortId.orElse("None")
+					+ e.targetNodePortId.orElse("None")
 					+ "', '"
 					+ e.type.getName()
 					+ "').\n";
 			writer.append(interpolated);
 		}
+		writer.flush();
+		writer.close();
 	}
 	
 }

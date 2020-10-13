@@ -82,5 +82,8 @@
     <eClassifiers xsi:type="ecore:EClass" name="Reads"/>
     <eClassifiers xsi:type="ecore:EClass" name="Process"/>
     <eClassifiers xsi:type="ecore:EClass" name="FIFOSignal" eSuperTypes="#//Application/Signal"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Input"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Output"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Description"/>
   </eSubpackages>
 </ecore:EPackage>
