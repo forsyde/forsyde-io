@@ -29,7 +29,10 @@ import forsyde.io.java.types.application.Description;
 import forsyde.io.java.types.application.Input;
 import forsyde.io.java.types.application.Output;
 import forsyde.io.java.types.application.Process;
+import forsyde.io.java.types.application.Reads;
 import forsyde.io.java.types.application.SDFComb;
+import forsyde.io.java.types.application.Signal;
+import forsyde.io.java.types.application.Writes;
 
 public class SobelCaseTest {
 	
@@ -141,96 +144,118 @@ public class SobelCaseTest {
 				.withType(new Constructs())
 				.build();
 		model.addEdge(AbsCons, Abs, AbsEdge);
+
+		Vertex gxSig = Vertex.builder()
+				.withIdentifier("gxsig")
+				.withType(new Signal())
+				.withPorts(Set.of(
+						Port.builder().withIdentifier("fifoIn").withType(new Description()).build(),
+						Port.builder().withIdentifier("fifoOut").withType(new Description()).build()
+						))
+				.build();
+		model.addVertex(gxSig);
+		Vertex gySig = Vertex.builder()
+				.withIdentifier("gysig")
+				.withType(new Signal())
+				.withPorts(Set.of(
+						Port.builder().withIdentifier("fifoIn").withType(new Description()).build(),
+						Port.builder().withIdentifier("fifoOut").withType(new Description()).build()
+						))
+				.build();
+		model.addVertex(gySig);
+		Vertex absxSig = Vertex.builder()
+				.withIdentifier("absxsig")
+				.withType(new Signal())
+				.withPorts(Set.of(
+						Port.builder().withIdentifier("fifoIn").withType(new Description()).build(),
+						Port.builder().withIdentifier("fifoOut").withType(new Description()).build()
+						))
+				.build();
+		model.addVertex(absxSig);
+		Vertex absySig = Vertex.builder()
+				.withIdentifier("absysig")
+				.withType(new Signal())
+				.withPorts(Set.of(
+						Port.builder().withIdentifier("fifoIn").withType(new Description()).build(),
+						Port.builder().withIdentifier("fifoOut").withType(new Description()).build()
+						))
+				.build();
+		model.addVertex(absySig);
 		
-//		Signal gx = new Signal("GxInput");
-//		Signal gy = new Signal("GyInput");
-//		Signal absx = new Signal("AbsXInput");
-//		Signal absy = new Signal("AbsYInput");
-//		
-//		Writes getPxTogx = new Writes("px-gxsig");
-//		getPxTogx.fromVertex = getPx;
-//		getPxTogx.toVertex = gx;
-//		getPxTogx.fromPort = "gx";
-//		getPxTogx.toPort = "fifo-in";
-//		Writes getPxTogy = new Writes("px-gysig");
-//		getPxTogy.fromVertex = getPx;
-//		getPxTogy.toVertex = gy;
-//		getPxTogy.fromPort = "gy";
-//		getPxTogy.toPort = "fifo-in";
-//		Reads gxtoGx = new Reads("gxsig-gx");
-//		gxtoGx.fromVertex = gx;
-//		gxtoGx.toVertex = Gx;
-//		gxtoGx.fromPort = "fifo-out";
-//		gxtoGx.toPort = "gx";
-//		Reads gyToGy = new Reads("gysig-gy");
-//		gyToGy.fromVertex = gy;
-//		gyToGy.toVertex = Gy;
-//		gyToGy.fromPort = "fifo-out";
-//		gyToGy.toPort = "gy";
-//		Writes gxToabsx = new Writes("gx-absx");
-//		gxToabsx.fromVertex = Gx;
-//		gxToabsx.toVertex = absx;
-//		gxToabsx.fromPort = "resx";
-//		gxToabsx.toPort = "fifo-in";
-//		Writes gyToabsy = new Writes("gy-absy");
-//		gyToabsy.fromVertex = Gy;
-//		gyToabsy.toVertex = absy;
-//		gyToabsy.fromPort = "resy";
-//		gyToabsy.toPort = "fifo-in";
-//		Reads absxToAbs = new Reads("absx-abs");
-//		absxToAbs.fromVertex = absx;
-//		absxToAbs.toVertex = Abs;
-//		absxToAbs.fromPort = "fifo-out";
-//		absxToAbs.toPort = "resx";
-//		Reads absyToAbs = new Reads("absy-abs");
-//		absyToAbs.fromVertex = absy;
-//		absyToAbs.toVertex = Abs;
-//		absyToAbs.fromPort = "fifo-out";
-//		absyToAbs.toPort = "resy";
-//		
-//		
-//		CompoundProcess sobel = new CompoundProcess("sobel");
-//		sobel.vertexes = List.of(
-//				getPxCons, 
-//				GxCons,
-//				GyCons,
-//				AbsCons,
-//				getPx,
-//				Gx,
-//				Gy,
-//				Abs,
-//				gx,
-//				gy,
-//				absx,
-//				absy
-//				);
-//		sobel.edges = List.of(
-//				getPxEdge,
-//				GxEdge,
-//				GyEdge,
-//				AbsEdge,
-//				getPxTogx,
-//				getPxTogy,
-//				gxtoGx,
-//				gyToGy,
-//				gxToabsx,
-//				gyToabsy,
-//				absxToAbs,
-//				absyToAbs
-//				);
-//		
-//		ForSyDeIO model = new ForSyDeIO();
-//		model.vertexes = List.of(
-//				sobel
-//				);
-//		
-//		XmlMapper xmlMapper = XmlMapper.builder()
-//				.defaultUseWrapper(false)
-//				.configure(SerializationFeature.WRAP_ROOT_VALUE, false)
-//				.configure(SerializationFeature.INDENT_OUTPUT, true)
-//				.addModule(new JaxbAnnotationModule())
-//				.build();
-//		xmlMapper.writeValue(new File("sobelCaseTest.xml"), model);
+		Edge getPxTogx = Edge.builder()
+				.withSourceNodeId(getPx.identifier)
+				.withTargetNodeId(gxSig.identifier)
+				.withSourceNodePortId(Optional.of("gx"))
+				.withTargetNodePortId(Optional.of("fifoIn"))
+				.withType(new Writes())
+				.build();
+		model.addEdge(getPx, gxSig, getPxTogx);
+		Edge getPxTogy = Edge.builder()
+				.withSourceNodeId(getPx.identifier)
+				.withTargetNodeId(gySig.identifier)
+				.withSourceNodePortId(Optional.of("gx"))
+				.withTargetNodePortId(Optional.of("fifoIn"))
+				.withType(new Writes())
+				.build();
+		model.addEdge(getPx, gySig, getPxTogy);
+		Edge gxtoGx = Edge.builder()
+				.withSourceNodeId(gxSig.identifier)
+				.withTargetNodeId(Gx.identifier)
+				.withSourceNodePortId(Optional.of("fifoOut"))
+				.withTargetNodePortId(Optional.of("gx"))
+				.withType(new Reads())
+				.build();
+		model.addEdge(gxSig, Gx, gxtoGx);
+		Edge gyToGy = Edge.builder()
+				.withSourceNodeId(gySig.identifier)
+				.withTargetNodeId(Gy.identifier)
+				.withSourceNodePortId(Optional.of("fifoOut"))
+				.withTargetNodePortId(Optional.of("gy"))
+				.withType(new Reads())
+				.build();
+		model.addEdge(gySig, Gy, gyToGy);
+		Edge gxToabsx = Edge.builder()
+				.withSourceNodeId(Gx.identifier)
+				.withTargetNodeId(absxSig.identifier)
+				.withSourceNodePortId(Optional.of("resx"))
+				.withTargetNodePortId(Optional.of("fifoIn"))
+				.withType(new Writes())
+				.build();
+		model.addEdge(Gx, absxSig, gxToabsx);
+		Edge gyToabsy = Edge.builder()
+				.withSourceNodeId(Gy.identifier)
+				.withTargetNodeId(absySig.identifier)
+				.withSourceNodePortId(Optional.of("resy"))
+				.withTargetNodePortId(Optional.of("fifoIn"))
+				.withType(new Writes())
+				.build();
+		model.addEdge(Gy, absySig, gyToabsy);
+		Edge absxToAbs = Edge.builder()
+				.withSourceNodeId(absxSig.identifier)
+				.withTargetNodeId(Abs.identifier)
+				.withSourceNodePortId(Optional.of("fifoOut"))
+				.withTargetNodePortId(Optional.of("resx"))
+				.withType(new Reads())
+				.build();
+		model.addEdge(absxSig, Abs, absxToAbs);
+		Edge absyToAbs = Edge.builder()
+				.withSourceNodeId(absySig.identifier)
+				.withTargetNodeId(Abs.identifier)
+				.withSourceNodePortId(Optional.of("fifoOut"))
+				.withTargetNodePortId(Optional.of("resy"))
+				.withType(new Reads())
+				.build();
+		model.addEdge(absySig, Abs, absyToAbs);
+
+		Vertex sobel = Vertex.builder()
+				.withIdentifier("sobel")
+				.withType(new Process())
+				.withPorts(Set.of(
+						
+						))
+				.build();
+		model.addVertex(sobel);
+
 		
 		ForSyDeModelWriter writer = new ForSyDeModelWriter();
 		writer.write(model, "sobelTestCase.pro");
