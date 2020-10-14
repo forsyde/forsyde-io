@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import forsyde.io.generators.java.ClassToJava;
 import forsyde.io.generators.java.ClassToJavaXMISerializer;
 import forsyde.io.generators.java.EnumToJava;
+import forsyde.io.generators.java.TypesToJava;
 import forsyde.io.generators.utils.Packages;
 
 public class JavaGenerator {
@@ -33,12 +34,11 @@ public class JavaGenerator {
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
 			.put("ecore", new EcoreResourceFactoryImpl());
 		
-		Resource fecore = resourceSet.getResource(URI.createFileURI("ecore/forsyde.ecore"), true);
+		Resource fecore = resourceSet.getResource(URI.createFileURI("ecore/types.ecore"), true);
 		
 		EPackage ForSyDe = (EPackage) fecore.getContents().get(0);
 		
-		final String packageRoot = "packages-out/java-io/src/main/java";
-		String ioPath = null;
+		final String packageRoot = "java-io/src/main/java/forsyde/io/java";
 		
 		// the main reason to use this sort of iteration instead of the 'forEach' is that I wanted
 		// to add the throws declaration in the generate signature
@@ -46,17 +46,14 @@ public class JavaGenerator {
 			EObject elem = iterator.next();
 			if (elem instanceof EClass) {
 				EClass cls = (EClass) elem;
-				final CharSequence produced = ClassToJava.toText(cls);
+				final CharSequence produced = TypesToJava.toText(cls);
 				// System.out.println(produced);
 				final String filePath = Packages.getPackageSequence(cls.getEPackage()).stream()
-						.map(p -> p.getName())
+						.map(p -> p.getName().toLowerCase())
 						.reduce((s1, s2) -> s1 + '/' + s2)
 						.orElseThrow();
 				final Path fileDir = Paths.get(packageRoot, filePath);
 				final Path fileTotal = Paths.get(packageRoot, filePath, cls.getName() + ".java");
-				if (cls.getName().equals("ForSyDeIO")) {
-					ioPath = filePath;
-				}
 				Files.createDirectories(fileDir);
 				Files.writeString(fileTotal, produced);
 			} else if (elem instanceof EEnum) {
@@ -64,12 +61,12 @@ public class JavaGenerator {
 				final CharSequence produced = EnumToJava.toText(enu);
 				// System.out.println(produced);
 				final String filePath = Packages.getPackageSequence(enu.getEPackage()).stream()
-						.map(p -> p.getName())
+						.map(p -> p.getName().toLowerCase())
 						.reduce((s1, s2) -> s1 + '/' + s2)
 						.orElseThrow();
 				final Path fileDir = Paths.get(packageRoot, filePath);
 				final Path fileTotal = Paths.get(packageRoot, filePath, enu.getName() + ".java");
-				
+				Files.createDirectories(fileDir);
 				Files.writeString(fileTotal, produced);
 			}
 		}
