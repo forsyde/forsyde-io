@@ -1,36 +1,56 @@
 # ForSyDe IO
 
-This repository holds the graph model view of ForSyDe,
-specially the definition of the exchange formats that
-comply to this view so that supporting libraries
-can be generated for different programming languages.
+This repository contains information about the format used to persist and manipulate
+a ForSyDe model that can be implemented and consumed in different languages.
+It also contains (generated) supporting libraries that can serve as a stub for such
+implementations.
 
-In a sense, this is a "meta-model" for ForSyDe system models.
-The meta-model itself should be _as flat as possible_  due to:
- 1) its graph foundation: different classes should really mean different _kinds_ of elements,
- 2) its paradigm portability: OOP supports lots of hierarchies, but FP is stricter and supports
-    better flat and disjoint types.
+## Model overview
 
-## Formats
+A ForSyDe model is given as a _typed-port-pseudo-property-graph_. This means that:
 
-These formats are defined in a way that the libraries generated from `forsyde-io`
-can depend on already made tools, for each programming language targeted, as much
-as possible. For example, trying to generate XML that is complaint to `jackson` xml.
+  1) every vertex can connect to itself (the _pseudo_). This enables us to properly describe dataflow models with
+    feedback.
+  2) every vertex can have an arbitrary number of properties attached to it (the _property_). These properties can
+    mostly be anything and describe extra information that is particular to every vertex.
+  3) every vertex has a set of ports and every edge can optionally connect two ports (the _port_ part). This helps
+    to allieve any amibiguities when process are being constructed out of functions as the inputs and outputs can
+    be properly connected during the final artifact generation. 
+  4) every vertex, edge and port has an associated "type". This helps to define semantic on top of the graph
+    as relationships and be defined over the types. Furthermore, these "types" can be considered contractual, which
+    enables tranformations of the model via graph+type matching.
 
-### XML
+Diagramatically, this can be seen as:
+          _________________________________________________
+    ---->|T (type)                                         |------>
+    ---->|{prop1 : tprop1 ,prop2 : tprop2 ,...} properties |------>
+         |{port1: tport1, ...} ports                       |
+    ---->|_________________________________________________|------>
+          
 
-1. The name of the tag _is_ the type of the object whenever the data is not a reference.
-   For example, the XML would start as,
+    vertex1 : type1 (port1 : tport1) ------------------------> vertex2 : type2 (port2 : tport2)
+                                            edge : T
 
-        <ForSyDeIO revision="..."...>
-          <contents ...>
-          ...
-          <ConstructProcess identifier="greatProcess" ...>
-          <ConstructProcess/>
-          ...
-        <ForSyDeIO/>
+## Exchange format
 
-    Otherwise, the tag refers to the property inside the class and references another object.
+The ideal format captures easily this model and can be described in a single textual file so
+that it can be easily be ported anywhere. After experimenting with XML, JSON and other custom formats,
+the decision was made to represent the model directly in Datalog/Prolog format as follows.
+
+    vertex(vertexName, vertexType).
+    ...
+    prop(propName, vertexName, propVal, propType).
+    ...
+    port(portName, vertexName, protType).
+    ...
+    edge(sourceVertexName, targetVertexName, sPortName, tPortName, edgeType).
+    ...
+
+Which can be easily parsed in most languages or directly consumed by prolog/datalog engines. The latter
+whom are intended to be the main deduction and database framework for working with these models.
+
+The types are currently defined in an `ecore` file that hopefully enable easy generation of these types
+in all major targeted langauges: Haskell, Java, C/C++, Prolog/Datalog.
 
 ## Guidelines
 
@@ -38,16 +58,3 @@ as possible. For example, trying to generate XML that is complaint to `jackson` 
      - if `x` goes up, it means that _major_ scientific concepts have been implemented. Therefore, backwards compatibility is likely jeopardized.
      - if `y` goes up, it means that _minor_ scientific concepts have been implemented. Therefore, backwards compatibility is partially assured and requires investigation.
      - if `z` goes up, it means that _no_ scientific concepts have been implemented, but only facilities for the end user/designer. Therefore, backwards compatibility should be maintained.
-
-<!--- Comments
-
-As component models are quite easy to be translated to the object-oriented paradigm, one of the main sources for what can be found in a ForSyDe model is the ECore model, that can be read and modified however you like as long as you don't use any specific OOP concepts like abstract classes, interfaces etc. Consider the components as simple information structures that have a precise and unambigous meaning once you read them.
-
-The prefeered way to interface different parts of a flow based on ForSyDe models is to parse and dump the models
-described here. For that, there is a "flat" representation that is nearly just text-based and, as the name implies,
-flat. Since the model is basically a graph, this is easily done. There is also a XMI representation of the model, which
-is intended to be used to dialog with external users of the ForSyDe domain who usually prefers Eclipse or XML based
-representations. Otherwise, stick to the "flat" ForSyDe-IO. Also, once a proper front-end exists for the tooling
-ecosystem, the "flat" representation shall be default choice for generation and interaction between different
-tools.
---->
