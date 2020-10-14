@@ -21,6 +21,7 @@ A ForSyDe model is given as a _typed-port-pseudo-property-graph_. This means tha
     enables tranformations of the model via graph+type matching.
 
 Diagramatically, this can be seen as:
+
           _________________________________________________
     ---->|T (type)                                         |------>
     ---->|{prop1 : tprop1 ,prop2 : tprop2 ,...} properties |------>
