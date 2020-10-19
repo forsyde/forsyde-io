@@ -90,11 +90,13 @@ task replaceJavaIOVersion() {
 	} 
 }
 
+/*
 task replacePythonIOVersion {
 	def replaced = file('./python-io/setup.py').text.replaceFirst(/version='.+'/, "version='${version}'")
 	file('./python-io/setup.py').text = replaced
 }
+*/
 
 tasks.run.dependsOn replaceEcoreIOVersion
 tasks.run.dependsOn replaceJavaIOVersion
-tasks.run.dependsOn replacePythonIOVersion
+// tasks.run.dependsOn replacePythonIOVersion
