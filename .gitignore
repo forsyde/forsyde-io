@@ -368,3 +368,4 @@ gradle-app.setting
 # dont add the generated types to the repo
 python-io/forsyde/io/python/types
 java-io/src/main/java/forsyde/io/java/types
+haskell-io/src/ForSyDe/IO/Haskell/Types*

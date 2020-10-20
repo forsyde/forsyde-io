@@ -1,4 +1,4 @@
-package forsyde.io.generators.haskell
+package forsyde.io.generators.haskell.types
 
 import java.util.ArrayList
 import java.util.List
@@ -8,30 +8,36 @@ import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EPackage
 
-class PackageToHaskell {
+class TypePackageToHaskell {
 	
 	static def toText(EPackage pac)
 	'''
-	module «pac.packageSequence.map[name].join('.')» where (
-	  «pac.exports.map[name].join(',\n')»
-	) where
-	
-	«FOR i : pac.necessaryImports»
-	import «i.packageSequence.map[name].join('.')»
-	«ENDFOR»
-	
-	«FOR t : pac.dataTypes»
-	type «t.name» = «t.instanceTypeName»
-	«ENDFOR»
-	
-	«FOR e : pac.enums»
-	«EnumToHaskell.toText(e)»
-	«ENDFOR»
-	
-	«FOR c : pac.classes»
-	«ClassToHaskell.toText(c)»
-	«ENDFOR»
+		module «pac.packageSequence.map[name].join('.')» where (
+		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ','»
+	    «''»	«cls.name»«IF cls.EAllAttributes.length > 0»,«ENDIF»
+	    «FOR att : cls.EAllAttributes SEPARATOR ','»
+	    «''»    get«cls.name»«att.name.toFirstUpper»
+		«ENDFOR»
+	  	«ENDFOR»
+		) where
+		
+		data Type = Unknown |
+		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+		«''»    «cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' ' AFTER ' '»«att.EType.name»«ENDFOR»|
+		«ENDFOR»
+		
+		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+		«FOR att : cls.EAllAttributes»
+		get«cls.name»«att.name.toFirstUpper» :: Type -> «att.EType.name»
+		get«cls.name»«att.name.toFirstUpper» «filterClassAttrToPattern(cls, att.name)» = «att.name»
+		get«cls.name»«att.name.toFirstUpper» _ = error "Type element has no attribute '«att.name»'"
+		
+		«ENDFOR»
+		«ENDFOR»
 	'''
+	
+	static def filterClassAttrToPattern(EClass cls, String name)
+	'''(«cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' '»«IF att.name == name»«att.name»«ELSE»_«ENDIF»«ENDFOR»)'''
 	
 	static def Iterable<EClassifier> getExports(EPackage pac) {
 		return pac.classes + pac.dataTypes
