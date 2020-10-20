@@ -1,4 +1,0 @@
-[submodule "haskell-io"]
-	path = haskell-io
-	url = git@gitr.sys.kth.se:jordao/forsyde-io-haskell.git
-  branch = master
