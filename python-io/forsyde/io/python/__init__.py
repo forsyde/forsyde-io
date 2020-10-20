@@ -1,88 +1,104 @@
+import re
+
 import networkx as nx
 
-class Type:
-
-    """This class represents any type defined in the 'type' hierarchy."""
-
-    def __init__(self, identifier=None):
-        """TODO: to be defined.
-
-        :identifier: TODO
-
-        """
-        self.identifier = identifier
-
-    def get_type_name(self):
-        raise NotImplemented("Interface `Type`.`get_type_name` invoked directly. It must be overridden.")
-
-
-class Vertex(object):
-
-    """Docstring for Vertex. """
-
-    def __init__(self, 
-                 identifier, 
-                 ports = set(),
-                 properties = dict(),
-                 vertex_type=Type()
-                 ):
-        """TODO: to be defined.
-
-        :identifier: TODO
-        :vertex_type: TODO
-
-        """
-        self.identifier = identifier
-        self.ports = ports
-        self.properties = properties
-        self.vertex_type = vertex_type
-
-    def __hash__(self):
-        return hash(self.identifier)
-
-    def __eq__(self, other):
-        return self.identifier == other.identifier
-
-class Edge(object):
-
-    """Docstring for Edge. """
-
-    def __init__(self,
-                 source_vertex,
-                 target_vertex,
-                 source_vertex_port,
-                 target_vertex_port,
-                 edge_type=Type()
-                 ):
-        """TODO: to be defined.
-
-        :source_vertex: TODO
-        :target_vertex: TODO
-        :source_vertex_port: TODO
-        :target_vertex_port: TODO
-        :edge_type: TODO
-
-        """
-        self.source_vertex = source_vertex
-        self.target_vertex = target_vertex
-        self.source_vertex_port = source_vertex_port
-        self.target_vertex_port = target_vertex_port
-        self.edge_type = edge_type
-
-    def __eq__(self, other):
-        return (self.source_vertex == other.source_vertex and
-                self.target_vertex == other.target_vertex and
-                (self.source_vertex_port and other.source_vertex_port or
-                 self.source_vertex_port == other.source_vertex_port) and
-                (self.target_vertex_port and other.target_vertex_port or 
-                 self.target_vertex_port == other.target_vertex_port) and
-                self.edge_type == other.edge_type)
+import forsyde.io.python.core as core
+import forsyde.io.python.types as types
 
 class ForSyDeModel(nx.MultiDiGraph):
 
     """Docstring for ForSyDeModel. """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """TODO: to be defined. """
-        nx.MultiDiGraph.__init__(self)
+        nx.MultiDiGraph.__init__(self, *args, **kwargs)
 
+    def write(self, sink: str) -> None:
+        with open(sink, 'w') as sink_file:
+            for (vid, vertex) in self.nodes("data"):
+                sink_file.write("vertex('{0}', '{1}').\n".format(
+                    vertex.identifier, 
+                    vertex.vertex_type.get_type_name()
+                ))
+            # these loops need to be separated so that prolog consider the exchange
+            # file a valid prolog databse.
+            for (vid, vertex) in self.nodes("data"):
+                for port in vertex.ports:
+                    sink_file.write("port('{0}', '{1}', '{2}').\n".format(
+                        port.identifier,
+                        vertex.identifier, 
+                        port.port_type.get_type_name()
+                    ))
+            for (sid, tid, edge) in self.edges.data("data"):
+                sink_file.write("edge('{0}', '{1}', '{2}', '{3}', '{4}').\n".format(
+                    edge.source_vertex_id,
+                    edge.target_vertex_id,
+                    edge.source_vertex_port_id or '',
+                    edge.target_vertex_port_id or '',
+                    edge.edge_type.get_type_name()
+                ))
+
+
+    def read(self, source: str) -> None:
+        vertex_pattern = re.compile("vertex\('(\S+)', '(\S+)'\)\.")
+        port_pattern = re.compile("port\('(\S+)', '(\S+)', '(\S+)'\)\.")
+        edge_pattern = re.compile("edge\('(\S+)', '(\S+)', '(\S+)', '(\S+)', '(\S+)'\)\.")
+        with open(source, 'r') as source_file:
+            vertex_dict = dict()
+            for linenum, line in enumerate(source_file):
+                if line.startswith("%") or line == "\n":
+                    pass
+                elif line.startswith('vertex'):
+                    [(vertex_id, vertex_type_name)] = vertex_pattern.findall(line)
+                    vertex_type = types.TypesFactory.build_type(vertex_type_name)
+                    vertex_dict[vertex_id] = core.Vertex(
+                        identifier = vertex_id,
+                        vertex_type = vertex_type
+                    )
+                    self.add_node(vertex_id, data = vertex_dict[vertex_id])
+                elif line.startswith('port'):
+                    # the variables name are shortened to save space
+                    # but they follow the same logic as the ones for
+                    # vertexes.
+                    [(p_id, p_vid, p_tname)] = port_pattern.findall(line)
+                    port_type = types.TypesFactory.build_type(p_tname)
+                    port = core.Port(
+                                identifier = p_id,
+                                port_type = port_type
+                            )
+                    vertex_dict[p_vid].ports.add(port)
+                elif line.startswith('edge'):
+                    # the variables name are shortened to save space
+                    # but they follow the same logic as the ones for
+                    # vertexes.
+                    [(e_sid, e_tid, e_spid, e_tpid, e_tname)] = edge_pattern.findall(line)
+                    edge_type = types.TypesFactory.build_type(e_tname)
+                    edge = core.Edge(
+                        source_vertex_id = e_sid,
+                        target_vertex_id = e_tid,
+                        edge_type = edge_type
+                    )
+                    if e_spid:
+                        edge.source_vertex_port_id = e_spid
+                    if e_tpid:
+                        edge.target_vertex_port_id = e_tpid
+                    self.add_edge(e_sid, e_tid, data=edge)
+                else:
+                    raise NotImplementedError(
+                        "Syntax error in the ForSyDe-IO Model at line {0}:\n {1}".format(
+                            linenum,
+                            line
+                        )
+                    )
+
+    @classmethod
+    def from_file(cls, source: str) -> "ForSyDeModel":
+        """TODO: Docstring for read.
+
+        :source: TODO
+        :returns: TODO
+
+        """
+        new_instance = ForSyDeModel()
+        new_instance.read(source)
+        return new_instance

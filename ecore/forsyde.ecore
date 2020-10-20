@@ -136,7 +136,7 @@
     <eSubpackages name="IO" nsURI="https://forsyde.github.io/ForSyDe/IO" nsPrefix="ForSyDe.Model.IO">
       <eClassifiers xsi:type="ecore:EClass" name="ForSyDeIO">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="version" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
-            defaultValueLiteral="&quot;0.5.0&quot;"/>
+            defaultValueLiteral="&quot;0.5.1&quot;"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="tables" upperBound="-1"
             eType="#//Model/Core/Table" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="vertexes" upperBound="-1"
