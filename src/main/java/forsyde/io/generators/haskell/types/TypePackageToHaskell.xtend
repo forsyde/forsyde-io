@@ -12,23 +12,28 @@ class TypePackageToHaskell {
 	
 	static def toText(EPackage pac)
 	'''
-		module «pac.packageSequence.map[name].join('.')» where (
-		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ','»
-	    «''»	«cls.name»«IF cls.EAllAttributes.length > 0»,«ENDIF»
-	    «FOR att : cls.EAllAttributes SEPARATOR ','»
-	    «''»    get«cls.name»«att.name.toFirstUpper»
-		«ENDFOR»
-	  	«ENDFOR»
-		) where
+		module ForSyDe.IO.Haskell.«pac.packageSequence.map[name].join('.')»
+		  (
+		    Type (
+		    «FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ','»
+    	    «''»      «cls.name»
+    	  	«ENDFOR»
+		    )
+			«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+		    «FOR att : cls.EAllAttributes SEPARATOR ','»
+		    «''»    get«cls.name»«att.name.toFirstUpper»
+			«ENDFOR»
+		  	«ENDFOR»
+		  ) where
 		
 		data Type = Unknown |
-		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-		«''»    «cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' ' AFTER ' '»«att.EType.name»«ENDFOR»|
+		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ' |'»
+		«''»    «cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' ' AFTER ' '»«haskellizeType(att.EType.name)»«ENDFOR»
 		«ENDFOR»
 		
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
 		«FOR att : cls.EAllAttributes»
-		get«cls.name»«att.name.toFirstUpper» :: Type -> «att.EType.name»
+		get«cls.name»«att.name.toFirstUpper» :: Type -> «haskellizeType(att.EType.name)»
 		get«cls.name»«att.name.toFirstUpper» «filterClassAttrToPattern(cls, att.name)» = «att.name»
 		get«cls.name»«att.name.toFirstUpper» _ = error "Type element has no attribute '«att.name»'"
 		
@@ -41,6 +46,13 @@ class TypePackageToHaskell {
 	
 	static def Iterable<EClassifier> getExports(EPackage pac) {
 		return pac.classes + pac.dataTypes
+	}
+	
+	static def String haskellizeType(String typeName) {
+		switch (typeName) {
+			case "Boolean": return "Bool"
+			default: return typeName
+		}
 	}
 	
 	static def Iterable<EPackage> necessaryImports(EPackage pac) {

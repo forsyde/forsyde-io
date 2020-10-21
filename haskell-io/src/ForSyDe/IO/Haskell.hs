@@ -1,8 +1,10 @@
-module Haskell (
+module ForSyDe.IO.Haskell (
   Port,
   Vertex,
   Edge
 ) where
+
+import qualified Data.HashSet as HashSet
 
 import ForSyDe.IO.Haskell.Types (Type)
 
