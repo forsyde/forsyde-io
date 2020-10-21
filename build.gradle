@@ -83,6 +83,15 @@ task replacePythonIOVersion {
 	file('./python-io/setup.py').text = replaced
 }
 
+task replaceHaskellIOVersion {
+	def pattern = ~/version:(\s*)(.+)/
+	def match = file('./haskell-io/package.yaml').text =~ pattern 
+	def spaces = match[0][1]
+	def replaced = file('./haskell-io/package.yaml').text.replaceFirst(pattern, "version:${spaces}${version}")
+	file('./haskell-io/package.yaml').text = replaced
+}
+
 tasks.run.dependsOn replaceEcoreIOVersion
 tasks.run.dependsOn replaceJavaIOVersion
 tasks.run.dependsOn replacePythonIOVersion
+tasks.run.dependsOn replaceHaskellIOVersion
