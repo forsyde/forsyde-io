@@ -1,35 +1,35 @@
-package forsyde.io.generators.haskell
+package forsyde.io.generators.haskell.types
 
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EStructuralFeature
 
-class ClassToHaskell {
+class TypeClassToHaskell {
 	
 	static def toText(EClass cls) {
 		switch cls {
 			
 			case cls.hasSubclasses :
 			'''
-			class «cls.name» where
-			  «cls.featuresNames»
-			  
+				class «cls.name» where
+				  «cls.featuresNames»
+				  
 			'''
 			 
 			default :
 			'''
-			data «cls.name» = «cls.name» {
-			  «cls.featuresNames»
-			}
-			
-			«FOR p : cls.ESuperTypes»
-			instance «p.name» «cls.name» where
-			  «FOR e : p.EStructuralFeatures»
-			  «e.name» = _«cls.name»_«e.name»
-			  «ENDFOR»
-			«ENDFOR»
-			
+				data «cls.name» = «cls.name» {
+				  «cls.featuresNames»
+				}
+				
+				«FOR p : cls.ESuperTypes»
+					instance «p.name» «cls.name» where
+					  «FOR e : p.EStructuralFeatures»
+					  	«e.name» = _«cls.name»_«e.name»
+					  «ENDFOR»
+				«ENDFOR»
+				
 			'''
 		}
 	}

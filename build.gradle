@@ -73,8 +73,8 @@ task replaceEcoreIOVersion {
 }
 
 task replaceJavaIOVersion() {
-	def replaced = file('./packages-out/java-io/build.gradle').text.replaceFirst(/version = '.+'/, "version = '${version}'")
-	file('./packages-out/java-io/build.gradle').text = replaced
+	def replaced = file('./java-io/build.gradle').text.replaceFirst(/version = '.+'/, "version = '${version}'")
+	file('./java-io/build.gradle').text = replaced
 }
 
 
