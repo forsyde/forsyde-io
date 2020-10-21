@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EPackage
+import org.eclipse.emf.ecore.EAttribute
 
 class TypePackageToHaskell {
 	
@@ -18,18 +19,18 @@ class TypePackageToHaskell {
 		    «FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ','»
     	    «''»      «cls.name»
     	  	«ENDFOR»
-		    )
-			«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-		    «FOR att : cls.EAllAttributes SEPARATOR ','»
-		    «''»    get«cls.name»«att.name.toFirstUpper»
-			«ENDFOR»
+		    )«IF pac.eAllContents.exists[e | e instanceof EAttribute]»,«ENDIF»
+			«FOR att : pac.eAllContents.filter[e | e instanceof EClass]
+				.flatMap[e | (e as EClass).EAllAttributes.iterator].toSet SEPARATOR ','»
+		    «''»    get«att.EContainingClass.name»«att.name.toFirstUpper»
 		  	«ENDFOR»
 		  ) where
 		
 		data Type = Unknown |
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ' |'»
-		«''»    «cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' ' AFTER ' '»«haskellizeType(att.EType.name)»«ENDFOR»
+		«''»  «cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' ' AFTER ' '»«haskellizeType(att.EType.name)»«ENDFOR»
 		«ENDFOR»
+		  deriving (Show, Eq)
 		
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
 		«FOR att : cls.EAllAttributes»
