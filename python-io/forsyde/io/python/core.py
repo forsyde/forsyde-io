@@ -18,7 +18,7 @@ class Port(object):
 
     def __init__(self, 
                  identifier: str, 
-                 port_type = Type()
+                 port_type: Type = Type()
                  ):
         """TODO: to be defined.
 
@@ -41,10 +41,10 @@ class Vertex(object):
     """Docstring for Vertex. """
 
     def __init__(self, 
-                 identifier, 
-                 ports: Optional[Set[Port]] = None,
-                 properties: Optional[Set[Any]] = None,
-                 vertex_type=Type()
+                 identifier: str, 
+                 ports: Set[Port] = set(),
+                 properties: Set[Any] = set(),
+                 vertex_type: Type = Type()
                  ):
         """TODO: to be defined.
 
@@ -53,10 +53,14 @@ class Vertex(object):
 
         """
         self.identifier = identifier
-        if not ports:
+        # due to the class initialization in python, recreating the
+        # set is necessary to make it instance specific and not
+        # a class global
+        if len(ports) == 0:
             ports = set()
         self.ports = ports
-        if not properties:
+        # see above.
+        if len(properties) == 0:
             properties = set()
         self.properties = properties
         self.vertex_type = vertex_type
