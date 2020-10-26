@@ -19,11 +19,12 @@ class TypePackageToHaskell {
 		    «FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ','»
     	    «''»      «cls.name»
     	  	«ENDFOR»
-		    )«IF pac.eAllContents.exists[e | e instanceof EAttribute]»,«ENDIF»
-			«FOR att : pac.eAllContents.filter[e | e instanceof EClass]
-				.flatMap[e | (e as EClass).EAllAttributes.iterator].toSet SEPARATOR ','»
-		    «''»    get«att.EContainingClass.name»«att.name.toFirstUpper»
-		  	«ENDFOR»
+		    ),
+            «IF pac.eAllContents.exists[e | e instanceof EAttribute]»
+		«''»    getTypeProperty,
+		    setTypeProperty,
+            «ENDIF»
+		    typeFromName
 		  ) where
 		
 		data Type = Unknown |
@@ -32,18 +33,43 @@ class TypePackageToHaskell {
 		«ENDFOR»
 		  deriving (Show, Eq)
 		
+		getTypeProperty :: Type -> String -> a
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-		«FOR att : cls.EAllAttributes»
-		get«cls.name»«att.name.toFirstUpper» :: Type -> «haskellizeType(att.EType.name)»
-		get«cls.name»«att.name.toFirstUpper» «filterClassAttrToPattern(cls, att.name)» = «att.name»
-		get«cls.name»«att.name.toFirstUpper» _ = error "Type element has no attribute '«att.name»'"
-		
+		«FOR att : cls.EAllAttributes» 
+		getTypeProperty «classAttrToMatchPattern(cls, att.name)» "«att.name»" = «att.name» :: «haskellizeType(att.EAttributeType.name)» 
 		«ENDFOR»
+		getTypeProperty «classAttrToMatchPattern(cls, "")» att = error $ "Type '«cls.name»' has no property " ++ att
+		«ENDFOR»
+		
+		«IF pac.eAllContents.filter[e | e instanceof EAttribute].empty == false»
+		setTypeProperty :: Type -> String -> a -> Type
+		«ENDIF»
+		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].filter[!EAllAttributes.empty].toSet»
+		«FOR att : cls.EAllAttributes» 
+		setTypeProperty «classAttrToSetPattern(cls, att.name)» "«att.name»" «att.name» = «classAttrToSetPattern(cls, "")»
+		«ENDFOR»
+		setTypeProperty «classAttrToSetPattern(cls, "")» att _ = error $ "Type '«cls.name»' has no property " ++ att
+		«ENDFOR»
+		
+«««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+«««		«FOR att : cls.EAllAttributes»
+«««		get«cls.name»«att.name.toFirstUpper» :: Type -> «haskellizeType(att.EType.name)»
+«««		get«cls.name»«att.name.toFirstUpper» «filterClassAttrToPattern(cls, att.name)» = «att.name»
+«««		get«cls.name»«att.name.toFirstUpper» _ = error "Type element has no attribute '«att.name»'"
+		
+«««		«ENDFOR»
+«««		«ENDFOR»
+		typeFromName :: String -> Type
+		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+		typeFromName "«cls.name»" = «cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' ' AFTER ' '»«haskellizeValue(att.defaultValueLiteral)»«ENDFOR»
 		«ENDFOR»
 	'''
 	
-	static def filterClassAttrToPattern(EClass cls, String name)
+	static def classAttrToMatchPattern(EClass cls, String name)
 	'''(«cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' '»«IF att.name == name»«att.name»«ELSE»_«ENDIF»«ENDFOR»)'''
+	
+	static def classAttrToSetPattern(EClass cls, String name)
+	'''(«cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' '»«IF att.name != name»«att.name»«ELSE»_«ENDIF»«ENDFOR»)'''
 	
 	static def Iterable<EClassifier> getExports(EPackage pac) {
 		return pac.classes + pac.dataTypes
@@ -53,6 +79,14 @@ class TypePackageToHaskell {
 		switch (typeName) {
 			case "Boolean": return "Bool"
 			default: return typeName
+		}
+	}
+	
+	static def String haskellizeValue(String value) {
+		switch (value) {
+			case "false": return "False"
+			case "true": return "True"
+			default: return value
 		}
 	}
 	

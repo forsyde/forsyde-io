@@ -1,14 +1,23 @@
+{-# LANGUAGE OverloadedStrings #-}
 module ForSyDe.IO.Haskell (
   Port,
   Property,
   Vertex,
-  Edge
+  Edge,
+  ForSyDeModel
 ) where
 
-import Data.Hashable
-import qualified Data.HashSet as HashSet
+-- Base libraries
+import Data.List
 
-import ForSyDe.IO.Haskell.Types (Type)
+-- External libraries
+import Text.Regex.Base
+import Text.Regex.TDFA
+import Data.Hashable
+import qualified Data.HashMap as HashMap
+
+-- Internal libraries
+import ForSyDe.IO.Haskell.Types (Type, typeFromName)
 
 data Port idType = Port { portIdentifier :: idType
                         , portType :: Type
@@ -20,8 +29,8 @@ instance (Hashable idType) => Hashable (Port idType) where
 data Property = Property {} deriving (Show, Eq)
 
 data Vertex idType = Vertex { vertexIdentifier :: idType
-                            , vertexPorts :: HashSet.HashSet (Port idType)
-                            , vertexProperties :: HashSet.HashSet (Property)
+                            , vertexPorts :: HashMap.HashMap idType (Port idType)
+                            , vertexProperties :: HashMap.HashMap idType (Property)
                             , vertexType :: Type
                             } deriving (Show, Eq)
 
@@ -39,16 +48,19 @@ instance (Hashable vIdType, Hashable pIdType) => Hashable (Edge vIdType pIdType)
   hashWithSalt salt (Edge sId tId _ _ _) = 
     hashWithSalt salt sId + hashWithSalt salt tId
 
-data ForSyDeModel idType = ForSyDeModel { vertexes :: HashSet.HashSet (Vertex idType)
-                                        , edges :: HashSet.HashSet (Edge idType idType)
+data ForSyDeModel idType = ForSyDeModel { vertexes :: HashMap.HashMap idTtype (Vertex idType)
+                                        , edges :: HashMap.HashMap idType (Edge idType idType)
                                         } deriving (Show, Eq)
+
+emptyForSyDeModel :: ForSyDeModel idType
+emptyForSyDeModel = ForSyDeModel HashMap.empty HashMap.empty
 
 forSyDeModelAddNode :: (Eq idType, Hashable idType) => 
   Vertex idType -> 
   ForSyDeModel idType -> 
   ForSyDeModel idType
-forSyDeModelAddNode vertex (ForSyDeModel vSet eSet) = let
-  newVSet = HashSet.insert vertex vSet
+forSyDeModelAddNode vertex@(Vertex id _ _ _) (ForSyDeModel vSet eSet) = let
+  newVSet = HashMap.insert id vertex vSet
   in
     ForSyDeModel newVSet eSet
   
@@ -56,7 +68,36 @@ forSyDeModelAddEdge :: (Eq idType, Hashable idType) =>
   Edge idType idType ->
   ForSyDeModel idType ->
   ForSyDeModel idType
-forSyDeModelAddEdge edge (ForSyDeModel vSet eSet) = let
-  newESet = HashSet.insert edge eSet
+forSyDeModelAddEdge edge@(Edge sid tid _ _ _) (ForSyDeModel vSet eSet) = let
+  newESet = HashMap.insert (sid ++ "-" ++ tid) edge eSet
   in
     ForSyDeModel vSet newESet
+
+forSyDeModelFromString :: String -> Either String (ForSyDeModel String)
+forSyDeModelFromString wholeString = forSyDeModelFromTokens tokens $ Right emptyForSyDeModel
+  where
+    tokens = lines wholeString
+
+forSyDeModelFromTokens :: [String] -> Either String (ForSyDeModel String) -> Either String (ForSyDeModel String)
+forSyDeModelFromTokens (token:tokens) (Right currentModel)
+  | isInfixOf "%" token = forSyDeModelFromTokens tokens $ Right currentModel
+  | isInfixOf "vertex" token = let
+      [vId, vTypeName] = filteredMatches
+      vType = typeFromName vTypeName
+      newVertex = Vertex vId HashMap.empty HashMap.empty vType :: Vertex String
+      newModel = forSyDeModelAddNode newVertex currentModel
+    in
+      forSyDeModelFromTokens tokens $ Right newModel
+  | isInfixOf "edge" token = forSyDeModelFromTokens tokens $ Right currentModel
+  | isInfixOf "port" token = forSyDeModelFromTokens tokens $ Right currentModel
+  | isInfixOf "prop" token = forSyDeModelFromTokens tokens $ Right currentModel
+  | otherwise = Left ""
+  where
+    regexpat = "'([a-zA-Z0-9_]+)'[,)]" :: String
+    matches = getAllTextMatches (token =~ regexpat) :: [String]
+    -- drop the first ' and the last ', or ')
+    filteredMatches = map (tail . (\s -> take ((length s) -2) s)) matches :: [String]
+    
+forSyDeModelFromTokens _ (Left err) = Left err
+forSyDeModelFromTokens [] (Right model) = Right model
+

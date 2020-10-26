@@ -4,28 +4,10 @@
   <eSubpackages name="Application" nsURI="https://forsyde.github.io/ForSyDe/Model/Application"
       nsPrefix="ForSyDe.Model.Application">
     <eClassifiers xsi:type="ecore:EClass" name="DataType"/>
-    <eClassifiers xsi:type="ecore:EClass" name="SingularDataType" eSuperTypes="#//Application/DataType">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" lowerBound="1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="ArrayDataType" eSuperTypes="#//Application/DataType">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" lowerBound="1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1"
-          eType="#//Application/SingularDataType" containment="true"/>
-    </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ConstructedProcess" eSuperTypes="#//Application/Process"/>
-    <eClassifiers xsi:type="ecore:EClass" name="Signal">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="descriptors" ordered="false"
-          upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Signal"/>
     <eClassifiers xsi:type="ecore:EClass" name="NativeFunction"/>
-    <eClassifiers xsi:type="ecore:EClass" name="Implementation">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="target" lowerBound="1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="source" lowerBound="1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Implementation"/>
     <eClassifiers xsi:type="ecore:EClass" name="SDFComb"/>
     <eClassifiers xsi:type="ecore:EClass" name="SDFPrefix"/>
     <eClassifiers xsi:type="ecore:EClass" name="SYComb"/>
@@ -48,32 +30,28 @@
   <eSubpackages name="Platform" nsURI="https://forsyde.github.io/ForSyDe/Model/Platform"
       nsPrefix="ForSyDe.Model.Platform">
     <eClassifiers xsi:type="ecore:EClass" name="Communication"/>
-    <eClassifiers xsi:type="ecore:EClass" name="Computation">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="support" upperBound="-1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Computation"/>
     <eClassifiers xsi:type="ecore:EClass" name="Storage"/>
     <eClassifiers xsi:type="ecore:EClass" name="Interface"/>
     <eClassifiers xsi:type="ecore:EClass" name="Structure"/>
     <eClassifiers xsi:type="ecore:EClass" name="TimeDivisionMultiplexer" eSuperTypes="#//Platform/Communication">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxSlots" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="minSlots" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxSlots" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
+          defaultValueLiteral="1"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="minSlots" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
+          defaultValueLiteral="1"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ComputationalTile" eSuperTypes="#//Platform/Computation"/>
   </eSubpackages>
   <eSubpackages name="Extra" nsURI="https://forsyde.github.io/ForSyDe/Model/Extra"
       nsPrefix="ForSyDe.Model.Extra">
-    <eClassifiers xsi:type="ecore:EClass" name="Goal">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="nature" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="process" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="target" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Goal"/>
     <eClassifiers xsi:type="ecore:EClass" name="Throughput" eSuperTypes="#//Extra/Goal"/>
   </eSubpackages>
   <eSubpackages name="Refinement" nsURI="https://forsyde.github.io/ForSyDe/Model/Refinement"
       nsPrefix="ForSyDe.Model.Refinement">
     <eClassifiers xsi:type="ecore:EClass" name="SporadicTask">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="minArrival" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="minArrival" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
+          defaultValueLiteral="0"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="TriggeredTask"/>
     <eClassifiers xsi:type="ecore:EClass" name="StaticCyclicSchedule"/>
