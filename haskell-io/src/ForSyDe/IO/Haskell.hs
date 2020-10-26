@@ -9,6 +9,7 @@ module ForSyDe.IO.Haskell (
 
 -- Base libraries
 import Data.List
+import Data.Dynamic
 
 -- External libraries
 import Text.Regex.Base
@@ -26,11 +27,9 @@ data Port idType = Port { portIdentifier :: idType
 instance (Hashable idType) => Hashable (Port idType) where
   hashWithSalt salt (Port id _) = hashWithSalt salt id
 
-data Property = Property {} deriving (Show, Eq)
-
 data Vertex idType = Vertex { vertexIdentifier :: idType
                             , vertexPorts :: HashMap.HashMap idType (Port idType)
-                            , vertexProperties :: HashMap.HashMap idType (Property)
+                            , vertexProperties :: HashMap.HashMap idType Dynamic
                             , vertexType :: Type
                             } deriving (Show, Eq)
 

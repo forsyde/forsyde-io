@@ -33,13 +33,18 @@ class TypePackageToHaskell {
 		«ENDFOR»
 		  deriving (Show, Eq)
 		
-		getTypeProperty :: Type -> String -> a
+		getTypeStandardProperties :: Type -> [String]
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-		«FOR att : cls.EAllAttributes» 
-		getTypeProperty «classAttrToMatchPattern(cls, att.name)» "«att.name»" = «att.name» :: «haskellizeType(att.EAttributeType.name)» 
+		getTypeStandardProperties «cls.name» = [«cls.EAllAttributes.map["'" + name + "'"].join(", ")»]
 		«ENDFOR»
-		getTypeProperty «classAttrToMatchPattern(cls, "")» att = error $ "Type '«cls.name»' has no property " ++ att
-		«ENDFOR»
+		
+«««		getTypeDeducedProperties :: Type -> [String]
+«««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+«««		«FOR att : cls.EAllAttributes» 
+«««		getTypeProperty «classAttrToMatchPattern(cls, att.name)» "«att.name»" = «att.name» :: «haskellizeType(att.EAttributeType.name)» 
+«««		«ENDFOR»
+«««		getTypeProperty «classAttrToMatchPattern(cls, "")» att = error $ "Type '«cls.name»' has no property " ++ att
+«««		«ENDFOR»
 		
 		«IF pac.eAllContents.filter[e | e instanceof EAttribute].empty == false»
 		setTypeProperty :: Type -> String -> a -> Type
