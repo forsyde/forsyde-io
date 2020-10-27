@@ -15,10 +15,10 @@ import Data.Dynamic
 import Text.Regex.Base
 import Text.Regex.TDFA
 import Data.Hashable
-import qualified Data.HashMap as HashMap
+import qualified Data.Map as Map
 
 -- Internal libraries
-import ForSyDe.IO.Haskell.Types (Type, typeFromName)
+import ForSyDe.IO.Haskell.Types (Type, makeTypeFromName, getTypeStandardProperties)
 
 data Port idType = Port { portIdentifier :: idType
                         , portType :: Type
@@ -28,8 +28,8 @@ instance (Hashable idType) => Hashable (Port idType) where
   hashWithSalt salt (Port id _) = hashWithSalt salt id
 
 data Vertex idType = Vertex { vertexIdentifier :: idType
-                            , vertexPorts :: HashMap.HashMap idType (Port idType)
-                            , vertexProperties :: HashMap.HashMap idType Dynamic
+                            , vertexPorts :: Map.Map idType (Port idType)
+                            , vertexProperties :: Map.Map idType Dynamic
                             , vertexType :: Type
                             } deriving (Show, Eq)
 
@@ -47,19 +47,19 @@ instance (Hashable vIdType, Hashable pIdType) => Hashable (Edge vIdType pIdType)
   hashWithSalt salt (Edge sId tId _ _ _) = 
     hashWithSalt salt sId + hashWithSalt salt tId
 
-data ForSyDeModel idType = ForSyDeModel { vertexes :: HashMap.HashMap idTtype (Vertex idType)
-                                        , edges :: HashMap.HashMap idType (Edge idType idType)
+data ForSyDeModel idType = ForSyDeModel { vertexes :: Map.Map idType (Vertex idType)
+                                        , edges :: Map.Map idType (Edge idType idType)
                                         } deriving (Show, Eq)
 
 emptyForSyDeModel :: ForSyDeModel idType
-emptyForSyDeModel = ForSyDeModel HashMap.empty HashMap.empty
+emptyForSyDeModel = ForSyDeModel Map.empty Map.empty
 
 forSyDeModelAddNode :: (Eq idType, Hashable idType) => 
   Vertex idType -> 
   ForSyDeModel idType -> 
   ForSyDeModel idType
 forSyDeModelAddNode vertex@(Vertex id _ _ _) (ForSyDeModel vSet eSet) = let
-  newVSet = HashMap.insert id vertex vSet
+  newVSet = Map.insert id vertex vSet
   in
     ForSyDeModel newVSet eSet
   
@@ -68,7 +68,7 @@ forSyDeModelAddEdge :: (Eq idType, Hashable idType) =>
   ForSyDeModel idType ->
   ForSyDeModel idType
 forSyDeModelAddEdge edge@(Edge sid tid _ _ _) (ForSyDeModel vSet eSet) = let
-  newESet = HashMap.insert (sid ++ "-" ++ tid) edge eSet
+  newESet = Map.insert (sid ++ "-" ++ tid) edge eSet
   in
     ForSyDeModel vSet newESet
 
@@ -82,8 +82,8 @@ forSyDeModelFromTokens (token:tokens) (Right currentModel)
   | isInfixOf "%" token = forSyDeModelFromTokens tokens $ Right currentModel
   | isInfixOf "vertex" token = let
       [vId, vTypeName] = filteredMatches
-      vType = typeFromName vTypeName
-      newVertex = Vertex vId HashMap.empty HashMap.empty vType :: Vertex String
+      vType = makeTypeFromName vTypeName
+      newVertex = Vertex vId Map.empty Map.empty vType :: Vertex String
       newModel = forSyDeModelAddNode newVertex currentModel
     in
       forSyDeModelFromTokens tokens $ Right newModel
