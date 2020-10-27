@@ -15,17 +15,17 @@ class TypePackageToHaskell {
 	'''
 		module ForSyDe.IO.Haskell.«pac.packageSequence.map[name].join('.')»
 		  (
-		    Type (
-		    «FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ','»
-    	    «''»      «cls.name»
+		    Type ( Unknown
+		    «FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+    	«''»         , «cls.name»
     	  	«ENDFOR»
-		    ),
+		    )
             «IF pac.eAllContents.exists[e | e instanceof EAttribute]»
-		«''»    getTypeStandardProperties,
-		    getTypeStandardPropertiesDefault,
-		    getTypeDeducedProperties,
+		«''»    , getTypeStandardProperties
+		    , getTypeStandardPropertiesDefault
+		    , getTypeDeducedProperties
             «ENDIF»
-		    makeTypeFromName
+		    , makeTypeFromName
 		  ) where
 		  
 		import Data.Dynamic

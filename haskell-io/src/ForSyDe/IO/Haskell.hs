@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module ForSyDe.IO.Haskell (
   Port,
-  Property,
   Vertex,
   Edge,
   ForSyDeModel
@@ -18,7 +17,7 @@ import Data.Hashable
 import qualified Data.Map as Map
 
 -- Internal libraries
-import ForSyDe.IO.Haskell.Types (Type, makeTypeFromName, getTypeStandardProperties)
+import ForSyDe.IO.Haskell.Types (Type(Unknown), makeTypeFromName, getTypeStandardProperties)
 
 data Port idType = Port { portIdentifier :: idType
                         , portType :: Type
@@ -31,7 +30,7 @@ data Vertex idType = Vertex { vertexIdentifier :: idType
                             , vertexPorts :: Map.Map idType (Port idType)
                             , vertexProperties :: Map.Map idType Dynamic
                             , vertexType :: Type
-                            } deriving (Show, Eq)
+                            } deriving (Show)
 
 instance (Hashable idType) => Hashable (Vertex idType) where
   hashWithSalt salt (Vertex id _ _ _) = hashWithSalt salt id
@@ -48,31 +47,41 @@ instance (Hashable vIdType, Hashable pIdType) => Hashable (Edge vIdType pIdType)
     hashWithSalt salt sId + hashWithSalt salt tId
 
 data ForSyDeModel idType = ForSyDeModel { vertexes :: Map.Map idType (Vertex idType)
-                                        , edges :: Map.Map idType (Edge idType idType)
-                                        } deriving (Show, Eq)
+                                        , edges :: Map.Map (idType, idType) [(Edge idType idType)]
+                                        } deriving (Show)
 
 emptyForSyDeModel :: ForSyDeModel idType
 emptyForSyDeModel = ForSyDeModel Map.empty Map.empty
 
-forSyDeModelAddNode :: (Eq idType, Hashable idType) => 
-  Vertex idType -> 
-  ForSyDeModel idType -> 
-  ForSyDeModel idType
-forSyDeModelAddNode vertex@(Vertex id _ _ _) (ForSyDeModel vSet eSet) = let
-  newVSet = Map.insert id vertex vSet
-  in
-    ForSyDeModel newVSet eSet
-  
-forSyDeModelAddEdge :: (Eq idType, Hashable idType) =>
-  Edge idType idType ->
-  ForSyDeModel idType ->
-  ForSyDeModel idType
-forSyDeModelAddEdge edge@(Edge sid tid _ _ _) (ForSyDeModel vSet eSet) = let
-  newESet = Map.insert (sid ++ "-" ++ tid) edge eSet
-  in
-    ForSyDeModel vSet newESet
+forSyDeModelGetNode 
+  :: (Ord idType, Eq idType, Hashable idType) 
+  => ForSyDeModel idType
+  -> idType
+  -> Maybe (Vertex idType)
+forSyDeModelGetNode (ForSyDeModel vSet eSet) id = Map.lookup id vSet
 
-forSyDeModelFromString :: String -> Either String (ForSyDeModel String)
+
+forSyDeModelAddNode 
+  :: (Ord idType, Eq idType, Hashable idType)
+  => Vertex idType
+  -> ForSyDeModel idType
+  -> ForSyDeModel idType
+forSyDeModelAddNode vertex@(Vertex id _ _ _) (ForSyDeModel vSet eSet) = 
+  let newVSet = Map.insert id vertex vSet
+  in ForSyDeModel newVSet eSet
+  
+forSyDeModelAddEdge 
+  :: (Ord idType, Eq idType, Hashable idType, Show idType) 
+  => Edge idType idType
+  -> ForSyDeModel idType
+  -> ForSyDeModel idType
+forSyDeModelAddEdge edge@(Edge sid tid _ _ _) (ForSyDeModel vSet eSet)
+  | Map.member (sid, tid) eSet = ForSyDeModel vSet $ Map.adjust (edge:) (sid, tid) eSet
+  | otherwise                  = ForSyDeModel vSet $ Map.insert (sid, tid) [edge] eSet
+
+forSyDeModelFromString 
+  :: String 
+  -> Either String (ForSyDeModel String)
 forSyDeModelFromString wholeString = forSyDeModelFromTokens tokens $ Right emptyForSyDeModel
   where
     tokens = lines wholeString
@@ -80,16 +89,33 @@ forSyDeModelFromString wholeString = forSyDeModelFromTokens tokens $ Right empty
 forSyDeModelFromTokens :: [String] -> Either String (ForSyDeModel String) -> Either String (ForSyDeModel String)
 forSyDeModelFromTokens (token:tokens) (Right currentModel)
   | isInfixOf "%" token = forSyDeModelFromTokens tokens $ Right currentModel
-  | isInfixOf "vertex" token = let
-      [vId, vTypeName] = filteredMatches
-      vType = makeTypeFromName vTypeName
-      newVertex = Vertex vId Map.empty Map.empty vType :: Vertex String
-      newModel = forSyDeModelAddNode newVertex currentModel
-    in
-      forSyDeModelFromTokens tokens $ Right newModel
-  | isInfixOf "edge" token = forSyDeModelFromTokens tokens $ Right currentModel
-  | isInfixOf "port" token = forSyDeModelFromTokens tokens $ Right currentModel
+
+  | isInfixOf "vertex" token = 
+    let [vId, vTypeName] = filteredMatches
+        vType = makeTypeFromName vTypeName
+        newVertex = Vertex vId Map.empty Map.empty vType :: Vertex String
+        newModel = forSyDeModelAddNode newVertex currentModel
+    in forSyDeModelFromTokens tokens $ Right newModel
+
+  | isInfixOf "edge" token = 
+    let [sId, tId, sPortId, tPortId, eTypeName] = filteredMatches
+        eType = makeTypeFromName eTypeName
+        newEdge = Edge sId tId sPortId tPortId eType :: Edge String String
+        newModel = forSyDeModelAddEdge newEdge currentModel
+    in forSyDeModelFromTokens tokens $ Right newModel
+
+  | isInfixOf "port" token = 
+    let [vId, pId, pTypeName] = filteredMatches
+        pType = makeTypeFromName pTypeName
+        newModel = case forSyDeModelGetNode currentModel vId of
+          Just (Vertex _ ports props vType) -> 
+            forSyDeModelAddNode (Vertex vId (Map.insert pId (Port pId pType) ports) props vType) currentModel
+          Nothing ->
+            forSyDeModelAddNode (Vertex vId (Map.singleton pId (Port pId pType)) Map.empty Unknown) currentModel
+    in forSyDeModelFromTokens tokens $ Right newModel
+  -- TODO: Implement property parsing
   | isInfixOf "prop" token = forSyDeModelFromTokens tokens $ Right currentModel
+
   | otherwise = Left ""
   where
     regexpat = "'([a-zA-Z0-9_]+)'[,)]" :: String
