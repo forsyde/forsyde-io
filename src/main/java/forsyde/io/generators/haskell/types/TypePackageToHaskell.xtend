@@ -31,7 +31,7 @@ class TypePackageToHaskell {
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ' |'»
 		«''»  «cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' ' AFTER ' '»«haskellizeType(att.EType.name)»«ENDFOR»
 		«ENDFOR»
-		  deriving (Show, Eq)
+		  deriving (Show, Read, Eq)
 		
 		getTypeStandardProperties :: Type -> [String]
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
@@ -64,10 +64,11 @@ class TypePackageToHaskell {
 		
 «««		«ENDFOR»
 «««		«ENDFOR»
-		typeFromName :: String -> Type
-		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-		typeFromName "«cls.name»" = «cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' ' AFTER ' '»«haskellizeValue(att.defaultValueLiteral)»«ENDFOR»
-		«ENDFOR»
+«««		typeFromName :: String -> Type
+«««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+«««		typeFromName "«cls.name»" = «cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' ' AFTER ' '»«haskellizeValue(att.defaultValueLiteral)»«ENDFOR»
+«««		«ENDFOR»
+		
 	'''
 	
 	static def classAttrToMatchPattern(EClass cls, String name)
