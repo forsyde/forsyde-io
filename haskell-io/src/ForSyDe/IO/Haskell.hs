@@ -1,11 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
-module ForSyDe.IO.Haskell (
-  Port,
-  Vertex,
-  Edge,
-  ForSyDeModel
-) where
-
+module ForSyDe.IO.Haskell ( Port
+                          , Vertex
+                          , Edge
+                          , ForSyDeModel
+                          )
+                            where
 -- Base libraries
 import Data.List
 import Data.Dynamic
@@ -17,7 +16,10 @@ import Data.Hashable
 import qualified Data.Map as Map
 
 -- Internal libraries
-import ForSyDe.IO.Haskell.Types (Type(Unknown), makeTypeFromName, getTypeStandardProperties)
+import ForSyDe.IO.Haskell.Types ( Type(Unknown)
+                                , makeTypeFromName
+                                , getTypeStandardProperties
+                                )
 
 data Port idType = Port { portIdentifier :: idType
                         , portType :: Type
@@ -92,21 +94,21 @@ forSyDeModelFromTokens (token:tokens) (Right currentModel)
 
   | isInfixOf "vertex" token = 
     let [vId, vTypeName] = filteredMatches
-        vType = makeTypeFromName vTypeName
+        vType = read vTypeName
         newVertex = Vertex vId Map.empty Map.empty vType :: Vertex String
         newModel = forSyDeModelAddNode newVertex currentModel
     in forSyDeModelFromTokens tokens $ Right newModel
 
   | isInfixOf "edge" token = 
     let [sId, tId, sPortId, tPortId, eTypeName] = filteredMatches
-        eType = makeTypeFromName eTypeName
+        eType = read eTypeName
         newEdge = Edge sId tId sPortId tPortId eType :: Edge String String
         newModel = forSyDeModelAddEdge newEdge currentModel
     in forSyDeModelFromTokens tokens $ Right newModel
 
   | isInfixOf "port" token = 
     let [vId, pId, pTypeName] = filteredMatches
-        pType = makeTypeFromName pTypeName
+        pType = read pTypeName
         newModel = case forSyDeModelGetNode currentModel vId of
           Just (Vertex _ ports props vType) -> 
             forSyDeModelAddNode (Vertex vId (Map.insert pId (Port pId pType) ports) props vType) currentModel
@@ -126,3 +128,18 @@ forSyDeModelFromTokens (token:tokens) (Right currentModel)
 forSyDeModelFromTokens _ (Left err) = Left err
 forSyDeModelFromTokens [] (Right model) = Right model
 
+forSyDeModelToTokens
+  :: (Eq idType, Ord idType, Hashable idType, Show idType)
+  => ForSyDeModel idType
+  -> [String]
+forSyDeModelToTokens model@(ForSyDeModel vSet eSet) =
+  let vStrings = map (\v -> "vertex('" ++ (show  $ vertexIdentifier v) ++ "', '" ++ (show $ vertexType v) ++ "').") vSet
+      pStrings = [] :: [String]
+      eStrings = [] :: [String]
+  in vStrings ++ pStrings ++ eStrings
+
+forSyDeModelToString
+  :: (Eq idType, Ord idType, Hashable idType, Show idType)
+  => ForSyDeModel idType
+  -> String
+forSyDeModelToString model = intercalate "\n" $ forSyDeModelToTokens model
