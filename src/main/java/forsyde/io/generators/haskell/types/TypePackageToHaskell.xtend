@@ -15,59 +15,52 @@ class TypePackageToHaskell {
 	'''
 		module ForSyDe.IO.Haskell.«pac.packageSequence.map[name].join('.')»
 		  (
-		    Type (
-		    «FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ','»
-    	    «''»      «cls.name»
+		    Type ( Unknown
+		    «FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+    	«''»         , «cls.name»
     	  	«ENDFOR»
-		    ),
+		    )
             «IF pac.eAllContents.exists[e | e instanceof EAttribute]»
-		«''»    getTypeProperty,
-		    setTypeProperty,
+		«''»    , getTypeStandardProperties
+		    , getTypeStandardPropertiesDefault
+		    , getTypeDeducedProperties
             «ENDIF»
-		    typeFromName
+		    , makeTypeFromName
 		  ) where
+		  
+		import Data.Dynamic
 		
 		data Type = Unknown |
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ' |'»
-		«''»  «cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' ' AFTER ' '»«haskellizeType(att.EType.name)»«ENDFOR»
+		«''»  «cls.name»
 		«ENDFOR»
 		  deriving (Show, Read, Eq)
 		
 		getTypeStandardProperties :: Type -> [String]
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-		getTypeStandardProperties «cls.name» = [«cls.EAllAttributes.map["'" + name + "'"].join(", ")»]
+		getTypeStandardProperties «cls.name» = [«cls.EAllAttributes.map['"' + name + '"'].join(", ")»]
 		«ENDFOR»
+		getTypeStandardProperties _ = []
 		
-«««		getTypeDeducedProperties :: Type -> [String]
-«««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-«««		«FOR att : cls.EAllAttributes» 
-«««		getTypeProperty «classAttrToMatchPattern(cls, att.name)» "«att.name»" = «att.name» :: «haskellizeType(att.EAttributeType.name)» 
-«««		«ENDFOR»
-«««		getTypeProperty «classAttrToMatchPattern(cls, "")» att = error $ "Type '«cls.name»' has no property " ++ att
-«««		«ENDFOR»
-		
-		«IF pac.eAllContents.filter[e | e instanceof EAttribute].empty == false»
-		setTypeProperty :: Type -> String -> a -> Type
-		«ENDIF»
-		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].filter[!EAllAttributes.empty].toSet»
-		«FOR att : cls.EAllAttributes» 
-		setTypeProperty «classAttrToSetPattern(cls, att.name)» "«att.name»" «att.name» = «classAttrToSetPattern(cls, "")»
+		getTypeStandardPropertiesDefault :: Type -> String -> Dynamic
+		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+		«FOR att : cls.EAllAttributes»
+		getTypeStandardPropertiesDefault «cls.name» "«att.name»" = toDyn («haskellizeValue(att.defaultValueLiteral)» :: «haskellizeType(att.EAttributeType.name)»)
+		«ENDFOR» 
 		«ENDFOR»
-		setTypeProperty «classAttrToSetPattern(cls, "")» att _ = error $ "Type '«cls.name»' has no property " ++ att
+		getTypeStandardPropertiesDefault t p = error ("Type " ++ (show t) ++ " has no default for " ++ p)
+		
+		getTypeDeducedProperties :: Type -> [String]
+«««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+«««		getTypeDeducedProperties «cls.name» = [«cls.EAllAttributes.map['"' + name + '"'].join(", ")»]
+«««		«ENDFOR»
+		getTypeDeducedProperties _ = []
+		
+		makeTypeFromName :: String -> Type
+		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+		makeTypeFromName "«cls.name»" = «cls.name»
 		«ENDFOR»
-		
-«««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-«««		«FOR att : cls.EAllAttributes»
-«««		get«cls.name»«att.name.toFirstUpper» :: Type -> «haskellizeType(att.EType.name)»
-«««		get«cls.name»«att.name.toFirstUpper» «filterClassAttrToPattern(cls, att.name)» = «att.name»
-«««		get«cls.name»«att.name.toFirstUpper» _ = error "Type element has no attribute '«att.name»'"
-		
-«««		«ENDFOR»
-«««		«ENDFOR»
-«««		typeFromName :: String -> Type
-«««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-«««		typeFromName "«cls.name»" = «cls.name» «FOR att : cls.EAllAttributes SEPARATOR ' ' AFTER ' '»«haskellizeValue(att.defaultValueLiteral)»«ENDFOR»
-«««		«ENDFOR»
+		makeTypeFromName _ = Unknown
 		
 	'''
 	
