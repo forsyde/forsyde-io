@@ -128,15 +128,27 @@ forSyDeModelFromTokens (token:tokens) (Right currentModel)
 forSyDeModelFromTokens _ (Left err) = Left err
 forSyDeModelFromTokens [] (Right model) = Right model
 
+listToRelation
+  :: (Show e)
+  => String
+  -> [e]
+  -> String
+listToRelation relName le = relName ++ "(" ++ listOfAtoms ++ ")."
+  where
+    listOfAtoms = intercalate ", " $ map (\s -> "'" ++ (show s) ++ "'") le
+
 forSyDeModelToTokens
   :: (Eq idType, Ord idType, Hashable idType, Show idType)
   => ForSyDeModel idType
   -> [String]
 forSyDeModelToTokens model@(ForSyDeModel vSet eSet) =
-  let vStrings = map (\v -> "vertex('" ++ (show  $ vertexIdentifier v) ++ "', '" ++ (show $ vertexType v) ++ "').") vSet
+  let vStrings = Map.elems $ Map.map vToStr vSet
       pStrings = [] :: [String]
       eStrings = [] :: [String]
   in vStrings ++ pStrings ++ eStrings
+    where
+      vToStr (Vertex vId _ _ t) = listToRelation "vertex" [vId, t]
+      pToStr (Vertex vId _ _ _) (Port pId t) = listToRelation  "port" [vId, pId, t]
 
 forSyDeModelToString
   :: (Eq idType, Ord idType, Hashable idType, Show idType)
