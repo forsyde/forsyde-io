@@ -5,6 +5,17 @@ a ForSyDe model that can be implemented and consumed in different languages.
 It also contains (generated) supporting libraries that can serve as a stub for such
 implementations.
 
+## Using the supporting libraries
+
+This source repository is intended to be used by a CI flow so that the necessary code is automatically generated every
+new version upgrade and uploaded to the relevant package repositories each langauge uses.
+
+For any `<language-io>` folder present in this repo, try to find in the follwoing package repositories:
+ - PyPI for Python
+ - bintray for Java
+ - HackageDB for Haskell
+The packages `forsyde-io-<language>` that provides the classes to dump and read models.
+
 ## Model overview
 
 A ForSyDe model is given as a _typed-port-pseudo-property-graph_. This means that:
@@ -52,10 +63,22 @@ whom are intended to be the main deduction and database framework for working wi
 
 The types are currently defined in an `ecore` file that hopefully enable easy generation of these types
 in all major targeted langauges: Haskell, Java, C/C++, Prolog/Datalog.
+The graph section of each programming language supporting library is free to use other graph libraries desired.
 
-## Guidelines
+## Contribution
 
-  1. The semantic versioning `x.y.z` has the following mentality for this project:
-     - if `x` goes up, it means that _major_ scientific concepts have been implemented. Therefore, backwards compatibility is likely jeopardized.
-     - if `y` goes up, it means that _minor_ scientific concepts have been implemented. Therefore, backwards compatibility is partially assured and requires investigation.
-     - if `z` goes up, it means that _no_ scientific concepts have been implemented, but only facilities for the end user/designer. Therefore, backwards compatibility should be maintained.
+### New supporting libraries
+
+New support of the model on other languages are always welcome! The goal is that the most famous and well-known repository
+for packages in the new language contains your `forsyde-io` libraries. The canonical way to do this would be to add a new subfolder
+in this source repo which can upload all code that is both generated and written by hand. 
+
+As an example, the Python supporting package generates the `types` classes from the ecore `file` along the NetworkX-backed core classes before
+uploading all the sources to PyPI.
+
+### Versioning
+
+The semantic versioning `x.y.z` has the following mentality for this project:
+  - if `x` goes up, it means that _major_ concepts have been changed. Therefore, backwards compatibility is likely jeopardized.
+  - if `y` goes up, it means that _minor_ concepts have been changed. Therefore, backwards compatibility requires investigation.
+  - if `z` goes up, it means that the concepts have been incremented losslessly or the core libraries changed. Therefore, backwards compatibility is maintained.

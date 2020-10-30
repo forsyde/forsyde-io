@@ -19,7 +19,7 @@ ext {
 }
 
 group = 'forsyde'
-version = '0.5.1'
+version = '0.1.0'
 
 sourceCompatibility = 1.8
 
@@ -79,7 +79,7 @@ task replaceJavaIOVersion() {
 
 
 task replacePythonIOVersion {
-	def replaced = file('./python-io/setup.py').text.replaceFirst(/version='.+'/, "version='${version}'")
+	def replaced = file('./python-io/setup.py').text.replaceFirst(/version=('|").+('|")/, "version='${version}'")
 	file('./python-io/setup.py').text = replaced
 }
 

@@ -22,7 +22,7 @@ ext {
 }
 
 group = 'forsyde'
-version = '0.5.1'
+version = '0.1.0'
 
 
 // In this section you declare where to find the dependencies of your project
