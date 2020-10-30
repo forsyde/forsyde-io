@@ -20,10 +20,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 
-import forsyde.io.generators.java.ClassToJava;
-import forsyde.io.generators.java.ClassToJavaXMISerializer;
 import forsyde.io.generators.java.EnumToJava;
-import forsyde.io.generators.java.TypesToJava;
+import forsyde.io.generators.java.types.TypesFactoryGeneratorJava;
+import forsyde.io.generators.java.types.TypesGeneratorJava;
 import forsyde.io.generators.utils.Packages;
 
 public class JavaGenerator {
@@ -36,26 +35,17 @@ public class JavaGenerator {
 		
 		Resource fecore = resourceSet.getResource(URI.createFileURI("ecore/types.ecore"), true);
 		
-		EPackage ForSyDe = (EPackage) fecore.getContents().get(0);
+		EPackage forSyDeTypes = (EPackage) fecore.getContents().get(0);
 		
 		final String packageRoot = "java-io/src/main/java/forsyde/io/java";
 		
 		// the main reason to use this sort of iteration instead of the 'forEach' is that I wanted
 		// to add the throws declaration in the generate signature
-		for (TreeIterator<EObject> iterator = ForSyDe.eAllContents(); iterator.hasNext();) {
+		processPackage(forSyDeTypes, packageRoot);
+		for (TreeIterator<EObject> iterator = forSyDeTypes.eAllContents(); iterator.hasNext();) {
 			EObject elem = iterator.next();
 			if (elem instanceof EClass) {
-				EClass cls = (EClass) elem;
-				final CharSequence produced = TypesToJava.toText(cls);
-				// System.out.println(produced);
-				final String filePath = Packages.getPackageSequence(cls.getEPackage()).stream()
-						.map(p -> p.getName().toLowerCase())
-						.reduce((s1, s2) -> s1 + '/' + s2)
-						.orElseThrow();
-				final Path fileDir = Paths.get(packageRoot, filePath);
-				final Path fileTotal = Paths.get(packageRoot, filePath, cls.getName() + ".java");
-				Files.createDirectories(fileDir);
-				Files.writeString(fileTotal, produced);
+				processClass((EClass) elem, packageRoot);
 			} else if (elem instanceof EEnum) {
 				EEnum enu = (EEnum) elem;
 				final CharSequence produced = EnumToJava.toText(enu);
@@ -68,6 +58,8 @@ public class JavaGenerator {
 				final Path fileTotal = Paths.get(packageRoot, filePath, enu.getName() + ".java");
 				Files.createDirectories(fileDir);
 				Files.writeString(fileTotal, produced);
+			} else if (elem instanceof EPackage) {
+				processPackage((EPackage) elem, packageRoot);
 			}
 		}
 		// add the XMI serializer and deserializer, should go in the same pacakge as ForSyDeIO
@@ -83,4 +75,30 @@ public class JavaGenerator {
 //		Files.writeString(ioTotalFlat, producedFlat);
 	}
 	
+	private void processPackage(EPackage pak, String packageRoot) throws IOException {
+		final CharSequence produced = TypesFactoryGeneratorJava.toText(pak);
+		String filePathParent = Packages.getPackageSequence(pak).stream()
+				.map(p -> p.getName().toLowerCase())
+				.reduce((s1, s2) -> s1 + '/' + s2)
+				.orElseThrow();
+		Path fileDir;
+		Path fileTotal;
+		fileDir = Paths.get(packageRoot, filePathParent);
+		fileTotal = Paths.get(packageRoot, filePathParent, pak.getName() + "Factory.java");
+		Files.createDirectories(fileDir);
+		Files.writeString(fileTotal, produced);
+	}
+	
+	private void processClass(EClass cls, String packageRoot) throws IOException {
+		final CharSequence produced = TypesGeneratorJava.toText(cls);
+		// System.out.println(produced);
+		final String filePath = Packages.getPackageSequence(cls.getEPackage()).stream()
+				.map(p -> p.getName().toLowerCase())
+				.reduce((s1, s2) -> s1 + '/' + s2)
+				.orElseThrow();
+		final Path fileDir = Paths.get(packageRoot, filePath);
+		final Path fileTotal = Paths.get(packageRoot, filePath, cls.getName() + ".java");
+		Files.createDirectories(fileDir);
+		Files.writeString(fileTotal, produced);
+	}
 }

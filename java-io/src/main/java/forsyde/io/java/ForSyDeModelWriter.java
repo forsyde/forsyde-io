@@ -5,6 +5,7 @@ package forsyde.io.java;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -33,13 +34,24 @@ public class ForSyDeModelWriter {
 		for(Vertex v : model.vertexSet()) {
 			for(Port p : v.ports) {
 				String interpolated = "port('" 
-						+ p.identifier 
-						+ "', '" 
 						+ v.identifier 
+						+ "', '" 
+						+ p.identifier 
 						+ "', '"
 						+ p.type.getName()
 						+ "').\n";
 				writer.append(interpolated);	
+			}
+			
+			for(String propName : v.properties.keySet()) {
+				String interpolated = "prop('" 
+						+ v.identifier 
+						+ "', '" 
+						+ propName 
+						+ "', '"
+						+ v.properties.get(propName).toString()
+						+ "').\n";
+				writer.append(interpolated);
 			}
 		}
 		for(Edge e : model.edgeSet()) {
@@ -59,5 +71,6 @@ public class ForSyDeModelWriter {
 		writer.flush();
 		writer.close();
 	}
+
 	
 }
