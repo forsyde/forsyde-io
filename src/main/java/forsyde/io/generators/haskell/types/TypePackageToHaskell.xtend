@@ -34,7 +34,7 @@ class TypePackageToHaskell {
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ' |'»
 		«''»  «cls.name»
 		«ENDFOR»
-		  deriving (Show, Eq)
+		  deriving (Show, Read, Eq)
 		
 		getTypeStandardProperties :: Type -> [String]
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
