@@ -12,7 +12,7 @@ new version upgrade and uploaded to the relevant package repositories each langa
 
 For any `<language-io>` folder present in this repo, try to find in the follwoing package repositories:
  - [PyPI for Python](https://test.pypi.org/project/forsyde-io-python/)
- - bintray for Java
+ - [Bintray for Java](https://bintray.com/forsyde/forsyde-io/forsyde-io-java)
  - HackageDB for Haskell
 The packages `forsyde-io-<language>` that provides the classes to dump and read models.
 
