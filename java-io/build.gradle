@@ -21,7 +21,7 @@ ext {
 }
 
 group = 'forsyde-io'
-version = '0.1.0'
+version = '0.1.1'
 
 
 // In this section you declare where to find the dependencies of your project
