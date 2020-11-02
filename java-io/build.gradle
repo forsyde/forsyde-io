@@ -38,10 +38,6 @@ repositories {
 dependencies {
   // The production code uses the SLF4J logging API at compile time
   implementation 'org.slf4j:slf4j-api:1.7.25'
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.11.2'
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.2'
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.2'
-  implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.11.2'
   implementation group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.0'
 
   testImplementation 'junit:junit:4.12'
@@ -50,24 +46,21 @@ dependencies {
 sourceCompatibility = 1.8
 
 
-/*
- *bintray {   
- *    user = 'rojods'
- *    key = '16c433d0d69525a044eedcf4dc2391247d3d5cb5'
- *    pkg {
- *        repo = 'maven'
- *        name = 'forsyde-model-java'
- *        userOrg = 'rojods'
- *        licenses = ['MIT']
- *        vcsUrl = 'https://github.com/bintray/gradle-bintray-plugin.git'
- *        version {
- *          name = '0.0.1-Alpha'
- *          released = new Date()
- *        }
- *    }
- *    publications = ['ForSyDeModelJava']
- *}
- */
+bintray {   
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    pkg {
+        repo = 'maven'
+        name = "${artifactName}"
+        userOrg = "${group}"
+        licenses = ['MIT', 'BSD3']
+        vcsUrl = 'https://github.com/forsyde/forsyde-io'
+        version {
+          name = "${version}"
+          released = new Date()
+        }
+    }
+}
 
 java { 
     withSourcesJar()
