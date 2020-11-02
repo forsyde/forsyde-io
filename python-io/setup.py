@@ -7,7 +7,7 @@ setuptools.setup(
     name='forsyde-io-python',
     version='0.1.0',
     author="Rodolfo Jordao",
-    author_email="jordao@kth.sw",
+    author_email="jordao@kth.se",
     description="ForSyDe-IO Python supporting libraries",
     long_description=long_description,
     long_description_content_type="text/markdown",
