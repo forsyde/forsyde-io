@@ -22,3 +22,9 @@ publish-local-java.task: generate-code.task
 
 publish-local-haskell.task: generate-code.task
 	$(MAKE) -C $(HASKELL_DIR) publish-local.task
+
+publish-online.task: publish-online-all.task
+
+publish-online-all.task: generate-code.task
+	$(MAKE) -C $(PYTHON_DIR) publish-online.task
+	$(MAKE) -C $(JAVA_DIR) publish-online.task
