@@ -1,6 +1,7 @@
 PYTHON_DIR := python-io
 JAVA_DIR := java-io
 HASKELL_DIR := haskell-io
+PROLOG_DIR := prolog-io
 
 all: generate-code.task
 

@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 
 import forsyde.io.generators.java.EnumToJava;
 import forsyde.io.generators.java.types.TypesFactoryGeneratorJava;
-import forsyde.io.generators.java.types.TypesGeneratorJava;
+import forsyde.io.generators.java.types.TypesClassToJava;
 import forsyde.io.generators.utils.Packages;
 
 public class JavaGenerator {
@@ -90,7 +90,7 @@ public class JavaGenerator {
 	}
 	
 	private void processClass(EClass cls, String packageRoot) throws IOException {
-		final CharSequence produced = TypesGeneratorJava.toText(cls);
+		final CharSequence produced = TypesClassToJava.toText(cls);
 		// System.out.println(produced);
 		final String filePath = Packages.getPackageSequence(cls.getEPackage()).stream()
 				.map(p -> p.getName().toLowerCase())

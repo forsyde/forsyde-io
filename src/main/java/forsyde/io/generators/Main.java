@@ -13,10 +13,12 @@ public class Main {
 			PythonGenerator pythonGenerator = new PythonGenerator();
 			HaskellGenerator haskellGenerator = new HaskellGenerator();
 			JavaGenerator javaGenerator = new JavaGenerator();
+			PrologGenerator prologGenerator = new PrologGenerator();
 			
 			pythonGenerator.generate();
 			haskellGenerator.generate();
 			javaGenerator.generate();
+			prologGenerator.generate();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

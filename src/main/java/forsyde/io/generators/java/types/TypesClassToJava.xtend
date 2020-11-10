@@ -6,7 +6,7 @@ import org.eclipse.emf.ecore.EPackage
 import java.util.List
 import forsyde.io.generators.utils.Packages
 
-class TypesGeneratorJava {
+class TypesClassToJava {
 	
 	static def toText(EClass cls)
 	'''
