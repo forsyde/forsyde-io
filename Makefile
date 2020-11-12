@@ -1,11 +1,18 @@
-PYTHON_DIR := python-io
-JAVA_DIR := java-io
-HASKELL_DIR := haskell-io
-PROLOG_DIR := prolog-io
+SQL_DIR := sql
+PYTHON_DIR := python
+JAVA_DIR := java
+HASKELL_DIR := haskell
+PROLOG_DIR := prolog
 
 all: generate-code.task
 
-generate-code.task:
+generate-code.task: \
+	generate-code-python.task
+
+generate-code-python.task: generate-code-types.task
+	@cp -r $(SQL_DIR)/* $(PYTHON_DIR)/forsyde/io/python
+
+generate-code-types.task:
 	./gradlew run
 
 publish-local.task: publish-local-all.task

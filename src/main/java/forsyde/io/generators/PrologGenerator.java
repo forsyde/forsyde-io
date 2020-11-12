@@ -29,7 +29,7 @@ public class PrologGenerator {
 		
 		EPackage forSyDeTypes = (EPackage) fecoreTypes.getContents().get(0);
 		
-		final String packageRoot = "prolog-io/std";
+		final String packageRoot = "prolog/lib";
 		
 		processPackage(forSyDeTypes, packageRoot);
 //		TreeIterator<EObject> iterator = forSyDeTypes.eAllContents();

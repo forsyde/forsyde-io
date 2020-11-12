@@ -16,6 +16,14 @@ import forsyde.io.generators.python.types.TypePackageToPython;
 import forsyde.io.generators.utils.Packages;
 
 public class PythonGenerator {
+	
+	public String typeSrc;
+	public String typeDst;
+
+	public PythonGenerator(String typeSrc, String typeDst) {
+		this.typeSrc = typeSrc;
+		this.typeDst = typeDst;
+	}
 
 	public void generate() throws Exception {
 		ResourceSet resourceSet = new ResourceSetImpl();
@@ -23,11 +31,11 @@ public class PythonGenerator {
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
 			.put("ecore", new EcoreResourceFactoryImpl());
 		
-		Resource fecoreTypes = resourceSet.getResource(URI.createFileURI("ecore/types.ecore"), true);
+		Resource fecoreTypes = resourceSet.getResource(URI.createFileURI(typeSrc), true);
 		
 		EPackage forSyDeTypes = (EPackage) fecoreTypes.getContents().get(0);
 		
-		final String packageRoot = "python-io/forsyde/io/python";
+		final String packageRoot = typeDst;
 		
 		processPackage(forSyDeTypes, packageRoot);
 		TreeIterator<EObject> iterator = forSyDeTypes.eAllContents();

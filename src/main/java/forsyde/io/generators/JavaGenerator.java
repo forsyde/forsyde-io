@@ -25,19 +25,19 @@ import forsyde.io.generators.java.types.TypesFactoryGeneratorJava;
 import forsyde.io.generators.java.types.TypesClassToJava;
 import forsyde.io.generators.utils.Packages;
 
-public class JavaGenerator {
+public class JavaGenerator implements TypesGenerator {
 	
-	public void generate() throws IOException {
+	public void generate(String typeSrc, String typeDst) throws IOException {
 		ResourceSet resourceSet = new ResourceSetImpl();
 		
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
 			.put("ecore", new EcoreResourceFactoryImpl());
 		
-		Resource fecore = resourceSet.getResource(URI.createFileURI("ecore/types.ecore"), true);
+		Resource fecore = resourceSet.getResource(URI.createFileURI(typeSrc), true);
 		
 		EPackage forSyDeTypes = (EPackage) fecore.getContents().get(0);
 		
-		final String packageRoot = "java-io/src/main/java/forsyde/io/java";
+		final String packageRoot = typeDst;
 		
 		// the main reason to use this sort of iteration instead of the 'forEach' is that I wanted
 		// to add the throws declaration in the generate signature

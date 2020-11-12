@@ -10,15 +10,17 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
-			PythonGenerator pythonGenerator = new PythonGenerator();
-			HaskellGenerator haskellGenerator = new HaskellGenerator();
+			PythonGenerator pythonGenerator = new PythonGenerator("ecore/types.ecore", "python/forsyde/io/python");
+			HaskellGenerator haskellGenerator = new HaskellGenerator("ecore/types.ecore", "haskell/src/ForSyDe/IO/Haskell");
 			JavaGenerator javaGenerator = new JavaGenerator();
 			PrologGenerator prologGenerator = new PrologGenerator();
+			SQLGenerator sqlGenerator = new SQLGenerator();
 			
 			pythonGenerator.generate();
 			haskellGenerator.generate();
-			javaGenerator.generate();
+			javaGenerator.generate("ecore/types.ecore", "java/src/main/java/forsyde/io/java");
 			prologGenerator.generate();
+			sqlGenerator.generate("ecore/types.ecore", "sql");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

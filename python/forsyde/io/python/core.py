@@ -1,4 +1,4 @@
-from typing import Optional, Set, Any
+from typing import Optional, Set, Any, Dict
 
 class Type:
 
@@ -43,7 +43,7 @@ class Vertex(object):
     def __init__(self, 
                  identifier: str, 
                  ports: Set[Port] = set(),
-                 properties: Set[Any] = set(),
+                 properties: Dict[str, Any] = dict(),
                  vertex_type: Type = Type()
                  ):
         """TODO: to be defined.
@@ -61,7 +61,7 @@ class Vertex(object):
         self.ports = ports
         # see above.
         if len(properties) == 0:
-            properties = set()
+            properties = dict()
         self.properties = properties
         self.vertex_type = vertex_type
 

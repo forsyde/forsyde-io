@@ -16,6 +16,10 @@ plugins {
 
 ext {
   artifactName = 'forsyde-io'
+  pythonDir = 'python'
+  javaDir = 'java'
+  haskellDir = 'haskell'
+  sqlDir = 'sql'
 }
 
 group = 'forsyde'
@@ -73,22 +77,22 @@ task replaceEcoreIOVersion {
 }
 
 task replaceJavaIOVersion() {
-	def replaced = file('./java-io/build.gradle').text.replaceFirst(/version = '.+'/, "version = '${version}'")
-	file('./java-io/build.gradle').text = replaced
+	def replaced = file(javaDir + '/build.gradle').text.replaceFirst(/version = '.+'/, "version = '${version}'")
+	file(javaDir + '/build.gradle').text = replaced
 }
 
 
 task replacePythonIOVersion {
-	def replaced = file('./python-io/setup.py').text.replaceFirst(/version=('|").+('|")/, "version='${version}'")
-	file('./python-io/setup.py').text = replaced
+	def replaced = file(pythonDir + '/setup.py').text.replaceFirst(/version=('|").+('|")/, "version='${version}'")
+	file(pythonDir + '/setup.py').text = replaced
 }
 
 task replaceHaskellIOVersion {
 	def pattern = ~/version:(\s*)(.+)/
-	def match = file('./haskell-io/package.yaml').text =~ pattern 
+	def match = file(haskellDir + '/package.yaml').text =~ pattern 
 	def spaces = match[0][1]
-	def replaced = file('./haskell-io/package.yaml').text.replaceFirst(pattern, "version:${spaces}${version}")
-	file('./haskell-io/package.yaml').text = replaced
+	def replaced = file(haskellDir + '/package.yaml').text.replaceFirst(pattern, "version:${spaces}${version}")
+	file(haskellDir + '/package.yaml').text = replaced
 }
 
 tasks.run.dependsOn replaceEcoreIOVersion
