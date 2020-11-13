@@ -1,6 +1,8 @@
+import abc
 from typing import Optional, Set, Any, Dict
 
-class Type:
+
+class Type(abc.ABC):
 
     """This class represents any type defined in the 'type' hierarchy."""
 
@@ -9,15 +11,19 @@ class Type:
         """
         pass
 
-    def get_type_name(self):
-        raise NotImplementedError("Interface `Type`.`get_type_name` invoked directly. It must be overridden.")
+    @abc.abstractmethod
+    def get_type_name(self) -> str:
+        return ""
+
 
 class Port(object):
 
     """Docstring for Port. """
 
-    def __init__(self, 
-                 identifier: str, 
+    _id_gen_counter: int = 0
+
+    def __init__(self,
+                 identifier: Optional[str] = None,
                  port_type: Type = Type()
                  ):
         """TODO: to be defined.
@@ -26,6 +32,9 @@ class Port(object):
         :port_type: TODO
 
         """
+        if not identifier:
+            self._id_gen_counter += 1
+            identifier = "port_" + self._id_gen_counter
         self.identifier = identifier
         self.port_type = port_type
 
@@ -34,14 +43,19 @@ class Port(object):
 
     def __hash__(self):
         return hash(self.identifier)
-        
+
+    def __repr__(self):
+        return f"<Port {self.port_type} {self.identifier}>"
+
 
 class Vertex(object):
 
     """Docstring for Vertex. """
 
-    def __init__(self, 
-                 identifier: str, 
+    _id_gen_counter: int = 0
+
+    def __init__(self,
+                 identifier: Optional[str] = None,
                  ports: Set[Port] = set(),
                  properties: Dict[str, Any] = dict(),
                  vertex_type: Type = Type()
@@ -52,6 +66,9 @@ class Vertex(object):
         :vertex_type: TODO
 
         """
+        if not identifier:
+            self._id_gen_counter += 1
+            identifier = "vertex_" + self._id_gen_counter
         self.identifier = identifier
         # due to the class initialization in python, recreating the
         # set is necessary to make it instance specific and not
@@ -72,7 +89,7 @@ class Vertex(object):
         return self.identifier == other.identifier
 
     def __repr__(self):
-        return "<V id {0}, type {1}, {2} ports, {3} props>".format(
+        return "<Vertex {1} {0}, {2} ports, {3} props>".format(
             self.identifier,
             str(self.vertex_type),
             len(self.ports),
@@ -115,7 +132,7 @@ class Edge(object):
                 self.edge_type == other.edge_type)
 
     def __repr__(self):
-        return "<E {0}:{2} -> {1}:{3}, type {4}".format(
+        return "<Edge {4} {0}:{2} -> {1}:{3}>".format(
             self.source_vertex_id,
             self.target_vertex_id,
             self.source_vertex_port_id,

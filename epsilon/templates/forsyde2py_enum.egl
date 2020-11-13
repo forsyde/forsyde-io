@@ -1,9 +1,0 @@
-class [%=enum.name%](Enum):
-    '''
-    This enum has been generated automatically from the ForSyDe Component Metaschema.
-    Particular comments follow wherever pertinent.
-    '''
-
-    [%for (item in enum.getELiterals()) {%]
-    [%=item.literal%] = [%=item.value%]
-    [%}%]
