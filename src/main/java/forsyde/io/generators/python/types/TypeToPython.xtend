@@ -6,9 +6,6 @@ class TypeToPython {
 	
 	static def toText(EClass cls)
 	'''
-«««		The core import is a workaround for the python from ... import problem with circular depedencies
-«««		https://stackoverflow.com/questions/744373/circular-or-cyclic-imports-in-python
-«««
 		class «cls.name»(core.Type):
 		    """
 		    This class has been automatically generated from forsyde-io.
@@ -17,13 +14,33 @@ class TypeToPython {
 		
 		    def __init__(self):
 		        pass
-		        
+		
 		    def __repr__(self):
 		        return self.get_type_name()
-		    
-		    def get_type_name(self) -> str:
+		
+		    def get_type_name(self):
 		        return "«cls.name»"
 		
+		    def get_required_ports(self):
+		        «IF cls.EAllReferences.isEmpty»
+		        return []
+		        «ELSE»
+		        return [
+		        «FOR r : cls.EAllReferences SEPARATOR ','»
+		        «''»  "«r.name»"
+		        «ENDFOR»
+		        ]
+		        «ENDIF»
 		
+		    def get_required_properties(self):
+		        «IF cls.EAllAttributes.isEmpty»
+		        return []
+		        «ELSE»
+		        return [
+		        «FOR a : cls.EAllAttributes SEPARATOR ','»
+		        «''»  "«a.name»"
+		        «ENDFOR»
+		        ]
+		        «ENDIF»
 	'''
 }

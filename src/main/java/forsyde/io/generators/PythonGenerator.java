@@ -15,17 +15,10 @@ import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import forsyde.io.generators.python.types.TypePackageToPython;
 import forsyde.io.generators.utils.Packages;
 
-public class PythonGenerator {
+public class PythonGenerator implements  TypesGenerator {
 	
-	public String typeSrc;
-	public String typeDst;
 
-	public PythonGenerator(String typeSrc, String typeDst) {
-		this.typeSrc = typeSrc;
-		this.typeDst = typeDst;
-	}
-
-	public void generate() throws Exception {
+	public void generate(String typeSrc, String typeDst) throws IOException {
 		ResourceSet resourceSet = new ResourceSetImpl();
 		
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()

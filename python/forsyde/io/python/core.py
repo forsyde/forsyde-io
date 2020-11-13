@@ -15,6 +15,14 @@ class Type(abc.ABC):
     def get_type_name(self) -> str:
         return ""
 
+    @abc.abstractmethod
+    def get_required_ports(self) -> Set[str]:
+        return set()
+
+    @abc.abstractmethod
+    def get_required_properties(self) -> Set[str]:
+        return set()
+
 
 class Port(object):
 

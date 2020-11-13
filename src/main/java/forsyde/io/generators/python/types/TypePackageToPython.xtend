@@ -11,39 +11,51 @@ class TypePackageToPython {
 «««		The types import is a workaround for the python from ... import problem with circular depedencies
 «««		https://stackoverflow.com/questions/744373/circular-or-cyclic-imports-in-python
 «««	
-	import forsyde.io.python.core as core 
+	import forsyde.io.python.core as core
 	«FOR subp : pak.ESubpackages»
-	import forsyde.io.python.«Packages.getPackageSequence(pak).reverse.map[p | p.name.toLowerCase].join(".")».«subp.name.toLowerCase» as «subp.name.toLowerCase»
+	from forsyde.io.python.«Packages.getPackageSequence(pak).reverse.map[p | p.name.toLowerCase].join(".")».«subp.name.toLowerCase» import «subp.name»Factory
 	«ENDFOR»
+	
 	
 	«FOR type : pak.EClassifiers.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
 	«TypeToPython.toText(type)»
-	«ENDFOR»
 	
+	
+	«ENDFOR»
 	class «pak.name»Factory:
 	    """
-	    This class was auto generated to enable import and export of ForSyDe-IO type models
+	    This class is auto generated.
+	    It enables import and export of ForSyDe-IO type models by stringification.
 	    """
 	
 	    @classmethod
-	    def build_type(cls, type_name: str, strict: bool = True) -> core.Type:
-	        «makeTypeBuilder(pak)»
+	    def build_type(cls,
+	                   type_name: str,
+	                   strict: bool = True
+	                   ) -> core.Type:
+	        str_to_classes = {
+            «FOR type : pak.EClassifiers.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ','»
+            "«type.name»": «type.name»
+	        «ENDFOR»
+	        }
+	        if type_name in str_to_classes:
+	            return str_to_classes[type_name]
+	        «FOR subp : pak.ESubpackages»
+	        subpackage_type = «subp.name»Factory.build_type(type_name, False)
+	        if subpackage_type is not None:
+	            return subpackage_type
+	        «ENDFOR»
 	        if strict:
-	            raise NotImplementedError("The type '{0}' is not implemented and could not be built".format(type_name))
+	            raise NotImplementedError(
+	              f"The type '{type_name}' is not recognized."
+	            )
 	        else:
 	            return None
 	'''
 	
 	static def makeTypeBuilder(EPackage pak)
 	'''
-	«FOR type : pak.EClassifiers.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-	if type_name == "«type.name»":
-	    return «type.name»()
-	«ENDFOR»
-	«FOR subp : pak.ESubpackages»
-	delegated = «subp.name.toLowerCase».«subp.name»Factory.build_type(type_name, False)
-	if delegated != None:
-	    return delegated
-    «ENDFOR»
+	
+	
 	'''
 }

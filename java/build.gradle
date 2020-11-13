@@ -76,18 +76,6 @@ jar {
 	archiveFileName = "${artifactName}" + "-" + "${version}" + ".jar"
 }
 
-publishing {
-  publications {
-    maven(MavenPublication) {
-      groupId = group
-      artifactId = artifactName
-      version = version
-
-      from components.java
-    }
-  }
-}
-
 uploadArchives {
   repositories {
     mavenDeployer {

@@ -10,13 +10,13 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
-			PythonGenerator pythonGenerator = new PythonGenerator("ecore/types.ecore", "python/forsyde/io/python");
+			PythonGenerator pythonGenerator = new PythonGenerator();
 			HaskellGenerator haskellGenerator = new HaskellGenerator("ecore/types.ecore", "haskell/src/ForSyDe/IO/Haskell");
 			JavaGenerator javaGenerator = new JavaGenerator();
 			PrologGenerator prologGenerator = new PrologGenerator();
 			SQLGenerator sqlGenerator = new SQLGenerator();
 			
-			pythonGenerator.generate();
+			pythonGenerator.generate("ecore/types.ecore", "python/forsyde/io/python");
 			haskellGenerator.generate();
 			javaGenerator.generate("ecore/types.ecore", "java/src/main/java/forsyde/io/java");
 			prologGenerator.generate();
