@@ -1,8 +1,7 @@
-import abc
 from typing import Optional, Set, Any, Dict
 
 
-class Type(abc.ABC):
+class Type(object):
 
     """This class represents any type defined in the 'type' hierarchy."""
 
@@ -11,15 +10,12 @@ class Type(abc.ABC):
         """
         pass
 
-    @abc.abstractmethod
     def get_type_name(self) -> str:
-        return ""
+        return "Unknown"
 
-    @abc.abstractmethod
     def get_required_ports(self) -> Set[str]:
         return set()
 
-    @abc.abstractmethod
     def get_required_properties(self) -> Set[str]:
         return set()
 
