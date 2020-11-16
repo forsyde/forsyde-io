@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS _allowed_types (
   type_name TEXT PRIMARY KEY
 );
 
-CREATE VIEW allowed_types
+CREATE VIEW IF NOT EXISTS allowed_types AS
 SELECT * FROM _allowed_types;
 
 CREATE TABLE IF NOT EXISTS _super_types_base (
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS _super_types_base (
   PRIMARY KEY (type_name, super_type_name)
 );
 
-CREATE VIEW super_types_base
+CREATE VIEW IF NOT EXISTS super_types_base AS
 SELECT * FROM _super_types_base;
 
 CREATE TABLE IF NOT EXISTS _vertexes (
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS _vertexes (
     REFERENCES allowed_types (type_name)
 );
 
-CREATE VIEW vertexes
+CREATE VIEW IF NOT EXISTS vertexes AS
 SELECT * FROM _vertexes;
 
 CREATE TABLE IF NOT EXISTS _ports (
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS _ports (
     REFERENCES allowed_types (type_name)
 );
 
-CREATE VIEW ports
+CREATE VIEW IF NOT EXISTS ports AS
 SELECT * FROM _ports;
 
 CREATE TABLE IF NOT EXISTS _properties (
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS _properties (
     REFERENCES vertexes (vertex_id)
 );
 
-CREATE VIEW properties
+CREATE VIEW IF NOT EXISTS properties AS
 SELECT * FROM _properties;
 
 CREATE TABLE IF NOT EXISTS _edges (
@@ -73,6 +73,6 @@ CREATE TABLE IF NOT EXISTS _edges (
   PRIMARY KEY (source_vertex_id, target_vertex_id, source_vertex_port_id, target_vertex_port_id)
 );
 
-CREATE VIEW edges
+CREATE VIEW IF NOT EXISTS edges AS
 SELECT * FROM _edges;
 

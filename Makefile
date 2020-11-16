@@ -7,10 +7,7 @@ PROLOG_DIR := prolog
 all: generate-code.task
 
 generate-code.task: \
-	generate-code-python.task
-
-generate-code-python.task: generate-code-types.task
-	@cp -r $(SQL_DIR)/* $(PYTHON_DIR)/forsyde/io/python
+	generate-code-types.task
 
 generate-code-types.task:
 	./gradlew run

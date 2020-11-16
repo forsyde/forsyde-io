@@ -8,14 +8,14 @@ class TypesPackageToSQL {
 	static def toText(EPackage pak)
 	'''
 	«FOR t : pak.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toIterable»
-	INSERT OR IGNORE INTO allowed_types (type_name) VALUES ('«t.name»');
+	INSERT OR IGNORE INTO `_allowed_types` (type_name) VALUES ('«t.name»');
 	«ENDFOR»
-	INSERT OR IGNORE INTO allowed_types (type_name) VALUES ('Unkown');
+	INSERT OR IGNORE INTO `_allowed_types` (type_name) VALUES ('Unknown');
 	
 	«FOR t : pak.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toIterable»
-	INSERT OR IGNORE INTO super_types_base (type_name, super_type_name) VALUES ('«t.name»', '«t.name»');
+	INSERT OR IGNORE INTO `_super_types_base` (type_name, super_type_name) VALUES ('«t.name»', '«t.name»');
 	«FOR s : t.ESuperTypes»
-	INSERT OR IGNORE INTO super_types_base (type_name, super_type_name) VALUES ('«t.name»', '«s.name»');
+	INSERT OR IGNORE INTO `_super_types_base` (type_name, super_type_name) VALUES ('«t.name»', '«s.name»');
 	«ENDFOR»
 	«ENDFOR»
 	'''
