@@ -9,24 +9,24 @@ CREATE TABLE IF NOT EXISTS _allowed_types (
 CREATE VIEW IF NOT EXISTS allowed_types AS
 SELECT * FROM _allowed_types;
 
-CREATE TABLE IF NOT EXISTS _super_types_base (
+CREATE TABLE IF NOT EXISTS _refined_types_base (
   type_name TEXT,
-  super_type_name TEXT,
+  refined_type_name TEXT,
   FOREIGN KEY (type_name)
-    REFERENCES allowed_types (type_name),
-  FOREIGN KEY (super_type_name)
-    REFERENCES allowed_types (type_name),
-  PRIMARY KEY (type_name, super_type_name)
+    REFERENCES _allowed_types (type_name),
+  FOREIGN KEY (refined_type_name)
+    REFERENCES _allowed_types (type_name),
+  PRIMARY KEY (type_name, refined_type_name)
 );
 
-CREATE VIEW IF NOT EXISTS super_types_base AS
-SELECT * FROM _super_types_base;
+CREATE VIEW IF NOT EXISTS refined_types_base AS
+SELECT * FROM _refined_types_base;
 
 CREATE TABLE IF NOT EXISTS _vertexes (
   vertex_id TEXT PRIMARY KEY,
   type_name TEXT NOT NULL,
   FOREIGN KEY (type_name)
-    REFERENCES allowed_types (type_name)
+    REFERENCES _allowed_types (type_name)
 );
 
 CREATE VIEW IF NOT EXISTS vertexes AS
@@ -38,9 +38,9 @@ CREATE TABLE IF NOT EXISTS _ports (
   type_name TEXT NOT NULL,
   PRIMARY KEY (vertex_id, port_id),
   FOREIGN KEY (vertex_id)
-    REFERENCES vertexes (vertex_id),
+    REFERENCES _vertexes (vertex_id),
   FOREIGN KEY (type_name)
-    REFERENCES allowed_types (type_name)
+    REFERENCES _allowed_types (type_name)
 );
 
 CREATE VIEW IF NOT EXISTS ports AS
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS _properties (
   prop_value JSON NOT NULL,
   PRIMARY KEY (vertex_id, prop_id),
   FOREIGN KEY (vertex_id)
-    REFERENCES vertexes (vertex_id)
+    REFERENCES _vertexes (vertex_id)
 );
 
 CREATE VIEW IF NOT EXISTS properties AS
@@ -65,11 +65,11 @@ CREATE TABLE IF NOT EXISTS _edges (
   target_vertex_port_id TEXT,
   type_name TEXT NOT NULL,
   FOREIGN KEY (source_vertex_id)
-    REFERENCES vertexes (vertex_id),
+    REFERENCES _vertexes (vertex_id),
   FOREIGN KEY (target_vertex_id)
-    REFERENCES vertexes (vertex_id),
+    REFERENCES _vertexes (vertex_id),
   FOREIGN KEY (type_name)
-    REFERENCES allowed_types (type_name),
+    REFERENCES _allowed_types (type_name),
   PRIMARY KEY (source_vertex_id, target_vertex_id, source_vertex_port_id, target_vertex_port_id)
 );
 

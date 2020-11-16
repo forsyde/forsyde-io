@@ -13,7 +13,7 @@ class TypePackageToPython {
 «««	
 	import forsyde.io.python.core as core
 	«FOR subp : pak.ESubpackages»
-	from forsyde.io.python.«Packages.getPackageSequence(pak).reverse.map[p | p.name.toLowerCase].join(".")».«subp.name.toLowerCase» import «subp.name»Factory
+	from forsyde.io.python.«Packages.getPackageSequence(pak).map[p | p.name.toLowerCase].join(".")».«subp.name.toLowerCase» import «subp.name»Factory
 	«ENDFOR»
 	
 	

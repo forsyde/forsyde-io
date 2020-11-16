@@ -47,7 +47,7 @@ class QueryableMixin(object):
     def _install_standard_views(self):
         with self.connect_db() as db:
             for view_name in self.standard_views:
-                sql_command = res.read_text('forsyde.io.python', view_name)
+                sql_command = res.read_text('forsyde.io.python.sql', view_name)
                 db.executescript(sql_command)
 
     def query_view(self, view_name: str) -> Iterable[Dict[str, str]]:
@@ -138,9 +138,9 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                     [(p_vid, p_id, p_tname)] = port_pattern.findall(line)
                     port_type = types.TypesFactory.build_type(p_tname)
                     port = core.Port(
-                                identifier = p_id,
-                                port_type = port_type
-                            )
+                        identifier = p_id,
+                        port_type = port_type
+                    )
                     vertex_dict[p_vid].ports.add(port)
                 elif line.startswith('prop'):
                     # the variables name are shortened to save space
@@ -175,10 +175,10 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
     def write_db(self, sink: str) -> None: 
         self.setup_model_db(sink)
         with self.connect_db() as con:
-            insert_vertex_sql = res.read_text('forsyde.io.python', 'insert_vertex.sql')
-            insert_edge_sql = res.read_text('forsyde.io.python', 'insert_edge.sql')
-            insert_prop_sql = res.read_text('forsyde.io.python', 'insert_property.sql')
-            insert_port_sql = res.read_text('forsyde.io.python', 'insert_port.sql')
+            insert_vertex_sql = res.read_text('forsyde.io.python.sql', 'insert_vertex.sql')
+            insert_edge_sql = res.read_text('forsyde.io.python.sql', 'insert_edge.sql')
+            insert_prop_sql = res.read_text('forsyde.io.python.sql', 'insert_property.sql')
+            insert_port_sql = res.read_text('forsyde.io.python.sql', 'insert_port.sql')
             vertexes = (
                 (vid, v.vertex_type.get_type_name())
                 for (vid, v) in self.nodes("data")
@@ -220,9 +220,9 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                 p_tname = row['type_name']
                 port_type = types.TypesFactory.build_type(p_tname)
                 port = core.Port(
-                            identifier = p_id,
-                            port_type = port_type
-                        )
+                    identifier = p_id,
+                    port_type = port_type
+                )
                 vertex_dict[p_vid].ports.add(port)
             for row in con.execute('SELECT * FROM properties;'):
                 p_vid = row['vertex_id']

@@ -1,4 +1,5 @@
 TYPES_DIR := forsyde/io/python/types
+SQL_DIR := forsyde/io/python/sql
 PYTHON := python3
 PIP := $(PYTHON) -m pip 
 
@@ -21,3 +22,7 @@ publish-testpypi.task: gen-dist-archives.task
 
 publish-pypi.task: gen-dist-archives.task
 	$(PYTHON) -m twine upload dist/*
+
+inject-sql.task:
+	@mkdir -p $(SQL_DIR)
+	@cp -r sql/* $(SQL_DIR)

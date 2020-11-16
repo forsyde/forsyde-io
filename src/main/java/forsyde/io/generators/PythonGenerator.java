@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -50,6 +52,7 @@ public class PythonGenerator extends  TypesGenerator {
 				.orElse(".");
 		Path fileDir;
 		Path fileTotal;
+		
 		if (pak.getESubpackages().isEmpty() == false) {
 			fileDir = Paths.get(packageRoot, filePathParent, pak.getName().toLowerCase());
 			fileTotal = Paths.get(packageRoot, filePathParent, pak.getName().toLowerCase(), "__init__.py");

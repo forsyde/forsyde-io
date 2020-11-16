@@ -20,7 +20,7 @@ public class Main {
 			haskellGenerator.generate();
 			javaGenerator.generate("ecore/types.ecore", "java/src/main/java/forsyde/io/java");
 			prologGenerator.generate();
-			sqlGenerator.generate("ecore/types.ecore", "python/forsyde/io/python");
+			sqlGenerator.generate("ecore/types.ecore", "python/forsyde/io/python/sql");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

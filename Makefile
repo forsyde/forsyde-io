@@ -9,7 +9,14 @@ all: generate-code.task
 generate-code.task: \
 	generate-code-types.task
 
-generate-code-types.task:
+inject-sql.task:
+	@mkdir -p $(PYTHON_DIR)/sql
+	@cp -r $(SQL_DIR)/* $(PYTHON_DIR)/sql
+	$(MAKE) -C $(PYTHON_DIR) inject-sql.task
+
+generate-code-types.task:\
+	clean-code-types-all.task\
+	inject-sql.task
 	@./gradlew run
 
 publish-online.task: publish-online-all.task

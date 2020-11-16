@@ -1,1 +1,1 @@
-include forsyde/io/python/*.sql
+include forsyde/io/python/sql/*.sql

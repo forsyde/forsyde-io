@@ -32,7 +32,6 @@ public class SQLGenerator extends TypesGenerator {
 		
 		final String packageRoot = typeDst;
 		
-		cleanRoot(typeDst, ".");
 		processPackage(forSyDeTypes, packageRoot);
 //		TreeIterator<EObject> iterator = forSyDeTypes.eAllContents();
 //		while (iterator.hasNext()) {

@@ -18,16 +18,6 @@ public abstract class TypesGenerator {
 		String typeSrc,
 		String typeDst
 	) throws IOException;
-	
-	public void cleanRoot (
-		String root,
-		String typeDst
-	) throws IOException {
-		Files.walk(Paths.get(typeDst, root))
-	      .sorted(Comparator.reverseOrder())
-	      .map(Path::toFile)
-	      .forEach(File::delete);
-	}
 		
 	protected void processPackage(EPackage pak, String packageRoot, String prefix, String suffix, Boolean lowerCase) throws IOException {
 		final CharSequence produced = TypesFactoryGeneratorJava.toText(pak);
