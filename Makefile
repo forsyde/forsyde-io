@@ -4,49 +4,32 @@ JAVA_DIR := java
 HASKELL_DIR := haskell
 PROLOG_DIR := prolog
 
-all: generate-code.task
+LIBS := PYTHON JAVA HASKELL
 
-generate-code.task: \
-	generate-code-types.task
+all: generate-code
 
-inject-sql.task:
-	@mkdir -p $(PYTHON_DIR)/sql
-	@cp -r $(SQL_DIR)/* $(PYTHON_DIR)/sql
-	$(MAKE) -C $(PYTHON_DIR) inject-sql.task
-
-generate-code-types.task:\
-	clean-code-types-all.task\
-	inject-sql.task
+generate-code:\
+	inject-sql
 	@./gradlew run
 
-publish-online.task: publish-online-all.task
+inject-sql: $(addprefix inject-sql-,$(LIBS))
 
-publish-local.task: publish-local-all.task
+inject-sql-%:
+	@mkdir -p $($*_DIR)/sql
+	@cp -r $(SQL_DIR)/* $($*_DIR)/sql
+	@$(MAKE) -C $($*_DIR) inject-sql
 
-publish-online-all.task: generate-code.task
-	$(MAKE) -C $(PYTHON_DIR) publish-online.task
-	$(MAKE) -C $(JAVA_DIR) publish-online.task
+clean-code-%:
+	@$(MAKE) -C $($*_DIR) clean-code
 
-publish-local-all.task: \
-	publish-local-python.task \
-	publish-local-java.task \
-	publish-local-haskell.task
+publish-local: $(addprefix publish-local-,$(LIBS))
 
-clean-code-types-all.task: \
-	clean-code-types-python.task \
-	clean-code-types-java.task
+publish-local-%: generate-code
+	$(MAKE) -C $($*_DIR) publish-local
 
-clean-code-types-python.task:
-	$(MAKE) -C $(PYTHON_DIR) clean-code-types.task
-
-publish-local-python.task: generate-code.task
-	$(MAKE) -C $(PYTHON_DIR) publish-local.task
-
-publish-local-java.task: generate-code.task
-	$(MAKE) -C $(JAVA_DIR) publish-local.task
-
-clean-code-types-java.task:
-	$(MAKE) -C $(JAVA_DIR) clean-code-types.task
-
-publish-local-haskell.task: generate-code.task
-	$(MAKE) -C $(HASKELL_DIR) publish-local.task
+publish-online: $(addprefix publish-online-,$(LIBS))
+	
+publish-online-%: generate-code
+	$(MAKE) -C $($*_DIR) publish-online
+	$(MAKE) -C $(PYTHON_DIR) publish-online
+	$(MAKE) -C $(JAVA_DIR) publish-online

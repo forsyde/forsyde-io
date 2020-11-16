@@ -1,16 +1,18 @@
 TYPES_DIR := src/main/java/forsyde/io/java/types/
 GRADLE := ./gradlew
 
-publish-local.task:
+publish-local:
 	$(GRADLE) publishToMavenLocal
 
-clean-code-types.task:
+clean-code-types:
 	$(RM) -rf $(TYPES_DIR)
 
-publish-online.task: upload-online.task
+publish-online: upload-online
 
-upload-online.task: upload-bintray.task
+upload-online: upload-bintray
 
-upload-bintray.task:
+upload-bintray:
 	$(GRADLE) bintrayUpload
 
+inject-sql:
+	@echo "!!!JAVA inject sql not implemented yet!!!"

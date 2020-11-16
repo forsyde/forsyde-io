@@ -3,26 +3,26 @@ SQL_DIR := forsyde/io/python/sql
 PYTHON := python3
 PIP := $(PYTHON) -m pip 
 
-publish-local.task:
+publish-local:
 	$(PIP) install .
 
-clean-code-types.task:
+clean-code-types:
 	$(RM) -rf $(TYPES_DIR)
 
-publish-online.task: publish-pypi.task
+publish-online: publish-pypi
 
-update-tools.task: 
+update-tools: 
 	$(PIP) install --user --upgrade setuptools wheel twine
 
-gen-dist-archives.task: update-tools.task
+gen-dist-archives: update-tools
 	$(PYTHON) setup.py sdist bdist_wheel
 
-publish-testpypi.task: gen-dist-archives.task
+publish-testpypi: gen-dist-archives
 	$(PYTHON) -m twine upload --repository testpypi dist/*
 
-publish-pypi.task: gen-dist-archives.task
+publish-pypi: gen-dist-archives
 	$(PYTHON) -m twine upload dist/*
 
-inject-sql.task:
+inject-sql:
 	@mkdir -p $(SQL_DIR)
 	@cp -r sql/* $(SQL_DIR)
