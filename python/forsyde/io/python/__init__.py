@@ -55,12 +55,13 @@ class QueryableMixin(object):
             for row in db.execute(f"SELECT * FROM {view_name};"):
                 yield dict(row)
 
+
 class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
 
     """Docstring for ForSyDeModel. """
 
-    def __init__(self, 
-                 standard_views = [
+    def __init__(self,
+                 standard_views=[
                      'create_tables.sql',
                      'types.sql',
                      'create_types_views.sql',
