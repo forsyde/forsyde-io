@@ -1,8 +1,12 @@
+TYPES_DIR := forsyde/io/python/types
 PYTHON := python3
 PIP := $(PYTHON) -m pip 
 
 publish-local.task:
 	$(PIP) install .
+
+clean-code-types.task:
+	$(RM) -rf $(TYPES_DIR)
 
 publish-online.task: publish-pypi.task
 

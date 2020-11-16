@@ -15,7 +15,7 @@ import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import forsyde.io.generators.python.types.TypePackageToPython;
 import forsyde.io.generators.utils.Packages;
 
-public class PythonGenerator implements  TypesGenerator {
+public class PythonGenerator extends  TypesGenerator {
 	
 
 	public void generate(String typeSrc, String typeDst) throws IOException {

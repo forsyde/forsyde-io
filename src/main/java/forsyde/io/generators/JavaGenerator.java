@@ -25,7 +25,7 @@ import forsyde.io.generators.java.types.TypesFactoryGeneratorJava;
 import forsyde.io.generators.java.types.TypesClassToJava;
 import forsyde.io.generators.utils.Packages;
 
-public class JavaGenerator implements TypesGenerator {
+public class JavaGenerator extends TypesGenerator {
 	
 	public void generate(String typeSrc, String typeDst) throws IOException {
 		ResourceSet resourceSet = new ResourceSetImpl();
@@ -62,17 +62,6 @@ public class JavaGenerator implements TypesGenerator {
 				processPackage((EPackage) elem, packageRoot);
 			}
 		}
-		// add the XMI serializer and deserializer, should go in the same pacakge as ForSyDeIO
-//		final Path ioTotalXMI = Paths.get(packageRoot, ioPath, "ForSyDeIOXMIDriver.java");
-//		final CharSequence producedXMI = ClassToJavaXMISerializer.toText(ForSyDe);
-//		Files.createDirectories(Paths.get(packageRoot, ioPath));
-//		Files.writeString(ioTotalXMI, producedXMI);
-		// add the FlatIR serializer and deserializer, should go in the same pacakge as ForSyDeIO
-		// after some thoughts it seems it is quite unnecessary to define another format.
-//		final Path ioTotalFlat = Paths.get(packageRoot, ioPath, "ForSyDeIOFlatIRDriver.java");
-//		final CharSequence producedFlat = ClassToJavaFlatIRSerializer.toText(ForSyDe);
-//		Files.createDirectories(Paths.get(packageRoot, ioPath));
-//		Files.writeString(ioTotalFlat, producedFlat);
 	}
 	
 	private void processPackage(EPackage pak, String packageRoot) throws IOException {

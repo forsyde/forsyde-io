@@ -18,7 +18,7 @@ import forsyde.io.generators.python.types.TypePackageToPython;
 import forsyde.io.generators.sql.types.TypesPackageToSQL;
 import forsyde.io.generators.utils.Packages;
 
-public class SQLGenerator implements TypesGenerator {
+public class SQLGenerator extends TypesGenerator {
 
 	public void generate(String typeSrc, String typeDst) throws IOException {
 		ResourceSet resourceSet = new ResourceSetImpl();
@@ -32,6 +32,7 @@ public class SQLGenerator implements TypesGenerator {
 		
 		final String packageRoot = typeDst;
 		
+		cleanRoot(typeDst, ".");
 		processPackage(forSyDeTypes, packageRoot);
 //		TreeIterator<EObject> iterator = forSyDeTypes.eAllContents();
 //		while (iterator.hasNext()) {
