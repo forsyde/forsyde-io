@@ -65,7 +65,7 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                      'create_tables.sql',
                      'types.sql',
                      'create_types_views.sql',
-                     'create_sdf_views.sql'
+                     'create_views.sql'
                  ],
                  *args, **kwargs):
         """TODO: to be defined. """
