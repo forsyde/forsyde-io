@@ -2,12 +2,15 @@ import re
 import sqlite3
 import importlib.resources as res
 from contextlib import contextmanager
-from typing import Iterable, Dict 
+from typing import Iterable, Dict, Any
 
 import networkx as nx
 
-import forsyde.io.python.core as core
-import forsyde.io.python.types as types
+from forsyde.io.python.types import TypesFactory
+from forsyde.io.python.core import Vertex
+from forsyde.io.python.core import Port
+from forsyde.io.python.core import Edge
+
 
 class QueryableMixin(object):
 
@@ -50,7 +53,7 @@ class QueryableMixin(object):
                 sql_command = res.read_text('forsyde.io.python.sql', view_name)
                 db.executescript(sql_command)
 
-    def query_view(self, view_name: str) -> Iterable[Dict[str, str]]:
+    def query_view(self, view_name: str) -> Iterable[Dict[str, Any]]:
         with self.connect_db() as db:
             for row in db.execute(f"SELECT * FROM {view_name};"):
                 yield dict(row)
@@ -64,7 +67,6 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                  standard_views=[
                      'create_tables.sql',
                      'types.sql',
-                     'create_types_views.sql',
                      'create_views.sql'
                  ],
                  *args, **kwargs):
@@ -113,7 +115,6 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                     edge.edge_type.get_type_name()
                 ))
 
-
     def read_prolog(self, source: str) -> None:
         vertex_pattern = re.compile("vertex\('(\S+)', '(\S+)'\)\.")
         port_pattern = re.compile("port\('(\S+)', '(\S+)', '(\S+)'\)\.")
@@ -126,8 +127,8 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                     pass
                 elif line.startswith('vertex'):
                     [(vertex_id, vertex_type_name)] = vertex_pattern.findall(line)
-                    vertex_type = types.TypesFactory.build_type(vertex_type_name)
-                    vertex_dict[vertex_id] = core.Vertex(
+                    vertex_type = TypesFactory.build_type(vertex_type_name)
+                    vertex_dict[vertex_id] = Vertex(
                         identifier = vertex_id,
                         vertex_type = vertex_type
                     )
@@ -137,8 +138,8 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                     # but they follow the same logic as the ones for
                     # vertexes.
                     [(p_vid, p_id, p_tname)] = port_pattern.findall(line)
-                    port_type = types.TypesFactory.build_type(p_tname)
-                    port = core.Port(
+                    port_type = TypesFactory.build_type(p_tname)
+                    port = Port(
                         identifier = p_id,
                         port_type = port_type
                     )
@@ -154,8 +155,8 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                     # but they follow the same logic as the ones for
                     # vertexes.
                     [(e_sid, e_tid, e_spid, e_tpid, e_tname)] = edge_pattern.findall(line)
-                    edge_type = types.TypesFactory.build_type(e_tname)
-                    edge = core.Edge(
+                    edge_type = TypesFactory.build_type(e_tname)
+                    edge = Edge(
                         source_vertex_id = e_sid,
                         target_vertex_id = e_tid,
                         edge_type = edge_type
@@ -173,7 +174,14 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                         )
                     )
 
-    def write_db(self, sink: str) -> None: 
+    def query_vertexes(self,
+                       view_name: str,
+                       id_name: str = 'vertex_id'
+                       ) -> Iterable[Vertex]:
+        for row in self.query_view(view_name):
+            yield self.nodes("data")[row[id_name]]
+
+    def write_db(self, sink: str) -> None:
         self.setup_model_db(sink)
         with self.connect_db() as con:
             insert_vertex_sql = res.read_text('forsyde.io.python.sql', 'insert_vertex.sql')
@@ -198,55 +206,52 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
             )
             con.executemany(insert_prop_sql, props)
             edges = (
-                (sid, tid, e.source_vertex_port_id, e.target_vertex_port_id, e.edge_type.get_type_name())
-                for (sid, tid, e) in self.edges.data("data")
+                e.ids_tuple() for (_, _, e) in self.edges.data("data")
             )
             con.executemany(insert_edge_sql, edges)
 
     def read_db(self, source: str) -> None:
         self.setup_model_db(source)
-        with self.connect_db() as con:
-            vertex_dict = dict()
-            for row in con.execute('SELECT * FROM vertexes;'):
-                vertex_id = row["vertex_id"]
-                vertex_type = types.TypesFactory.build_type(row["type_name"])
-                vertex_dict[vertex_id] = core.Vertex(
-                    identifier = vertex_id,
-                    vertex_type = vertex_type
-                )
-                self.add_node(vertex_id, data = vertex_dict[vertex_id])
-            for row in con.execute('SELECT * FROM ports;'):
-                p_vid = row['vertex_id']
-                p_id = row['port_id']
-                p_tname = row['type_name']
-                port_type = types.TypesFactory.build_type(p_tname)
-                port = core.Port(
-                    identifier = p_id,
-                    port_type = port_type
-                )
-                vertex_dict[p_vid].ports.add(port)
-            for row in con.execute('SELECT * FROM properties;'):
-                p_vid = row['vertex_id']
-                p_id = row['prop_id']
-                p_val = row['prop_value']
-                vertex_dict[p_vid].properties[p_id] = p_val
-            for row in con.execute('SELECT * FROm edges;'):
-                e_sid = row['source_vertex_id']
-                e_tid = row['target_vertex_id']
-                e_spid = row['source_vertex_port_id']
-                e_tpid = row['target_vertex_port_id']
-                e_tname = row['type_name']
-                edge_type = types.TypesFactory.build_type(e_tname)
-                edge = core.Edge(
-                    source_vertex_id = e_sid,
-                    target_vertex_id = e_tid,
-                    edge_type = edge_type
-                )
-                if e_spid:
-                    edge.source_vertex_port_id = e_spid
-                if e_tpid:
-                    edge.target_vertex_port_id = e_tpid
-                self.add_edge(e_sid, e_tid, data=edge)
+        vertex_dict = dict()
+        for row in self.query_view('vertexes'):
+            vertex = Vertex(
+                identifier=row["vertex_id"],
+                vertex_type=TypesFactory.build_type(row["type_name"])
+            )
+            vertex_dict[vertex.identifier] = vertex
+            self.add_node(vertex.identifier, data=vertex)
+        for row in self.query_view('ports'):
+            p_vid = row['vertex_id']
+            p_id = row['port_id']
+            p_type = TypesFactory.build_type(row['type_name'])
+            port = Port(identifier=p_id, port_type=p_type)
+            vertex_dict[p_vid].ports.add(port)
+        for row in self.query_view('properties'):
+            p_vid = row['vertex_id']
+            p_id = row['prop_id']
+            p_val = row['prop_value']
+            vertex_dict[p_vid].properties[p_id] = p_val
+        for row in self.query_view('edges'):
+            edge = Edge(
+                source_vertex=vertex_dict[row['source_vertex_id']],
+                target_vertex=vertex_dict[row['target_vertex_id']],
+                source_vertex_port=next(
+                    (p for p in vertex_dict[row['source_vertex_id']].ports
+                     if p.identifier == row['source_vertex_port_id']),
+                    None
+                ),
+                target_vertex_port=next(
+                    (p for p in vertex_dict[row['target_vertex_id']].ports
+                     if p.identifier == row['target_vertex_port_id']),
+                    None
+                ),
+                edge_type=TypesFactory.build_type(row['type_name'])
+            )
+            self.add_edge(
+                edge.source_vertex.identifier,
+                edge.target_vertex.identifier,
+                data=edge
+            )
 
     @classmethod
     def from_file(cls, source: str) -> "ForSyDeModel":

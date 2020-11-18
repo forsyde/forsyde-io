@@ -1,4 +1,8 @@
+from dataclasses import dataclass, field
 from typing import Optional, Set, Any, Dict
+
+_port_id_counter = 1
+_vertex_id_counter = 1
 
 
 class Type(object):
@@ -20,126 +24,57 @@ class Type(object):
         return set()
 
 
+@dataclass(unsafe_hash=True)
 class Port(object):
 
     """Docstring for Port. """
 
-    _id_gen_counter: int = 0
+    identifier: Optional[str] = field(default=None, hash=True)
+    port_type: Type = field(default=Type(), compare=False)
 
-    def __init__(self,
-                 identifier: Optional[str] = None,
-                 port_type: Type = Type()
-                 ):
-        """TODO: to be defined.
-
-        :identifier: TODO
-        :port_type: TODO
-
-        """
-        if not identifier:
-            self._id_gen_counter += 1
-            identifier = "port_" + self._id_gen_counter
-        self.identifier = identifier
-        self.port_type = port_type
-
-    def __eq__(self, other):
-        return self.identifier == other.identifier
-
-    def __hash__(self):
-        return hash(self.identifier)
-
-    def __repr__(self):
-        return f"<Port {self.port_type} {self.identifier}>"
+    def __post_init__(self):
+        global _port_id_counter
+        if not self.identifier:
+            self.identifier = f"port{_port_id_counter}"
+            _port_id_counter += 1
 
 
+@dataclass(unsafe_hash=True)
 class Vertex(object):
 
     """Docstring for Vertex. """
 
-    _id_gen_counter: int = 0
+    identifier: Optional[str] = field(default=None, hash=True)
+    ports: Set[Port] = field(default_factory=lambda: set(), compare=False)
+    properties: Dict[str, Any] = field(
+        default_factory=lambda: dict(),
+        compare=False)
+    vertex_type: Type = field(default=Type(), compare=False)
 
-    def __init__(self,
-                 identifier: Optional[str] = None,
-                 ports: Set[Port] = set(),
-                 properties: Dict[str, Any] = dict(),
-                 vertex_type: Type = Type()
-                 ):
-        """TODO: to be defined.
+    def __post_init__(self):
+        global _vertex_id_counter
+        if not self.identifier:
+            self.identifier = f"vertex{_vertex_id_counter}"
+            _vertex_id_counter += 1
 
-        :identifier: TODO
-        :vertex_type: TODO
 
-        """
-        if not identifier:
-            self._id_gen_counter += 1
-            identifier = "vertex_" + self._id_gen_counter
-        self.identifier = identifier
-        # due to the class initialization in python, recreating the
-        # set is necessary to make it instance specific and not
-        # a class global
-        if len(ports) == 0:
-            ports = set()
-        self.ports = ports
-        # see above.
-        if len(properties) == 0:
-            properties = dict()
-        self.properties = properties
-        self.vertex_type = vertex_type
-
-    def __hash__(self):
-        return hash(self.identifier)
-
-    def __eq__(self, other):
-        return self.identifier == other.identifier
-
-    def __repr__(self):
-        return "<Vertex {1} {0}, {2} ports, {3} props>".format(
-            self.identifier,
-            str(self.vertex_type),
-            len(self.ports),
-            len(self.properties)
-        )
-
+@dataclass
 class Edge(object):
 
     """Docstring for Edge. """
+    source_vertex: Vertex
+    target_vertex: Vertex
+    source_vertex_port: Optional[Port] = field(default=None) 
+    target_vertex_port: Optional[Port] = field(default=None)
+    edge_type: Type = field(default=Type(), compare=False)
 
-    def __init__(self,
-                 source_vertex_id: str,
-                 target_vertex_id: str,
-                 source_vertex_port_id: Optional[str] = '',
-                 target_vertex_port_id: Optional[str] = '',
-                 edge_type=Type()
-                 ):
-        """TODO: to be defined.
-
-        :source_vertex: TODO
-        :target_vertex: TODO
-        :source_vertex_port: TODO
-        :target_vertex_port: TODO
-        :edge_type: TODO
-
-        """
-        self.source_vertex_id = source_vertex_id
-        self.target_vertex_id = target_vertex_id
-        self.source_vertex_port_id = source_vertex_port_id
-        self.target_vertex_port_id = target_vertex_port_id
-        self.edge_type = edge_type
-
-    def __eq__(self, other):
-        return (self.source_vertex == other.source_vertex and
-                self.target_vertex == other.target_vertex and
-                (self.source_vertex_port and other.source_vertex_port or
-                 self.source_vertex_port == other.source_vertex_port) and
-                (self.target_vertex_port and other.target_vertex_port or 
-                 self.target_vertex_port == other.target_vertex_port) and
-                self.edge_type == other.edge_type)
-
-    def __repr__(self):
-        return "<Edge {4} {0}:{2} -> {1}:{3}>".format(
-            self.source_vertex_id,
-            self.target_vertex_id,
-            self.source_vertex_port_id,
-            self.target_vertex_port_id,
-            str(self.edge_type)
+    def ids_tuple(self):
+        return (
+            self.source_vertex.identifier,
+            self.target_vertex.identifier,
+            self.source_vertex_port.identifier if
+            self.source_vertex_port else None,
+            self.target_vertex_port.identifier if
+            self.target_vertex_port else None,
+            self.edge_type.get_type_name()
         )
