@@ -60,14 +60,14 @@ SELECT `actor_id`,
   FROM sdf_topology_unsigned;
 
 CREATE VIEW IF NOT EXISTS `orderings` AS
-SELECT v.`vertex_id`, v.`type_name`
+SELECT DISTINCT v.`vertex_id`, v.`type_name`
   FROM vertexes AS v
   JOIN refined_types AS t ON v.type_name = t.refined_type_name
 WHERE
   t.`type_name` = 'AbstractOrdering';
 
 CREATE VIEW IF NOT EXISTS `tdma_mpsoc_processing_units` AS
-SELECT s.`vertex_id`, s.`type_name`
+SELECT DISTINCT s.`vertex_id`, s.`type_name`
   FROM vertexes AS s
   JOIN refined_types AS st ON s.type_name = st.refined_type_name
   JOIN edges AS e ON s.vertex_id = e.source_vertex_id
@@ -80,7 +80,7 @@ WHERE
   tt.`type_name` = 'TimeDivisionMultiplexer';
 
 CREATE VIEW IF NOT EXISTS `tdma_mpsoc_bus` AS
-SELECT t.`vertex_id`, t.`type_name`
+SELECT DISTINCT t.`vertex_id`, t.`type_name`
   FROM vertexes AS s
   JOIN refined_types AS st ON s.type_name = st.refined_type_name
   JOIN edges AS e ON s.vertex_id = e.source_vertex_id

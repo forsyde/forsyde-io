@@ -17,6 +17,13 @@
         defaultValueLiteral="1"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AbstractPhysicalConnection"/>
+  <eClassifiers xsi:type="ecore:EClass" name="WCET">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="process" lowerBound="1"
+        eType="#//Process"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="processor" lowerBound="1"
+        eType="#//AbstractProcessingComponent"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
+  </eClassifiers>
   <eSubpackages name="Application" nsURI="https://forsyde.github.io/ForSyDe/Model/Application"
       nsPrefix="">
     <eClassifiers xsi:type="ecore:EClass" name="DataType"/>
