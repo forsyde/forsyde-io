@@ -8,9 +8,9 @@ class TypePackageToPython {
 	
 	static def toText(EPackage pak)
 	'''
-«««		The types import is a workaround for the python from ... import problem with circular depedencies
-«««		https://stackoverflow.com/questions/744373/circular-or-cyclic-imports-in-python
-«««	
+	from dataclasses import dataclass, field
+	from typing import Set
+
 	import forsyde.io.python.core as core
 	«FOR subp : pak.ESubpackages»
 	from forsyde.io.python.«Packages.getPackageSequence(pak).map[p | p.name.toLowerCase].join(".")».«subp.name.toLowerCase» import «subp.name»Factory

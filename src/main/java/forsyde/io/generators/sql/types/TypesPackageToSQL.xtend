@@ -15,7 +15,7 @@ class TypesPackageToSQL {
 	«FOR t : pak.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toIterable»
 	INSERT OR IGNORE INTO `_refined_types_base` (type_name, refined_type_name) VALUES ('«t.name»', '«t.name»');
 	«FOR s : t.ESuperTypes»
-	INSERT OR IGNORE INTO `_refined_types_base` (type_name, refined_type_name) VALUES ('«t.name»', '«s.name»');
+	INSERT OR IGNORE INTO `_refined_types_base` (type_name, refined_type_name) VALUES ('«s.name»', '«t.name»');
 	«ENDFOR»
 	«ENDFOR»
 	'''

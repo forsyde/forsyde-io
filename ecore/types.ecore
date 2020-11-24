@@ -2,12 +2,28 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="Types" nsURI="https://forsyde.github.io/Types" nsPrefix="">
   <eClassifiers xsi:type="ecore:EClass" name="Process"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Task"/>
-  <eClassifiers xsi:type="ecore:EClass" name="SporadicTask" eSuperTypes="#//Task #//TriggeredTask">
+  <eClassifiers xsi:type="ecore:EClass" name="SporadicTask" eSuperTypes="#//TriggeredTask #//AbstractOrdering">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="minArrival" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
         defaultValueLiteral="0"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="TriggeredTask" eSuperTypes="#//Task"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TriggeredTask" eSuperTypes="#//AbstractOrdering"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractOrdering" eSuperTypes="#//AbstractGrouping"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractGrouping"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractPhysicalComponent"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractProcessingComponent" eSuperTypes="#//AbstractPhysicalComponent"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractCommunicationComponent" eSuperTypes="#//AbstractPhysicalComponent"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TimeDivisionMultiplexer" eSuperTypes="#//AbstractCommunicationComponent">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="slots" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
+        defaultValueLiteral="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractPhysicalConnection"/>
+  <eClassifiers xsi:type="ecore:EClass" name="WCET">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="process" lowerBound="1"
+        eType="#//Process"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="processor" lowerBound="1"
+        eType="#//AbstractProcessingComponent"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
+  </eClassifiers>
   <eSubpackages name="Application" nsURI="https://forsyde.github.io/ForSyDe/Model/Application"
       nsPrefix="">
     <eClassifiers xsi:type="ecore:EClass" name="DataType"/>
@@ -33,12 +49,6 @@
     <eClassifiers xsi:type="ecore:EClass" name="Storage"/>
     <eClassifiers xsi:type="ecore:EClass" name="Interface"/>
     <eClassifiers xsi:type="ecore:EClass" name="Structure"/>
-    <eClassifiers xsi:type="ecore:EClass" name="TimeDivisionMultiplexer" eSuperTypes="#//Platform/Communication">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxSlots" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
-          defaultValueLiteral="1"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="minSlots" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
-          defaultValueLiteral="1"/>
-    </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ComputationalTile" eSuperTypes="#//Platform/Computation"/>
   </eSubpackages>
   <eSubpackages name="Extra" nsURI="https://forsyde.github.io/ForSyDe/Model/Extra"
