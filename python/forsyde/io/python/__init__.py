@@ -1,3 +1,4 @@
+import json
 import re
 import sqlite3
 import importlib.resources as res
@@ -201,19 +202,19 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
             insert_prop_sql = res.read_text('forsyde.io.python.sql', 'insert_property.sql')
             insert_port_sql = res.read_text('forsyde.io.python.sql', 'insert_port.sql')
             vertexes = (
-                (vid, v.vertex_type.get_type_name())
-                for (vid, v) in self.nodes("data")
+                (v.identifier, v.vertex_type.get_type_name())
+                for v in self.nodes
             )
             con.executemany(insert_vertex_sql, vertexes)
             ports = (
-                (p.identifier, vid, p.port_type.get_type_name())
-                for (vid, v) in self.nodes("data")
+                (p.identifier, v.identifier, p.port_type.get_type_name())
+                for v in self.nodes
                 for p in v.ports
             )
             con.executemany(insert_port_sql, ports)
             props = (
-                (pkey, vid, str(pval))
-                for (vid, v) in self.nodes("data")
+                (pkey, v.identifier, json.dumps(pval))
+                for v in self.nodes
                 for (pkey, pval) in v.properties.items()
             )
             con.executemany(insert_prop_sql, props)
