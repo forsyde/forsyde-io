@@ -1,1 +1,1 @@
-INSERT OR REPLACE INTO vertexes (vertex_id, type_name) VALUES (?, ?);
+INSERT OR REPLACE INTO _vertexes (vertex_id, type_name) VALUES (?, ?);
