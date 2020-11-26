@@ -30,7 +30,7 @@ class Port(object):
     """Docstring for Port. """
 
     identifier: Optional[str] = field(default=None, hash=True)
-    port_type: Type = field(default=Type(), compare=False)
+    port_type: Type = field(default=Type(), compare=False, hash=False)
 
     def __post_init__(self):
         global _port_id_counter
@@ -45,11 +45,18 @@ class Vertex(object):
     """Docstring for Vertex. """
 
     identifier: Optional[str] = field(default=None, hash=True)
-    ports: Set[Port] = field(default_factory=lambda: set(), compare=False)
+    ports: Set[Port] = field(
+        default_factory=lambda: set(),
+        compare=False,
+        hash=False)
     properties: Dict[str, Any] = field(
         default_factory=lambda: dict(),
-        compare=False)
-    vertex_type: Type = field(default=Type(), compare=False)
+        compare=False,
+        hash=False)
+    vertex_type: Type = field(
+        default=Type(),
+        compare=False,
+        hash=False)
 
     def __post_init__(self):
         global _vertex_id_counter

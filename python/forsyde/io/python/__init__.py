@@ -178,8 +178,20 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                        view_name: str,
                        id_name: str = 'vertex_id'
                        ) -> Iterable[Vertex]:
+        # TODO: optimize this later
         for row in self.query_view(view_name):
-            yield self.nodes("data")[row[id_name]]
+            for v in self.nodes:
+                if v.identifier == row[id_name]:
+                    yield v
+
+    def get_vertex(
+        self,
+        label: str,
+        label_name: str = 'label'
+    ) -> Vertex:
+        for (v, d) in self.nodes.data():
+            if d[label_name] == label:
+                return v
 
     def write_db(self, sink: str) -> None:
         self.setup_model_db(sink)
@@ -212,44 +224,46 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
 
     def read_db(self, source: str) -> None:
         self.setup_model_db(source)
-        vertex_dict = dict()
         for row in self.query_view('vertexes'):
             vertex = Vertex(
                 identifier=row["vertex_id"],
                 vertex_type=TypesFactory.build_type(row["type_name"])
             )
-            vertex_dict[vertex.identifier] = vertex
-            self.add_node(vertex.identifier, data=vertex)
+            self.add_node(vertex, label=vertex.identifier)
         for row in self.query_view('ports'):
             p_vid = row['vertex_id']
             p_id = row['port_id']
             p_type = TypesFactory.build_type(row['type_name'])
             port = Port(identifier=p_id, port_type=p_type)
-            vertex_dict[p_vid].ports.add(port)
+            self.get_vertex(p_vid).ports.add(port)
         for row in self.query_view('properties'):
             p_vid = row['vertex_id']
             p_id = row['prop_id']
             p_val = row['prop_value']
-            vertex_dict[p_vid].properties[p_id] = p_val
+            self.get_vertex(p_vid).properties[p_id] = p_val
         for row in self.query_view('edges'):
+            source_vertex = self.get_vertex(row['source_vertex_id'])
+            target_vertex = self.get_vertex(row['target_vertex_id'])
+            source_vertex_port = next(
+                (p for p in source_vertex.ports
+                 if p.identifier == row['source_vertex_port_id']),
+                None
+            )
+            target_vertex_port = next(
+                (p for p in source_vertex.ports
+                 if p.identifier == row['target_vertex_port_id']),
+                None
+            )
             edge = Edge(
-                source_vertex=vertex_dict[row['source_vertex_id']],
-                target_vertex=vertex_dict[row['target_vertex_id']],
-                source_vertex_port=next(
-                    (p for p in vertex_dict[row['source_vertex_id']].ports
-                     if p.identifier == row['source_vertex_port_id']),
-                    None
-                ),
-                target_vertex_port=next(
-                    (p for p in vertex_dict[row['target_vertex_id']].ports
-                     if p.identifier == row['target_vertex_port_id']),
-                    None
-                ),
+                source_vertex=source_vertex,
+                target_vertex=target_vertex,
+                source_vertex_port=source_vertex_port,
+                target_vertex_port=target_vertex_port,
                 edge_type=TypesFactory.build_type(row['type_name'])
             )
             self.add_edge(
-                edge.source_vertex.identifier,
-                edge.target_vertex.identifier,
+                edge.source_vertex,
+                edge.target_vertex,
                 data=edge
             )
 
