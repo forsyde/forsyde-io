@@ -45,7 +45,7 @@ class TypePackageToPython {
 	        «ENDFOR»
 	        }
 	        if type_name in str_to_classes:
-	            return str_to_classes[type_name]
+	            return str_to_classes[type_name]()
 	        «FOR subp : pak.ESubpackages»
 	        subpackage_type = «subp.name»Factory.build_type(type_name, False)
 	        if subpackage_type is not None:
