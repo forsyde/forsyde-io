@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from typing import Iterable, Dict, Any
 
 import networkx as nx
+import networkx.drawing.nx_pydot as nx_pydot
 
 from forsyde.io.python.types import TypesFactory
 from forsyde.io.python.core import Vertex
@@ -85,6 +86,8 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
             nx.write_gexf(self.stringified(), sink)
         elif '.graphml' in sink:
             nx.write_graphml(self.stringified(), sink)
+        elif '.dot' in sink:
+            nx_pydot.write_dot(self.stringified(), sink)
         else:
             raise NotImplementedError
 
