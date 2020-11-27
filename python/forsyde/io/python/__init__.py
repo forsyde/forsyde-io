@@ -1,3 +1,4 @@
+import copy
 import json
 import re
 import sqlite3
@@ -80,6 +81,10 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
             self.write_prolog(sink)
         elif '.db' in sink:
             self.write_db(sink)
+        elif '.gexf' in sink:
+            nx.write_gexf(self.stringified(), sink)
+        elif '.graphml' in sink:
+            nx.write_graphml(self.stringified(), sink)
         else:
             raise NotImplementedError
 
@@ -91,6 +96,27 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
         else:
             raise NotImplementedError
 
+    def stringified(self) -> nx.MultiDiGraph:
+        strg = nx.MultiDiGraph()
+        for v in self.nodes:
+            strg.add_node(
+                f"{v.identifier}:{v.vertex_type.get_type_name()}"
+            )
+        for (s, t, e) in self.edges.data("object"):
+            sp = e.source_vertex_port
+            tp = e.target_vertex_port
+            strg.add_edge(
+                f"{s.identifier}:{s.vertex_type.get_type_name()}",
+                f"{t.identifier}:{t.vertex_type.get_type_name()}",
+                key=f"{e.edge_type.get_type_name()}:" +
+                f"{s.identifier}.{sp.identifier}" if sp else
+                f"{s.identifier}" +
+                "->" +
+                f"{t.identifier}.{tp.identifier}" if tp else
+                f"{s.identifier}"
+            )
+        return strg
+
     def write_prolog(self, sink: str) -> None:
         with open(sink, 'w') as sink_file:
             for (vid, vertex) in self.nodes("data"):
@@ -99,7 +125,7 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                     vertex.vertex_type.get_type_name()
                 ))
             # these loops need to be separated so that prolog consider the exchange
-            # file a valid prolog databse.
+            # file a valid prolog objectbse.
             for (vid, vertex) in self.nodes("data"):
                 for port in vertex.ports:
                     sink_file.write("port('{0}', '{1}', '{2}').\n".format(
@@ -107,7 +133,7 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                         vertex.identifier, 
                         port.port_type.get_type_name()
                     ))
-            for (sid, tid, edge) in self.edges.data("data"):
+            for (sid, tid, edge) in self.edges.data("object"):
                 sink_file.write("edge('{0}', '{1}', '{2}', '{3}', '{4}').\n".format(
                     edge.source_vertex_id,
                     edge.target_vertex_id,
@@ -133,7 +159,7 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                         identifier = vertex_id,
                         vertex_type = vertex_type
                     )
-                    self.add_node(vertex_id, data = vertex_dict[vertex_id])
+                    self.add_node(vertex_id, object = vertex_dict[vertex_id])
                 elif line.startswith('port'):
                     # the variables name are shortened to save space
                     # but they follow the same logic as the ones for
@@ -166,7 +192,7 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                         edge.source_vertex_port_id = e_spid
                     if e_tpid:
                         edge.target_vertex_port_id = e_tpid
-                    self.add_edge(e_sid, e_tid, data=edge)
+                    self.add_edge(e_sid, e_tid, object=edge)
                 else:
                     raise NotImplementedError(
                         "Syntax error in the ForSyDe-IO Model at line {0}:\n {1}".format(
@@ -219,7 +245,7 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
             )
             con.executemany(insert_prop_sql, props)
             edges = (
-                e.ids_tuple() for (_, _, e) in self.edges.data("data")
+                e.ids_tuple() for (_, _, e) in self.edges.data("object")
             )
             con.executemany(insert_edge_sql, edges)
 
@@ -265,7 +291,7 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
             self.add_edge(
                 edge.source_vertex,
                 edge.target_vertex,
-                data=edge
+                object=edge
             )
 
     @classmethod
