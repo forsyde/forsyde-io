@@ -23,7 +23,7 @@ ext {
 }
 
 group = 'forsyde'
-version = '0.1.2'
+version = '0.1.3'
 
 sourceCompatibility = 1.8
 
@@ -85,6 +85,8 @@ task replaceJavaIOVersion() {
 task replacePythonIOVersion {
 	def replaced = file(pythonDir + '/setup.py').text.replaceFirst(/version=('|").+('|")/, "version='${version}'")
 	file(pythonDir + '/setup.py').text = replaced
+	def replacedPoetry = file(pythonDir + '/pyproject.toml').text.replaceFirst(/version = ('|").+('|")/, "version = \"${version}\"")
+	file(pythonDir + '/pyproject.toml').text = replacedPoetry
 }
 
 task replaceHaskellIOVersion {

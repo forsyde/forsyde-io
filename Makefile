@@ -31,5 +31,3 @@ publish-online: $(addprefix publish-online-,$(LIBS))
 	
 publish-online-%: generate-code
 	$(MAKE) -C $($*_DIR) publish-online
-	$(MAKE) -C $(PYTHON_DIR) publish-online
-	$(MAKE) -C $(JAVA_DIR) publish-online

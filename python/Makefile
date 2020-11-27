@@ -2,6 +2,7 @@ TYPES_DIR := forsyde/io/python/types
 SQL_DIR := forsyde/io/python/sql
 PYTHON := python3
 PIP := $(PYTHON) -m pip 
+POETRY := poetry
 
 publish-local:
 	$(PIP) install .
@@ -14,14 +15,14 @@ publish-online: publish-pypi
 update-tools: 
 	$(PIP) install --user --upgrade setuptools wheel twine
 
-gen-dist-archives: update-tools
-	$(PYTHON) setup.py sdist bdist_wheel
+build: update-tools
+	$(POETRY) build
 
 publish-testpypi: gen-dist-archives
-	$(PYTHON) -m twine upload --repository testpypi dist/*
+	$(POETRY) publish --repository testpypi-token.pypi
 
-publish-pypi: gen-dist-archives
-	$(PYTHON) -m twine upload dist/*
+publish-pypi: build
+	$(POETRY) publish 
 
 inject-sql:
 	@mkdir -p $(SQL_DIR)
