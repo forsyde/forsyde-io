@@ -103,20 +103,20 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
         strg = nx.MultiDiGraph()
         for v in self.nodes:
             strg.add_node(
-                f"{v.identifier}_{v.vertex_type.get_type_name()}"
+                f"{v.identifier}\\n{v.vertex_type.get_type_name()}"
             )
         for (s, t, e) in self.edges.data("object"):
             sp = e.source_vertex_port
             tp = e.target_vertex_port
             strg.add_edge(
-                f"{s.identifier}_{s.vertex_type.get_type_name()}",
-                f"{t.identifier}_{t.vertex_type.get_type_name()}",
-                key=f"{e.edge_type.get_type_name()}:" +
-                f"{s.identifier}.{sp.identifier}" if sp else
-                f"{s.identifier}" +
-                "->" +
-                f"{t.identifier}.{tp.identifier}:" if tp else
-                f"{s.identifier}"
+                f"{s.identifier}\\n{s.vertex_type.get_type_name()}",
+                f"{t.identifier}\\n{t.vertex_type.get_type_name()}",
+                label = f"{e.edge_type.get_type_name()}\\n" +
+                (f"{s.identifier}.{sp.identifier}" if sp else
+                f"{s.identifier}") +
+                "\\n" +
+                (f"{t.identifier}.{tp.identifier}" if tp else
+                f"{t.identifier}")
             )
         return strg
 
