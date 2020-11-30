@@ -1,6 +1,7 @@
 package forsyde.io.generators.python.types
 
 import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EClassifier
 
 class TypeToPython {
 	
@@ -14,12 +15,16 @@ class TypeToPython {
 		    """
 		
 		    type_name: str = '«cls.name»'
-		    required_ports: Set[str] = field(
-		        default_factory=lambda: set(
-		          «FOR r : cls.EAllAttributes SEPARATOR ','»
-		          '«r.name»'
+		    required_ports: Dict[str, Optional[str]] = field(
+		        default_factory=lambda: {
+		          «FOR r : cls.EAllReferences SEPARATOR ','»
+		          «IF r.EAnnotations.exists[source == "Port"]»
+		          '«r.name»': '«(r.EAnnotations.findFirst[source == "Port"].references.head as EClassifier).name»'
+		          «ELSE»
+		          '«r.name»': None
+		          «ENDIF»
 		          «ENDFOR»
-		        ),
+		        },
 		        repr=False
 		    )
 		    required_properties: Set[str] = field(

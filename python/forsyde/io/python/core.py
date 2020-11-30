@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional, Set, Any, Dict
+from typing import Optional, Set, Any, Dict, Tuple
 
 _port_id_counter = 1
 _vertex_id_counter = 1
@@ -17,11 +17,11 @@ class Type(object):
     def get_type_name(self) -> str:
         return "Unknown"
 
-    def get_required_ports(self) -> Set[str]:
-        return set()
+    def get_required_ports(self) -> Dict[str, Optional[str]]:
+        return dict()
 
-    def get_required_properties(self) -> Set[str]:
-        return set()
+    def get_required_properties(self) -> Dict[str, Any]:
+        return dict()
 
 
 @dataclass(unsafe_hash=True)

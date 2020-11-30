@@ -64,14 +64,22 @@
     <eClassifiers xsi:type="ecore:EClass" name="FIFOSignal" eSuperTypes="#//Vertexes/Signal"/>
     <eClassifiers xsi:type="ecore:EClass" name="WCCT">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="flit" lowerBound="1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
+          defaultValueLiteral="0"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="sender" lowerBound="1"
-          eType="#//Vertexes/AbstractProcessingComponent"/>
+          eType="#//Vertexes/AbstractProcessingComponent">
+        <eAnnotations source="Port" references="#//Ports/Characterization"/>
+      </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EReference" name="reciever" lowerBound="1"
-          eType="#//Vertexes/AbstractProcessingComponent"/>
+          eType="#//Vertexes/AbstractProcessingComponent">
+        <eAnnotations source="Port" references="#//Ports/Characterization"/>
+      </eStructuralFeatures>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="interconnects" lowerBound="1"
+          upperBound="-1" eType="#//Vertexes/AbstractCommunicationComponent">
+        <eAnnotations source="Port" references="#//Ports/Characterization"/>
+      </eStructuralFeatures>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="FlitWCCT" eSuperTypes="#//Vertexes/WCCT"/>
     <eSubpackages name="MoC" nsURI="https://forsyde.github.io/ForSyDe/Model/MoC" nsPrefix="">
       <eSubpackages name="SY" nsURI="https://forsyde.github.io/ForSyDe/Model/MoC/SY"
           nsPrefix="">
@@ -101,5 +109,6 @@
       nsPrefix="PortsTypes">
     <eClassifiers xsi:type="ecore:EClass" name="Host"/>
     <eClassifiers xsi:type="ecore:EClass" name="OrderedExecution"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Characterization"/>
   </eSubpackages>
 </ecore:EPackage>

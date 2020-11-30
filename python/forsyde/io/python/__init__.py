@@ -77,7 +77,20 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
         nx.MultiDiGraph.__init__(self, *args, **kwargs)
         QueryableMixin.__init__(self, standard_views)
 
+    def _rectify_model(self):
+        for v in self.nodes:
+            pnames = (p.identifier for p in v.ports)
+            for (p, t) in v.vertex_type.get_required_ports().items():
+                if p not in pnames:
+                    v.ports.add(
+                        Port(
+                            identifier=p,
+                            port_type=TypesFactory.build_type(t) if t else None
+                        )
+                    )
+
     def write(self, sink: str) -> None:
+        self._rectify_model()
         if '.pro' in sink or '.pl' in sink:
             self.write_prolog(sink)
         elif '.db' in sink:
@@ -98,6 +111,7 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
             self.read_db(source)
         else:
             raise NotImplementedError
+        self._rectify_model()
 
     def stringified(self) -> nx.MultiDiGraph:
         strg = nx.MultiDiGraph()
