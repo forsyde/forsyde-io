@@ -79,13 +79,17 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
 
     def _rectify_model(self):
         for v in self.nodes:
-            pnames = (p.identifier for p in v.ports)
-            for (p, t) in v.vertex_type.get_required_ports().items():
-                if p not in pnames:
+            default_props = v.vertex_type.get_required_properties()
+            for (k, val) in default_props.items():
+                if k not in v.properties:
+                    v.properties[k] = val
+            default_ports = v.vertex_type.get_required_ports()
+            for (p, t) in default_ports.items():
+                if p not in (p.identifier for p in v.ports):
                     v.ports.add(
                         Port(
                             identifier=p,
-                            port_type=TypesFactory.build_type(t) if t else None
+                            port_type=TypesFactory.build_type(t)
                         )
                     )
 

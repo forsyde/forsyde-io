@@ -17,22 +17,22 @@ class TypeToPython {
 		    type_name: str = '«cls.name»'
 		    required_ports: Dict[str, Optional[str]] = field(
 		        default_factory=lambda: {
-		          «FOR r : cls.EAllReferences SEPARATOR ','»
-		          «IF r.EAnnotations.exists[source == "Port"]»
-		          '«r.name»': '«(r.EAnnotations.findFirst[source == "Port"].references.head as EClassifier).name»'
-		          «ELSE»
-		          '«r.name»': None
-		          «ENDIF»
+		          «FOR r : cls.EAllReferences.filter[lowerBound == 1 && upperBound == 1] SEPARATOR ','»
+		          '«r.name»': '«r.EType.name»'
 		          «ENDFOR»
 		        },
 		        repr=False
 		    )
-		    required_properties: Set[str] = field(
-		        default_factory=lambda: set(
+		    required_properties: Dict[str, Any] = field(
+		        default_factory=lambda: {
 		          «FOR a : cls.EAllAttributes SEPARATOR ','»
-		          '«a.name»'
+		          «IF a.defaultValueLiteral.isNullOrEmpty»
+		          '«a.name»': None
+		          «ELSE»
+		          '«a.name»': «a.defaultValueLiteral»
+		          «ENDIF»
 		          «ENDFOR»
-		        ),
+		        },
 		        repr=False
 		    )
 		
