@@ -121,5 +121,6 @@
       nsPrefix="PortsTypes">
     <eClassifiers xsi:type="ecore:EClass" name="Host"/>
     <eClassifiers xsi:type="ecore:EClass" name="OrderedExecution"/>
+    <eClassifiers xsi:type="ecore:EClass" name="AbstractHardwarePort"/>
   </eSubpackages>
 </ecore:EPackage>

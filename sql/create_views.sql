@@ -10,6 +10,8 @@ DROP VIEW IF EXISTS `tdma_mpsoc_bus`;
 DROP VIEW IF EXISTS `tdma_mpsoc_bus_slots`;
 DROP VIEW IF EXISTS `wcet`;
 DROP VIEW IF EXISTS `signal_wcct`;
+DROP VIEW IF EXISTS `count_wcet`;
+DROP VIEW IF EXISTS `count_signal_wcct`;
 
 CREATE VIEW refined_types AS
 WITH recursive
@@ -134,8 +136,7 @@ SELECT DISTINCT sender.`vertex_id` as sender_id,
                 reciever.`vertex_id` as reciever_id,
                 interconnect.`vertex_id` as interconnect_id,
                 signal.`vertex_id` as signal_id,
-				wcctp.prop_id,
-                wcctp.prop_value
+                wcctp.prop_value as wcct_time
   FROM vertexes AS wcct
   JOIN properties AS wcctp ON wcctp.vertex_id = wcct.vertex_id
   JOIN edges AS esignal ON esignal.source_vertex_id = wcct.vertex_id
@@ -152,7 +153,13 @@ SELECT DISTINCT sender.`vertex_id` as sender_id,
   JOIN refined_types AS interconnectt ON interconnect.type_name = interconnectt.refined_type_name
 WHERE
   signalt.type_name = 'Signal' AND
+  wcctp.prop_id = 'time' AND
   sendert.type_name = 'AbstractProcessingComponent' AND
   recievert.type_name = 'AbstractProcessingComponent' AND
   interconnectt.type_name = 'AbstractCommunicationComponent';  
   
+CREATE VIEW `count_wcet` AS
+SELECT COUNT(*) as `count` FROM `wcet`;
+
+CREATE VIEW `count_signal_wcct` AS
+SELECT COUNT(*) as `count` FROM `signal_wcct`;
