@@ -5,9 +5,10 @@ DROP VIEW IF EXISTS `sdf_channels`;
 DROP VIEW IF EXISTS `sdf_topology_unsigned`;
 DROP VIEW IF EXISTS `sdf_topology`;
 DROP VIEW IF EXISTS `orderings`;
-DROP VIEW IF EXISTS `tdma_mpsoc_processing_units`;
+DROP VIEW IF EXISTS `tdma_mpsoc_procs`;
 DROP VIEW IF EXISTS `tdma_mpsoc_bus`;
 DROP VIEW IF EXISTS `tdma_mpsoc_bus_slots`;
+DROP VIEW IF EXISTS `tdma_mpsoc_connections`;
 DROP VIEW IF EXISTS `wcet`;
 DROP VIEW IF EXISTS `signal_wcct`;
 DROP VIEW IF EXISTS `count_wcet`;
@@ -80,7 +81,7 @@ SELECT DISTINCT v.`vertex_id`, v.`type_name`
 WHERE
   t.`type_name` = 'AbstractOrdering';
 
-CREATE VIEW `tdma_mpsoc_processing_units` AS
+CREATE VIEW `tdma_mpsoc_procs` AS
 SELECT DISTINCT s.`vertex_id`, s.`type_name`
   FROM vertexes AS s
   JOIN refined_types AS st ON s.type_name = st.refined_type_name
@@ -102,9 +103,31 @@ SELECT DISTINCT t.`vertex_id`, t.`type_name`
   JOIN vertexes AS t ON t.vertex_id = e.target_vertex_id
   JOIN refined_types AS tt ON t.type_name = tt.refined_type_name
 WHERE
-  st.`type_name` = 'AbstractProcessingComponent' AND
+  (
+      st.`type_name` = 'AbstractProcessingComponent' 
+      OR
+      st.`type_name` = 'TimeDivisionMultiplexer' 
+  )
+  AND
   et.`type_name` = 'AbstractPhysicalConnection' AND
   tt.`type_name` = 'TimeDivisionMultiplexer';
+
+CREATE VIEW `tdma_mpsoc_connections` AS
+SELECT DISTINCT *
+  FROM _edges AS e
+WHERE
+  (
+    e.source_vertex_id IN (SELECT `vertex_id` FROM tdma_mpsoc_bus)
+    OR 
+    e.source_vertex_id IN (SELECT `vertex_id` FROM tdma_mpsoc_procs)
+  )
+  AND
+  (
+    e.target_vertex_id IN (SELECT `vertex_id` FROM tdma_mpsoc_bus)
+    OR 
+    e.target_vertex_id IN (SELECT `vertex_id` FROM tdma_mpsoc_procs)
+  )
+;
 
 CREATE VIEW `tdma_mpsoc_bus_slots` AS
 SELECT s.`vertex_id`, p.prop_value as `slots`
@@ -134,7 +157,6 @@ WHERE
 CREATE VIEW `signal_wcct` AS
 SELECT DISTINCT sender.`vertex_id` as sender_id,
                 reciever.`vertex_id` as reciever_id,
-                interconnect.`vertex_id` as interconnect_id,
                 signal.`vertex_id` as signal_id,
                 wcctp.prop_value as wcct_time
   FROM vertexes AS wcct
@@ -145,18 +167,23 @@ SELECT DISTINCT sender.`vertex_id` as sender_id,
   JOIN vertexes AS sender ON esender.target_vertex_id = sender.vertex_id
   JOIN edges AS ereciever ON ereciever.source_vertex_id = wcct.vertex_id
   JOIN vertexes AS reciever ON ereciever.target_vertex_id = reciever.vertex_id
-  JOIN edges AS einterconnect ON einterconnect.source_vertex_id = wcct.vertex_id
-  JOIN vertexes AS interconnect ON einterconnect.target_vertex_id = interconnect.vertex_id
   JOIN refined_types AS signalt ON signal.type_name = signalt.refined_type_name
   JOIN refined_types AS sendert ON sender.type_name = sendert.refined_type_name
   JOIN refined_types AS recievert ON reciever.type_name = recievert.refined_type_name
-  JOIN refined_types AS interconnectt ON interconnect.type_name = interconnectt.refined_type_name
 WHERE
   signalt.type_name = 'Signal' AND
   wcctp.prop_id = 'time' AND
-  sendert.type_name = 'AbstractProcessingComponent' AND
-  recievert.type_name = 'AbstractProcessingComponent' AND
-  interconnectt.type_name = 'AbstractCommunicationComponent';  
+  sender.`vertex_id` != reciever.`vertex_id` AND
+  (
+    (sendert.type_name = 'AbstractCommunicationComponent' AND
+     recievert.type_name = 'AbstractProcessingComponent')
+    OR
+    (sendert.type_name = 'AbstractProcessingComponent' AND
+     recievert.type_name = 'AbstractCommunicationComponent')
+    OR
+    (sendert.type_name = 'AbstractCommunicationComponent' AND
+     recievert.type_name = 'AbstractCommunicationComponent')
+  );
   
 CREATE VIEW `count_wcet` AS
 SELECT COUNT(*) as `count` FROM `wcet`;

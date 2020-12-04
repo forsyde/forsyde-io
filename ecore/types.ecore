@@ -56,8 +56,6 @@
           eType="#//Vertexes/AbstractProcessingComponent"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="reciever" lowerBound="1"
           eType="#//Vertexes/AbstractProcessingComponent"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="interconnect" lowerBound="1"
-          eType="#//Vertexes/AbstractCommunicationComponent"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="signal" lowerBound="1"
           eType="#//Vertexes/Signal"/>
     </eClassifiers>
