@@ -1,7 +1,9 @@
 
 DROP VIEW IF EXISTS `refined_types`;
 DROP VIEW IF EXISTS `sdf_actors`;
+DROP VIEW IF EXISTS sdf_prefixes;
 DROP VIEW IF EXISTS `sdf_channels`;
+DROP VIEW IF EXISTS `sdf_delay_channels`;
 DROP VIEW IF EXISTS `sdf_topology_unsigned`;
 DROP VIEW IF EXISTS `sdf_topology`;
 DROP VIEW IF EXISTS `orderings`;
@@ -40,6 +42,22 @@ WHERE
   tt.type_name = 'Process' AND
   st.type_name = 'SDFComb';
 
+CREATE VIEW sdf_prefixes AS
+SELECT DISTINCT sdf_pre.vertex_id
+       sdf_pre.type_name
+  FROM vertexes AS pref
+  JOIN edges ON pref.vertex_id = edges.source_vertex_id
+  JOIN vertexes AS sig ON sig.vertex_id = edges.target_vertex_id
+  JOIN edges ON pref.vertex_id = edges.target_vertex_id
+  JOIN vertexes AS cons ON cons.vertex_id = edges.source_vertex_id
+  JOIN refined_types AS preft ON pref.type_name = preft.refined_type_name
+  JOIN refined_types AS sigt ON sig.type_name = sigt.refined_type_name
+  JOIN refined_types AS const ON cons.type_name = const.refined_type_name
+WHERE
+  preft.type_name = 'Process' AND
+  sigt.type_name = 'Signal' AND
+  const.type_name = 'SDFPrefix';
+
 CREATE VIEW sdf_channels AS
 SELECT DISTINCT targets.vertex_id,
        targets.type_name
@@ -50,8 +68,32 @@ SELECT DISTINCT targets.vertex_id,
   JOIN refined_types AS st ON sources.type_name = st.refined_type_name
   JOIN refined_types AS tt ON targets.type_name = tt.refined_type_name
 WHERE
-  (et.type_name = 'Writes' OR et.type_name = 'Reads') AND
+  (
+	et.type_name = 'Writes' OR 
+	et.type_name = 'Reads' OR
+	et.type_name = 'Input' OR
+	et.type_name = 'Output'
+  ) AND
   tt.type_name = 'Signal';
+
+CREATE VIEW sdf_delay_channels AS
+SELECT DISTINCT targets.vertex_id,
+       targets.type_name
+  FROM vertexes AS targets
+  JOIN edges ON targets.vertex_id = edges.target_vertex_id
+  JOIN sdf_prefixes AS sources ON sources.vertex_id = edges.source_vertex_id
+  JOIN refined_types AS et ON edges.type_name = et.refined_type_name
+  JOIN refined_types AS st ON sources.type_name = st.refined_type_name
+  JOIN refined_types AS tt ON targets.type_name = tt.refined_type_name
+WHERE
+  (
+	et.type_name = 'Writes' OR 
+	et.type_name = 'Reads' OR
+	et.type_name = 'Input' OR
+	et.type_name = 'Output'
+  ) AND
+  tt.type_name = 'Signal';
+
 
 CREATE VIEW sdf_topology_unsigned AS
 SELECT DISTINCT 
