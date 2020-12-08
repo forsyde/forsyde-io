@@ -64,12 +64,11 @@ CREATE TABLE IF NOT EXISTS _edges (
   source_vertex_port_id TEXT,
   target_vertex_port_id TEXT,
   type_name TEXT NOT NULL,
-  FOREIGN KEY (source_vertex_id)
-    REFERENCES _vertexes (vertex_id),
-  FOREIGN KEY (target_vertex_id)
-    REFERENCES _vertexes (vertex_id),
-  FOREIGN KEY (type_name)
-    REFERENCES _allowed_types (type_name),
+  FOREIGN KEY (source_vertex_id) REFERENCES _vertexes (vertex_id),
+  FOREIGN KEY (target_vertex_id) REFERENCES _vertexes (vertex_id),
+  FOREIGN KEY (source_vertex_port_id) REFERENCES _ports (port_id),
+  FOREIGN KEY (target_vertex_port_id) REFERENCES _ports (port_id),
+  FOREIGN KEY (type_name) REFERENCES _allowed_types (type_name),
   PRIMARY KEY (source_vertex_id, target_vertex_id, source_vertex_port_id, target_vertex_port_id)
 );
 

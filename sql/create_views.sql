@@ -1,5 +1,6 @@
 
 DROP VIEW IF EXISTS `refined_types`;
+DROP VIEW IF EXISTS connected_vertexes;
 DROP VIEW IF EXISTS `sdf_actors`;
 DROP VIEW IF EXISTS sdf_prefixes;
 DROP VIEW IF EXISTS `sdf_channels`;
@@ -15,6 +16,8 @@ DROP VIEW IF EXISTS `wcet`;
 DROP VIEW IF EXISTS `signal_wcct`;
 DROP VIEW IF EXISTS `count_wcet`;
 DROP VIEW IF EXISTS `count_signal_wcct`;
+DROP VIEW IF EXISTS `min_throughput_targets`;
+DROP VIEW IF EXISTS `min_throughput`;
 
 CREATE VIEW refined_types AS
 WITH recursive
@@ -24,6 +27,20 @@ WITH recursive
    SELECT a.type_name, b.refined_type_name FROM refined_types_base as a
    JOIN refined_types_recur as b ON a.refined_type_name = b.type_name)
 SELECT * FROM refined_types_recur;
+
+CREATE VIEW connected_vertexes AS
+WITH RECURSIVE
+  connected_vertexes_recur(source_id, target_id) AS
+  (SELECT s.vertex_id as `source_id`, t.vertex_id as `target_id`
+       FROM vertexes AS s
+       JOIN edges AS e ON e.source_vertex_id = s.vertex_id
+       JOIN vertexes AS t ON e.target_vertex_id = t.vertex_id
+   UNION
+   SELECT r.source_id, t.vertex_id as `target_id`
+       FROM connected_vertexes_recur AS r
+       JOIN edges AS e ON e.source_vertex_id = r.target_id
+       JOIN vertexes AS t ON e.target_vertex_id = t.vertex_id)
+SELECT * FROM connected_vertexes_recur;
 
 CREATE VIEW sdf_actors AS
 SELECT DISTINCT targets.vertex_id,
@@ -43,13 +60,13 @@ WHERE
   st.type_name = 'SDFComb';
 
 CREATE VIEW sdf_prefixes AS
-SELECT DISTINCT sdf_pre.vertex_id
-       sdf_pre.type_name
+SELECT DISTINCT pref.vertex_id,
+       pref.type_name
   FROM vertexes AS pref
-  JOIN edges ON pref.vertex_id = edges.source_vertex_id
-  JOIN vertexes AS sig ON sig.vertex_id = edges.target_vertex_id
-  JOIN edges ON pref.vertex_id = edges.target_vertex_id
-  JOIN vertexes AS cons ON cons.vertex_id = edges.source_vertex_id
+  JOIN edges as sige ON pref.vertex_id = sige.source_vertex_id
+  JOIN vertexes AS sig ON sig.vertex_id = sige.target_vertex_id
+  JOIN edges AS conse ON pref.vertex_id = conse.target_vertex_id
+  JOIN vertexes AS cons ON cons.vertex_id = conse.source_vertex_id
   JOIN refined_types AS preft ON pref.type_name = preft.refined_type_name
   JOIN refined_types AS sigt ON sig.type_name = sigt.refined_type_name
   JOIN refined_types AS const ON cons.type_name = const.refined_type_name
@@ -232,3 +249,23 @@ SELECT COUNT(*) as `count` FROM `wcet`;
 
 CREATE VIEW `count_signal_wcct` AS
 SELECT COUNT(*) as `count` FROM `signal_wcct`;
+
+CREATE VIEW `min_throughput_targets` AS
+SELECT c.`target_id` as `vertex_id`
+  FROM connected_vertexes AS c
+  JOIN vertexes AS v ON c.source_id = v.vertex_id
+  JOIN vertexes AS o ON c.target_id = o.vertex_id
+  JOIN refined_types AS vt ON v.type_name = vt.refined_type_name
+  JOIN refined_types AS ot ON o.type_name = ot.refined_type_name 
+WHERE
+  vt.type_name = 'MinimumThroughput' AND
+  ot.type_name = 'Process';
+
+CREATE VIEW `min_throughput` AS
+  SELECT v.`vertex_id`, p.prop_value as `importance`
+  FROM vertexes AS v
+  JOIN properties AS p ON p.vertex_id = v.vertex_id
+  JOIN refined_types AS vt ON v.type_name = vt.refined_type_name
+WHERE
+  vt.type_name = 'MinimumThroughput';
+  
