@@ -123,8 +123,6 @@
   </eSubpackages>
   <eSubpackages name="Ports" nsURI="https://forsyde.github.io/ForSyDe/Model/Ports"
       nsPrefix="PortsTypes">
-    <eClassifiers xsi:type="ecore:EClass" name="Host"/>
-    <eClassifiers xsi:type="ecore:EClass" name="OrderedExecution"/>
     <eClassifiers xsi:type="ecore:EClass" name="AbstractHardwarePort"/>
   </eSubpackages>
 </ecore:EPackage>
