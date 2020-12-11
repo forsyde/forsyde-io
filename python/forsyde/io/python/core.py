@@ -14,6 +14,9 @@ class Type(object):
         """
         pass
 
+    def __hash__(self):
+        return hash(self.get_type_name())
+
     def get_type_name(self) -> str:
         return "Unknown"
 
@@ -24,7 +27,7 @@ class Type(object):
         return dict()
 
 
-@dataclass(unsafe_hash=True)
+@dataclass
 class Port(object):
 
     """Docstring for Port. """
@@ -38,8 +41,11 @@ class Port(object):
             self.identifier = f"port{_port_id_counter}"
             _port_id_counter += 1
 
+    def __hash__(self):
+        return hash(self.identifier)
 
-@dataclass(unsafe_hash=True)
+
+@dataclass
 class Vertex(object):
 
     """Docstring for Vertex. """
@@ -64,6 +70,9 @@ class Vertex(object):
             self.identifier = f"vertex{_vertex_id_counter}"
             _vertex_id_counter += 1
 
+    def __hash__(self):
+        return hash(self.identifier)
+
 
 @dataclass
 class Edge(object):
@@ -74,6 +83,11 @@ class Edge(object):
     source_vertex_port: Optional[Port] = field(default=None) 
     target_vertex_port: Optional[Port] = field(default=None)
     edge_type: Type = field(default=Type(), compare=False)
+
+    def __hash__(self):
+        return hash(
+            (self.source_vertex, self.target_vertex)
+        )
 
     def ids_tuple(self):
         return (
