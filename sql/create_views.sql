@@ -14,8 +14,10 @@ DROP VIEW IF EXISTS `tdma_mpsoc_bus_slots`;
 DROP VIEW IF EXISTS `tdma_mpsoc_connections`;
 DROP VIEW IF EXISTS `wcet`;
 DROP VIEW IF EXISTS `signal_wcct`;
+DROP VIEW IF EXISTS `signal_token_wcct`;
 DROP VIEW IF EXISTS `count_wcet`;
 DROP VIEW IF EXISTS `count_signal_wcct`;
+DROP VIEW IF EXISTS `count_signal_token_wcct`;
 DROP VIEW IF EXISTS `min_throughput_targets`;
 DROP VIEW IF EXISTS `min_throughput`;
 
@@ -196,7 +198,8 @@ WHERE
   p.prop_id = 'slots';
 
 CREATE VIEW `wcet` AS
-SELECT DISTINCT app.`vertex_id` as app_id,
+SELECT DISTINCT wcet.`vertex_id`,
+                app.`vertex_id` as app_id,
                 plat.`vertex_id` as plat_id,
                 wcetp.prop_value as wcet_time
   FROM vertexes AS wcet
@@ -251,7 +254,7 @@ CREATE VIEW `count_signal_wcct` AS
 SELECT COUNT(*) as `count` FROM `signal_wcct`;
 
 CREATE VIEW `min_throughput_targets` AS
-SELECT c.`target_id` as `vertex_id`
+SELECT c.`target_id` as `vertex_id`, c.`source_id` as `goal_id`
   FROM connected_vertexes AS c
   JOIN vertexes AS v ON c.source_id = v.vertex_id
   JOIN vertexes AS o ON c.target_id = o.vertex_id
@@ -269,3 +272,23 @@ CREATE VIEW `min_throughput` AS
 WHERE
   vt.type_name = 'MinimumThroughput';
   
+CREATE VIEW `signal_token_wcct` AS
+SELECT DISTINCT wcct.`vertex_id`,
+                signal.`vertex_id` as signal_id,
+                comm.`vertex_id` as comm_id,
+                wcctp.prop_value as wcct_time
+  FROM vertexes AS wcct
+  JOIN properties AS wcctp ON wcctp.vertex_id = wcct.vertex_id
+  JOIN edges AS esignal ON esignal.source_vertex_id = wcct.vertex_id
+  JOIN vertexes AS signal ON esignal.target_vertex_id = signal.vertex_id
+  JOIN edges AS ecomm ON ecomm.source_vertex_id = wcct.vertex_id
+  JOIN vertexes AS comm ON ecomm.target_vertex_id = comm.vertex_id
+  JOIN refined_types AS signalt ON signal.type_name = signalt.refined_type_name
+  JOIN refined_types AS commt ON comm.type_name = commt.refined_type_name
+WHERE
+  signalt.type_name = 'Signal' AND
+  wcctp.prop_id = 'time' AND
+  commt.type_name = 'AbstractCommunicationComponent';
+
+CREATE VIEW `count_signal_token_wcct` AS
+SELECT COUNT(*) as `count` FROM `signal_token_wcct`;
