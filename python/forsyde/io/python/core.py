@@ -17,6 +17,9 @@ class Type(object):
     def __hash__(self):
         return hash(self.get_type_name())
 
+    def is_refinement(self, other: "Type") -> bool:
+        return False
+
     def get_type_name(self) -> str:
         return "Unknown"
 

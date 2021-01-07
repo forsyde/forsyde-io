@@ -11,7 +11,7 @@ plugins {
   id 'eclipse'
   id 'idea'
   id 'application'
-  id "org.xtext.xtend" version "2.0.8"
+  id "org.xtext.xtend" version "2.0.9-alpha.3"
 }
 
 ext {
