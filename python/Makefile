@@ -26,4 +26,4 @@ publish-pypi: build
 
 inject-sql:
 	@mkdir -p $(SQL_DIR)
-	@cp -r sql/* $(SQL_DIR)
+	@mv -r sql/* $(SQL_DIR)

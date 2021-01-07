@@ -374,3 +374,9 @@ haskell/src/ForSyDe/IO/Haskell/Types*
 python/forsyde/io/python/sql
 java/src/main/java/forsyde/io/java/sql
 haskell/src/ForSyDe/IO/Haskell/sql
+python/sql
+java/src/main/java/sql
+haskell/src/sql
+
+# dont add xtext stuff
+src/main/xtend-gen
