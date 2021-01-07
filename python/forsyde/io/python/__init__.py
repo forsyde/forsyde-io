@@ -286,6 +286,43 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                         edge_type=TypesFactory.build_type(row['type_name']))
             self.add_edge(edge.source_vertex, edge.target_vertex, object=edge)
 
+    def property_to_xml(self, parent: etree.Element, prop: Any) -> None:
+        if isinstance(prop, dict):
+            for (k, v) in prop.items():
+                child = etree.SubElement(parent, 'Property')
+                child.set('name', k)
+                self.property_to_xml(child, v)
+        elif isinstance(prop, list):
+            for (i, v) in enumerate(prop):
+                child = etree.SubElement(parent, 'Property')
+                child.set('index', i)
+                self.property_to_xml(child, v)
+        elif isinstance(prop, set):
+            for v in prop:
+                child = etree.SubElement(parent, 'Property')
+                self.property_to_xml(child, v)
+        else:
+            parent.text = json.dumps(prop)
+
+    def xml_to_property(self, elem: etree.Element) -> Any:
+        if len(elem.xpath("Property[@index]")) > 0:
+            elems = elem.xpath("Property[@index]")
+            l = [None for i in range(len(elems))]
+            for e in elems:
+                l[int(e.get('index'))] = self.xml_to_property(e)
+            return l
+        elif len(elem.xpath("Property[@name]")) > 0:
+            return {
+                e.get("name"): self.xml_to_property(e)
+                for e in elem.xpath("Property[@name]")
+            }
+        elif len(elem.xpath("Property")) > 0:
+            return set(self.xml_to_property(e) for e in elem.xpath("Property"))
+        elif elem.text and elem.text.strip():
+            return json.loads(elem.text.strip())
+        else:
+            return dict()
+
     def write_xml(self, sink: str) -> None:
         tree = etree.Element('ForSyDe')
         for v in self.nodes:
@@ -299,7 +336,8 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
             for (prop, val) in v.properties.items():
                 prop_elem = etree.SubElement(node_elem, 'Property')
                 prop_elem.set('name', prop)
-                prop_elem.text = json.dumps(val)
+                # prop_elem.text = json.dumps(val)
+                self.property_to_xml(prop_elem, val)
         for (s, t, edge) in self.edges.data("object"):
             edge_elem = etree.SubElement(tree, 'Edge')
             edge_elem.set('source_id', s.identifier)
@@ -326,26 +364,26 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                 for portnode in vnode.xpath("Port"):
                     port_id = portnode.get('id')
                     port_type = TypesFactory.build_type(portnode.get('type'))
-                    vertex.ports.add(Port(port_id=port_id,
-                                          port_type=port_type))
-                for propnode in vnode.xpath('Property'):
-                    prop_name = propnode.get('name')
-                    prop_val = json.loads(propnode.text)
-                    vertex.properties[prop_name] = prop_val
+                    vertex.ports.add(
+                        Port(identifier=port_id, port_type=port_type))
+                vertex.properties = self.xml_to_property(vnode)
+                # for propnode in vnode.xpath('Property'):
+                #     prop_name = propnode.get('name')
+                #     prop_val = self.xml_to_property(
+                #         propnode)  # json.loads(propnode.text)
+                #     vertex.properties[prop_name] = prop_val
             for vedge in tree.xpath('/ForSyDe/Edge'):
                 edge_type = TypesFactory.build_type(vedge.get('type'))
                 source_vertex = next(n for (n, nid) in self.nodes.data('label')
-                                     if nid == vedge.get('source_vertex_id'))
+                                     if nid == vedge.get('source_id'))
                 target_vertex = next(n for (n, nid) in self.nodes.data('label')
-                                     if nid == vedge.get('target_vertex_id'))
+                                     if nid == vedge.get('target_id'))
                 source_vertex_port = next(
-                    p for p in source_vertex.ports
-                    if p.identifier == vedge.get('source_vertex_port_id'),
-                    None)
+                    (p for p in source_vertex.ports
+                     if p.identifier == vedge.get('source_port_id')), None)
                 target_vertex_port = next(
-                    p for p in target_vertex.ports
-                    if p.identifier == vedge.get('target_vertex_port_id'),
-                    None)
+                    (p for p in target_vertex.ports
+                     if p.identifier == vedge.get('target_port_id')), None)
                 edge = Edge(source_vertex=source_vertex,
                             target_vertex=target_vertex,
                             source_vertex_port=source_vertex_port,
