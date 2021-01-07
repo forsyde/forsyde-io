@@ -9,7 +9,7 @@ class TypePackageToPython {
 	static def toText(EPackage pak)
 	'''
 	from dataclasses import dataclass, field
-	from typing import Set, Dict, Optional, Any
+	from typing import Set, Dict, Optional, Any, List
 
 	import forsyde.io.python.core as core
 	«FOR subp : pak.ESubpackages»

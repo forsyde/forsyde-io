@@ -100,6 +100,8 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
             nx.write_graphml(self.stringified(), sink)
         elif '.dot' in sink:
             nx_pydot.write_dot(self.stringified(), sink)
+        elif '.xml' in sink:
+            self.write_xml(sink)
         else:
             raise NotImplementedError
 
@@ -108,6 +110,8 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
             self.read_prolog(source)
         elif '.db' in source:
             self.read_db(source)
+        elif '.xml' in source:
+            self.read_xml(source)
         else:
             raise NotImplementedError
         self._rectify_model()
@@ -287,18 +291,67 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
         for v in self.nodes:
             node_elem = etree.SubElement(tree, 'Vertex')
             node_elem.set('id', v.identifier)
-            node_elem.set('type', v.vertex_type.short_name())
-        with open(sink, 'w') as sinkstream:
-            sinkstream.write(
-                etree.tostring(tree, xml_declaration=True, pretty_print=True))
+            node_elem.set('type', v.vertex_type.get_type_name())
+            for port in v.ports:
+                port_elem = etree.SubElement(node_elem, 'Port')
+                port_elem.set('id', port.identifier)
+                port_elem.set('type', port.port_type.get_type_name())
+            for (prop, val) in v.properties.items():
+                prop_elem = etree.SubElement(node_elem, 'Property')
+                prop_elem.set('name', prop)
+                prop_elem.text = json.dumps(val)
         for (s, t, edge) in self.edges.data("object"):
             edge_elem = etree.SubElement(tree, 'Edge')
             edge_elem.set('source_id', s.identifier)
             edge_elem.set('target_id', t.identifier)
+            edge_elem.set('type', edge.edge_type.get_type_name())
+            if edge.source_vertex_port:
+                edge_elem.set('source_port_id',
+                              edge.source_vertex_port.identifier)
+            if edge.target_vertex_port:
+                edge_elem.set('target_port_id',
+                              edge.target_vertex_port.identifier)
+        with open(sink, 'w') as sinkstream:
+            sinkstream.write(
+                etree.tostring(tree, pretty_print=True, encoding='unicode'))
 
     def read_xml(self, source: str) -> None:
         with open(source, 'r') as instream:
             tree = etree.parse(instream)
+            for vnode in tree.xpath('/ForSyDe/Vertex'):
+                vertex_id = vnode.get('id')
+                vertex_type = TypesFactory.build_type(vnode.get('type'))
+                vertex = Vertex(identifier=vertex_id, vertex_type=vertex_type)
+                self.add_node(vertex, label=vertex_id)
+                for portnode in vnode.xpath("Port"):
+                    port_id = portnode.get('id')
+                    port_type = TypesFactory.build_type(portnode.get('type'))
+                    vertex.ports.add(Port(port_id=port_id,
+                                          port_type=port_type))
+                for propnode in vnode.xpath('Property'):
+                    prop_name = propnode.get('name')
+                    prop_val = json.loads(propnode.text)
+                    vertex.properties[prop_name] = prop_val
+            for vedge in tree.xpath('/ForSyDe/Edge'):
+                edge_type = TypesFactory.build_type(vedge.get('type'))
+                source_vertex = next(n for (n, nid) in self.nodes.data('label')
+                                     if nid == vedge.get('source_vertex_id'))
+                target_vertex = next(n for (n, nid) in self.nodes.data('label')
+                                     if nid == vedge.get('target_vertex_id'))
+                source_vertex_port = next(
+                    p for p in source_vertex.ports
+                    if p.identifier == vedge.get('source_vertex_port_id'),
+                    None)
+                target_vertex_port = next(
+                    p for p in target_vertex.ports
+                    if p.identifier == vedge.get('target_vertex_port_id'),
+                    None)
+                edge = Edge(source_vertex=source_vertex,
+                            target_vertex=target_vertex,
+                            source_vertex_port=source_vertex_port,
+                            target_vertex_port=target_vertex_port,
+                            edge_type=edge_type)
+                self.add_edge(source_vertex, target_vertex, object=edge)
 
     @classmethod
     def from_file(cls, source: str) -> "ForSyDeModel":

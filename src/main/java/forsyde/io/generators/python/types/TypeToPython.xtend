@@ -35,12 +35,12 @@ class TypeToPython {
 		        },
 		        repr=False
 		    )
-		    super_types: Set[core.Type] = field(
-		        default_factory=lambda: set([
+		    super_types: List[core.Type] = field(
+		        default_factory=lambda: [
 		        	«FOR s : cls.ESuperTypes SEPARATOR ','»
 		        	«s.name»()
 		        	«ENDFOR»
-		        ]),
+		        ],
 		        repr=False
 		    )
 		
