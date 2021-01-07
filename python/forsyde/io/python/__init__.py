@@ -287,6 +287,12 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
             self.add_edge(edge.source_vertex, edge.target_vertex, object=edge)
 
     def property_to_xml(self, parent: etree.Element, prop: Any) -> None:
+        '''Transform an object into the expected XML element layout
+        
+        The library 'dicttoxml' was considered but dropped for the moment
+        since there seemed to be no easy way to control the tag generation
+        as this function does by always creating "Property".
+        '''
         if isinstance(prop, dict):
             for (k, v) in prop.items():
                 child = etree.SubElement(parent, 'Property')
@@ -305,6 +311,12 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
             parent.text = json.dumps(prop)
 
     def xml_to_property(self, elem: etree.Element) -> Any:
+        '''Collect children of the element to expected property layout
+        
+        It collects the children recursively of 'elem' to the expected
+        formats and types. Currently, the json standard library is used
+        to jumpstart the types involved.
+        '''
         if len(elem.xpath("Property[@index]")) > 0:
             elems = elem.xpath("Property[@index]")
             l = [None for i in range(len(elems))]
