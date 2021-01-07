@@ -35,6 +35,14 @@ class TypeToPython {
 		        },
 		        repr=False
 		    )
+		    super_types: Set[core.Type] = field(
+		        default_factory=lambda: set([
+		        	«FOR s : cls.ESuperTypes SEPARATOR ','»
+		        	«s.name»()
+		        	«ENDFOR»
+		        ]),
+		        repr=False
+		    )
 		
 		    def get_type_name(self):
 		        return self.type_name
@@ -44,6 +52,9 @@ class TypeToPython {
 		
 		    def get_required_properties(self):
 		        return self.required_properties
+
+		    def is_refinement(self, other: core.Type) -> bool:
+		        return self == other or any(r.is_refinement(other) for r in self.super_types)
 	'''
 	
 	static def String listOfAttributeNames(EClass cls) {

@@ -1,2 +1,3 @@
-networkx
-pydot
+networkx >= 2.5
+pydot >= 1.4
+lxml >= 4.6

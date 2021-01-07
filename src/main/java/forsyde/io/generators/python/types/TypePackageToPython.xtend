@@ -15,13 +15,6 @@ class TypePackageToPython {
 	«FOR subp : pak.ESubpackages»
 	from forsyde.io.python.«Packages.getPackageSequence(pak).map[p | p.name.toLowerCase].join(".")».«subp.name.toLowerCase» import «subp.name»Factory
 	«ENDFOR»
-«««	# export from subpackages all types so that they are visible.
-«««	«FOR subp : pak.ESubpackages»
-«««	«FOR c : subp.EClassifiers»
-«««	from forsyde.io.python.«Packages.getPackageSequence(pak).map[p | p.name.toLowerCase].join(".")».«subp.name.toLowerCase» import «c.name»
-«««	«ENDFOR»
-«««	«ENDFOR»
-	
 	
 	«FOR type : pak.EClassifiers.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
 	«TypeToPython.toText(type)»
@@ -59,9 +52,4 @@ class TypePackageToPython {
 	            return None
 	'''
 	
-	static def makeTypeBuilder(EPackage pak)
-	'''
-	
-	
-	'''
 }

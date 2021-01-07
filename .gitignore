@@ -366,6 +366,11 @@ gradle-app.setting
 # End of https://www.toptal.com/developers/gitignore/api/haskell,python,java,gradle,eclipse,intellij+all
 
 # dont add the generated types to the repo
-python-io/forsyde/io/python/types
-java-io/src/main/java/forsyde/io/java/types
-haskell-io/src/ForSyDe/IO/Haskell/Types*
+python/forsyde/io/python/types
+java/src/main/java/forsyde/io/java/types
+haskell/src/ForSyDe/IO/Haskell/Types*
+
+# dont add the generated sql to the repo
+python/forsyde/io/python/sql
+java/src/main/java/forsyde/io/java/sql
+haskell/src/ForSyDe/IO/Haskell/sql

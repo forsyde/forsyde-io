@@ -6,6 +6,7 @@ import importlib.resources as res
 from contextlib import contextmanager
 from typing import Iterable, Dict, Any
 
+from lxml import etree
 import networkx as nx
 import networkx.drawing.nx_pydot as nx_pydot
 
@@ -280,6 +281,24 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                         target_vertex_port=target_vertex_port,
                         edge_type=TypesFactory.build_type(row['type_name']))
             self.add_edge(edge.source_vertex, edge.target_vertex, object=edge)
+
+    def write_xml(self, sink: str) -> None:
+        tree = etree.Element('ForSyDe')
+        for v in self.nodes:
+            node_elem = etree.SubElement(tree, 'Vertex')
+            node_elem.set('id', v.identifier)
+            node_elem.set('type', v.vertex_type.short_name())
+        with open(sink, 'w') as sinkstream:
+            sinkstream.write(
+                etree.tostring(tree, xml_declaration=True, pretty_print=True))
+        for (s, t, edge) in self.edges.data("object"):
+            edge_elem = etree.SubElement(tree, 'Edge')
+            edge_elem.set('source_id', s.identifier)
+            edge_elem.set('target_id', t.identifier)
+
+    def read_xml(self, source: str) -> None:
+        with open(source, 'r') as instream:
+            tree = etree.parse(instream)
 
     @classmethod
     def from_file(cls, source: str) -> "ForSyDeModel":
