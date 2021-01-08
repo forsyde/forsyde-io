@@ -92,14 +92,12 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
 
     def _rectify_model(self):
         for v in self.nodes:
-            default_props = v.vertex_type.get_required_properties()
-            for (k, val) in default_props.items():
+            for (k, val) in v.vertex_type.get_required_properties():
                 if k not in v.properties:
                     v.properties[k] = val
-            default_ports = v.vertex_type.get_required_ports()
-            for (p, t) in default_ports.items():
-                if p not in (p.identifier for p in v.ports):
-                    v.ports.add(Port(identifier=p, port_type=TypesFactory.build_type(t)))
+            for (name, port) in v.vertex_type.get_required_ports():
+                if name not in (p.identifier for p in v.ports):
+                    v.ports.add(Port(identifier=name, port_type=port))
 
     def write(self, sink: str) -> None:
         self._rectify_model()
@@ -388,7 +386,7 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                 self.add_edge(source_vertex, target_vertex, object=edge)
 
 
-def load_model(cls, source: str) -> ForSyDeModel:
+def load_model(source: str) -> ForSyDeModel:
     """TODO: Docstring for read.
 
     :source: TODO

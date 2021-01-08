@@ -41,10 +41,10 @@ class ModelType(object):
         return hash(self.get_type_name())
 
     def is_refinement(self, other: "ModelType") -> bool:
-        return other == self or any(s.is_refinement(other) for s in self.get_super_types())
+        return (self == other) or any(s.is_refinement(other) for s in self.get_super_types())
 
     def get_super_types(self) -> Iterable["ModelType"]:
-        yield self
+        yield from ()
 
     def get_type_name(self) -> str:
         return "UnknownType"

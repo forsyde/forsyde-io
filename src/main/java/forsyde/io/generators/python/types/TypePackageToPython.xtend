@@ -80,10 +80,9 @@ class TypePackageToPython {
 	«''»    # the type has at least one super type 
 	    # and therefore the function override is generated.
 	    def get_super_types(self):
-	        yield self
 			«FOR s : cls.ESuperTypes»
-«««	«''»        yield «s.name»Type.get_instance()
-	«''»        yield from «s.name»Type.get_istance().get_super_types()
+	«''»        yield «s.name»Type.get_instance()
+	«''»        yield from «s.name»Type.get_instance().get_super_types()
 	    	«ENDFOR»
 	
 	    «ENDIF»
@@ -101,7 +100,7 @@ class TypePackageToPython {
 	    # the type has at least one default attribute 
 	    # and therefore the function override is generated
 	    def get_required_properties(self):
-	        «FOR a : cls.EAttributes SEPARATOR ','»
+	        «FOR a : cls.EAttributes»
 	        «IF a.defaultValueLiteral.isNullOrEmpty»
 	        yield ('«a.name»', None)
 	        «ELSE»
