@@ -38,7 +38,7 @@ class TypeToPython {
 		    super_types: List[core.Type] = field(
 		        default_factory=lambda: [
 		        	«FOR s : cls.ESuperTypes SEPARATOR ','»
-		        	«s.name»()
+		«''»            «s.name»()
 		        	«ENDFOR»
 		        ],
 		        repr=False

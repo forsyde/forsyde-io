@@ -32,15 +32,19 @@ public class PythonGenerator extends  TypesGenerator {
 		
 		final String packageRoot = typeDst;
 		
-		processPackage(forSyDeTypes, packageRoot);
-		TreeIterator<EObject> iterator = forSyDeTypes.eAllContents();
-		while (iterator.hasNext()) {
-			EObject elem = iterator.next();
-			if(elem instanceof EPackage) {
-				EPackage pak = (EPackage) elem;
-				processPackage(pak, packageRoot);
-			}
-		}
+		
+		final CharSequence produced = TypePackageToPython.toText(forSyDeTypes);
+		Files.createDirectories(Paths.get(packageRoot));
+		Files.writeString(Paths.get(packageRoot, "types.py"), produced);
+//		processPackage(forSyDeTypes, packageRoot);
+//		TreeIterator<EObject> iterator = forSyDeTypes.eAllContents();
+//		while (iterator.hasNext()) {
+//			EObject elem = iterator.next();
+//			if(elem instanceof EPackage) {
+//				EPackage pak = (EPackage) elem;
+//				processPackage(pak, packageRoot);
+//			}
+//		}
 	}
 	
 	private void processPackage(EPackage pak, String packageRoot) throws IOException {
