@@ -21,8 +21,8 @@ class TypePackageToHaskell {
     	  	«ENDFOR»
 		    )
             «IF pac.eAllContents.exists[e | e instanceof EAttribute]»
-		«''»    , getTypeStandardProperties
-		    , getTypeStandardPropertiesDefault
+		«''»    , getTypeDefaultProperties
+«««		    , getTypeDefaultPropertiesValues
 		    , getTypeDeducedProperties
             «ENDIF»
 		    , makeTypeFromName
@@ -36,19 +36,19 @@ class TypePackageToHaskell {
 		«ENDFOR»
 		  deriving (Show, Read, Eq)
 		
-		getTypeStandardProperties :: Type -> [String]
+		getTypeDefaultProperties :: Type -> [String]
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-		getTypeStandardProperties «cls.name» = [«cls.EAllAttributes.map['"' + name + '"'].join(", ")»]
+		getTypeDefaultProperties «cls.name» = [«cls.EAllAttributes.map['"' + name + '"'].join(", ")»]
 		«ENDFOR»
-		getTypeStandardProperties _ = []
+		getTypeDefaultProperties _ = []
 		
-		getTypeStandardPropertiesDefault :: Type -> String -> Dynamic
-		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-		«FOR att : cls.EAllAttributes»
-		getTypeStandardPropertiesDefault «cls.name» "«att.name»" = toDyn («haskellizeValue(att.defaultValueLiteral)» :: «haskellizeType(att.EAttributeType.name)»)
-		«ENDFOR» 
-		«ENDFOR»
-		getTypeStandardPropertiesDefault t p = error ("Type " ++ (show t) ++ " has no default for " ++ p)
+«««		getTypeDefaultPropertiesValues :: (Typeable a, Read a, Show a) => Type -> String -> a
+«««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+«««		«FOR att : cls.EAllAttributes»
+«««		getTypeDefaultPropertiesValues  «cls.name» "«att.name»" = «haskellizeValue(att.defaultValueLiteral)»
+«««		«ENDFOR» 
+«««		«ENDFOR»
+«««		getTypeDefaultPropertiesValues  t p = error ("Type " ++ (show t) ++ " has no default for " ++ p)
 		
 		getTypeDeducedProperties :: Type -> [String]
 «««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
