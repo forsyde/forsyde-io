@@ -21,7 +21,6 @@ from forsyde.io.python.core import Port
 from forsyde.io.python.types import TypesFactory
 
 
-
 class QueryableMixin(object):
 
     def __init__(self, standard_views):
@@ -301,14 +300,17 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                 child = etree.SubElement(parent, 'Property')
                 self.property_to_xml(child, v)
         else:
-            parent.text = json.dumps(prop)
+            if isinstance(prop, int):
+                parent.set('type', 'Integer')
+            elif isinstance(prop, float):
+                parent.set('type', 'Float')
+            parent.text = str(prop)
 
     def xml_to_property(self, elem: etree.Element) -> Any:
         '''Collect children of the element to expected property layout
-        
+
         It collects the children recursively of 'elem' to the expected
-        formats and types. Currently, the json standard library is used
-        to jumpstart the types involved.
+        formats and types.
         '''
         if len(elem.xpath("Property[@index]")) > 0:
             elems = elem.xpath("Property[@index]")
@@ -321,7 +323,12 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
         elif len(elem.xpath("Property")) > 0:
             return set(self.xml_to_property(e) for e in elem.xpath("Property"))
         elif elem.text and elem.text.strip():
-            return json.loads(elem.text.strip())
+            if elem.xpath('Property[@type="Integer"]'):
+                return int(elem.text.strip())
+            elif elem.xpath('Property[@type="Float"]'):
+                return float(elem.text.strip())
+            else:
+                return elem.text.strip()
         else:
             return dict()
 
