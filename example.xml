@@ -1,11 +1,11 @@
-<ForSyDe>
+<ForSyDeModel>
   <Vertex id="getPxCons" type="SDFComb">
     <Port id="combinator" type="Function"/>
     <Port id="constructed" type="Process"/>
     <Port id="result" type="Process"/>
     <Property name="production">
-      <Property name="gx">6</Property>
-      <Property name="gy">6</Property>
+      <Property name="gx" type="Integer">6</Property>
+      <Property name="gy" type="Integer">6</Property>
     </Property>
   </Vertex>
   <Vertex id="GxCons" type="SDFComb">
@@ -13,7 +13,7 @@
     <Port id="constructed" type="Process"/>
     <Port id="result" type="Process"/>
     <Property name="consumption">
-      <Property name="gx">6</Property>
+      <Property name="gx" type="Integer">6</Property>
     </Property>
       <Property name="production"><Property name="resx">1</Property>
     </Property>
@@ -23,10 +23,10 @@
     <Port id="constructed" type="Process"/>
     <Port id="result" type="Process"/>
     <Property name="consumption">
-      <Property name="gy">6</Property>
+      <Property name="gy" type="Integer">6</Property>
     </Property>
     <Property name="production">
-      <Property name="resy">1</Property>
+      <Property name="resy" type="Integer">1</Property>
     </Property>
   </Vertex>
   <Vertex id="AbsCons" type="SDFComb">
@@ -34,8 +34,8 @@
     <Port id="constructed" type="Process"/>
     <Port id="result" type="Process"/>
     <Property name="consumption">
-      <Property name="resx">1</Property>
-      <Property name="resy">1</Property>
+      <Property name="resx" type="Integer">1</Property>
+      <Property name="resy" type="Integer">1</Property>
     </Property>
   </Vertex>
   <Vertex id="getPx" type="Process">
@@ -59,22 +59,22 @@
   <Vertex id="gxsig" type="Signal">
     <Port id="fifoOut" type="Output"/>
     <Port id="fifoIn" type="Input"/>
-    <Property name="size">8</Property>
+    <Property name="size" type="Integer">8</Property>
   </Vertex>
   <Vertex id="gysig" type="Signal">
     <Port id="fifoOut" type="Output"/>
     <Port id="fifoIn" type="Input"/>
-    <Property name="size">8</Property>
+    <Property name="size" type="Integer">8</Property>
   </Vertex>
   <Vertex id="absxsig" type="Signal">
     <Port id="fifoOut" type="Output"/>
     <Port id="fifoIn" type="Input"/>
-    <Property name="size">8</Property>
+    <Property name="size" type="Integer">8</Property>
   </Vertex>
   <Vertex id="absysig" type="Signal">
     <Port id="fifoOut" type="Output"/>
     <Port id="fifoIn" type="Input"/>
-    <Property name="size">8</Property>
+    <Property name="size" type="Integer">8</Property>
   </Vertex>
   <Vertex id="sobel" type="Process">
     <Port id="imgOutput" type="Output"/>
@@ -99,62 +99,62 @@
   </Vertex>
   <Vertex id="tdmabus1" type="TimeDivisionMultiplexer">
     <Port id="requester" type="AbstractHardwarePort"/>
-    <Property name="slots">4</Property>
+    <Property name="slots" type="Integer">4</Property>
   </Vertex>
   <Vertex id="getPxWCET" type="WCET">
     <Port id="process" type="Process"/>
     <Port id="platform" type="AbstractProcessingComponent"/>
     <Port id="application" type="Process"/>
     <Port id="processor" type="AbstractProcessingComponent"/>
-    <Property name="time">4356</Property>
+    <Property name="time" type="Integer">4356</Property>
   </Vertex>
   <Vertex id="gxWCET" type="WCET">
     <Port id="process" type="Process"/>
     <Port id="platform" type="AbstractProcessingComponent"/>
     <Port id="application" type="Process"/>
     <Port id="processor" type="AbstractProcessingComponent"/>
-    <Property name="time">4147</Property>
+    <Property name="time" type="Integer">4147</Property>
   </Vertex>
   <Vertex id="gyWCET" type="WCET">
     <Port id="process" type="Process"/>
     <Port id="platform" type="AbstractProcessingComponent"/>
     <Port id="application" type="Process"/>
     <Port id="processor" type="AbstractProcessingComponent"/>
-    <Property name="time">4146</Property>
+    <Property name="time" type="Integer">4146</Property>
   </Vertex>
   <Vertex id="absWCET" type="WCET">
     <Port id="process" type="Process"/>
     <Port id="platform" type="AbstractProcessingComponent"/>
     <Port id="application" type="Process"/>
     <Port id="processor" type="AbstractProcessingComponent"/>
-    <Property name="time">1411</Property>
+    <Property name="time" type="Integer">1411</Property>
   </Vertex>
   <Vertex id="gxsigWCCT" type="WCCT">
     <Port id="reciever" type="AbstractPhysicalComponent"/>
     <Port id="sender" type="AbstractPhysicalComponent"/>
     <Port id="signal" type="Signal"/>
-    <Property name="time">1</Property>
+    <Property name="time" type="Integer">1</Property>
   </Vertex>
   <Vertex id="gysigWCCT" type="WCCT">
     <Port id="reciever" type="AbstractPhysicalComponent"/>
     <Port id="sender" type="AbstractPhysicalComponent"/>
     <Port id="signal" type="Signal"/>
-    <Property name="time">1</Property>
+    <Property name="time" type="Integer">1</Property>
   </Vertex>
   <Vertex id="absxsigWCCT" type="WCCT">
     <Port id="reciever" type="AbstractPhysicalComponent"/>
     <Port id="sender" type="AbstractPhysicalComponent"/>
     <Port id="signal" type="Signal"/>
-    <Property name="time">1</Property>
+    <Property name="time" type="Integer">1</Property>
   </Vertex>
   <Vertex id="absysigWCCT" type="WCCT">
     <Port id="reciever" type="AbstractPhysicalComponent"/>
     <Port id="sender" type="AbstractPhysicalComponent"/>
     <Port id="signal" type="Signal"/>
-    <Property name="time">1</Property>
+    <Property name="time" type="Integer">1</Property>
   </Vertex>
   <Vertex id="min_throughput_obj" type="MinimumThroughput">
-    <Property name="apriori_importance">1</Property>
+    <Property name="apriori_importance" type="Integer">1</Property>
   </Vertex>
   <Edge source_id="getPxCons" target_id="getPx" type="Construction" source_port_id="constructed"/>
   <Edge source_id="GxCons" target_id="Gx" type="Construction" source_port_id="constructed"/>
