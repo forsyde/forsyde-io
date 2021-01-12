@@ -15,7 +15,7 @@ class TypePackageToHaskell {
 	'''
 		module ForSyDe.IO.Haskell.«pac.packageSequence.map[name].join('.')»
 		  (
-		    Type ( Unknown
+		    ModelType ( Unknown
 		    «FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
     	«''»         , «cls.name»
     	  	«ENDFOR»
@@ -30,19 +30,19 @@ class TypePackageToHaskell {
 		  
 		import Data.Dynamic
 		
-		data Type = Unknown |
+		data ModelType = Unknown |
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ' |'»
 		«''»  «cls.name»
 		«ENDFOR»
 		  deriving (Show, Read, Eq)
 		
-		getTypeDefaultProperties :: Type -> [String]
+		getTypeDefaultProperties :: ModelType -> [String]
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
 		getTypeDefaultProperties «cls.name» = [«cls.EAllAttributes.map['"' + name + '"'].join(", ")»]
 		«ENDFOR»
 		getTypeDefaultProperties _ = []
 		
-«««		getTypeDefaultPropertiesValues :: (Typeable a, Read a, Show a) => Type -> String -> a
+«««		getTypeDefaultPropertiesValues :: (Typeable a, Read a, Show a) => ModelType -> String -> a
 «««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
 «««		«FOR att : cls.EAllAttributes»
 «««		getTypeDefaultPropertiesValues  «cls.name» "«att.name»" = «haskellizeValue(att.defaultValueLiteral)»
@@ -50,13 +50,13 @@ class TypePackageToHaskell {
 «««		«ENDFOR»
 «««		getTypeDefaultPropertiesValues  t p = error ("Type " ++ (show t) ++ " has no default for " ++ p)
 		
-		getTypeDeducedProperties :: Type -> [String]
+		getTypeDeducedProperties :: ModelType -> [String]
 «««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
 «««		getTypeDeducedProperties «cls.name» = [«cls.EAllAttributes.map['"' + name + '"'].join(", ")»]
 «««		«ENDFOR»
 		getTypeDeducedProperties _ = []
 		
-		makeTypeFromName :: String -> Type
+		makeTypeFromName :: String -> ModelType
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
 		makeTypeFromName "«cls.name»" = «cls.name»
 		«ENDFOR»
