@@ -15,22 +15,43 @@ class TypesClassToJava {
 	 */
 	package forsyde.io.java.«cls.EPackage.packageSequence.map[p | p.name.toLowerCase].join('.')»;
 	
-	import forsyde.io.java.FType;
-	«FOR i : cls.allReferencesClasses.filter[c | c != cls]»
-	import forsyde.io.java.«i.EPackage.packageSequence.map[p | p.name.toLowerCase].join('.')».«i.name»;
-	«ENDFOR»
+	import java.util.Optional;
+	import java.util.stream.Stream;
+	import forsyde.io.java.ModelType;
+«««	«FOR i : cls.allReferencesClasses.filter[c | c != cls]»
+«««	import forsyde.io.java.«i.EPackage.packageSequence.map[p | p.name.toLowerCase].join('.')».«i.name»;
+«««	«ENDFOR»
 	
-	public class «cls.name»	implements FType {
-		
+	public class «cls.name» extends ModelType {
+	
+		static Optional<«cls.name»> instance = Optional.of(new «cls.name»());
+	
+		static public «cls.name» getInstance() {
+			if (instance.isEmpty()) {
+				instance = Optional.of(new «cls.name»());
+			}
+			return instance.get();
+		}
+	
 		@Override
 		public String getName() {
 			return "«cls.name»";
 		};
-		
+	
 		@Override
 		public String toString() {
 			return "«cls.name»";
 		}
+	
+		@Override
+		public Stream<ModelType> getSuperTypes() {
+			return Stream.of(
+			«FOR s : cls.ESuperTypes SEPARATOR ','»
+				«s.name».getInstance()
+			«ENDFOR»
+			);
+		}
+	
 	}
 	'''
 	

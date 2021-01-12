@@ -15,7 +15,8 @@
     <Property name="consumption">
       <Property name="gx" type="Integer">6</Property>
     </Property>
-      <Property name="production"><Property name="resx">1</Property>
+    <Property name="production">
+      <Property name="resx">1</Property>
     </Property>
   </Vertex>
   <Vertex id="GyCons" type="SDFComb">
@@ -205,4 +206,4 @@
   <Edge source_id="absysigWCCT" target_id="tdmabus1" type="Annotation"/>
   <Edge source_id="absysigWCCT" target_id="absysig" type="Annotation"/>
   <Edge source_id="min_throughput_obj" target_id="sobel" type="Annotation"/>
-</ForSyDe>
+</ForSyDeModel>

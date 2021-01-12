@@ -362,7 +362,7 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
     def read_xml(self, source: str) -> None:
         with open(source, 'r') as instream:
             tree = etree.parse(instream)
-            for vnode in tree.xpath('/ForSyDe/Vertex'):
+            for vnode in tree.xpath('/ForSyDeModel/Vertex'):
                 vertex_id = vnode.get('id')
                 vertex_type = TypesFactory.build_type(vnode.get('type'))
                 vertex = Vertex(identifier=vertex_id, vertex_type=vertex_type)
@@ -377,7 +377,7 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                 #     prop_val = self.xml_to_property(
                 #         propnode)  # json.loads(propnode.text)
                 #     vertex.properties[prop_name] = prop_val
-            for vedge in tree.xpath('/ForSyDe/Edge'):
+            for vedge in tree.xpath('/ForSyDeModel/Edge'):
                 edge_type = TypesFactory.build_type(vedge.get('type'))
                 source_vertex = next(n for (n, nid) in self.nodes.data('label') if nid == vedge.get('source_id'))
                 target_vertex = next(n for (n, nid) in self.nodes.data('label') if nid == vedge.get('target_id'))

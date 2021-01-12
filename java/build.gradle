@@ -11,7 +11,7 @@ plugins {
   id 'idea'
   id 'eclipse'
   id 'maven-publish'
-  id "io.freefair.lombok" version "5.3.0"
+  //id "io.freefair.lombok" version "5.3.0"
   id "com.jfrog.bintray" version "1.8.5"
   id 'maven'
   id 'signing'
