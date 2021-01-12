@@ -17,7 +17,7 @@ class TypesClassToJava {
 	
 	import forsyde.io.java.FType;
 	«FOR i : cls.allReferencesClasses.filter[c | c != cls]»
-		import forsyde.io.java.«i.EPackage.packageSequence.map[p | p.name.toLowerCase].join('.')».«i.name»;
+	import forsyde.io.java.«i.EPackage.packageSequence.map[p | p.name.toLowerCase].join('.')».«i.name»;
 	«ENDFOR»
 	
 	public class «cls.name»	implements FType {

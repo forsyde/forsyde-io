@@ -60,6 +60,11 @@ import ForSyDe.IO.Haskell.Types ( Type(Unknown)
 --     NilPropertyMap NilPropertyMap = True
 --     (IntegerProperty k v others) (
         
+data MapItem keyType = StringMapItem String
+                     | IntegerMapItem Integer
+                     | FloatMapItem Float
+                     | ListMapItem [MapItem keyType]
+                     | DictMapItem (Map.Map keyType (MapItem keyType))
 
 
 data Port idType = Port { portIdentifier :: idType
@@ -71,7 +76,7 @@ instance (Hashable idType) => Hashable (Port idType) where
 
 data Vertex idType = Vertex { vertexIdentifier :: idType
                             , vertexPorts :: Map.Map idType (Port idType)
-                            , vertexProperties :: Map.Map idType Dynamic
+                            , vertexProperties :: Map.Map idType (MapItem idType)
                             , vertexType :: Type
                             }
 
@@ -211,7 +216,7 @@ modelFromXML = undefined
 propertiesFromXML
   :: (Read keyType)
   => XmlTree
-  -> Map.Map keyType Dynamic
+  -> Map.Map keyType (MapItem keyType)
 propertiesFromXML = undefined
 
 vertexesFromXML
