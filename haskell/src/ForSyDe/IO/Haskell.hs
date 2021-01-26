@@ -22,8 +22,6 @@ import ForSyDe.IO.Haskell.Types
     getTypeDefaultProperties,
     makeTypeFromName,
   )
-import Text.Regex.Base
-import Text.Regex.TDFA
 import Text.XML.HXT.Core
 
 data MapItem keyType
