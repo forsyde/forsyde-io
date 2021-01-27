@@ -23,6 +23,7 @@ import ForSyDe.IO.Haskell.Types
     makeTypeFromName,
   )
 import Text.XML.HXT.Core
+import Text.XML.HXT.XPath
 
 data MapItem keyType
   = StringMapItem String
@@ -123,25 +124,38 @@ modelAddEdge m@(ForSyDeModel vs es) e@(Edge s t _ _ _)
   where
     vs' = vertexes $ modelAddVertex (modelAddVertex m s) t
 
-modelFromXML ::
+modelFromXMLTree ::
   (Read idType, Eq idType) =>
   XmlTree ->
   ForSyDeModel idType
-modelFromXML = undefined
+modelFromXMLTree root = m
+  where
+    vElems = getXPath "/ForSyDeModel/Vertex" root
+    mWithVertex = foldr addVertexFromXMLTree emptyForSyDeModel vElems
+    eElems = getXPath "/ForSyDeModel/Edge" root
+    m = foldr addEdgeFromXMLTree mWithVertex eElems
 
-propertiesFromXML ::
+propertiesFromXMLTree ::
   (Read keyType) =>
   XmlTree ->
   [MapItem keyType]
-propertiesFromXML = undefined
+propertiesFromXMLTree = undefined
 
-addVertexFromXML ::
+addVertexFromXMLTree ::
   (Read idType, Eq idType) =>
   XmlTree ->
   ForSyDeModel idType ->
   ForSyDeModel idType
-addVertexFromXML vertexElement m =
-  undefined
+addVertexFromXMLTree vertexElement m = modelAddVertex m v
+  where
+    vidString = head $ (runLA $ getAttrValue "id") vertexElement
+    tString = head $ (runLA $ getAttrValue "type") vertexElement
+    vid = read vidString
+    t = (makeTypeFromName . read) tString
+    ports = map parsePortFromXML portsElems
+    properties = []
+    portsElems = (runLA $ getChildren >>> isElem >>> hasName "Port") vertexElement
+    v = Vertex vid ports properties t
 
 -- let id = read $ head . runLA $ getAttrValue "id" vertexElement
 --     t = makeTypeFromName (getAttrValue "type" vertexElement)
@@ -177,12 +191,12 @@ parsePortFromXML portElement =
     pidString = head $ (runLA $ getAttrValue "id") portElement
     tString = head $ (runLA $ getAttrValue "type") portElement
 
-addEdgeFromXML ::
+addEdgeFromXMLTree ::
   (Read idType, Eq idType) =>
   XmlTree ->
   ForSyDeModel idType ->
   ForSyDeModel idType
-addEdgeFromXML edgeElement m =
+addEdgeFromXMLTree edgeElement m =
   let source = fromJust (modelGetVertex m sId)
       target = fromJust (modelGetVertex m tId)
       t = (makeTypeFromName . read) tString
