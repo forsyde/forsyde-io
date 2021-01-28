@@ -135,11 +135,24 @@ modelFromXMLTree root = m
     eElems = getXPath "/ForSyDeModel/Edge" root
     m = foldr addEdgeFromXMLTree mWithVertex eElems
 
-propertiesFromXMLTree ::
-  (Read keyType) =>
+addEdgeFromXMLTree ::
+  (Read idType, Eq idType) =>
   XmlTree ->
-  [MapItem keyType]
-propertiesFromXMLTree = undefined
+  ForSyDeModel idType ->
+  ForSyDeModel idType
+addEdgeFromXMLTree edgeElement m = modelAddEdge m e
+  where
+    sId = read . head $ (runLA $ getAttrValue "source_id") edgeElement
+    tId = read . head $ (runLA $ getAttrValue "target_id") edgeElement
+    pSourceId = read . head $ (runLA $ getAttrValue "source_port_id") edgeElement
+    pTargetId = read . head $ (runLA $ getAttrValue "target_port_id") edgeElement
+    tString = head $ (runLA $ getAttrValue "type") edgeElement
+    source = fromJust $ modelGetVertex m sId
+    target = fromJust $ modelGetVertex m tId
+    sourcePort = find (\p -> pSourceId == portIdentifier p) (vertexPorts source)
+    targetPort = find (\p -> pTargetId == portIdentifier p) (vertexPorts target)
+    t = (makeTypeFromName . read) tString
+    e = Edge source target sourcePort targetPort t
 
 addVertexFromXMLTree ::
   (Read idType, Eq idType) =>
@@ -157,51 +170,20 @@ addVertexFromXMLTree vertexElement m = modelAddVertex m v
     portsElems = (runLA $ getChildren >>> isElem >>> hasName "Port") vertexElement
     v = Vertex vid ports properties t
 
--- let id = read $ head . runLA $ getAttrValue "id" vertexElement
---     t = makeTypeFromName (getAttrValue "type" vertexElement)
---     portsElems = deep (isElem >>> hasName "Port")
---     ports = []
---     properties = []
---  in modelAddVertex m (Vertex id ports properties t)
-
-parseVertexFromXML ::
-  (Read idType, Eq idType) =>
-  XmlTree ->
-  Vertex idType
-parseVertexFromXML vertexElement =
-  let vid = read vidString
-      t = (makeTypeFromName . read) tString
-      ports = map parsePortFromXML portsElems
-      properties = []
-   in Vertex vid ports properties t
-  where
-    vidString = head $ (runLA $ getAttrValue "id") vertexElement
-    tString = head $ (runLA $ getAttrValue "type") vertexElement
-    portsElems = (runLA $ getChildren >>> isElem >>> hasName "Port") vertexElement
-
 parsePortFromXML ::
   (Read idType, Eq idType) =>
   XmlTree ->
   Port idType
-parsePortFromXML portElement =
-  let pid = read pidString
-      t = (makeTypeFromName . read) tString
-   in Port pid t
+parsePortFromXML portElement = p
   where
     pidString = head $ (runLA $ getAttrValue "id") portElement
     tString = head $ (runLA $ getAttrValue "type") portElement
+    pid = read pidString
+    t = (makeTypeFromName . read) tString
+    p = Port pid t
 
-addEdgeFromXMLTree ::
-  (Read idType, Eq idType) =>
+propertiesFromXMLTree ::
+  (Read keyType) =>
   XmlTree ->
-  ForSyDeModel idType ->
-  ForSyDeModel idType
-addEdgeFromXMLTree edgeElement m =
-  let source = fromJust (modelGetVertex m sId)
-      target = fromJust (modelGetVertex m tId)
-      t = (makeTypeFromName . read) tString
-   in modelAddEdge m (Edge source target Nothing Nothing t)
-  where
-    sId = read . head $ (runLA $ getAttrValue "source_id") edgeElement
-    tId = read . head $ (runLA $ getAttrValue "target_id") edgeElement
-    tString = head $ (runLA $ getAttrValue "type") edgeElement
+  MapItem keyType
+propertiesFromXMLTree propElement = undefined
