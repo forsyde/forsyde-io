@@ -17,7 +17,7 @@
 #
 # resolver: ./custom-snapshot.yaml
 # resolver: https://example.com/snapshots/2018-01-01.yaml
-resolver: ghc-8.6
+resolver: lts-17.0
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -35,18 +35,19 @@ packages:
 # forks / in-progress versions pinned to a git hash. For example:
 #
 extra-deps:
- - containers-0.6.4.1
- - hashable-1.3.0.0
- - regex-base-0.94.0.0
- - regex-tdfa-1.3.1.0
- - parsec-3.1.14.0
- - text-1.2.4.0
- - binary-0.8.8.0
- - hxt-9.3.1.18
- - hxt-charproperties-9.4.0.0
- - hxt-regex-xmlschema-9.2.0.3
- - hxt-unicode-9.0.2.4
- - network-uri-2.6.3.0
+  - hxt-xpath-9.1.2.2
+#  - containers-0.6.4.1
+#  - hashable-1.3.0.0
+#  - regex-base-0.94.0.0
+#  - regex-tdfa-1.3.1.0
+#  - parsec-3.1.14.0
+#  - text-1.2.4.0
+#  - binary-0.8.8.0
+#  - hxt-9.3.1.18
+#  - hxt-charproperties-9.4.0.0
+#  - hxt-regex-xmlschema-9.2.0.3
+#  - hxt-unicode-9.0.2.4
+#  - network-uri-2.6.3.0
 
 
 # - git: https://github.com/commercialhaskell/stack.git

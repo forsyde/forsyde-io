@@ -15,64 +15,26 @@ import Data.Dynamic
 -- External libraries
 import Data.Hashable
 import Data.List
-import qualified Data.Map as Map
+import Data.Maybe
 -- Internal libraries
 import ForSyDe.IO.Haskell.Types
   ( ModelType (Unknown),
     getTypeDefaultProperties,
     makeTypeFromName,
   )
-import Text.Regex.Base
-import Text.Regex.TDFA
 import Text.XML.HXT.Core
-
--- not super optimal, but does the trick in a very standard
--- Haskell way
--- data PropertyMap k = IntegerProperty k Integer (PropertyMap k)
---                    | FloatProperty k Float (PropertyMap k)
---                    | DoubleProperty k Double (PropertyMap k)
---                    | StringProperty k String (PropertyMap k)
---                    | ChildrenProperty k [PropertyMap k] (PropertyMap k)
---                    | NilPropertyMap
-
--- failed GADT attempt
--- data PropertyMap k v where
---   IntPropertyMap :: (Integral a) => k -> a -> PropertyMap k a
---   FloatPropertyMap :: (Floating a) => k -> a -> PropertyMap k a
---   TextPropertyMap :: k -> String -> PropertyMap k String
---   ChildPropertyMap :: k -> [PropertyMap k v] -> PropertyMap k [PropertyMap k v]
---   NilPropertyMap :: PropertyMap k v -- ??
-
--- instance Foldable PropertyMap where
---   foldMap f NilPropertyMap = mempty
---   foldMap f (IntegerProperty k v others) = f v `mappend` foldMap f others
---   foldMap f (FloatProperty k v others) = foldMap f others
---   foldMap f (DoubleProperty k v others) = foldMap f others
---   foldMap f (StringProperty k v others) = foldMap f others
---   foldMap f (ChildrenProperty k children others) = (foldr (foldMap f) children) `mappend` foldMap f others
-
--- instance (Integral a) => Foldable (PropertyMap keyType) where
---   foldMap f NilPropertyMap = mempty
---   foldMap f (IntPropertyMap k v) = f v
---   foldMap f (ChildPropertyMap k v)
-
--- instance (Eq keyType) => Eq (PropertyMap keyType) where
---   (==) pMap otherPMap |
---     NilPropertyMap _ = False
---     _ NilPropertyMap = False
---     NilPropertyMap NilPropertyMap = True
---     (IntegerProperty k v others) (
+import Text.XML.HXT.XPath
 
 data MapItem keyType
   = StringMapItem String
   | IntegerMapItem Integer
   | FloatMapItem Float
   | ListMapItem [MapItem keyType]
-  | DictMapItem (Map.Map keyType (MapItem keyType))
+  | DictMapItem [(keyType, MapItem keyType)]
 
 data Port idType = Port
   { portIdentifier :: idType,
-    portType :: Type
+    portType :: ModelType
   }
   deriving (Eq)
 
@@ -81,9 +43,9 @@ instance (Hashable idType) => Hashable (Port idType) where
 
 data Vertex idType = Vertex
   { vertexIdentifier :: idType,
-    vertexPorts :: Map.Map idType (Port idType),
-    vertexProperties :: Map.Map idType (MapItem idType),
-    vertexType :: Type
+    vertexPorts :: [Port idType],
+    vertexProperties :: [(idType, MapItem idType)],
+    vertexType :: ModelType
   }
 
 instance (Eq idType) => Eq (Vertex idType) where
@@ -94,174 +56,134 @@ instance (Eq idType) => Eq (Vertex idType) where
 instance (Hashable idType) => Hashable (Vertex idType) where
   hashWithSalt salt (Vertex id _ _ _) = hashWithSalt salt id
 
-data Edge vIdType pIdType = Edge
-  { sourceVertex :: vIdType,
-    targetVertex :: vIdType,
-    sourceVertexPort :: pIdType,
-    targetVertexPort :: pIdType,
-    edgeType :: Type
+data Edge idType = Edge
+  { sourceVertex :: Vertex idType,
+    targetVertex :: Vertex idType,
+    sourceVertexPort :: Maybe (Port idType),
+    targetVertexPort :: Maybe (Port idType),
+    edgeType :: ModelType
   }
   deriving (Eq)
 
-instance (Hashable vIdType, Hashable pIdType) => Hashable (Edge vIdType pIdType) where
+instance (Hashable vIdType) => Hashable (Edge vIdType) where
   hashWithSalt salt (Edge sId tId _ _ _) =
     hashWithSalt salt sId + hashWithSalt salt tId
 
 data ForSyDeModel idType = ForSyDeModel
-  { vertexes :: Map.Map idType (Vertex idType),
-    edges :: Map.Map (idType, idType) [(Edge idType idType)]
+  { vertexes :: [Vertex idType],
+    edges :: [Edge idType]
   }
   deriving (Eq)
 
+-- | Return an empty 'ForSyDeModel' with no 'Vertex' or 'Edge'
 emptyForSyDeModel :: ForSyDeModel idType
-emptyForSyDeModel = ForSyDeModel Map.empty Map.empty
+emptyForSyDeModel = ForSyDeModel [] []
 
+vertexFromStrings ::
+  idType ->
+  String ->
+  Vertex idType
+vertexFromStrings idV t = Vertex idV [] [] (makeTypeFromName t)
+
+-- | Queries a 'Vertex' in the model by its Id
+-- returns 'Nothing' if nones exists.
 modelGetVertex ::
-  (Ord idType, Eq idType, Hashable idType) =>
+  (Eq idType) =>
   ForSyDeModel idType ->
   idType ->
   Maybe (Vertex idType)
-modelGetVertex (ForSyDeModel vSet eSet) id = Map.lookup id vSet
+modelGetVertex (ForSyDeModel vs _) vId = find (\v -> vId == vertexIdentifier v) vs
 
+-- | Add a new vertex to the model if it does not exist there yet
+-- Otherwise returns the same model silently.
 modelAddVertex ::
-  (Ord idType, Eq idType, Hashable idType) =>
-  Vertex idType ->
+  (Eq idType) =>
   ForSyDeModel idType ->
+  Vertex idType ->
   ForSyDeModel idType
-modelAddVertex vertex@(Vertex id _ _ _) (ForSyDeModel vSet eSet) =
-  let newVSet = Map.insert id vertex vSet
-   in ForSyDeModel newVSet eSet
+modelAddVertex (ForSyDeModel vs es) v
+  | v `elem` vs = ForSyDeModel vs es
+  | otherwise = ForSyDeModel (v : vs) es
+
+modelGetEdges ::
+  (Eq idType) =>
+  ForSyDeModel idType ->
+  Vertex idType ->
+  Vertex idType ->
+  [Edge idType]
+modelGetEdges (ForSyDeModel _ es) s t = filter (\e -> (sourceVertex e == s) && (targetVertex e == t)) es
 
 modelAddEdge ::
-  (Ord idType, Eq idType, Hashable idType, Show idType) =>
-  Edge idType idType ->
+  (Eq idType) =>
+  ForSyDeModel idType ->
+  Edge idType ->
+  ForSyDeModel idType
+modelAddEdge m@(ForSyDeModel vs es) e@(Edge s t _ _ _)
+  | e `elem` es = ForSyDeModel vs' es
+  | otherwise = ForSyDeModel vs' (e : es)
+  where
+    vs' = vertexes $ modelAddVertex (modelAddVertex m s) t
+
+modelFromXMLTree ::
+  (Read idType, Eq idType) =>
+  XmlTree ->
+  ForSyDeModel idType
+modelFromXMLTree root = m
+  where
+    vElems = getXPath "/ForSyDeModel/Vertex" root
+    mWithVertex = foldr addVertexFromXMLTree emptyForSyDeModel vElems
+    eElems = getXPath "/ForSyDeModel/Edge" root
+    m = foldr addEdgeFromXMLTree mWithVertex eElems
+
+addEdgeFromXMLTree ::
+  (Read idType, Eq idType) =>
+  XmlTree ->
   ForSyDeModel idType ->
   ForSyDeModel idType
-modelAddEdge edge@(Edge sid tid _ _ _) (ForSyDeModel vSet eSet)
-  | Map.member (sid, tid) eSet = ForSyDeModel vSet $ Map.adjust (edge :) (sid, tid) eSet
-  | otherwise = ForSyDeModel vSet $ Map.insert (sid, tid) [edge] eSet
+addEdgeFromXMLTree edgeElement m = modelAddEdge m e
+  where
+    sId = read . head $ (runLA $ getAttrValue "source_id") edgeElement
+    tId = read . head $ (runLA $ getAttrValue "target_id") edgeElement
+    pSourceId = read . head $ (runLA $ getAttrValue "source_port_id") edgeElement
+    pTargetId = read . head $ (runLA $ getAttrValue "target_port_id") edgeElement
+    tString = head $ (runLA $ getAttrValue "type") edgeElement
+    source = fromJust $ modelGetVertex m sId
+    target = fromJust $ modelGetVertex m tId
+    sourcePort = find (\p -> pSourceId == portIdentifier p) (vertexPorts source)
+    targetPort = find (\p -> pTargetId == portIdentifier p) (vertexPorts target)
+    t = (makeTypeFromName . read) tString
+    e = Edge source target sourcePort targetPort t
 
--- modelFromString
---   :: String
---   -> Either String (ForSyDeModel String)
--- modelFromString wholeString = modelFromTokens tokens $ Right emptyForSyDeModel
---   where
---     tokens = lines wholeString
---
--- modelFromTokens :: [String] -> Either String (ForSyDeModel String) -> Either String (ForSyDeModel String)
--- modelFromTokens (token:tokens) (Right currentModel)
---   | isInfixOf "%" token = modelFromTokens tokens $ Right currentModel
---
---   | isInfixOf "vertex" token =
---     let [vId, vTypeName] = filteredMatches
---         vType = read vTypeName
---         newVertex = Vertex vId Map.empty Map.empty vType :: Vertex String
---         newModel = modelAddVertex newVertex currentModel
---     in modelFromTokens tokens $ Right newModel
---
---   | isInfixOf "edge" token =
---     let [sId, tId, sPortId, tPortId, eTypeName] = filteredMatches
---         eType = read eTypeName
---         newEdge = Edge sId tId sPortId tPortId eType :: Edge String String
---         newModel = modelAddEdge newEdge currentModel
---     in modelFromTokens tokens $ Right newModel
---
---   | isInfixOf "port" token =
---     let [vId, pId, pTypeName] = filteredMatches
---         pType = read pTypeName
---         newModel = case modelGetVertex currentModel vId of
---           Just (Vertex _ ports props vType) ->
---             modelAddVertex (Vertex vId (Map.insert pId (Port pId pType) ports) props vType) currentModel
---           Nothing ->
---             modelAddVertex (Vertex vId (Map.singleton pId (Port pId pType)) Map.empty Unknown) currentModel
---     in modelFromTokens tokens $ Right newModel
---   -- TODO: Implement property parsing
---   | isInfixOf "prop" token = modelFromTokens tokens $ Right currentModel
---
---   | otherwise = Left ""
---   where
---     regexpat = "'([a-zA-Z0-9_]+)'[,)]" :: String
---     matches = getAllTextMatches (token =~ regexpat) :: [String]
---     -- drop the first ' and the last ', or ')
---     filteredMatches = map (tail . (\s -> take ((length s) -2) s)) matches :: [String]
---
--- modelFromTokens _ (Left err) = Left err
--- modelFromTokens [] (Right model) = Right model
-
--- listToRelation
---   :: (Show e)
---   => String
---   -> [e]
---   -> String
--- listToRelation relName le = relName ++ "(" ++ listOfAtoms ++ ")."
---   where
---     listOfAtoms = intercalate ", " $ map (\s -> "'" ++ (show s) ++ "'") le
---
--- modelToTokens
---   :: (Eq idType, Ord idType, Hashable idType, Show idType)
---   => ForSyDeModel idType
---   -> [String]
--- modelToTokens model@(ForSyDeModel vSet eSet) =
---   let vStrings = Map.elems $ Map.map vToStr vSet
---       pStrings = [] :: [String]
---       eStrings = [] :: [String]
---   in vStrings ++ pStrings ++ eStrings
---     where
---       vToStr (Vertex vId _ _ t) = listToRelation "vertex" [vId, t]
---       pToStr (Vertex vId _ _ _) (Port pId t) = listToRelation  "port" [vId, pId, t]
---
--- modelToString
---   :: (Eq idType, Ord idType, Hashable idType, Show idType)
---   => ForSyDeModel idType
---   -> String
--- modelToString model = intercalate "\n" $ modelToTokens model
-
-modelFromXML ::
-  (Read idType, Hashable idType) =>
+addVertexFromXMLTree ::
+  (Read idType, Eq idType) =>
   XmlTree ->
+  ForSyDeModel idType ->
   ForSyDeModel idType
-modelFromXML = undefined
+addVertexFromXMLTree vertexElement m = modelAddVertex m v
+  where
+    vidString = head $ (runLA $ getAttrValue "id") vertexElement
+    tString = head $ (runLA $ getAttrValue "type") vertexElement
+    vid = read vidString
+    t = (makeTypeFromName . read) tString
+    ports = map parsePortFromXML portsElems
+    properties = []
+    portsElems = (runLA $ getChildren >>> isElem >>> hasName "Port") vertexElement
+    v = Vertex vid ports properties t
 
-propertiesFromXML ::
+parsePortFromXML ::
+  (Read idType, Eq idType) =>
+  XmlTree ->
+  Port idType
+parsePortFromXML portElement = p
+  where
+    pidString = head $ (runLA $ getAttrValue "id") portElement
+    tString = head $ (runLA $ getAttrValue "type") portElement
+    pid = read pidString
+    t = (makeTypeFromName . read) tString
+    p = Port pid t
+
+propertiesFromXMLTree ::
   (Read keyType) =>
   XmlTree ->
-  Map.Map keyType (MapItem keyType)
-propertiesFromXML = undefined
-
-vertexesFromXML ::
-  (Hashable idType) =>
-  XmlTree ->
-  [(Vertex idType)]
-vertexesFromXML (NTree _ []) = []
--- found a vertex tag and therefore parse it
-vertexesFromXML (NTree (XTag "Vertex" attrs) cs) = newVertex : vertexesFromXML cs
--- Did not find vertex so we recurse
-vertexesFromXML (NTree (XTag _ _) cs) = vertexesFromXML cs
-
-vertexFromXML ::
-  (Hashable idType) =>
-  XmlTree ->
-  (Vertex idType)
-vertexFromXML vertexElement =
-  let id = getAttrValue "id" vertexElement
-      t = makeTypeFromName (getAttrValue "type" vertexElement)
-      -- TODO: continue here
-      -- portsElems = deep undefined
-      ports = Map.Map.empty
-      properties = Map.Map.empty
-   in Vertex id ports properties t
-
-portFromXML ::
-  (Hashable idType) =>
-  XmlTree ->
-  (Port idType)
-portFromXML portElement =
-  let id = getAttrValue "id" vertexElement
-      t = makeTypeFromName (getAttrValue "type" vertexElement)
-   in Port id t
-
-edgesFromXML ::
-  (Hashable idType) =>
-  XmlTree ->
-  [(Edge idType idType)]
-edgesFromXML = undefined
+  MapItem keyType
+propertiesFromXMLTree propElement = undefined
