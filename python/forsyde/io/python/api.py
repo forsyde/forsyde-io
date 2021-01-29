@@ -9,6 +9,8 @@ from typing import Iterable
 from typing import Dict
 from typing import Any
 from typing import Optional
+from typing import Type
+from typing import Union
 
 from lxml import etree
 import networkx as nx
@@ -21,54 +23,7 @@ from forsyde.io.python.core import Port
 from forsyde.io.python.types import TypesFactory
 
 
-class QueryableMixin(object):
-
-    def __init__(self, standard_views):
-        self.conn = None
-        self.db = None
-        self.standard_views = standard_views
-
-    def __del__(self):
-        if self.conn:
-            self.conn.close()
-
-    def setup_model_db(self, db=":memory:"):
-        if db != ":memory:":
-            self.db = db
-        else:
-            self.conn = sqlite3.connect(":memory:")
-        self._install_standard_views()
-
-    @contextmanager
-    def connect_db(self):
-        try:
-            conn = None
-            if self.db:
-                conn = sqlite3.connect(self.db)
-            else:
-                if not self.conn:
-                    self.conn = self.setup_model_db()
-                conn = self.conn
-            conn.row_factory = sqlite3.Row
-            yield conn
-        finally:
-            conn.commit()
-            if self.db:
-                conn.close()
-
-    def _install_standard_views(self):
-        with self.connect_db() as db:
-            for view_name in self.standard_views:
-                sql_command = res.read_text('forsyde.io.python.sql', view_name)
-                db.executescript(sql_command)
-
-    def query_view(self, view_name: str) -> Iterable[Dict[str, Any]]:
-        with self.connect_db() as db:
-            for row in db.execute(f"SELECT * FROM {view_name};"):
-                yield dict(row)
-
-
-class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
+class ForSyDeModel(nx.MultiDiGraph):
     """The main graph holder element representing a ForSyDe Model
 
     A subclass of MultiDiGraph from the networkX library, this class
@@ -87,7 +42,6 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
     def __init__(self, standard_views=['create_tables.sql', 'types.sql', 'create_views.sql'], *args, **kwargs):
         """TODO: to be defined. """
         nx.MultiDiGraph.__init__(self, *args, **kwargs)
-        QueryableMixin.__init__(self, standard_views)
 
     def _rectify_model(self):
         for v in self.nodes:
@@ -102,8 +56,6 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
         self._rectify_model()
         if '.pro' in sink or '.pl' in sink:
             self.write_prolog(sink)
-        elif '.db' in sink:
-            self.write_db(sink)
         elif '.gexf' in sink:
             nx.write_gexf(self.stringified(), sink)
         elif '.graphml' in sink:
@@ -203,9 +155,20 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
                         linenum, line))
 
     def get_vertexes(self,
-                     v_type: Optional[ModelType] = None,
+                     v_type: Union[Type, Optional[ModelType]] = None,
                      filters: List[Callable[[Vertex], bool]] = []
                      ) -> Iterable[Vertex]:
+        '''Query vertexes based on their attached type and additional filters
+
+        Arguments:
+            v_type:
+                Either a `ModelType` instance for a `ModelType` `type` itself,
+                which serves as a hard filter for the query.
+            filters:
+                The callables are called with every vertex fed as argument. If
+                they evaluate to `True`, then the vertex is in the result,
+                otherwise it is skipped.
+        '''
         for v in self.nodes:
             if v_type and v.is_type(v_type):
                 if all(f(v) for f in filters):
@@ -219,64 +182,10 @@ class ForSyDeModel(nx.MultiDiGraph, QueryableMixin):
     def neighs_rev(self, v: Vertex) -> Iterable[Vertex]:
         yield from nx.reverse_view(self).adj[v]
 
-    def query_vertexes(self, view_name: str, id_name: str = 'vertex_id') -> Iterable[Vertex]:
-        # TODO: optimize this later
-        for row in self.query_view(view_name):
-            for v in self.nodes:
-                if v.identifier == row[id_name]:
-                    yield v
-
     def get_vertex(self, label: str, label_name: str = 'label') -> Vertex:
         for (v, d) in self.nodes.data():
             if d[label_name] == label:
                 return v
-
-    def write_db(self, sink: str) -> None:
-        self.setup_model_db(sink)
-        with self.connect_db() as con:
-            insert_vertex_sql = res.read_text('forsyde.io.python.sql', 'insert_vertex.sql')
-            insert_edge_sql = res.read_text('forsyde.io.python.sql', 'insert_edge.sql')
-            insert_prop_sql = res.read_text('forsyde.io.python.sql', 'insert_property.sql')
-            insert_port_sql = res.read_text('forsyde.io.python.sql', 'insert_port.sql')
-            vertexes = ((v.identifier, v.vertex_type.get_type_name()) for v in self.nodes)
-            con.executemany(insert_vertex_sql, vertexes)
-            ports = ((p.identifier, v.identifier, p.port_type.get_type_name()) for v in self.nodes for p in v.ports)
-            con.executemany(insert_port_sql, ports)
-            props = ((pkey, v.identifier, json.dumps(pval)) for v in self.nodes
-                     for (pkey, pval) in v.properties.items())
-            con.executemany(insert_prop_sql, props)
-            edges = (e.ids_tuple() for (_, _, e) in self.edges.data("object"))
-            con.executemany(insert_edge_sql, edges)
-
-    def read_db(self, source: str) -> None:
-        self.setup_model_db(source)
-        for row in self.query_view('vertexes'):
-            vertex = Vertex(identifier=row["vertex_id"], vertex_type=TypesFactory.build_type(row["type_name"]))
-            self.add_node(vertex, label=vertex.identifier)
-        for row in self.query_view('ports'):
-            p_vid = row['vertex_id']
-            p_id = row['port_id']
-            p_type = TypesFactory.build_type(row['type_name'])
-            port = Port(identifier=p_id, port_type=p_type)
-            self.get_vertex(p_vid).ports.add(port)
-        for row in self.query_view('properties'):
-            p_vid = row['vertex_id']
-            p_id = row['prop_id']
-            p_val = row['prop_value']
-            self.get_vertex(p_vid).properties[p_id] = p_val
-        for row in self.query_view('edges'):
-            source_vertex = self.get_vertex(row['source_vertex_id'])
-            target_vertex = self.get_vertex(row['target_vertex_id'])
-            source_vertex_port = next((p for p in source_vertex.ports if p.identifier == row['source_vertex_port_id']),
-                                      None)
-            target_vertex_port = next((p for p in source_vertex.ports if p.identifier == row['target_vertex_port_id']),
-                                      None)
-            edge = Edge(source_vertex=source_vertex,
-                        target_vertex=target_vertex,
-                        source_vertex_port=source_vertex_port,
-                        target_vertex_port=target_vertex_port,
-                        edge_type=TypesFactory.build_type(row['type_name']))
-            self.add_edge(edge.source_vertex, edge.target_vertex, object=edge)
 
     def property_to_xml(self, parent: etree.Element, prop: Any) -> None:
         '''Transform an object into the expected XML element layout
