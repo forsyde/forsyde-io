@@ -1,0 +1,2 @@
+include forsyde/io/python/sql/*.sql
+recursive-include *.pyi

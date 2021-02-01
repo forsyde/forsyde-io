@@ -16,17 +16,17 @@ class TypesFactoryGeneratorJava {
 	
 	import java.util.Optional;
 	
-	import forsyde.io.java.FType;
+	import forsyde.io.java.ModelType;
 	«FOR sub : pak.ESubpackages»
 	import forsyde.io.java.«sub.packageSequence.map[p | p.name.toLowerCase].join('.')».«sub.name»Factory;
 	«ENDFOR»
 	
 	public class «pak.name»Factory {
 		
-		static public Optional<FType> getTypeFromName(String name) {
+		static public Optional<ModelType> getTypeFromName(String name) {
 			
 			«IF pak.ESubpackages.empty == false»
-			Optional<FType> built;
+			Optional<ModelType> built;
 			«ENDIF»
 			«FOR cls : pak.EClassifiers.filter[c | c instanceof EClass]»
 			if (name.equals("«cls.name»")) {

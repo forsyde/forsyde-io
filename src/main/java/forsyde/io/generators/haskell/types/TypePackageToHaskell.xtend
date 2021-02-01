@@ -15,14 +15,14 @@ class TypePackageToHaskell {
 	'''
 		module ForSyDe.IO.Haskell.«pac.packageSequence.map[name].join('.')»
 		  (
-		    Type ( Unknown
+		    ModelType ( Unknown
 		    «FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
     	«''»         , «cls.name»
     	  	«ENDFOR»
 		    )
             «IF pac.eAllContents.exists[e | e instanceof EAttribute]»
-		«''»    , getTypeStandardProperties
-		    , getTypeStandardPropertiesDefault
+		«''»    , getTypeDefaultProperties
+«««		    , getTypeDefaultPropertiesValues
 		    , getTypeDeducedProperties
             «ENDIF»
 		    , makeTypeFromName
@@ -30,33 +30,33 @@ class TypePackageToHaskell {
 		  
 		import Data.Dynamic
 		
-		data Type = Unknown |
+		data ModelType = Unknown |
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ' |'»
 		«''»  «cls.name»
 		«ENDFOR»
 		  deriving (Show, Read, Eq)
 		
-		getTypeStandardProperties :: Type -> [String]
+		getTypeDefaultProperties :: ModelType -> [String]
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-		getTypeStandardProperties «cls.name» = [«cls.EAllAttributes.map['"' + name + '"'].join(", ")»]
+		getTypeDefaultProperties «cls.name» = [«cls.EAllAttributes.map['"' + name + '"'].join(", ")»]
 		«ENDFOR»
-		getTypeStandardProperties _ = []
+		getTypeDefaultProperties _ = []
 		
-		getTypeStandardPropertiesDefault :: Type -> String -> Dynamic
-		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-		«FOR att : cls.EAllAttributes»
-		getTypeStandardPropertiesDefault «cls.name» "«att.name»" = toDyn («haskellizeValue(att.defaultValueLiteral)» :: «haskellizeType(att.EAttributeType.name)»)
-		«ENDFOR» 
-		«ENDFOR»
-		getTypeStandardPropertiesDefault t p = error ("Type " ++ (show t) ++ " has no default for " ++ p)
+«««		getTypeDefaultPropertiesValues :: (Typeable a, Read a, Show a) => ModelType -> String -> a
+«««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
+«««		«FOR att : cls.EAllAttributes»
+«««		getTypeDefaultPropertiesValues  «cls.name» "«att.name»" = «haskellizeValue(att.defaultValueLiteral)»
+«««		«ENDFOR» 
+«««		«ENDFOR»
+«««		getTypeDefaultPropertiesValues  t p = error ("Type " ++ (show t) ++ " has no default for " ++ p)
 		
-		getTypeDeducedProperties :: Type -> [String]
+		getTypeDeducedProperties :: ModelType -> [String]
 «««		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
 «««		getTypeDeducedProperties «cls.name» = [«cls.EAllAttributes.map['"' + name + '"'].join(", ")»]
 «««		«ENDFOR»
 		getTypeDeducedProperties _ = []
 		
-		makeTypeFromName :: String -> Type
+		makeTypeFromName :: String -> ModelType
 		«FOR cls : pac.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
 		makeTypeFromName "«cls.name»" = «cls.name»
 		«ENDFOR»

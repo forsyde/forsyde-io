@@ -1,24 +1,36 @@
-PYTHON_DIR := python-io
-JAVA_DIR := java-io
-HASKELL_DIR := haskell-io
+SQL_DIR := sql
+PYTHON_DIR := python
+JAVA_DIR := java
+HASKELL_DIR := haskell
+PROLOG_DIR := prolog
 
-all: generate-code.task
+PYTHON_SQL_DIR := $(PYTHON_DIR)/forsyde/io/python/sql
+JAVA_SQL_DIR := $(JAVA_DIR)/src/main/resources/sql
+HASKELL_SQL_DIR := $(HASKELL_DIR)/sql
 
-generate-code.task:
-	./gradlew run
+LIBS := PYTHON JAVA HASKELL
 
-publish-local.task: publish-local-all.task
+all: generate-code
 
-publish-local-all.task: \
-	publish-local-python.task \
-	publish-local-java.task \
-	publish-local-haskell.task
+generate-code:\
+	inject-sql
+	@./gradlew run
 
-publish-local-python.task: generate-code.task
-	$(MAKE) -C $(PYTHON_DIR) publish-local.task
+inject-sql: $(addprefix inject-sql-,$(LIBS))
 
-publish-local-java.task: generate-code.task
-	$(MAKE) -C $(JAVA_DIR) publish-local.task
+inject-sql-%:
+	@mkdir -p $($*_SQL_DIR)
+	@cp -r $(SQL_DIR)/* $($*_SQL_DIR)
 
-publish-local-haskell.task: generate-code.task
-	$(MAKE) -C $(HASKELL_DIR) publish-local.task
+clean-code-%:
+	@$(MAKE) -C $($*_DIR) clean-code
+
+publish-local: $(addprefix publish-local-,$(LIBS))
+
+publish-local-%: generate-code
+	$(MAKE) -C $($*_DIR) publish-local
+
+publish-online: $(addprefix publish-online-,$(LIBS))
+	
+publish-online-%: generate-code
+	$(MAKE) -C $($*_DIR) publish-online
