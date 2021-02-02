@@ -16,38 +16,183 @@ class TypePackageToPython {
 	time modifying anything here, but on the true source which is a model file.
 	"""
 	
-«««	
-«««	from typing import Dict
-«««	from typing import Optional
-«««	from typing import Any
-«««	from typing import List
-
 	import forsyde.io.python.core as core
 
 	
-	«FOR type : pak.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet»
-	«classToText(type)»
+	«FOR type : pak.eAllContents
+		.filter[e | e instanceof EClass].map[e | e as EClass]
+		.filter[EAllSuperTypes.map[name].contains("Vertex")]
+		.toSet»
+	«vertexToText(type)»
 	
 	«ENDFOR»
-	«factoryToText(pak)»
+	«FOR type : pak.eAllContents
+			.filter[e | e instanceof EClass].map[e | e as EClass]
+			.filter[EAllSuperTypes.map[name].contains("Edge")]
+			.toSet»
+	«edgeToText(type)»
+	
+	«ENDFOR»
+	«vertexFactoryToText(pak)»
+	
+	«edgeFactoryToText(pak)»
+	
+«««	«factoryToText(pak)»
+	'''
+	
+	static def vertexToText(EClass cls)
+	'''
+	class «cls.name»(«cls.ESuperTypes.map[name].map[n | n == "Vertex" ? "core.Vertex" : n].join(', ')»):
+	
+	    def get_type_name(self) -> str:
+	        return "«cls.name»"
+	        
+	    «FOR r : cls.EReferences.filter[EType.name == "Port"]»
+	    def get_port_«r.name»(self) -> core.Port:
+	        return self.get_port("«r.name»")
+
+	    «ENDFOR»	
+	    «FOR r : cls.EReferences.filter[EType.name == "Port"]»
+	    def get_«r.name»(self, model) -> «r.EGenericType.ETypeArguments.head.EClassifier.name»:
+	        out_port = self.get_port_«r.name»()
+	        for n in model.adj[self]:
+	            for (_, edata) in model.edges[self, n]:
+	                edge = edata["object"]
+	                if edge.source_vertex_port == out_port:
+	                    return edge.target_vertex
+	        raise AttributeError(f"Port «r.name» of {self.identifier} does not exist.")
+
+	    «ENDFOR»
+	    «FOR r : cls.EReferences.filter[EType.name.contains("Property")]»
+	    def get_«r.name»(self):
+	        out_port = next(p for p in self.ports if p.identifier == "«r.name»")
+	        for n in model.adj[self]:
+	            for (_, edata) in model.edges[self, n]:
+	                edge = edata["object"]
+	                if edge.source_vertex_port == out_port:
+	                    return edge.target_vertex
+	        raise AttributeError(f"Connection «r.name» of {self.identifier} does not exist.")
+
+   	    «ENDFOR»
+	'''
+	
+	static def edgeToText(EClass cls)
+	'''
+	class «cls.name»(«cls.ESuperTypes.map[name].map[n | n == "Edge" ? "core.Edge" : n].join(', ')»):
+	
+	    def get_type_name(self) -> str:
+	        return "«cls.name»"
+	'''
+	
+	static def edgeFactoryToText(EPackage pak)
+	'''
+	class EdgeFactory:
+	    """
+	    This class is auto generated.
+	    It enables import and export of ForSyDe-IO type models by stringification.
+	    """
+
+	    @classmethod
+	    def build(
+	        cls,
+		    source: core.Vertex,
+		    target: core.Vertex,
+		    type_name: str
+		) -> core.Edge:
+	        «FOR type : pak.eAllContents
+	            		.filter[e | e instanceof EClass].map[e | e as EClass]
+	            		.filter[EAllSuperTypes.map[name].contains("Edge")]
+	            		.toSet»
+	        if type_name == "«type.name»":
+	            return «type.name»(
+	                source_vertex = source,
+	                target_vertex = target
+	            )
+	        «ENDFOR»
+	        raise NotImplementedError(
+	            f"The Edge type '{type_name}' is not recognized."
+	        )
+	'''
+	
+	static def vertexFactoryToText(EPackage pak)
+	'''
+	class VertexFactory:
+	    """
+	    This class is auto generated.
+	    It enables import and export of ForSyDe-IO type models by stringification.
+	    """
+	
+	    str_to_classes = {
+        «FOR type : pak.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass]
+        			.filter[EAllSuperTypes.map[name].contains("Vertex")].toSet SEPARATOR ','»
+        «''»    "«type.name»": «type.name»
+        «ENDFOR»
+	    }
+	    
+	    @classmethod
+	    def get_type_from_name(cls,
+	                   type_name: str
+	                   ) -> type:
+	        if type_name in cls.str_to_classes:
+	            return cls.str_to_classes[type_name]
+	        raise NotImplementedError(
+	           f"The type '{type_name}' is not recognized."
+	        )
+	
+	
+	    @classmethod
+	    def build(
+	        cls,
+	        identifier: str,
+	        type_name: str,
+	        ports = None,
+	        properties = None
+	     ) -> core.Vertex:
+	        vtype = cls.get_type_from_name(type_name)
+	        return vtype(
+	            identifier=identifier,
+	            ports=ports,
+	            properties=properties
+	        )
+	        raise NotImplementedError(
+	           f"The Vertex type '{type_name}' is not recognized."
+	        )
+«««	        «FOR type : pak.eAllContents
+«««	            		.filter[e | e instanceof EClass].map[e | e as EClass]
+«««	            		.filter[EAllSuperTypes.map[name].contains("Vertex")]
+«««	            		.toSet»
+«««	        if type_name == "«type.name»":
+«««	            return «type.name»(
+«««	                identifier = identifier,
+«««	                ports = ports,
+«««	                properties = properties
+«««	            )
+«««	            «ENDFOR»
+«««	        if strict:
+«««	            raise NotImplementedError(
+«««	        	    f"The Vertex type '{type_name}' is not recognized."
+«««	        	)
+«««	        else:
+«««	            return core.Vertex()
 	'''
 	
 	static def factoryToText(EPackage pak)
 	'''
-	class «pak.name»Factory:
+	class TypeFactory:
 	    """
 	    This class is auto generated.
 	    It enables import and export of ForSyDe-IO type models by stringification.
 	    """
 	
 	    @classmethod
-	    def build_type(cls,
+	    def get_type(cls,
 	                   type_name: str,
 	                   strict: bool = True
 	                   ) -> core.ModelType:
 	        str_to_classes = {
-            «FOR type : pak.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass].toSet SEPARATOR ','»
-            «''»    "«type.name»": «type.name»Type
+            «FOR type : pak.eAllContents.filter[e | e instanceof EClass].map[e | e as EClass]
+            			.filter[EAllSuperTypes.map[name].contains("Vertex")].toSet SEPARATOR ','»
+            «''»    "«type.name»": «type.name»
 	        «ENDFOR»
 	        }
 	        if type_name in str_to_classes:

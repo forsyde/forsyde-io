@@ -8,10 +8,6 @@ from typing import Set
 from typing import Tuple
 
 
-_port_id_counter = 1
-_vertex_id_counter = 1
-
-
 class ModelType(object):
     """Type associated with a vertex or a port.
     
@@ -34,14 +30,15 @@ class ModelType(object):
     def __repr__(self):
         return self.get_type_name()
 
-    def __eq__(self, other: "ModelType"):
+    def __eq__(self, other):
         return self.get_type_name() == other.get_type_name()
 
     def __hash__(self):
         return hash(self.get_type_name())
 
     def is_refinement(self, other: "ModelType") -> bool:
-        return (self == other) or any(s.is_refinement(other) for s in self.get_super_types())
+        return (self == other) or any(
+            s.is_refinement(other) for s in self.get_super_types())
 
     def get_super_types(self) -> Iterable["ModelType"]:
         yield from ()
@@ -66,20 +63,14 @@ class Port(object):
     to denote which input argument of a function is to be used.
     """
 
-    identifier: Optional[str] = field(default=None, hash=True)
-    port_type: ModelType = field(default=ModelType(), compare=False, hash=False)
-
-    def __post_init__(self):
-        global _port_id_counter
-        if not self.identifier:
-            self.identifier = f"port{_port_id_counter}"
-            _port_id_counter += 1
+    identifier: str = field(default_factory=_generate_port_id, hash=True)
+    port_type: Optional[type] = field(default=None, compare=False, hash=False)
 
     def __hash__(self):
         return hash(self.identifier)
 
-    def is_type(self, t: ModelType) -> bool:
-        return self.port_type.is_refinement(t)
+    # def is_type(self, t: ModelType) -> bool:
+    #     return self.port_type and self.port_type.is_refinement(t)
 
 
 @dataclass
@@ -95,22 +86,31 @@ class Vertex(object):
     Multiplexer.
     """
 
-    identifier: Optional[str] = field(default=None, hash=True)
-    ports: Set[Port] = field(default_factory=lambda: set(), compare=False, hash=False)
-    properties: Dict[str, Any] = field(default_factory=lambda: dict(), compare=False, hash=False)
-    vertex_type: ModelType = field(default=ModelType(), compare=False, hash=False)
+    identifier: str = field(default_factory=_generate_vertex_id,
+                            hash=True,
+                            eq=True)
+    ports: Set[Port] = field(default_factory=set,
+                             compare=False,
+                             eq=False,
+                             hash=False)
+    properties: Dict[str, Any] = field(default_factory=dict,
+                                       compare=False,
+                                       eq=False,
+                                       hash=False)
 
-    def __post_init__(self):
-        global _vertex_id_counter
-        if not self.identifier:
-            self.identifier = f"vertex{_vertex_id_counter}"
-            _vertex_id_counter += 1
+    # vertex_type: ModelType = field(default=ModelType(), compare=False, hash=False)
+
+    def __eq__(self, other):
+        return self.identifier == other.identifier
 
     def __hash__(self):
         return hash(self.identifier)
 
-    def is_type(self, t: ModelType) -> bool:
-        return self.vertex_type.is_refinement(t)
+    def get_type_name(self) -> str:
+        return "Vertex"
+
+    def get_port(self, name: str) -> Port:
+        return next(p for p in self.ports if p.identifier == name)
 
 
 @dataclass
@@ -122,19 +122,39 @@ class Edge(object):
     they exist. The edges also have types associated with them
     so that extra deductions can be made along the EDA flow.
     """
-    source_vertex: Vertex
-    target_vertex: Vertex
+    source_vertex: Vertex = field(default=Vertex())
+    target_vertex: Vertex = field(default=Vertex())
     source_vertex_port: Optional[Port] = field(default=None)
     target_vertex_port: Optional[Port] = field(default=None)
-    edge_type: ModelType = field(default=ModelType(), compare=False)
+
+    # edge_type: ModelType = field(default=ModelType(), compare=False)
 
     def __hash__(self):
         return hash((self.source_vertex, self.target_vertex))
 
     def ids_tuple(self):
         return (self.source_vertex.identifier, self.target_vertex.identifier,
-                self.source_vertex_port.identifier if self.source_vertex_port else None,
-                self.target_vertex_port.identifier if self.target_vertex_port else None, self.edge_type.get_type_name())
+                self.source_vertex_port.identifier if self.source_vertex_port
+                else None, self.target_vertex_port.identifier
+                if self.target_vertex_port else None,
+                self.edge_type.get_type_name())
 
-    def is_type(self, tsource: ModelType, ttarget: ModelType) -> bool:
-        return self.source_vertex.is_type(tsource) and self.target_vertex.is_type(ttarget)
+    # def is_type(self, tsource: ModelType, ttarget: ModelType) -> bool:
+    #     return self.source_vertex.is_type(
+    #         tsource) and self.target_vertex.is_type(ttarget)
+
+
+_port_id_counter = 0
+_vertex_id_counter = 0
+
+
+def _generate_vertex_id() -> str:
+    global _vertex_id_counter
+    _vertex_id_counter += 1
+    return "vertex" + str(_vertex_id_counter)
+
+
+def _generate_port_id() -> str:
+    global _port_id_counter
+    _port_id_counter += 1
+    return "port" + str(_port_id_counter)

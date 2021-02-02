@@ -3,6 +3,9 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="Types" nsURI="https://forsyde.github.io/Types" nsPrefix="Types">
   <eClassifiers xsi:type="ecore:EClass" name="Vertex" abstract="true" interface="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="Edge" abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Port">
+    <eTypeParameters name="T"/>
+  </eClassifiers>
   <eSubpackages name="Vertexes" nsURI="https://forsyde.github.io/ForSyDe/Model/Vertexes"
       nsPrefix="VertexTypes">
     <eClassifiers xsi:type="ecore:EClass" name="SporadicTask" eSuperTypes="#//Vertexes/TriggeredTask #//Vertexes/AbstractOrdering">
@@ -11,28 +14,28 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="TriggeredTask" eSuperTypes="#//Vertexes/AbstractOrdering"/>
     <eClassifiers xsi:type="ecore:EClass" name="AbstractOrdering" eSuperTypes="#//Vertexes/AbstractGrouping"/>
-    <eClassifiers xsi:type="ecore:EClass" name="AbstractGrouping"/>
-    <eClassifiers xsi:type="ecore:EClass" name="WCET">
+    <eClassifiers xsi:type="ecore:EClass" name="AbstractGrouping" eSuperTypes="#//Vertex"/>
+    <eClassifiers xsi:type="ecore:EClass" name="WCET" eSuperTypes="#//Vertex">
       <eStructuralFeatures xsi:type="ecore:EReference" name="process" lowerBound="1"
-          eType="#//Vertexes/Cyber/Process"/>
+          eType="#//Vertexes/Process"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="processor" lowerBound="1"
-          eType="#//Vertexes/Physical/AbstractProcessingComponent"/>
+          eType="#//Vertexes/ModelOfArchitecture/AbstractProcessingComponent"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
           defaultValueLiteral="0"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="WCCT">
+    <eClassifiers xsi:type="ecore:EClass" name="WCCT" eSuperTypes="#//Vertex">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
           defaultValueLiteral="0"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="sender" lowerBound="1"
-          eType="#//Vertexes/Physical/AbstractProcessingComponent"/>
+          eType="#//Vertexes/ModelOfArchitecture/AbstractProcessingComponent"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="reciever" lowerBound="1"
-          eType="#//Vertexes/Physical/AbstractProcessingComponent"/>
+          eType="#//Vertexes/ModelOfArchitecture/AbstractProcessingComponent"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="signal" lowerBound="1"
-          eType="#//Vertexes/Cyber/Signal"/>
+          eType="#//Vertexes/Signal"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="Requirement"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Requirement" eSuperTypes="#//Vertex"/>
     <eClassifiers xsi:type="ecore:EClass" name="HardRequirement" eSuperTypes="#//Vertexes/Requirement">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="limit" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
@@ -42,122 +45,107 @@
           eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
           defaultValueLiteral="1"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="Goal"/>
-    <eClassifiers xsi:type="ecore:EClass" name="StaticCyclicScheduler"/>
-    <eClassifiers xsi:type="ecore:EClass" name="FixedPriorityScheduler">
+    <eClassifiers xsi:type="ecore:EClass" name="Goal" eSuperTypes="#//Vertex"/>
+    <eClassifiers xsi:type="ecore:EClass" name="StaticCyclicScheduler" eSuperTypes="#//Vertex"/>
+    <eClassifiers xsi:type="ecore:EClass" name="FixedPriorityScheduler" eSuperTypes="#//Vertex">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="preemptive" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"
           defaultValueLiteral="true"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="CustomScheduler"/>
-    <eClassifiers xsi:type="ecore:EClass" name="RoundRobinScheduler"/>
-    <eClassifiers xsi:type="ecore:EClass" name="Property">
-      <eTypeParameters name="T"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="value">
-        <eGenericType eTypeParameter="#//Vertexes/Property/T"/>
-      </eStructuralFeatures>
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="PropertyMap">
-      <eTypeParameters name="K"/>
-      <eTypeParameters name="V"/>
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="PropertyList">
-      <eTypeParameters name="T"/>
-    </eClassifiers>
-    <eSubpackages name="Physical" nsURI="https://forsyde.github.io/ForSyDe/Model/Vertexes/Physical"
-        nsPrefix="VertexPhysical">
+    <eClassifiers xsi:type="ecore:EClass" name="CustomScheduler" eSuperTypes="#//Vertex"/>
+    <eClassifiers xsi:type="ecore:EClass" name="RoundRobinScheduler" eSuperTypes="#//Vertex"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Process" eSuperTypes="#//Vertexes/Function"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Signal" eSuperTypes="#//Vertex"/>
+    <eClassifiers xsi:type="ecore:EClass" name="FIFOSignal" eSuperTypes="#//Vertexes/Signal"/>
+    <eClassifiers xsi:type="ecore:EClass" name="LabelSignal" eSuperTypes="#//Vertexes/Signal"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//Vertex"/>
+    <eSubpackages name="ModelOfComputation" nsURI="https://forsyde.github.io/ForSyDe/Vertex/MoC"
+        nsPrefix="VertexMoC">
+      <eSubpackages name="SY" nsURI="https://forsyde.github.io/ForSyDe/Model/MoC/SY"
+          nsPrefix="">
+        <eClassifiers xsi:type="ecore:EClass" name="SYComb" eSuperTypes="#//Vertexes/Function">
+          <eStructuralFeatures xsi:type="ecore:EReference" name="combinator" lowerBound="1">
+            <eGenericType eClassifier="#//Port">
+              <eTypeArguments eClassifier="#//Vertexes/Function"/>
+            </eGenericType>
+          </eStructuralFeatures>
+          <eStructuralFeatures xsi:type="ecore:EReference" name="output" lowerBound="1">
+            <eGenericType eClassifier="#//Port">
+              <eTypeArguments eClassifier="#//Vertexes/Function"/>
+            </eGenericType>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="SYPrefix" eSuperTypes="#//Vertexes/Function">
+          <eStructuralFeatures xsi:type="ecore:EReference" name="prefixer" lowerBound="1">
+            <eGenericType eClassifier="#//Port">
+              <eTypeArguments eClassifier="#//Vertexes/Function"/>
+            </eGenericType>
+          </eStructuralFeatures>
+          <eStructuralFeatures xsi:type="ecore:EReference" name="output" lowerBound="1">
+            <eGenericType eClassifier="#//Port">
+              <eTypeArguments eClassifier="#//Vertexes/Function"/>
+            </eGenericType>
+          </eStructuralFeatures>
+        </eClassifiers>
+      </eSubpackages>
+      <eSubpackages name="SDF" nsURI="https://forsyde.github.io/ForSyDe/Model/MoC/SDF"
+          nsPrefix="">
+        <eClassifiers xsi:type="ecore:EClass" name="SDFComb" eSuperTypes="#//Vertexes/Function">
+          <eStructuralFeatures xsi:type="ecore:EReference" name="combinator" lowerBound="1">
+            <eGenericType eClassifier="#//Port">
+              <eTypeArguments eClassifier="#//Vertexes/Function"/>
+            </eGenericType>
+          </eStructuralFeatures>
+          <eStructuralFeatures xsi:type="ecore:EReference" name="output" lowerBound="1">
+            <eGenericType eClassifier="#//Port">
+              <eTypeArguments eClassifier="#//Vertexes/Function"/>
+            </eGenericType>
+          </eStructuralFeatures>
+          <eStructuralFeatures xsi:type="ecore:EReference" name="production" lowerBound="1"
+              containment="true">
+            <eGenericType eClassifier="#//Properties/PropertyMap">
+              <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+              <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
+            </eGenericType>
+          </eStructuralFeatures>
+          <eStructuralFeatures xsi:type="ecore:EReference" name="consumption" lowerBound="1"
+              containment="true">
+            <eGenericType eClassifier="#//Properties/PropertyMap">
+              <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+              <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
+            </eGenericType>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="SDFPrefix" eSuperTypes="#//Vertexes/Function">
+          <eStructuralFeatures xsi:type="ecore:EReference" name="output" lowerBound="1">
+            <eGenericType eClassifier="#//Port">
+              <eTypeArguments eClassifier="#//Vertexes/Function"/>
+            </eGenericType>
+          </eStructuralFeatures>
+          <eStructuralFeatures xsi:type="ecore:EReference" name="prefixer" lowerBound="1"
+              containment="true">
+            <eGenericType eClassifier="#//Port">
+              <eTypeArguments eClassifier="#//Vertexes/Function"/>
+            </eGenericType>
+          </eStructuralFeatures>
+        </eClassifiers>
+      </eSubpackages>
+    </eSubpackages>
+    <eSubpackages name="ModelOfArchitecture" nsURI="https://forsyde.github.io/ForSyDe/Vertex/MoA"
+        nsPrefix="VertexMoA">
       <eClassifiers xsi:type="ecore:EClass" name="AbstractPhysicalComponent" eSuperTypes="#//Vertex">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
           <details key="documentation" value="Represents a "/>
         </eAnnotations>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="AbstractProcessingComponent" eSuperTypes="#//Vertexes/Physical/AbstractPhysicalComponent"/>
+      <eClassifiers xsi:type="ecore:EClass" name="AbstractProcessingComponent" eSuperTypes="#//Vertexes/ModelOfArchitecture/AbstractPhysicalComponent"/>
       <eClassifiers xsi:type="ecore:EClass" name="AbstractCommunicationComponent"
-          eSuperTypes="#//Vertexes/Physical/AbstractPhysicalComponent"/>
-      <eClassifiers xsi:type="ecore:EClass" name="TimeDivisionMultiplexer" eSuperTypes="#//Vertexes/Physical/AbstractCommunicationComponent">
+          eSuperTypes="#//Vertexes/ModelOfArchitecture/AbstractPhysicalComponent"/>
+      <eClassifiers xsi:type="ecore:EClass" name="TimeDivisionMultiplexer" eSuperTypes="#//Vertexes/ModelOfArchitecture/AbstractCommunicationComponent">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="slots" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
             defaultValueLiteral="1"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="AbstractStorageComponent" eSuperTypes="#//Vertexes/Physical/AbstractPhysicalComponent"/>
-      <eClassifiers xsi:type="ecore:EClass" name="AbsractInterfaceComponent" eSuperTypes="#//Vertexes/Physical/AbstractPhysicalComponent"/>
-    </eSubpackages>
-    <eSubpackages name="Cyber" nsURI="https://forsyde.github.io/VertexCyber" nsPrefix="VertexCyber">
-      <eClassifiers xsi:type="ecore:EClass" name="Process" eSuperTypes="#//Vertexes/Cyber/Function"/>
-      <eClassifiers xsi:type="ecore:EClass" name="Signal" eSuperTypes="#//Vertex"/>
-      <eClassifiers xsi:type="ecore:EClass" name="FIFOSignal" eSuperTypes="#//Vertexes/Cyber/Signal"/>
-      <eClassifiers xsi:type="ecore:EClass" name="LabelSignal" eSuperTypes="#//Vertexes/Cyber/Signal"/>
-      <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//Vertex"/>
-      <eSubpackages name="MoC" nsURI="https://forsyde.github.io/ForSyDe/Model/MoC"
-          nsPrefix="">
-        <eSubpackages name="SY" nsURI="https://forsyde.github.io/ForSyDe/Model/MoC/SY"
-            nsPrefix="">
-          <eClassifiers xsi:type="ecore:EClass" name="SYComb" eSuperTypes="#//Vertexes/Cyber/Function">
-            <eStructuralFeatures xsi:type="ecore:EReference" name="combinator" lowerBound="1">
-              <eGenericType eClassifier="#//Ports/Port">
-                <eTypeArguments eClassifier="#//Vertexes/Cyber/Function"/>
-              </eGenericType>
-            </eStructuralFeatures>
-            <eStructuralFeatures xsi:type="ecore:EReference" name="output" lowerBound="1">
-              <eGenericType eClassifier="#//Ports/Port">
-                <eTypeArguments eClassifier="#//Vertexes/Cyber/Function"/>
-              </eGenericType>
-            </eStructuralFeatures>
-          </eClassifiers>
-          <eClassifiers xsi:type="ecore:EClass" name="SYPrefix" eSuperTypes="#//Vertexes/Cyber/Function">
-            <eStructuralFeatures xsi:type="ecore:EReference" name="prefixer" lowerBound="1">
-              <eGenericType eClassifier="#//Ports/Port">
-                <eTypeArguments eClassifier="#//Vertexes/Cyber/Function"/>
-              </eGenericType>
-            </eStructuralFeatures>
-            <eStructuralFeatures xsi:type="ecore:EReference" name="output" lowerBound="1">
-              <eGenericType eClassifier="#//Ports/Port">
-                <eTypeArguments eClassifier="#//Vertexes/Cyber/Function"/>
-              </eGenericType>
-            </eStructuralFeatures>
-          </eClassifiers>
-        </eSubpackages>
-        <eSubpackages name="SDF" nsURI="https://forsyde.github.io/ForSyDe/Model/MoC/SDF"
-            nsPrefix="">
-          <eClassifiers xsi:type="ecore:EClass" name="SDFComb" eSuperTypes="#//Vertexes/Cyber/Function">
-            <eStructuralFeatures xsi:type="ecore:EReference" name="combinator" lowerBound="1">
-              <eGenericType eClassifier="#//Ports/Port">
-                <eTypeArguments eClassifier="#//Vertexes/Cyber/Function"/>
-              </eGenericType>
-            </eStructuralFeatures>
-            <eStructuralFeatures xsi:type="ecore:EReference" name="output" lowerBound="1">
-              <eGenericType eClassifier="#//Ports/Port">
-                <eTypeArguments eClassifier="#//Vertexes/Cyber/Function"/>
-              </eGenericType>
-            </eStructuralFeatures>
-            <eStructuralFeatures xsi:type="ecore:EReference" name="production" lowerBound="1"
-                containment="true">
-              <eGenericType eClassifier="#//Vertexes/PropertyMap">
-                <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-                <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
-              </eGenericType>
-            </eStructuralFeatures>
-            <eStructuralFeatures xsi:type="ecore:EReference" name="consumption" lowerBound="1"
-                containment="true">
-              <eGenericType eClassifier="#//Vertexes/PropertyMap">
-                <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-                <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
-              </eGenericType>
-            </eStructuralFeatures>
-          </eClassifiers>
-          <eClassifiers xsi:type="ecore:EClass" name="SDFPrefix" eSuperTypes="#//Vertexes/Cyber/Function">
-            <eStructuralFeatures xsi:type="ecore:EReference" name="result" lowerBound="1">
-              <eGenericType eClassifier="#//Ports/Port">
-                <eTypeArguments eClassifier="#//Vertexes/Cyber/Function"/>
-              </eGenericType>
-            </eStructuralFeatures>
-            <eStructuralFeatures xsi:type="ecore:EReference" name="prefixer" lowerBound="1"
-                containment="true">
-              <eGenericType eClassifier="#//Ports/Port">
-                <eTypeArguments eClassifier="#//Vertexes/Cyber/Function"/>
-              </eGenericType>
-            </eStructuralFeatures>
-          </eClassifiers>
-        </eSubpackages>
-      </eSubpackages>
+      <eClassifiers xsi:type="ecore:EClass" name="AbstractStorageComponent" eSuperTypes="#//Vertexes/ModelOfArchitecture/AbstractPhysicalComponent"/>
+      <eClassifiers xsi:type="ecore:EClass" name="AbsractInterfaceComponent" eSuperTypes="#//Vertexes/ModelOfArchitecture/AbstractPhysicalComponent"/>
     </eSubpackages>
   </eSubpackages>
   <eSubpackages name="Edges" nsURI="https://forsyde.github.io/ForSyDe/Model/Edges"
@@ -179,9 +167,6 @@
   </eSubpackages>
   <eSubpackages name="Ports" nsURI="https://forsyde.github.io/ForSyDe/Model/Ports"
       nsPrefix="PortsTypes">
-    <eClassifiers xsi:type="ecore:EClass" name="Port">
-      <eTypeParameters name="T"/>
-    </eClassifiers>
     <eSubpackages name="Physical" nsURI="https://forsyde.github.io/ForSyDe/Model/Ports/Physical"
         nsPrefix="PortsPhysical">
       <eClassifiers xsi:type="ecore:EClass" name="AbstractHardwarePort"/>
@@ -198,5 +183,21 @@
       <eClassifiers xsi:type="ecore:EClass" name="UnsignedInteger" eSuperTypes="#//Ports/Cyber/Numeric"/>
       <eClassifiers xsi:type="ecore:EClass" name="Real" eSuperTypes="#//Ports/Cyber/Numeric"/>
     </eSubpackages>
+  </eSubpackages>
+  <eSubpackages name="Properties" nsURI="https://forsyde.github.io/ForSyDe/Model/Properties"
+      nsPrefix="PropertyTypes">
+    <eClassifiers xsi:type="ecore:EClass" name="Property">
+      <eTypeParameters name="T"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="value">
+        <eGenericType eTypeParameter="#//Properties/Property/T"/>
+      </eStructuralFeatures>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PropertyMap">
+      <eTypeParameters name="K"/>
+      <eTypeParameters name="V"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PropertyList">
+      <eTypeParameters name="T"/>
+    </eClassifiers>
   </eSubpackages>
 </ecore:EPackage>
