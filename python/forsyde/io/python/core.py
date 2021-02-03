@@ -7,6 +7,21 @@ from typing import Optional
 from typing import Set
 from typing import Tuple
 
+_port_id_counter = 0
+_vertex_id_counter = 0
+
+
+def _generate_vertex_id() -> str:
+    global _vertex_id_counter
+    _vertex_id_counter += 1
+    return "vertex" + str(_vertex_id_counter)
+
+
+def _generate_port_id() -> str:
+    global _port_id_counter
+    _port_id_counter += 1
+    return "port" + str(_port_id_counter)
+
 
 class ModelType(object):
     """Type associated with a vertex or a port.
@@ -86,16 +101,10 @@ class Vertex(object):
     Multiplexer.
     """
 
-    identifier: str = field(default_factory=_generate_vertex_id,
-                            hash=True,
-                            eq=True)
-    ports: Set[Port] = field(default_factory=set,
-                             compare=False,
-                             eq=False,
-                             hash=False)
+    identifier: str = field(default_factory=_generate_vertex_id, hash=True)
+    ports: Set[Port] = field(default_factory=set, compare=False, hash=False)
     properties: Dict[str, Any] = field(default_factory=dict,
                                        compare=False,
-                                       eq=False,
                                        hash=False)
 
     # vertex_type: ModelType = field(default=ModelType(), compare=False, hash=False)
@@ -142,19 +151,3 @@ class Edge(object):
     # def is_type(self, tsource: ModelType, ttarget: ModelType) -> bool:
     #     return self.source_vertex.is_type(
     #         tsource) and self.target_vertex.is_type(ttarget)
-
-
-_port_id_counter = 0
-_vertex_id_counter = 0
-
-
-def _generate_vertex_id() -> str:
-    global _vertex_id_counter
-    _vertex_id_counter += 1
-    return "vertex" + str(_vertex_id_counter)
-
-
-def _generate_port_id() -> str:
-    global _port_id_counter
-    _port_id_counter += 1
-    return "port" + str(_port_id_counter)

@@ -72,8 +72,8 @@ eclipse {
 
 task replaceEcoreIOVersion {
 	def pattern = ~/(<.*name="version"(.|\n)*defaultValueLiteral=)"(.+)"/
-	def replaced = file('./ecore/forsyde.ecore').text.replaceFirst(pattern, '$1"&quot;' + project.version + '&quot;"')
-	file('./ecore/forsyde.ecore').text = replaced 
+	def replaced = file('./ecore/types.ecore').text.replaceFirst(pattern, '$1"&quot;' + project.version + '&quot;"')
+	file('./ecore/types.ecore').text = replaced 
 }
 
 task replaceJavaIOVersion() {

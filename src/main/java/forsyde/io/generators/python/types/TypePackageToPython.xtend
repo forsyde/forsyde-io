@@ -56,7 +56,7 @@ class TypePackageToPython {
 	    def get_«r.name»(self, model) -> «r.EGenericType.ETypeArguments.head.EClassifier.name»:
 	        out_port = self.get_port_«r.name»()
 	        for n in model.adj[self]:
-	            for (_, edata) in model.edges[self, n]:
+	            for (_, edata) in model.edges[self][n]:
 	                edge = edata["object"]
 	                if edge.source_vertex_port == out_port:
 	                    return edge.target_vertex
@@ -65,13 +65,10 @@ class TypePackageToPython {
 	    «ENDFOR»
 	    «FOR r : cls.EReferences.filter[EType.name.contains("Property")]»
 	    def get_«r.name»(self):
-	        out_port = next(p for p in self.ports if p.identifier == "«r.name»")
-	        for n in model.adj[self]:
-	            for (_, edata) in model.edges[self, n]:
-	                edge = edata["object"]
-	                if edge.source_vertex_port == out_port:
-	                    return edge.target_vertex
-	        raise AttributeError(f"Connection «r.name» of {self.identifier} does not exist.")
+	        try:
+	            return self.properties["«r.name»"]
+	        except KeyError:
+	            raise AttributeError(f"Vertex {self.identifier} has no '«r.name»' property.")
 
    	    «ENDFOR»
 	'''
@@ -151,8 +148,8 @@ class TypePackageToPython {
 	        vtype = cls.get_type_from_name(type_name)
 	        return vtype(
 	            identifier=identifier,
-	            ports=ports,
-	            properties=properties
+	            ports=ports if ports else set(),
+	            properties=properties if properties else dict()
 	        )
 	        raise NotImplementedError(
 	           f"The Vertex type '{type_name}' is not recognized."

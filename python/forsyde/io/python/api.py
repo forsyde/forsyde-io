@@ -49,14 +49,15 @@ class ForSyDeModel(nx.MultiDiGraph):
         """TODO: to be defined. """
         nx.MultiDiGraph.__init__(self, *args, **kwargs)
 
-    def _rectify_model(self):
-        for v in self.nodes:
-            for (k, val) in v.vertex_type.get_required_properties():
-                if k not in v.properties:
-                    v.properties[k] = val
-            for (name, port) in v.vertex_type.get_required_ports():
-                if name not in (p.identifier for p in v.ports):
-                    v.ports.add(Port(identifier=name, port_type=port))
+    def _rectify_model(self) -> None:
+        pass
+        # for v in self.nodes:
+        #     for (k, val) in v.vertex_type.get_required_properties():
+        #         if k not in v.properties:
+        #             v.properties[k] = val
+        #     for (name, port) in v.vertex_type.get_required_ports():
+        #         if name not in (p.identifier for p in v.ports):
+        #             v.ports.add(Port(identifier=name, port_type=port))
 
     def write(self, sink: str) -> None:
         self._rectify_model()
@@ -309,8 +310,11 @@ class ForSyDeModel(nx.MultiDiGraph):
                     elif portnode.get('type') == "Float":
                         port.port_type = float
                     else:
-                        port.port_type = VertexFactory.get_type_from_name(
-                            portnode.get('type'))
+                        try:
+                            port.port_type = VertexFactory.get_type_from_name(
+                                portnode.get('type'))
+                        except NotImplementedError:
+                            port.port_type = str
                     vertex.ports.add(port)
                 vertex.properties = self.xml_to_property(vnode)
                 # for propnode in vnode.xpath('Property'):
@@ -326,24 +330,20 @@ class ForSyDeModel(nx.MultiDiGraph):
                 edge = EdgeFactory.build(source=source_vertex,
                                          target=target_vertex,
                                          type_name=vedge.get('type'))
-                # edge = Edge(source_vertex=source_vertex,
-                #             target_vertex=target_vertex,
-                #             source_vertex_port=source_vertex_port,
-                #             target_vertex_port=target_vertex_port)
-                # edge_type = TypesFactory.build_type(vedge.get('type'))
                 if vedge.get('source_port_id'):
                     edge.source_vertex_port = source_vertex.get_port(
                         vedge.get('source_port_id'))
                 if vedge.get('target_port_id'):
                     edge.target_vertex_port = target_vertex.get_port(
                         vedge.get('target_port_id'))
-                # source_vertex_port = next(
-                #     (p for p in source_vertex.ports
-                #      if p.identifier == vedge.get('source_port_id')), None)
-                # target_vertex_port = next(
-                #     (p for p in target_vertex.ports
-                #      if p.identifier == vedge.get('target_port_id')), None)
-                self.add_edge(source_vertex, target_vertex, object=edge)
+                key = (
+                    f"{vedge.get('source_id')}:{vedge.get('source_port_id')}->"
+                    +
+                    f"{vedge.get('target_id')}:{vedge.get('target_port_id')}")
+                self.add_edge(source_vertex,
+                              target_vertex,
+                              key=key,
+                              object=edge)
 
 
 def load_model(source: str) -> ForSyDeModel:

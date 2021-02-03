@@ -8,13 +8,13 @@
   </eClassifiers>
   <eSubpackages name="Vertexes" nsURI="https://forsyde.github.io/ForSyDe/Model/Vertexes"
       nsPrefix="VertexTypes">
+    <eClassifiers xsi:type="ecore:EClass" name="AbstractGrouping" eSuperTypes="#//Vertex"/>
+    <eClassifiers xsi:type="ecore:EClass" name="AbstractOrdering" eSuperTypes="#//Vertexes/AbstractGrouping"/>
+    <eClassifiers xsi:type="ecore:EClass" name="TriggeredTask" eSuperTypes="#//Vertexes/AbstractOrdering"/>
     <eClassifiers xsi:type="ecore:EClass" name="SporadicTask" eSuperTypes="#//Vertexes/TriggeredTask #//Vertexes/AbstractOrdering">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="minArrival" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
           defaultValueLiteral="0"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="TriggeredTask" eSuperTypes="#//Vertexes/AbstractOrdering"/>
-    <eClassifiers xsi:type="ecore:EClass" name="AbstractOrdering" eSuperTypes="#//Vertexes/AbstractGrouping"/>
-    <eClassifiers xsi:type="ecore:EClass" name="AbstractGrouping" eSuperTypes="#//Vertex"/>
     <eClassifiers xsi:type="ecore:EClass" name="WCET" eSuperTypes="#//Vertex">
       <eStructuralFeatures xsi:type="ecore:EReference" name="process" lowerBound="1"
           eType="#//Vertexes/Process"/>
@@ -40,12 +40,12 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="limit" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Goal" eSuperTypes="#//Vertex"/>
     <eClassifiers xsi:type="ecore:EClass" name="MinimumThroughput" eSuperTypes="#//Vertexes/Goal">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="apriori_importance" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
           defaultValueLiteral="1"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="Goal" eSuperTypes="#//Vertex"/>
     <eClassifiers xsi:type="ecore:EClass" name="StaticCyclicScheduler" eSuperTypes="#//Vertex"/>
     <eClassifiers xsi:type="ecore:EClass" name="FixedPriorityScheduler" eSuperTypes="#//Vertex">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="preemptive" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"
@@ -53,11 +53,11 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="CustomScheduler" eSuperTypes="#//Vertex"/>
     <eClassifiers xsi:type="ecore:EClass" name="RoundRobinScheduler" eSuperTypes="#//Vertex"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//Vertex"/>
     <eClassifiers xsi:type="ecore:EClass" name="Process" eSuperTypes="#//Vertexes/Function"/>
     <eClassifiers xsi:type="ecore:EClass" name="Signal" eSuperTypes="#//Vertex"/>
     <eClassifiers xsi:type="ecore:EClass" name="FIFOSignal" eSuperTypes="#//Vertexes/Signal"/>
     <eClassifiers xsi:type="ecore:EClass" name="LabelSignal" eSuperTypes="#//Vertexes/Signal"/>
-    <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//Vertex"/>
     <eSubpackages name="ModelOfComputation" nsURI="https://forsyde.github.io/ForSyDe/Vertex/MoC"
         nsPrefix="VertexMoC">
       <eSubpackages name="SY" nsURI="https://forsyde.github.io/ForSyDe/Model/MoC/SY"
@@ -141,8 +141,11 @@
       <eClassifiers xsi:type="ecore:EClass" name="AbstractCommunicationComponent"
           eSuperTypes="#//Vertexes/ModelOfArchitecture/AbstractPhysicalComponent"/>
       <eClassifiers xsi:type="ecore:EClass" name="TimeDivisionMultiplexer" eSuperTypes="#//Vertexes/ModelOfArchitecture/AbstractCommunicationComponent">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="slots" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"
-            defaultValueLiteral="1"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="slots" containment="true">
+          <eGenericType eClassifier="#//Properties/Property">
+            <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Integer"/>
+          </eGenericType>
+        </eStructuralFeatures>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="AbstractStorageComponent" eSuperTypes="#//Vertexes/ModelOfArchitecture/AbstractPhysicalComponent"/>
       <eClassifiers xsi:type="ecore:EClass" name="AbsractInterfaceComponent" eSuperTypes="#//Vertexes/ModelOfArchitecture/AbstractPhysicalComponent"/>

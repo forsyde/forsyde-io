@@ -7,16 +7,10 @@ time modifying anything here, but on the true source which is a model file.
 import forsyde.io.python.core as core
 
 
-class SporadicTask(TriggeredTask, AbstractOrdering):
+class AbstractGrouping(core.Vertex):
 
     def get_type_name(self) -> str:
-        return "SporadicTask"
-        
-
-class TriggeredTask(AbstractOrdering):
-
-    def get_type_name(self) -> str:
-        return "TriggeredTask"
+        return "AbstractGrouping"
         
 
 class AbstractOrdering(AbstractGrouping):
@@ -25,10 +19,16 @@ class AbstractOrdering(AbstractGrouping):
         return "AbstractOrdering"
         
 
-class AbstractGrouping(core.Vertex):
+class TriggeredTask(AbstractOrdering):
 
     def get_type_name(self) -> str:
-        return "AbstractGrouping"
+        return "TriggeredTask"
+        
+
+class SporadicTask(TriggeredTask, AbstractOrdering):
+
+    def get_type_name(self) -> str:
+        return "SporadicTask"
         
 
 class WCET(core.Vertex):
@@ -55,16 +55,16 @@ class HardRequirement(Requirement):
         return "HardRequirement"
         
 
-class MinimumThroughput(Goal):
-
-    def get_type_name(self) -> str:
-        return "MinimumThroughput"
-        
-
 class Goal(core.Vertex):
 
     def get_type_name(self) -> str:
         return "Goal"
+        
+
+class MinimumThroughput(Goal):
+
+    def get_type_name(self) -> str:
+        return "MinimumThroughput"
         
 
 class StaticCyclicScheduler(core.Vertex):
@@ -91,6 +91,12 @@ class RoundRobinScheduler(core.Vertex):
         return "RoundRobinScheduler"
         
 
+class Function(core.Vertex):
+
+    def get_type_name(self) -> str:
+        return "Function"
+        
+
 class Process(Function):
 
     def get_type_name(self) -> str:
@@ -115,12 +121,6 @@ class LabelSignal(Signal):
         return "LabelSignal"
         
 
-class Function(core.Vertex):
-
-    def get_type_name(self) -> str:
-        return "Function"
-        
-
 class SYComb(Function):
 
     def get_type_name(self) -> str:
@@ -135,7 +135,7 @@ class SYComb(Function):
     def get_combinator(self, model) -> Function:
         out_port = self.get_port_combinator()
         for n in model.adj[self]:
-            for (_, edata) in model.edges[self, n]:
+            for (_, edata) in model.edges[self][n]:
                 edge = edata["object"]
                 if edge.source_vertex_port == out_port:
                     return edge.target_vertex
@@ -144,7 +144,7 @@ class SYComb(Function):
     def get_output(self, model) -> Function:
         out_port = self.get_port_output()
         for n in model.adj[self]:
-            for (_, edata) in model.edges[self, n]:
+            for (_, edata) in model.edges[self][n]:
                 edge = edata["object"]
                 if edge.source_vertex_port == out_port:
                     return edge.target_vertex
@@ -165,7 +165,7 @@ class SYPrefix(Function):
     def get_prefixer(self, model) -> Function:
         out_port = self.get_port_prefixer()
         for n in model.adj[self]:
-            for (_, edata) in model.edges[self, n]:
+            for (_, edata) in model.edges[self][n]:
                 edge = edata["object"]
                 if edge.source_vertex_port == out_port:
                     return edge.target_vertex
@@ -174,7 +174,7 @@ class SYPrefix(Function):
     def get_output(self, model) -> Function:
         out_port = self.get_port_output()
         for n in model.adj[self]:
-            for (_, edata) in model.edges[self, n]:
+            for (_, edata) in model.edges[self][n]:
                 edge = edata["object"]
                 if edge.source_vertex_port == out_port:
                     return edge.target_vertex
@@ -195,7 +195,7 @@ class SDFComb(Function):
     def get_combinator(self, model) -> Function:
         out_port = self.get_port_combinator()
         for n in model.adj[self]:
-            for (_, edata) in model.edges[self, n]:
+            for (_, edata) in model.edges[self][n]:
                 edge = edata["object"]
                 if edge.source_vertex_port == out_port:
                     return edge.target_vertex
@@ -204,29 +204,23 @@ class SDFComb(Function):
     def get_output(self, model) -> Function:
         out_port = self.get_port_output()
         for n in model.adj[self]:
-            for (_, edata) in model.edges[self, n]:
+            for (_, edata) in model.edges[self][n]:
                 edge = edata["object"]
                 if edge.source_vertex_port == out_port:
                     return edge.target_vertex
         raise AttributeError(f"Port output of {self.identifier} does not exist.")
 
     def get_production(self):
-        out_port = next(p for p in self.ports if p.identifier == "production")
-        for n in model.adj[self]:
-            for (_, edata) in model.edges[self, n]:
-                edge = edata["object"]
-                if edge.source_vertex_port == out_port:
-                    return edge.target_vertex
-        raise AttributeError(f"Connection production of {self.identifier} does not exist.")
+        try:
+            return self.properties["production"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no 'production' property.")
 
     def get_consumption(self):
-        out_port = next(p for p in self.ports if p.identifier == "consumption")
-        for n in model.adj[self]:
-            for (_, edata) in model.edges[self, n]:
-                edge = edata["object"]
-                if edge.source_vertex_port == out_port:
-                    return edge.target_vertex
-        raise AttributeError(f"Connection consumption of {self.identifier} does not exist.")
+        try:
+            return self.properties["consumption"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no 'consumption' property.")
 
 
 class SDFPrefix(Function):
@@ -243,7 +237,7 @@ class SDFPrefix(Function):
     def get_output(self, model) -> Function:
         out_port = self.get_port_output()
         for n in model.adj[self]:
-            for (_, edata) in model.edges[self, n]:
+            for (_, edata) in model.edges[self][n]:
                 edge = edata["object"]
                 if edge.source_vertex_port == out_port:
                     return edge.target_vertex
@@ -252,7 +246,7 @@ class SDFPrefix(Function):
     def get_prefixer(self, model) -> Function:
         out_port = self.get_port_prefixer()
         for n in model.adj[self]:
-            for (_, edata) in model.edges[self, n]:
+            for (_, edata) in model.edges[self][n]:
                 edge = edata["object"]
                 if edge.source_vertex_port == out_port:
                     return edge.target_vertex
@@ -282,6 +276,12 @@ class TimeDivisionMultiplexer(AbstractCommunicationComponent):
     def get_type_name(self) -> str:
         return "TimeDivisionMultiplexer"
         
+    def get_slots(self):
+        try:
+            return self.properties["slots"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no 'slots' property.")
+
 
 class AbstractStorageComponent(AbstractPhysicalComponent):
 
@@ -342,25 +342,25 @@ class VertexFactory:
     """
 
     str_to_classes = {
-            "SporadicTask": SporadicTask,
-            "TriggeredTask": TriggeredTask,
-            "AbstractOrdering": AbstractOrdering,
             "AbstractGrouping": AbstractGrouping,
+            "AbstractOrdering": AbstractOrdering,
+            "TriggeredTask": TriggeredTask,
+            "SporadicTask": SporadicTask,
             "WCET": WCET,
             "WCCT": WCCT,
             "Requirement": Requirement,
             "HardRequirement": HardRequirement,
-            "MinimumThroughput": MinimumThroughput,
             "Goal": Goal,
+            "MinimumThroughput": MinimumThroughput,
             "StaticCyclicScheduler": StaticCyclicScheduler,
             "FixedPriorityScheduler": FixedPriorityScheduler,
             "CustomScheduler": CustomScheduler,
             "RoundRobinScheduler": RoundRobinScheduler,
+            "Function": Function,
             "Process": Process,
             "Signal": Signal,
             "FIFOSignal": FIFOSignal,
             "LabelSignal": LabelSignal,
-            "Function": Function,
             "SYComb": SYComb,
             "SYPrefix": SYPrefix,
             "SDFComb": SDFComb,
@@ -395,8 +395,8 @@ class VertexFactory:
         vtype = cls.get_type_from_name(type_name)
         return vtype(
             identifier=identifier,
-            ports=ports,
-            properties=properties
+            ports=ports if ports else set(),
+            properties=properties if properties else dict()
         )
         raise NotImplementedError(
            f"The Vertex type '{type_name}' is not recognized."

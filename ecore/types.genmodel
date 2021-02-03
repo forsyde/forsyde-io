@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/forsyde-io/src" modelPluginID="forsyde-io" modelName="Types"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="8.0" copyrightFields="false" operationReflection="true" importOrganizing="true">
+  <foreignModel>types.ecore</foreignModel>
+  <genPackages prefix="Types" disposableProviderFactory="true" ecorePackage="types.ecore#/">
+    <genClasses image="false" ecoreClass="types.ecore#//Vertex"/>
+    <genClasses image="false" ecoreClass="types.ecore#//Edge"/>
+    <genClasses ecoreClass="types.ecore#//Port">
+      <genTypeParameters ecoreTypeParameter="types.ecore#//Port/T"/>
+    </genClasses>
+    <nestedGenPackages prefix="Vertexes" disposableProviderFactory="true" ecorePackage="types.ecore#//Vertexes">
+      <genClasses ecoreClass="types.ecore#//Vertexes/TriggeredTask"/>
+      <genClasses ecoreClass="types.ecore#//Vertexes/SporadicTask">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute types.ecore#//Vertexes/SporadicTask/minArrival"/>
+      </genClasses>
+      <genClasses ecoreClass="types.ecore#//Vertexes/AbstractGrouping"/>
+      <genClasses ecoreClass="types.ecore#//Vertexes/AbstractOrdering"/>
+      <genClasses ecoreClass="types.ecore#//Vertexes/WCET">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference types.ecore#//Vertexes/WCET/process"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference types.ecore#//Vertexes/WCET/processor"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute types.ecore#//Vertexes/WCET/time"/>
+      </genClasses>
+      <genClasses ecoreClass="types.ecore#//Vertexes/WCCT">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute types.ecore#//Vertexes/WCCT/time"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference types.ecore#//Vertexes/WCCT/sender"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference types.ecore#//Vertexes/WCCT/reciever"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference types.ecore#//Vertexes/WCCT/signal"/>
+      </genClasses>
+      <genClasses ecoreClass="types.ecore#//Vertexes/Requirement"/>
+      <genClasses ecoreClass="types.ecore#//Vertexes/HardRequirement">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute types.ecore#//Vertexes/HardRequirement/limit"/>
+      </genClasses>
+      <genClasses ecoreClass="types.ecore#//Vertexes/Goal"/>
+      <genClasses ecoreClass="types.ecore#//Vertexes/MinimumThroughput">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute types.ecore#//Vertexes/MinimumThroughput/apriori_importance"/>
+      </genClasses>
+      <genClasses ecoreClass="types.ecore#//Vertexes/StaticCyclicScheduler"/>
+      <genClasses ecoreClass="types.ecore#//Vertexes/FixedPriorityScheduler">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute types.ecore#//Vertexes/FixedPriorityScheduler/preemptive"/>
+      </genClasses>
+      <genClasses ecoreClass="types.ecore#//Vertexes/CustomScheduler"/>
+      <genClasses ecoreClass="types.ecore#//Vertexes/RoundRobinScheduler"/>
+      <genClasses ecoreClass="types.ecore#//Vertexes/Function"/>
+      <genClasses ecoreClass="types.ecore#//Vertexes/Process"/>
+      <genClasses ecoreClass="types.ecore#//Vertexes/Signal"/>
+      <genClasses ecoreClass="types.ecore#//Vertexes/FIFOSignal"/>
+      <genClasses ecoreClass="types.ecore#//Vertexes/LabelSignal"/>
+      <nestedGenPackages prefix="ModelOfComputation" disposableProviderFactory="true"
+          ecorePackage="types.ecore#//Vertexes/ModelOfComputation">
+        <nestedGenPackages prefix="SY" disposableProviderFactory="true" ecorePackage="types.ecore#//Vertexes/ModelOfComputation/SY">
+          <genClasses ecoreClass="types.ecore#//Vertexes/ModelOfComputation/SY/SYComb">
+            <genFeatures notify="false" createChild="false" propertySortChoices="true"
+                ecoreFeature="ecore:EReference types.ecore#//Vertexes/ModelOfComputation/SY/SYComb/combinator"/>
+            <genFeatures notify="false" createChild="false" propertySortChoices="true"
+                ecoreFeature="ecore:EReference types.ecore#//Vertexes/ModelOfComputation/SY/SYComb/output"/>
+          </genClasses>
+          <genClasses ecoreClass="types.ecore#//Vertexes/ModelOfComputation/SY/SYPrefix">
+            <genFeatures notify="false" createChild="false" propertySortChoices="true"
+                ecoreFeature="ecore:EReference types.ecore#//Vertexes/ModelOfComputation/SY/SYPrefix/prefixer"/>
+            <genFeatures notify="false" createChild="false" propertySortChoices="true"
+                ecoreFeature="ecore:EReference types.ecore#//Vertexes/ModelOfComputation/SY/SYPrefix/output"/>
+          </genClasses>
+        </nestedGenPackages>
+        <nestedGenPackages prefix="SDF" disposableProviderFactory="true" ecorePackage="types.ecore#//Vertexes/ModelOfComputation/SDF">
+          <genClasses ecoreClass="types.ecore#//Vertexes/ModelOfComputation/SDF/SDFComb">
+            <genFeatures notify="false" createChild="false" propertySortChoices="true"
+                ecoreFeature="ecore:EReference types.ecore#//Vertexes/ModelOfComputation/SDF/SDFComb/combinator"/>
+            <genFeatures notify="false" createChild="false" propertySortChoices="true"
+                ecoreFeature="ecore:EReference types.ecore#//Vertexes/ModelOfComputation/SDF/SDFComb/output"/>
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference types.ecore#//Vertexes/ModelOfComputation/SDF/SDFComb/production"/>
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference types.ecore#//Vertexes/ModelOfComputation/SDF/SDFComb/consumption"/>
+          </genClasses>
+          <genClasses ecoreClass="types.ecore#//Vertexes/ModelOfComputation/SDF/SDFPrefix">
+            <genFeatures notify="false" createChild="false" propertySortChoices="true"
+                ecoreFeature="ecore:EReference types.ecore#//Vertexes/ModelOfComputation/SDF/SDFPrefix/output"/>
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference types.ecore#//Vertexes/ModelOfComputation/SDF/SDFPrefix/prefixer"/>
+          </genClasses>
+        </nestedGenPackages>
+      </nestedGenPackages>
+      <nestedGenPackages prefix="ModelOfArchitecture" disposableProviderFactory="true"
+          ecorePackage="types.ecore#//Vertexes/ModelOfArchitecture">
+        <genClasses ecoreClass="types.ecore#//Vertexes/ModelOfArchitecture/AbstractPhysicalComponent"/>
+        <genClasses ecoreClass="types.ecore#//Vertexes/ModelOfArchitecture/AbstractProcessingComponent"/>
+        <genClasses ecoreClass="types.ecore#//Vertexes/ModelOfArchitecture/AbstractCommunicationComponent"/>
+        <genClasses ecoreClass="types.ecore#//Vertexes/ModelOfArchitecture/TimeDivisionMultiplexer">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute types.ecore#//Vertexes/ModelOfArchitecture/TimeDivisionMultiplexer/slots"/>
+        </genClasses>
+        <genClasses ecoreClass="types.ecore#//Vertexes/ModelOfArchitecture/AbstractStorageComponent"/>
+        <genClasses ecoreClass="types.ecore#//Vertexes/ModelOfArchitecture/AbsractInterfaceComponent"/>
+      </nestedGenPackages>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Edges" disposableProviderFactory="true" ecorePackage="types.ecore#//Edges">
+      <genClasses ecoreClass="types.ecore#//Edges/Input"/>
+      <genClasses ecoreClass="types.ecore#//Edges/Output"/>
+      <genClasses ecoreClass="types.ecore#//Edges/Annotation"/>
+      <genClasses ecoreClass="types.ecore#//Edges/Expansion"/>
+      <nestedGenPackages prefix="Physical" disposableProviderFactory="true" ecorePackage="types.ecore#//Edges/Physical">
+        <genClasses ecoreClass="types.ecore#//Edges/Physical/AbstractPhysicalConnection"/>
+      </nestedGenPackages>
+      <nestedGenPackages prefix="Decision" disposableProviderFactory="true" ecorePackage="types.ecore#//Edges/Decision">
+        <genClasses ecoreClass="types.ecore#//Edges/Decision/AbstractDecision"/>
+        <genClasses ecoreClass="types.ecore#//Edges/Decision/AbstractScheduling"/>
+        <genClasses ecoreClass="types.ecore#//Edges/Decision/AbstractMapping"/>
+      </nestedGenPackages>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Ports" disposableProviderFactory="true" ecorePackage="types.ecore#//Ports">
+      <nestedGenPackages prefix="Physical" disposableProviderFactory="true" ecorePackage="types.ecore#//Ports/Physical">
+        <genClasses ecoreClass="types.ecore#//Ports/Physical/AbstractHardwarePort"/>
+      </nestedGenPackages>
+      <nestedGenPackages prefix="Cyber" disposableProviderFactory="true" ecorePackage="types.ecore#//Ports/Cyber">
+        <genClasses ecoreClass="types.ecore#//Ports/Cyber/AbstractCyberPort"/>
+        <genClasses ecoreClass="types.ecore#//Ports/Cyber/Numeric">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute types.ecore#//Ports/Cyber/Numeric/bits"/>
+        </genClasses>
+        <genClasses ecoreClass="types.ecore#//Ports/Cyber/Integer"/>
+        <genClasses ecoreClass="types.ecore#//Ports/Cyber/UnsignedInteger"/>
+        <genClasses ecoreClass="types.ecore#//Ports/Cyber/Real"/>
+      </nestedGenPackages>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Properties" disposableProviderFactory="true" ecorePackage="types.ecore#//Properties">
+      <genClasses ecoreClass="types.ecore#//Properties/Property">
+        <genTypeParameters ecoreTypeParameter="types.ecore#//Properties/Property/T"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute types.ecore#//Properties/Property/value"/>
+      </genClasses>
+      <genClasses ecoreClass="types.ecore#//Properties/PropertyMap">
+        <genTypeParameters ecoreTypeParameter="types.ecore#//Properties/PropertyMap/K"/>
+        <genTypeParameters ecoreTypeParameter="types.ecore#//Properties/PropertyMap/V"/>
+      </genClasses>
+      <genClasses ecoreClass="types.ecore#//Properties/PropertyList">
+        <genTypeParameters ecoreTypeParameter="types.ecore#//Properties/PropertyList/T"/>
+      </genClasses>
+    </nestedGenPackages>
+  </genPackages>
+</genmodel:GenModel>
