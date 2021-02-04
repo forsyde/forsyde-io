@@ -23,7 +23,7 @@ ext {
 }
 
 group = 'forsyde'
-version = '0.1.5'
+version = '0.2.1'
 
 sourceCompatibility = 1.8
 
@@ -44,10 +44,10 @@ dependencies {
     // The production code uses the SLF4J logging API at compile time
     implementation 'org.slf4j:slf4j-api:1.7.25'
     // Epsilon for the current python generation
-    implementation 'org.eclipse.epsilon:epsilon-core:1.5.1'
-    implementation 'org.eclipse.epsilon:epsilon-emf:1.5.1'
-    implementation 'org.eclipse.epsilon:epsilon-workflow:1.5.1'
-    implementation 'org.eclipse.epsilon:epsilon-workflow-emf:1.5.1'
+    // implementation 'org.eclipse.epsilon:epsilon-core:1.5.1'
+    // implementation 'org.eclipse.epsilon:epsilon-emf:1.5.1'
+    // implementation 'org.eclipse.epsilon:epsilon-workflow:1.5.1'
+    // implementation 'org.eclipse.epsilon:epsilon-workflow-emf:1.5.1'
 
     // libraries required for some minimal XTend stuff.
 		implementation 'org.eclipse.xtend:org.eclipse.xtend.lib:2.21.0'
@@ -72,8 +72,8 @@ eclipse {
 
 task replaceEcoreIOVersion {
 	def pattern = ~/(<.*name="version"(.|\n)*defaultValueLiteral=)"(.+)"/
-	def replaced = file('./ecore/forsyde.ecore').text.replaceFirst(pattern, '$1"&quot;' + project.version + '&quot;"')
-	file('./ecore/forsyde.ecore').text = replaced 
+	def replaced = file('./ecore/types.ecore').text.replaceFirst(pattern, '$1"&quot;' + project.version + '&quot;"')
+	file('./ecore/types.ecore').text = replaced 
 }
 
 task replaceJavaIOVersion() {

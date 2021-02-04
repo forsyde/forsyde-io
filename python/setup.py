@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='forsyde-io-python',
-    version='0.1.5',
+    version='0.2.0',
     author="Rodolfo Jordao",
     author_email="jordao@kth.se",
     description="ForSyDe-IO Python supporting libraries",
