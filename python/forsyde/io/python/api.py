@@ -275,7 +275,14 @@ class ForSyDeModel(nx.MultiDiGraph):
             for port in v.ports:
                 port_elem = etree.SubElement(node_elem, 'Port')
                 port_elem.set('id', port.identifier)
-                port_elem.set('type', port.port_type.get_type_name())
+                if port.port_type == int:
+                    port_elem.set('type', 'Integer')
+                elif port.port_type == float:
+                    port_elem.set('type', 'Integer')
+                elif issubclass(port.port_type, Vertex):
+                    port_elem.set('type', str(port.port_type))
+                else:
+                    port_elem.set('type', 'String')
             for (prop, val) in v.properties.items():
                 prop_elem = etree.SubElement(node_elem, 'Property')
                 prop_elem.set('name', prop)
@@ -285,7 +292,7 @@ class ForSyDeModel(nx.MultiDiGraph):
             edge_elem = etree.SubElement(tree, 'Edge')
             edge_elem.set('source_id', s.identifier)
             edge_elem.set('target_id', t.identifier)
-            edge_elem.set('type', edge.edge_type.get_type_name())
+            edge_elem.set('type', edge.get_type_name())
             if edge.source_vertex_port:
                 edge_elem.set('source_port_id',
                               edge.source_vertex_port.identifier)
