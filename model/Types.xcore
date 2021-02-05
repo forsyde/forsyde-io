@@ -1,0 +1,187 @@
+@xcore.lang.Ecore(nsURI="https://forsyde.github.io/Types")
+@xcore.lang.GenModel(modelDirectory="/forsyde-io/src-gen", importerID="org.eclipse.emf.importer.ecore")
+package Types
+
+// ===================================================================
+// Graph entities
+// ===================================================================
+/* 
+ * These classes serve to help code generation tools and should _not_
+ * be generated in anyway, but rather, implemented by hand in every
+ * supporting library.
+ */
+interface Vertex {
+}
+
+interface Edge {
+}
+
+class Port<T> {
+}
+
+class Property<T> {
+}
+
+class PropertyMap<K , V> {
+}
+
+class PropertyList<T> {
+}
+
+// ===================================================================
+// Vertex: Model of Computation + Application
+// ===================================================================
+
+class AbstractCyberPort {
+}
+
+class Input extends Edge {
+}
+
+class Output extends Edge {
+}
+
+class Annotation extends Edge {
+}
+
+class Expansion extends Edge {
+}
+
+class Numeric extends AbstractCyberPort {
+	Integer[1] bits = "1"
+}
+
+//class Integer extends Numeric {
+//}
+//
+//class UnsignedInteger extends Numeric {
+//}
+//
+//class Real extends Numeric {
+//}
+
+class AbstractGrouping extends Vertex {
+}
+
+class AbstractOrdering extends AbstractGrouping {
+}
+
+class TriggeredTask extends AbstractOrdering {
+}
+
+class SporadicTask extends TriggeredTask, AbstractOrdering {
+	Integer[1] minArrival = "0"
+}
+
+// ===================================================================
+// Vertex: Performance data and annotations
+// ===================================================================
+
+
+class WCET extends Vertex {
+	refers Process[1] process
+	refers AbstractProcessingComponent[1] processor
+	Integer[1] time = "0"
+}
+
+class WCCT extends Vertex {
+	Integer[1] time = "0"
+	refers AbstractProcessingComponent[1] sender
+	refers AbstractProcessingComponent[1] reciever
+	refers Signal[1] signal
+}
+
+class Requirement extends Vertex {
+}
+
+class HardRequirement extends Requirement {
+	org.eclipse.emf.ecore.xml.^type.Integer[1] limit
+}
+
+class Goal extends Vertex {
+}
+
+class MinimumThroughput extends Goal {
+	Integer[1] apriori_importance = "1"
+}
+
+class StaticCyclicScheduler extends Vertex {
+}
+
+class FixedPriorityScheduler extends Vertex {
+	Boolean preemptive = "true"
+}
+
+class CustomScheduler extends Vertex {
+}
+
+class RoundRobinScheduler extends Vertex {
+}
+
+class Function extends Vertex {
+}
+
+class Process extends Function {
+}
+
+class Signal extends Vertex {
+}
+
+class FIFOSignal extends Signal {
+}
+
+class LabelSignal extends Signal {
+}
+
+class AbstractHardwarePort {
+}
+
+class SDFComb extends Function {
+	refers Port<Function>[1] combinator
+	refers Port<Function>[1] output
+	contains PropertyMap<String, Integer>[1] production
+	contains PropertyMap<String, Integer>[1] consumption
+}
+
+class SDFPrefix extends Function {
+	refers Port<Function>[1] output
+	contains Port<Function>[1] prefixer
+}
+
+class SYComb extends Function {
+	refers Port<Function>[1] combinator
+	refers Port<Function>[1] output
+}
+
+class SYPrefix extends Function {
+	refers Port<Function>[1] prefixer
+	refers Port<Function>[1] output
+}
+
+class AbstractPhysicalComponent extends Vertex {
+}
+
+class AbstractProcessingComponent extends AbstractPhysicalComponent {
+}
+
+class AbstractCommunicationComponent extends AbstractPhysicalComponent {
+}
+
+class TimeDivisionMultiplexer extends AbstractCommunicationComponent {
+	contains Property<Integer>slots
+}
+
+class AbstractStorageComponent extends AbstractPhysicalComponent {
+}
+
+class AbsractInterfaceComponent extends AbstractPhysicalComponent {
+}
+
+class AbstractDecision extends Edge {
+}
+
+class AbstractScheduling extends AbstractDecision {
+}
+
+class AbstractMapping extends AbstractDecision {
+}
