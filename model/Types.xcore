@@ -1,5 +1,5 @@
 @xcore.lang.Ecore(nsURI="https://forsyde.github.io/Types")
-@xcore.lang.GenModel(modelDirectory="/forsyde-io/src-gen", importerID="org.eclipse.emf.importer.ecore")
+@xcore.lang.GenModel(modelDirectory="/forsyde-io/src-gen", importerID="org.eclipse.emf.importer.ecore", oSGiCompatible="true", binaryCompatibleReflectiveMethods="true", arrayAccessors="true", generateSchema="true", codeFormatting="true", metaDataPackageSuffix="meta", runtimeCompatibility="true", runtimePlatform="RCP", featureDelegation="Reflective", resource="XML", commentFormatting="true")
 package Types
 
 // ===================================================================
@@ -10,10 +10,11 @@ package Types
  * be generated in anyway, but rather, implemented by hand in every
  * supporting library.
  */
-interface Vertex {
+ 
+class Vertex {
 }
 
-interface Edge {
+class Edge {
 }
 
 class Port<T> {

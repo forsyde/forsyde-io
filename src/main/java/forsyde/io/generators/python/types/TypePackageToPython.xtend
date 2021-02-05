@@ -1,12 +1,11 @@
 package forsyde.io.generators.python.types
 
-import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.EClass
-import forsyde.io.generators.utils.Packages
-import org.eclipse.emf.ecore.EcorePackage
+import com.google.common.collect.Iterators
+import java.util.ArrayList
+import java.util.List
 import org.eclipse.emf.ecore.EAttribute
-import Types.Vertex
-import Types.util.TypesAdapterFactory
+import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EPackage
 
 class TypePackageToPython {
 	
@@ -21,17 +20,11 @@ class TypePackageToPython {
 	import forsyde.io.python.core as core
 
 	
-	«FOR type : pak.eAllContents
-		.filter[e | e instanceof EClass].map[e | e as EClass]
-		.filter[EAllSuperTypes.map[name].contains("Vertex")]
-		.toSet»
+	«FOR type : getAllSubTypes(pak, "Vertex")»
 	«vertexToText(type)»
 	
 	«ENDFOR»
-	«FOR type : pak.eAllContents
-			.filter[e | e instanceof EClass].map[e | e as EClass]
-			.filter[EAllSuperTypes.map[name].contains("Edge")]
-			.toSet»
+	«FOR type : getAllSubTypes(pak, "Edge")»
 	«edgeToText(type)»
 	
 	«ENDFOR»
@@ -274,8 +267,21 @@ class TypePackageToPython {
 		}
 	}
 	
-	static Iterable<Class<Vertex>> getAllVertexes() {
-		val t = TypesAdapterFactory.
+	static def List<EClass> getAllSubTypes(EPackage top, String topName) {
+		var open = top.eAllContents
+		.filter[e | e instanceof EClass].map[e | e as EClass]
+		.filter[name == topName]
+		var classes = new ArrayList();
+		while (open.hasNext) {
+			val current = open.next;
+			classes.add(current)
+			open = Iterators.concat(open, 
+				top.eAllContents
+				.filter[e | e instanceof EClass].map[e | e as EClass]
+				.filter[ESuperTypes.contains(current)])
+		}
+		classes.remove(0);
+		return classes
 	}
 	
 }
