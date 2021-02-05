@@ -1,0 +1,14 @@
+@cached
+operation ForSyDe!EClass getAllSubClasses() : OrderedSet {
+	var classes = new OrderedSet;
+	for(sub in cls.getSubClasses(top, cls)) {
+		classes.add(sub);
+		classes.addAll(sub.getAllSubClasses(sub));
+	}
+	return classes;
+}
+
+@cached
+operation ForSyDe!EClass getSubClasses() : OrderedSet {
+	return ForSyDe!EClass.all().select(c | c.ESuperTypes.includes(cls)).asOrderedSet();
+}
