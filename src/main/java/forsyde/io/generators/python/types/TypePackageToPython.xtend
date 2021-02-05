@@ -5,6 +5,8 @@ import org.eclipse.emf.ecore.EClass
 import forsyde.io.generators.utils.Packages
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.EAttribute
+import Types.Vertex
+import Types.util.TypesAdapterFactory
 
 class TypePackageToPython {
 	
@@ -270,6 +272,10 @@ class TypePackageToPython {
 			case "false": "False"
 			default: a.defaultValueLiteral
 		}
+	}
+	
+	static Iterable<Class<Vertex>> getAllVertexes() {
+		val t = TypesAdapterFactory.
 	}
 	
 }
