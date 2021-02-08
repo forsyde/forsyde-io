@@ -32,7 +32,8 @@ projects:
   idesyde: https://github.com/forsyde/IDeSyDe
 
 # Build settings
-theme: minima
+remote_theme: forsyde/forsyde-web-theme
+# theme: minima
 plugins:
   - jekyll-feed
 
