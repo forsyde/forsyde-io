@@ -82,3 +82,4 @@ The semantic versioning `x.y.z` has the following mentality for this project:
   - if `x` goes up, it means that _major_ concepts have been changed. Therefore, backwards compatibility is likely jeopardized.
   - if `y` goes up, it means that _minor_ concepts have been changed. Therefore, backwards compatibility requires investigation.
   - if `z` goes up, it means that the concepts have been incremented losslessly or the core libraries changed. Therefore, backwards compatibility is maintained.
+

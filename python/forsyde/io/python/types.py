@@ -13,24 +13,6 @@ class AbstractGrouping(core.Vertex):
         return "AbstractGrouping"
         
 
-class AbstractOrdering(AbstractGrouping):
-
-    def get_type_name(self) -> str:
-        return "AbstractOrdering"
-        
-
-class TriggeredTask(AbstractOrdering):
-
-    def get_type_name(self) -> str:
-        return "TriggeredTask"
-        
-
-class SporadicTask(TriggeredTask, AbstractOrdering):
-
-    def get_type_name(self) -> str:
-        return "SporadicTask"
-        
-
 class WCET(core.Vertex):
 
     def get_type_name(self) -> str:
@@ -49,22 +31,10 @@ class Requirement(core.Vertex):
         return "Requirement"
         
 
-class HardRequirement(Requirement):
-
-    def get_type_name(self) -> str:
-        return "HardRequirement"
-        
-
 class Goal(core.Vertex):
 
     def get_type_name(self) -> str:
         return "Goal"
-        
-
-class MinimumThroughput(Goal):
-
-    def get_type_name(self) -> str:
-        return "MinimumThroughput"
         
 
 class StaticCyclicScheduler(core.Vertex):
@@ -97,28 +67,40 @@ class Function(core.Vertex):
         return "Function"
         
 
-class Process(Function):
-
-    def get_type_name(self) -> str:
-        return "Process"
-        
-
 class Signal(core.Vertex):
 
     def get_type_name(self) -> str:
         return "Signal"
         
 
-class FIFOSignal(Signal):
+class AbstractPhysicalComponent(core.Vertex):
 
     def get_type_name(self) -> str:
-        return "FIFOSignal"
+        return "AbstractPhysicalComponent"
         
 
-class LabelSignal(Signal):
+class AbstractOrdering(AbstractGrouping):
 
     def get_type_name(self) -> str:
-        return "LabelSignal"
+        return "AbstractOrdering"
+        
+
+class HardRequirement(Requirement):
+
+    def get_type_name(self) -> str:
+        return "HardRequirement"
+        
+
+class MinimumThroughput(Goal):
+
+    def get_type_name(self) -> str:
+        return "MinimumThroughput"
+        
+
+class Process(Function):
+
+    def get_type_name(self) -> str:
+        return "Process"
         
 
 class SYComb(Function):
@@ -253,10 +235,16 @@ class SDFPrefix(Function):
         raise AttributeError(f"Port prefixer of {self.identifier} does not exist.")
 
 
-class AbstractPhysicalComponent(core.Vertex):
+class FIFOSignal(Signal):
 
     def get_type_name(self) -> str:
-        return "AbstractPhysicalComponent"
+        return "FIFOSignal"
+        
+
+class LabelSignal(Signal):
+
+    def get_type_name(self) -> str:
+        return "LabelSignal"
         
 
 class AbstractProcessingComponent(AbstractPhysicalComponent):
@@ -271,6 +259,30 @@ class AbstractCommunicationComponent(AbstractPhysicalComponent):
         return "AbstractCommunicationComponent"
         
 
+class AbstractStorageComponent(AbstractPhysicalComponent):
+
+    def get_type_name(self) -> str:
+        return "AbstractStorageComponent"
+        
+
+class AbsractInterfaceComponent(AbstractPhysicalComponent):
+
+    def get_type_name(self) -> str:
+        return "AbsractInterfaceComponent"
+        
+
+class TriggeredTask(AbstractOrdering):
+
+    def get_type_name(self) -> str:
+        return "TriggeredTask"
+        
+
+class SporadicTask(TriggeredTask, AbstractOrdering):
+
+    def get_type_name(self) -> str:
+        return "SporadicTask"
+        
+
 class TimeDivisionMultiplexer(AbstractCommunicationComponent):
 
     def get_type_name(self) -> str:
@@ -283,16 +295,10 @@ class TimeDivisionMultiplexer(AbstractCommunicationComponent):
             raise AttributeError(f"Vertex {self.identifier} has no 'slots' property.")
 
 
-class AbstractStorageComponent(AbstractPhysicalComponent):
+class SporadicTask(TriggeredTask, AbstractOrdering):
 
     def get_type_name(self) -> str:
-        return "AbstractStorageComponent"
-        
-
-class AbsractInterfaceComponent(AbstractPhysicalComponent):
-
-    def get_type_name(self) -> str:
-        return "AbsractInterfaceComponent"
+        return "SporadicTask"
         
 
 class Input(core.Edge):
