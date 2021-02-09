@@ -6,6 +6,8 @@ package forsyde.io.java;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.sound.sampled.Port;
+
 import lombok.Builder.Default;
 import lombok.ToString;
 
@@ -20,7 +22,7 @@ import java.util.Map;
  *
  */
 public class Vertex {
-	
+
 	public String identifier;
 	public ModelType type;
 	public Set<Port> ports = new HashSet<Port>();
@@ -58,6 +60,14 @@ public class Vertex {
 		return builder.toString();
 	}
 
+	public String getTypeName() {
+		return "Vertex";
+	}
+
+	public Optional<Port> getPort(String portName) {
+		return ports.stream().filter((p) -> p.identifier).findFirst();
+	}
+
 	private String toString(Collection<?> collection, int maxLen) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[");
@@ -87,6 +97,5 @@ public class Vertex {
 		Vertex other = (Vertex) obj;
 		return Objects.equals(identifier, other.identifier);
 	}
-	
 
 }
