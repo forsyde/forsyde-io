@@ -1,0 +1,108 @@
+---
+vertexClasses:
+  AbstractGrouping:
+  AbstractOrdering:
+    superClasses:
+    - AbstractGrouping
+  TriggeredTask:
+    superClasses:
+    - AbstractOrdering
+  SporadicTask:
+    superClasses:
+    - AbstractOrdering
+  ExtraFunctional:
+  WCET:
+    superClasses:
+    - ExtraFunctional
+  WCCT:
+    superClasses:
+    - ExtraFunctional
+  Requirement:
+  HardRequirement:
+    superClasses:
+    - Requirement
+  Goal:
+  MinimumThroughput:
+    superClasses:
+    - Goal
+  StaticCyclicScheduler:
+  FixedPriorityScheduler:
+  CustomScheduler:
+  RoundRobinScheduler:
+  Function:
+  Process:
+    superClasses:
+    - Function
+  Signal:
+  BufferSignal:
+    superClasses:
+    - Signal
+  LabelSignal:
+    superClasses:
+    - Signal
+  SYComb:
+    superClasses:
+    - Function
+  SYPrefix:
+    superClasses:
+    - Function
+    required_ports:
+      prefixer:
+        class: Function
+      output:
+        class: Function
+  SDFComb:
+    superClasses:
+    - Function
+    required_ports:
+      combinator:
+        class: Function
+      output:
+        class: Function
+    required_properties:
+      consumption:
+        class: Dictionary
+      production:
+        class: Dictionary
+  SDFPrefix:
+    superClasses:
+    - Function
+    required_ports:
+      prefixer:
+        class: Function
+      output:
+        class: Function
+  AbstractPhysicalComponent:
+  AbstractProcessingComponent:
+    superClasses:
+    - AbstractPhysicalComponent
+  AbstractStorageComponent:
+    superClasses:
+    - AbstractPhysicalComponent
+  AbsractInterfaceComponent:
+    superClasses:
+    - AbstractPhysicalComponent
+  AbstractCommunicationComponent:
+    superClasses:
+    - AbstractPhysicalComponent
+  TimeDivisionMultiplexer:
+    superClasses:
+    - AbstractCommunicationComponent
+    required_properties:
+      slots:
+        class: Integer
+        default: 1
+edgeClasses:
+  Input:
+  Output:
+  Annotation:
+  Expansion:
+  AbstractPhysicalConnection:
+  AbstractDecision:
+  AbstractScheduling:
+    superClasses:
+    - AbstractDecision
+  AbstractMapping:
+    superClasses:
+    - AbstractDecision
+portClasses: 
