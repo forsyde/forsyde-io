@@ -1,0 +1,202 @@
+<ForSyDeModel>
+  <Vertex id="ACons" type="SDFComb">
+    <Port id="combinator" type="Function"/>
+    <Port id="output" type="Process"/>
+    <Property name="production">
+      <Property name="in" type="Integer">2</Property>
+      <Property name="outC" type="Integer">1</Property>
+    </Property>
+  </Vertex>
+  <Vertex id="BCons" type="SDFComb">
+    <Port id="combinator" type="Function"/>
+    <Port id="output" type="Process"/>
+    <Property name="consumption">
+      <Property name="in" type="Integer">1</Property>
+    </Property>
+    <Property name="production">
+      <Property name="outD" type="Integer">2</Property>
+    </Property>
+  </Vertex>
+  <Vertex id="CCons" type="SDFComb">
+    <Port id="combinator" type="Function"/>
+    <Port id="output" type="Process"/>
+    <Property name="consumption">
+      <Property name="inA" type="Integer">2</Property>
+      <Property name="inD" type="Integer">1</Property>
+    </Property>
+    <Property name="production">
+      <Property name="outD" type="Integer">1</Property>
+    </Property>
+  </Vertex>
+  <Vertex id="DCons" type="SDFComb">
+    <Port id="combinator" type="Function"/>
+    <Port id="output" type="Process"/>
+    <Property name="consumption">
+      <Property name="inC" type="Integer">1</Property>
+      <Property name="inB" type="Integer">2</Property>
+    </Property>
+    <Property name="production">
+      <Property name="outC" type="Integer">1</Property>
+      <Property name="out" type="Integer">2</Property>
+    </Property>
+  </Vertex>
+  <Vertex id="DCDelayCons" type="SDFPrefix">
+    <Port id="prefixer" type="Function"/>
+    <Port id="output" type="Process"/>
+  </Vertex>
+  <Vertex id="A" type="Process">
+    <Port id="in" type="Integer"/>
+    <Port id="outC" type="Integer"/>
+  </Vertex>
+  <Vertex id="B" type="Process">
+    <Port id="in" type="Integer"/>
+    <Port id="outD" type="Integer"/>
+  </Vertex>
+  <Vertex id="C" type="Process">
+    <Port id="inA" type="Integer"/>
+    <Port id="inD" type="Integer"/>
+    <Port id="outD" type="Integer"/>
+  </Vertex>
+  <Vertex id="D" type="Process">
+    <Port id="inC" type="Integer"/>
+    <Port id="inB" type="Integer"/>
+    <Port id="outC" type="Integer"/>
+    <Port id="out" type="Integer"/>
+  </Vertex>
+  <Vertex id="DCDelay" type="Process">
+    <Port id="inD" type="Integer"/>
+    <Port id="outDelayedC" type="Integer"/>
+  </Vertex>
+  <Vertex id="synth" type="Process">
+    <Port id="inA" type="Integer"/>
+    <Port id="inB" type="Integer"/>
+    <Port id="outD" type="Integer"/>
+  </Vertex>
+  <Vertex id="acSig" type="Signal">
+    <Port id="fifoOut" type="Integer"/>
+    <Port id="fifoIn" type="Integer"/>
+    <Property name="size" type="Integer">8</Property>
+  </Vertex>
+  <Vertex id="bdSig" type="Signal">
+    <Port id="fifoOut" type="Integer"/>
+    <Port id="fifoIn" type="Integer"/>
+    <Property name="size" type="Integer">8</Property>
+  </Vertex>
+  <Vertex id="cdSig" type="Signal">
+    <Port id="fifoOut" type="Integer"/>
+    <Port id="fifoIn" type="Integer"/>
+    <Property name="size" type="Integer">8</Property>
+  </Vertex>
+  <Vertex id="dcSig" type="Signal">
+    <Port id="fifoOut" type="Integer"/>
+    <Port id="fifoIn" type="Integer"/>
+    <Property name="size" type="Integer">8</Property>
+  </Vertex>
+  <Vertex id="dcSigDelayed" type="Signal">
+    <Port id="fifoOut" type="Integer"/>
+    <Port id="fifoIn" type="Integer"/>
+    <Property name="size" type="Integer">8</Property>
+  </Vertex>
+  <Vertex id="order_1" type="AbstractOrdering"/>
+  <Vertex id="order_2" type="AbstractOrdering"/>
+  <Vertex id="order_3" type="AbstractOrdering"/>
+  <Vertex id="tile1" type="AbstractProcessingComponent">
+    <Port id="communication" type="AbstractHardwarePort"/>
+  </Vertex>
+  <Vertex id="tile2" type="AbstractProcessingComponent">
+    <Port id="communication" type="AbstractHardwarePort"/>
+  </Vertex>
+  <Vertex id="tdmabus1" type="TimeDivisionMultiplexer">
+    <Port id="communication" type="AbstractHardwarePort"/>
+    <Port id="requester" type="AbstractHardwarePort"/>
+    <Property name="slots" type="Integer">4</Property>
+  </Vertex>
+  <Vertex id="AWCET" type="WCET">
+    <Port id="application" type="Process"/>
+    <Port id="platform" type="AbstractProcessingComponent"/>
+    <Property name="time" type="Integer">25</Property>
+  </Vertex>
+  <Vertex id="BWCET" type="WCET">
+    <Port id="application" type="Process"/>
+    <Port id="platform" type="AbstractProcessingComponent"/>
+    <Property name="time" type="Integer">60</Property>
+  </Vertex>
+  <Vertex id="CWCET" type="WCET">
+    <Port id="application" type="Process"/>
+    <Port id="platform" type="AbstractProcessingComponent"/>
+    <Property name="time" type="Integer">40</Property>
+  </Vertex>
+  <Vertex id="DWCET" type="WCET">
+    <Port id="application" type="Process"/>
+    <Port id="platform" type="AbstractProcessingComponent"/>
+    <Property name="time" type="Integer">50</Property>
+  </Vertex>
+  <Vertex id="acSigWCCT" type="WCCT">
+    <Port id="platform" type="AbstractCommunicationComponent"/>
+    <Port id="signal" type="Signal"/>
+    <Property name="time" type="Integer">1</Property>
+  </Vertex>
+  <Vertex id="bdSigWCCT" type="WCCT">
+    <Port id="platform" type="AbstractCommunicationComponent"/>
+    <Port id="signal" type="Signal"/>
+    <Property name="time" type="Integer">1</Property>
+  </Vertex>
+  <Vertex id="cdSigWCCT" type="WCCT">
+    <Port id="platform" type="AbstractCommunicationComponent"/>
+    <Port id="signal" type="Signal"/>
+    <Property name="time" type="Integer">1</Property>
+  </Vertex>
+  <Vertex id="dcSigWCCT" type="WCCT">
+    <Port id="platform" type="AbstractCommunicationComponent"/>
+    <Port id="signal" type="Signal"/>
+    <Property name="time" type="Integer">1</Property>
+  </Vertex>
+  <Vertex id="min_throughput_obj" type="MinimumThroughput">
+    <Property name="apriori_importance" type="Integer">1</Property>
+  </Vertex>
+  <Edge source_id="ACons" target_id="A" type="Output" source_port_id="output"/>
+  <Edge source_id="BCons" target_id="B" type="Output" source_port_id="output"/>
+  <Edge source_id="CCons" target_id="C" type="Output" source_port_id="output"/>
+  <Edge source_id="DCons" target_id="D" type="Output" source_port_id="output"/>
+  <Edge source_id="A" target_id="acSig" type="Output" source_port_id="outC" target_port_id="fifoIn"/>
+  <Edge source_id="acSig" target_id="C" type="Output" source_port_id="fifoOut" target_port_id="inA"/>
+  <Edge source_id="B" target_id="bdSig" type="Output" source_port_id="outD" target_port_id="fifoIn"/>
+  <Edge source_id="bdSig" target_id="D" type="Output" source_port_id="fifoOut" target_port_id="inB"/>
+  <Edge source_id="C" target_id="cdSig" type="Output" source_port_id="outD" target_port_id="fifoIn"/>
+  <Edge source_id="cdSig" target_id="D" type="Output" source_port_id="fifoOut" target_port_id="inC"/>
+  <Edge source_id="D" target_id="dcSig" type="Output" source_port_id="outC" target_port_id="fifoIn"/>
+  <Edge source_id="cdSig" target_id="DCDelay" type="Output" source_port_id="fifoOut" target_port_id="inD"/>
+  <Edge source_id="DCDelay" target_id="dcSigDelayed" type="Output" source_port_id="outDelayedC" target_port_id="fifoIn"/>
+  <Edge source_id="dcSigDelayed" target_id="C" type="Output" source_port_id="fifoOut" target_port_id="inD"/>
+  <Edge source_id="synth" target_id="A" type="Expansion" source_port_id="inA" target_port_id="in"/>
+  <Edge source_id="synth" target_id="B" type="Expansion" source_port_id="inB" target_port_id="in"/>
+  <Edge source_id="synth" target_id="D" type="Expansion" source_port_id="outD" target_port_id="out"/>
+  <!-- <Edge source_id="sobel" target_id="B" type="Expansion"/>
+  <Edge source_id="sobel" target_id="C" type="Expansion"/> -->
+  <Edge source_id="tile1" target_id="tdmabus1" type="AbstractPhysicalConnection" source_port_id="communication"/>
+  <Edge source_id="tile2" target_id="tdmabus1" type="AbstractPhysicalConnection" source_port_id="communication"/>
+  <Edge source_id="tdmabus1" target_id="tile1" type="AbstractPhysicalConnection" source_port_id="communication"/>
+  <Edge source_id="tdmabus1" target_id="tile2" type="AbstractPhysicalConnection" source_port_id="communication"/>
+  <Edge source_id="AWCET" target_id="A" type="Annotation" source_port_id="application"/>
+  <Edge source_id="AWCET" target_id="tile1" type="Annotation" source_port_id="platform"/>
+  <Edge source_id="AWCET" target_id="tile2" type="Annotation" source_port_id="platform"/>
+  <Edge source_id="BWCET" target_id="B" type="Annotation" source_port_id="application"/>
+  <Edge source_id="BWCET" target_id="tile1" type="Annotation" source_port_id="platform"/>
+  <Edge source_id="BWCET" target_id="tile2" type="Annotation" source_port_id="platform"/>
+  <Edge source_id="CWCET" target_id="C" type="Annotation" source_port_id="application"/>
+  <Edge source_id="CWCET" target_id="tile1" type="Annotation" source_port_id="platform"/>
+  <Edge source_id="CWCET" target_id="tile2" type="Annotation" source_port_id="platform"/>
+  <Edge source_id="DWCET" target_id="D" type="Annotation" source_port_id="application"/>
+  <Edge source_id="DWCET" target_id="tile1" type="Annotation" source_port_id="platform"/>
+  <Edge source_id="DWCET" target_id="tile2" type="Annotation" source_port_id="platform"/>
+  <Edge source_id="acSigWCCT" target_id="acSig" type="Annotation" source_port_id="signal"/>
+  <Edge source_id="acSigWCCT" target_id="tdmabus1" type="Annotation" source_port_id="platform"/>
+  <Edge source_id="bdSigWCCT" target_id="bdSig" type="Annotation" source_port_id="signal"/>
+  <Edge source_id="bdSigWCCT" target_id="tdmabus1" type="Annotation" source_port_id="platform"/>
+  <Edge source_id="cdSigWCCT" target_id="cdSig" type="Annotation" source_port_id="signal"/>
+  <Edge source_id="cdSigWCCT" target_id="tdmabus1" type="Annotation" source_port_id="platform"/>
+  <Edge source_id="dcSigWCCT" target_id="dcSig" type="Annotation" source_port_id="signal"/>
+  <Edge source_id="dcSigWCCT" target_id="dcSigDelayed" type="Annotation" source_port_id="signal"/>
+  <Edge source_id="dcSigWCCT" target_id="tdmabus1" type="Annotation" source_port_id="platform"/>
+  <Edge source_id="min_throughput_obj" target_id="synth" type="Annotation"/>
+</ForSyDeModel>

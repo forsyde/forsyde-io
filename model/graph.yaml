@@ -14,9 +14,31 @@ vertexClasses:
   WCET:
     superClasses:
     - ExtraFunctional
+    required_ports:
+    - application:
+      class: Process
+      multiple: unordered
+    - platform:
+      class: AbstractProcessingComponent
+      multiple: unordered
+    required_properties:
+    - time:
+      class: Integer
+      default: 0
   WCCT:
     superClasses:
     - ExtraFunctional
+    required_ports:
+    - application:
+      class: Process
+      multiple: unordered
+    - platform:
+      class: AbstractCommunicationComponent
+      multiple: unordered
+    required_properties:
+    - time:
+      class: Integer
+      default: 0
   Requirement:
   HardRequirement:
     superClasses:
@@ -25,6 +47,14 @@ vertexClasses:
   MinimumThroughput:
     superClasses:
     - Goal
+    required_ports:
+    - application:
+      class: Process
+      multiple: unordered
+    required_properties:
+    - apriori_importance:
+      class: Integer
+      default: 1
   StaticCyclicScheduler:
   FixedPriorityScheduler:
   CustomScheduler:
