@@ -135,4 +135,7 @@ edgeClasses:
   AbstractMapping:
     superClasses:
     - AbstractDecision
-portClasses: 
+portClasses:
+  Integer:
+    required:
+    - maxSize

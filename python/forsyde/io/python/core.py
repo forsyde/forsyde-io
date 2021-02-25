@@ -78,11 +78,19 @@ class Port(object):
     to denote which input argument of a function is to be used.
     """
 
-    identifier: str = field(default_factory=_generate_port_id, hash=True)
-    port_type: Optional[type] = field(default=None, compare=False, hash=False)
+    # identifier: str = field(default_factory=_generate_port_id, hash=True)
+    port_type: Optional["Port"] = field(default=None,
+                                        compare=False,
+                                        hash=False)
 
     def __hash__(self):
         return hash(self.identifier)
+
+    def get_type_name(self) -> str:
+        return "Port"
+
+    def serialize(self) -> dict:
+        return {}
 
     # def is_type(self, t: ModelType) -> bool:
     #     return self.port_type and self.port_type.is_refinement(t)
@@ -102,7 +110,9 @@ class Vertex(object):
     """
 
     identifier: str = field(default_factory=_generate_vertex_id, hash=True)
-    ports: Set[Port] = field(default_factory=set, compare=False, hash=False)
+    ports: Dict[str, Port] = field(default_factory=dict,
+                                   compare=False,
+                                   hash=False)
     properties: Dict[str, Any] = field(default_factory=dict,
                                        compare=False,
                                        hash=False)
@@ -120,6 +130,14 @@ class Vertex(object):
 
     def get_port(self, name: str) -> Port:
         return next(p for p in self.ports if p.identifier == name)
+
+    def get(self, name: str, model) -> "Vertex":
+        out_port = self.get_port(name)
+        for n in model.adj[self]:
+            for (_, edata) in model.edges[self][n]:
+                edge = edata["object"]
+                if edge.source_vertex_port == out_port:
+                    return edge.target_vertex
 
 
 @dataclass

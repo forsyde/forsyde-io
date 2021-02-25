@@ -18,8 +18,8 @@
     </Property>
   </Vertex>
   <Vertex id="GyCons" type="SDFComb">
-    <Port id="combinator" type="Function"/>
-    <Port id="output" type="Process"/>
+    <VertexPort id="combinator" type="Function"/>
+    <VertexPort id="output" type="Process"/>
     <Property name="consumption">
       <Property name="gy" type="Integer">6</Property>
     </Property>
@@ -28,15 +28,19 @@
     </Property>
   </Vertex>
   <Vertex id="AbsCons" type="SDFComb">
-    <Port id="combinator" type="Function"/>
-    <Port id="output" type="Process"/>
+    <VertexPort id="combinator" type="Function"/>
+    <VertexPort id="output" type="Process"/>
     <Property name="consumption">
       <Property name="resx" type="Integer">1</Property>
       <Property name="resy" type="Integer">1</Property>
     </Property>
   </Vertex>
   <Vertex id="getPx" type="Process">
-    <Port id="gy" type="Integer"/>
+    <Port id="gy" type="Integer">
+      <PortType name="Array" maxSize=6>
+        <PortType name="Integer" bytes=4/>
+      <PortType>
+    <Port/>
     <Port id="imgInput" type="Integer"/>
     <Port id="gx" type="Integer"/>
   </Vertex>

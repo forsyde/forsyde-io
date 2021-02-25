@@ -11,17 +11,17 @@
           "items": {
             "type": "object",
             "properties": {
-              "_id": {"type": "string"},
-              "_type": {"type": "string"},
+              "_id": {
+                "type": "string"
+              },
+              "_type": {
+                "type": "string"
+              },
               "ports": {
                 "type": "array",
                 "default": [],
                 "items": {
-                  "type": "object",
-                  "properties": {
-                    "_id": {"type": "string"},
-                    "_type": {"type": "string"}
-                  }
+                  "$ref": "#/definitions/Port"
                 }
               },
               "props": {
@@ -29,7 +29,12 @@
                 "default": {}
               }
             },
-            "required": ["_id", "_type", "ports", "props"]
+            "required": [
+              "_id",
+              "_type",
+              "ports",
+              "props"
+            ]
           }
         },
         "edges": {
@@ -38,19 +43,49 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-              "_source_id": {"type": "string"},
-              "_target_id": {"type": "string"},
-              "_source_port_id": {"type": "string"},
-              "_target_port_id": {"type": "string"},
-              "_type": {"type": "string"}
+              "_source_id": {
+                "type": "string"
+              },
+              "_target_id": {
+                "type": "string"
+              },
+              "_source_port_id": {
+                "type": "string"
+              },
+              "_target_port_id": {
+                "type": "string"
+              },
+              "_type": {
+                "type": "string"
+              }
             },
-            "required": ["_source_id", "_target_id", "_type"]
+            "required": [
+              "_source_id",
+              "_target_id",
+              "_type"
+            ]
           }
         }
       },
-      "required": ["vertexes", "edges"]
+      "required": [
+        "vertexes",
+        "edges"
+      ]
     }
   },
-  "definitions": {}
+  "definitions": {
+    "Port": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "portType": {
+          "$ref": "#/definitions/PortType"
+        }
+      }
+    },
+    "PortType": {}
+  }
 }
-
