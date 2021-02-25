@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "type": "object",
+  "properties": {
+    "ForSyDeModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "vertexes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {"type": "string"},
+              "_type": {"type": "string"},
+              "ports": {
+                "type": "array",
+                "default": [],
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {"type": "string"},
+                    "_type": {"type": "string"}
+                  }
+                }
+              },
+              "props": {
+                "type": "object",
+                "default": {}
+              }
+            },
+            "required": ["_id", "_type", "ports", "props"]
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "_source_id": {"type": "string"},
+              "_target_id": {"type": "string"},
+              "_source_port_id": {"type": "string"},
+              "_target_port_id": {"type": "string"},
+              "_type": {"type": "string"}
+            },
+            "required": ["_source_id", "_target_id", "_type"]
+          }
+        }
+      },
+      "required": ["vertexes", "edges"]
+    }
+  },
+  "definitions": {}
+}
+
