@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from dataclasses import field
-from typing import Iterable
-from typing import Dict
 from typing import Any
+from typing import Dict
+from typing import List
+from typing import Iterable
 from typing import Optional
 from typing import Set
 from typing import Tuple
@@ -78,10 +79,10 @@ class Port(object):
     to denote which input argument of a function is to be used.
     """
 
-    # identifier: str = field(default_factory=_generate_port_id, hash=True)
-    port_type: Optional["Port"] = field(default=None,
-                                        compare=False,
-                                        hash=False)
+    identifier: str = field(default_factory=_generate_port_id, hash=True)
+    # port_type: Optional["Vertex"] = field(default=None,
+    #                                     compare=False,
+    #                                     hash=False)
 
     def __hash__(self):
         return hash(self.identifier)
@@ -110,14 +111,13 @@ class Vertex(object):
     """
 
     identifier: str = field(default_factory=_generate_vertex_id, hash=True)
-    ports: Dict[str, Port] = field(default_factory=dict,
+    ports: List[Port] = field(default_factory=list,
                                    compare=False,
                                    hash=False)
     properties: Dict[str, Any] = field(default_factory=dict,
                                        compare=False,
                                        hash=False)
-
-    # vertex_type: ModelType = field(default=ModelType(), compare=False, hash=False)
+    vertex_type: ModelType = field(default=ModelType(), compare=False, hash=False)
 
     def __eq__(self, other):
         return self.identifier == other.identifier

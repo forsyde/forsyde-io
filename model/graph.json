@@ -216,22 +216,45 @@
         }
     },
     "portClasses": {
-        "Array": {
-            "size": {
-                "default": 1
+    },
+    "__commented__": {
+        "vertexClasses" : {
+            "TypeRepresentation": null,
+            "Integer": {
+                "superClasses": ["TypeRepresentation"],
+                "requied_properties": {
+                    "bits": {
+                        "class": "Integer",
+                        "default": 0
+                    }
+                }
             },
-            "contained": {}
-        },
-        "Integer": {
-            "bytes": {
-                "default": 1
+            "Floating": {
+                "superClasses": ["TypeRepresentation"],
+                "required_properties": {
+                    "bits": {
+                        "class": "Integer",
+                        "default": 0
+                    }
+                }
+            },
+            "Record": {
+                "superClasses": ["TypeRepresentation"],
+                "required_properties": {
+                    "name": {
+                        "class": "String"
+                    }
+                }
+            },
+            "Array": {
+                "superClasses": ["TypeRepresentation"],
+                "required_properties": {
+                    "size": {
+                        "class": "Integer",
+                        "default": 0
+                    }
+                }
             }
-        },
-        "Float": {
-            "bytes": {
-                "default": 1
-            }
-        },
-        "Record": {}
-    }
+        }
+    },
 }
