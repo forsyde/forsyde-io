@@ -14,7 +14,7 @@ class Integer(Port):
 
     bits: int = 8
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "Integer"
 
     def serialize(self) -> Dict[str, int]:
@@ -27,7 +27,7 @@ class Float(Port):
 
     bits: int = 0
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "Float"
 
     def serialize(self) -> Dict[str, int]:
@@ -41,7 +41,7 @@ class Array(Port):
     size: int = 1
     contained: Port = Integer(size=1)
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "Array"
 
     def serialize(self) -> Dict[str, Union[int, Port]]:
@@ -54,7 +54,7 @@ class Record(Port):
 
     elems: Dict[str, Port] = field(default_factory=dict)
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "Record"
 
     def serialize(self) -> Dict[str, Port]:
@@ -67,7 +67,7 @@ class VertexPort(Port):
 
     vertex_type: type = Vertex
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "VertexPort"
 
     def serialize(self) -> str:

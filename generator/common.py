@@ -1,8 +1,8 @@
-import yaml
+import json
 
 
 def get_spec():
-    spec = {"vertexClasses": {}, "edgeClasses": {}, "portClasses": {}}
-    with open('model/graph.yaml', 'r') as modelin:
-        spec = yaml.load(modelin, Loader=yaml.Loader)
+    spec = {"vertexTypes": {}, "edgeTypes": {}, "portClasses": {}}
+    with open('model/graph.json', 'r') as modelin:
+        spec = json.load(modelin)
     return spec

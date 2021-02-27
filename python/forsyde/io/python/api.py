@@ -88,13 +88,13 @@ class ForSyDeModel(nx.MultiDiGraph):
     def stringified(self) -> nx.MultiDiGraph:
         strg = nx.MultiDiGraph()
         for v in self.nodes:
-            strg.add_node(f"{v.identifier}\\n{v.get_type_name()}")
+            strg.add_node(f"{v.identifier}\\n{v.get_type_tag()}")
         for (s, t, e) in self.edges.data("object"):
             sp = e.source_vertex_port
             tp = e.target_vertex_port
-            strg.add_edge(f"{s.identifier}\\n{s.get_type_name()}",
-                          f"{t.identifier}\\n{t.get_type_name()}",
-                          label=f"{e.get_type_name()}\\n" +
+            strg.add_edge(f"{s.identifier}\\n{s.get_type_tag()}",
+                          f"{t.identifier}\\n{t.get_type_tag()}",
+                          label=f"{e.get_type_tag()}\\n" +
                           (f"{s.identifier}.{sp.identifier}"
                            if sp else f"{s.identifier}") + "\\n" +
                           (f"{t.identifier}.{tp.identifier}"
@@ -199,7 +199,7 @@ class ForSyDeModel(nx.MultiDiGraph):
         for v in self.nodes:
             node_elem = etree.SubElement(tree, 'Vertex')
             node_elem.set('id', v.identifier)
-            node_elem.set('type', v.get_type_name())
+            node_elem.set('type', v.get_type_tag())
             for port in v.ports:
                 port_elem = etree.SubElement(node_elem, 'Port')
                 port_elem.set('id', port.identifier)
@@ -220,7 +220,7 @@ class ForSyDeModel(nx.MultiDiGraph):
             edge_elem = etree.SubElement(tree, 'Edge')
             edge_elem.set('source_id', s.identifier)
             edge_elem.set('target_id', t.identifier)
-            edge_elem.set('type', edge.get_type_name())
+            edge_elem.set('type', edge.get_type_tag())
             if edge.source_vertex_port:
                 edge_elem.set('source_port_id',
                               edge.source_vertex_port.identifier)

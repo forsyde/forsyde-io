@@ -24,49 +24,49 @@ def _generate_port_id() -> str:
     return "port" + str(_port_id_counter)
 
 
-class ModelType(object):
-    """Type associated with a vertex or a port.
-    
-    Though Python already keeps many runtime amenities that would make this
-    explicit runtime representation of Types unnecesary, having it explicitly can
-    ease porting to other langauges and also usability for users that are not
-    familiar with Python 'meta' built-in facilities.
+# class ModelType(object):
+#     """Type associated with a vertex or a port.
 
-    This clas is meant to be used more of a interface than a concrete class.
-    """
+#     Though Python already keeps many runtime amenities that would make this
+#     explicit runtime representation of Types unnecesary, having it explicitly can
+#     ease porting to other langauges and also usability for users that are not
+#     familiar with Python 'meta' built-in facilities.
 
-    _instance = None
+#     This clas is meant to be used more of a interface than a concrete class.
+#     """
 
-    @classmethod
-    def get_instance(cls):
-        if not cls._instance:
-            cls._instance = cls()
-        return cls._instance
+#     _instance = None
 
-    def __repr__(self):
-        return self.get_type_name()
+#     @classmethod
+#     def get_instance(cls):
+#         if not cls._instance:
+#             cls._instance = cls()
+#         return cls._instance
 
-    def __eq__(self, other):
-        return self.get_type_name() == other.get_type_name()
+#     def __repr__(self):
+#         return self.get_type_tag()
 
-    def __hash__(self):
-        return hash(self.get_type_name())
+#     def __eq__(self, other):
+#         return self.get_type_tag() == other.get_type_tag()
 
-    def is_refinement(self, other: "ModelType") -> bool:
-        return (self == other) or any(
-            s.is_refinement(other) for s in self.get_super_types())
+#     def __hash__(self):
+#         return hash(self.get_type_tag())
 
-    def get_super_types(self) -> Iterable["ModelType"]:
-        yield from ()
+#     def is_refinement(self, other: "ModelType") -> bool:
+#         return (self == other) or any(
+#             s.is_refinement(other) for s in self.get_super_types())
 
-    def get_type_name(self) -> str:
-        return "UnknownType"
+#     def get_super_types(self) -> Iterable["ModelType"]:
+#         yield from ()
 
-    def get_required_ports(self) -> Iterable[Tuple[str, "ModelType"]]:
-        yield from ()
+#     def get_type_tag(self) -> str:
+#         return "UnknownType"
 
-    def get_required_properties(self) -> Iterable[Tuple[str, Any]]:
-        yield from ()
+#     def get_required_ports(self) -> Iterable[Tuple[str, "ModelType"]]:
+#         yield from ()
+
+#     def get_required_properties(self) -> Iterable[Tuple[str, Any]]:
+#         yield from ()
 
 
 @dataclass
@@ -80,6 +80,7 @@ class Port(object):
     """
 
     identifier: str = field(default_factory=_generate_port_id, hash=True)
+
     # port_type: Optional["Vertex"] = field(default=None,
     #                                     compare=False,
     #                                     hash=False)
@@ -87,7 +88,7 @@ class Port(object):
     def __hash__(self):
         return hash(self.identifier)
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "Port"
 
     def serialize(self) -> dict:
@@ -111,13 +112,14 @@ class Vertex(object):
     """
 
     identifier: str = field(default_factory=_generate_vertex_id, hash=True)
-    ports: List[Port] = field(default_factory=list,
-                                   compare=False,
-                                   hash=False)
+    ports: List[Port] = field(default_factory=list, compare=False, hash=False)
     properties: Dict[str, Any] = field(default_factory=dict,
                                        compare=False,
                                        hash=False)
-    vertex_type: ModelType = field(default=ModelType(), compare=False, hash=False)
+
+    # vertex_type: ModelType = field(default=ModelType(),
+    #                                compare=False,
+    #                                hash=False)
 
     def __eq__(self, other):
         return self.identifier == other.identifier
@@ -125,13 +127,17 @@ class Vertex(object):
     def __hash__(self):
         return hash(self.identifier)
 
-    def get_type_name(self) -> str:
-        return "Vertex"
+    def get_type_tag(self) -> str:
+        return self.__class__.__name__
 
     def get_port(self, name: str) -> Port:
-        return next(p for p in self.ports if p.identifier == name)
+        try:
+            return next(p for p in self.ports if p.identifier == name)
+        except StopIteration:
+            raise AttributeError(
+                f"Required port {name} of {self.identifier} does not exist.")
 
-    def get(self, name: str, model) -> "Vertex":
+    def get_neigh(self, name: str, model) -> "Vertex":
         out_port = self.get_port(name)
         for n in model.adj[self]:
             for (_, edata) in model.edges[self][n]:
@@ -159,12 +165,15 @@ class Edge(object):
     def __hash__(self):
         return hash((self.source_vertex, self.target_vertex))
 
-    def ids_tuple(self):
-        return (self.source_vertex.identifier, self.target_vertex.identifier,
-                self.source_vertex_port.identifier if self.source_vertex_port
-                else None, self.target_vertex_port.identifier
-                if self.target_vertex_port else None,
-                self.edge_type.get_type_name())
+    def get_type_tag(self) -> str:
+        return self.__class__.__name__
+
+    # def ids_tuple(self):
+    #     return (self.source_vertex.identifier, self.target_vertex.identifier,
+    #             self.source_vertex_port.identifier if self.source_vertex_port
+    #             else None, self.target_vertex_port.identifier
+    #             if self.target_vertex_port else None,
+    #             self.edge_type.get_type_tag())
 
     # def is_type(self, tsource: ModelType, ttarget: ModelType) -> bool:
     #     return self.source_vertex.is_type(
