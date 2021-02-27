@@ -12,7 +12,7 @@ class AbstractGrouping(core.Vertex):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "AbstractGrouping"
             
     
@@ -29,7 +29,7 @@ class AbstractOrdering(AbstractGrouping):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "AbstractOrdering"
             
     
@@ -46,7 +46,7 @@ class TriggeredTask(AbstractOrdering):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "TriggeredTask"
             
     
@@ -63,7 +63,7 @@ class SporadicTask(AbstractOrdering):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "SporadicTask"
             
     
@@ -80,7 +80,7 @@ class ExtraFunctional(core.Vertex):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "ExtraFunctional"
             
     
@@ -97,9 +97,36 @@ class WCET(ExtraFunctional):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "WCET"
             
+    
+    
+    def get_port_application(self) -> core.Port:
+        return self.get_port("application")
+
+    def get_application(self, model) -> "Process":
+        return self.get_neigh("application")
+
+    
+    def get_port_platform(self) -> core.Port:
+        return self.get_port("platform")
+
+    def get_platform(self, model) -> "AbstractProcessingComponent":
+        return self.get_neigh("platform")
+
+    
+    
+    
+    
+    
+    def get_time(self) -> int:
+    
+        try:
+            return self.properties["time"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'time' property.")
+
     
     
 
@@ -114,9 +141,36 @@ class WCCT(ExtraFunctional):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "WCCT"
             
+    
+    
+    def get_port_application(self) -> core.Port:
+        return self.get_port("application")
+
+    def get_application(self, model) -> "Process":
+        return self.get_neigh("application")
+
+    
+    def get_port_platform(self) -> core.Port:
+        return self.get_port("platform")
+
+    def get_platform(self, model) -> "AbstractCommunicationComponent":
+        return self.get_neigh("platform")
+
+    
+    
+    
+    
+    
+    def get_time(self) -> int:
+    
+        try:
+            return self.properties["time"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'time' property.")
+
     
     
 
@@ -131,7 +185,7 @@ class Requirement(core.Vertex):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "Requirement"
             
     
@@ -148,7 +202,7 @@ class HardRequirement(Requirement):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "HardRequirement"
             
     
@@ -165,7 +219,7 @@ class Goal(core.Vertex):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "Goal"
             
     
@@ -182,9 +236,29 @@ class MinimumThroughput(Goal):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "MinimumThroughput"
             
+    
+    
+    def get_port_application(self) -> core.Port:
+        return self.get_port("application")
+
+    def get_application(self, model) -> "Process":
+        return self.get_neigh("application")
+
+    
+    
+    
+    
+    
+    def get_apriori_importance(self) -> int:
+    
+        try:
+            return self.properties["apriori_importance"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'apriori_importance' property.")
+
     
     
 
@@ -199,7 +273,7 @@ class StaticCyclicScheduler(core.Vertex):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "StaticCyclicScheduler"
             
     
@@ -216,7 +290,7 @@ class FixedPriorityScheduler(core.Vertex):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "FixedPriorityScheduler"
             
     
@@ -233,7 +307,7 @@ class CustomScheduler(core.Vertex):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "CustomScheduler"
             
     
@@ -250,7 +324,7 @@ class RoundRobinScheduler(core.Vertex):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "RoundRobinScheduler"
             
     
@@ -267,7 +341,7 @@ class Function(core.Vertex):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "Function"
             
     
@@ -284,7 +358,7 @@ class Process(Function):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "Process"
             
     
@@ -301,7 +375,7 @@ class Signal(core.Vertex):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "Signal"
             
     
@@ -318,7 +392,7 @@ class BufferSignal(Signal):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "BufferSignal"
             
     
@@ -335,7 +409,7 @@ class LabelSignal(Signal):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "LabelSignal"
             
     
@@ -352,7 +426,7 @@ class SYComb(Function):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "SYComb"
             
     
@@ -369,7 +443,7 @@ class SYPrefix(Function):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "SYPrefix"
             
     
@@ -377,27 +451,15 @@ class SYPrefix(Function):
     def get_port_prefixer(self) -> core.Port:
         return self.get_port("prefixer")
 
-    def get_prefixer(self, model) -> Function:
-        out_port = self.get_port_prefixer()
-        for n in model.adj[self]:
-            for (_, edata) in model.edges[self][n]:
-                edge = edata["object"]
-                if edge.source_vertex_port == out_port:
-                    return edge.target_vertex
-        raise AttributeError(f"Required port prefixer of {self.identifier} does not exist.")
+    def get_prefixer(self, model) -> "Function":
+        return self.get_neigh("prefixer")
 
     
     def get_port_output(self) -> core.Port:
         return self.get_port("output")
 
-    def get_output(self, model) -> Function:
-        out_port = self.get_port_output()
-        for n in model.adj[self]:
-            for (_, edata) in model.edges[self][n]:
-                edge = edata["object"]
-                if edge.source_vertex_port == out_port:
-                    return edge.target_vertex
-        raise AttributeError(f"Required port output of {self.identifier} does not exist.")
+    def get_output(self, model) -> "Function":
+        return self.get_neigh("output")
 
     
     
@@ -414,7 +476,7 @@ class SDFComb(Function):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "SDFComb"
             
     
@@ -422,27 +484,15 @@ class SDFComb(Function):
     def get_port_combinator(self) -> core.Port:
         return self.get_port("combinator")
 
-    def get_combinator(self, model) -> Function:
-        out_port = self.get_port_combinator()
-        for n in model.adj[self]:
-            for (_, edata) in model.edges[self][n]:
-                edge = edata["object"]
-                if edge.source_vertex_port == out_port:
-                    return edge.target_vertex
-        raise AttributeError(f"Required port combinator of {self.identifier} does not exist.")
+    def get_combinator(self, model) -> "Function":
+        return self.get_neigh("combinator")
 
     
     def get_port_output(self) -> core.Port:
         return self.get_port("output")
 
-    def get_output(self, model) -> Function:
-        out_port = self.get_port_output()
-        for n in model.adj[self]:
-            for (_, edata) in model.edges[self][n]:
-                edge = edata["object"]
-                if edge.source_vertex_port == out_port:
-                    return edge.target_vertex
-        raise AttributeError(f"Required port output of {self.identifier} does not exist.")
+    def get_output(self, model) -> "Function":
+        return self.get_neigh("output")
 
     
     
@@ -479,7 +529,7 @@ class SDFPrefix(Function):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "SDFPrefix"
             
     
@@ -487,27 +537,15 @@ class SDFPrefix(Function):
     def get_port_prefixer(self) -> core.Port:
         return self.get_port("prefixer")
 
-    def get_prefixer(self, model) -> Function:
-        out_port = self.get_port_prefixer()
-        for n in model.adj[self]:
-            for (_, edata) in model.edges[self][n]:
-                edge = edata["object"]
-                if edge.source_vertex_port == out_port:
-                    return edge.target_vertex
-        raise AttributeError(f"Required port prefixer of {self.identifier} does not exist.")
+    def get_prefixer(self, model) -> "Function":
+        return self.get_neigh("prefixer")
 
     
     def get_port_output(self) -> core.Port:
         return self.get_port("output")
 
-    def get_output(self, model) -> Function:
-        out_port = self.get_port_output()
-        for n in model.adj[self]:
-            for (_, edata) in model.edges[self][n]:
-                edge = edata["object"]
-                if edge.source_vertex_port == out_port:
-                    return edge.target_vertex
-        raise AttributeError(f"Required port output of {self.identifier} does not exist.")
+    def get_output(self, model) -> "Function":
+        return self.get_neigh("output")
 
     
     
@@ -524,7 +562,7 @@ class AbstractPhysicalComponent(core.Vertex):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "AbstractPhysicalComponent"
             
     
@@ -541,7 +579,7 @@ class AbstractProcessingComponent(AbstractPhysicalComponent):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "AbstractProcessingComponent"
             
     
@@ -558,7 +596,7 @@ class AbstractStorageComponent(AbstractPhysicalComponent):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "AbstractStorageComponent"
             
     
@@ -575,7 +613,7 @@ class AbsractInterfaceComponent(AbstractPhysicalComponent):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "AbsractInterfaceComponent"
             
     
@@ -592,7 +630,7 @@ class AbstractCommunicationComponent(AbstractPhysicalComponent):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "AbstractCommunicationComponent"
             
     
@@ -609,7 +647,7 @@ class TimeDivisionMultiplexer(AbstractCommunicationComponent):
     
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
 	        return "TimeDivisionMultiplexer"
             
     
@@ -633,7 +671,7 @@ class Input(core.Edge):
 
 
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "Input"
 
 
@@ -641,7 +679,7 @@ class Output(core.Edge):
 
 
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "Output"
 
 
@@ -649,7 +687,7 @@ class Annotation(core.Edge):
 
 
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "Annotation"
 
 
@@ -657,7 +695,7 @@ class Expansion(core.Edge):
 
 
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "Expansion"
 
 
@@ -665,7 +703,7 @@ class AbstractPhysicalConnection(core.Edge):
 
 
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "AbstractPhysicalConnection"
 
 
@@ -673,7 +711,7 @@ class AbstractDecision(core.Edge):
 
 
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "AbstractDecision"
 
 
@@ -681,7 +719,7 @@ class AbstractScheduling(AbstractDecision):
 
 
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "AbstractScheduling"
 
 
@@ -689,7 +727,7 @@ class AbstractMapping(AbstractDecision):
 
 
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "AbstractMapping"
 
 
