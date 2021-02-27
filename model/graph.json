@@ -1,5 +1,5 @@
 {
-    "vertexClasses": {
+    "vertexTypes": {
         "AbstractGrouping": null,
         "AbstractOrdering": {
             "superClasses": [
@@ -21,49 +21,43 @@
             "superClasses": [
                 "ExtraFunctional"
             ],
-            "required_ports": [
-                {
-                    "application": null,
+            "required_ports": {
+                "application": {
                     "class": "Process",
                     "multiple": "unordered"
                 },
-                {
-                    "platform": null,
+                "platform": {
                     "class": "AbstractProcessingComponent",
                     "multiple": "unordered"
                 }
-            ],
-            "required_properties": [
-                {
-                    "time": null,
+            },
+            "required_properties": {
+                "time": {
                     "class": "Integer",
                     "default": 0
                 }
-            ]
+            }
         },
         "WCCT": {
             "superClasses": [
                 "ExtraFunctional"
             ],
-            "required_ports": [
-                {
-                    "application": null,
+            "required_ports": {
+                "application": {
                     "class": "Process",
                     "multiple": "unordered"
                 },
-                {
-                    "platform": null,
+                "platform": {
                     "class": "AbstractCommunicationComponent",
                     "multiple": "unordered"
                 }
-            ],
-            "required_properties": [
-                {
-                    "time": null,
+            },
+            "required_properties": {
+                "time": {
                     "class": "Integer",
                     "default": 0
                 }
-            ]
+            }
         },
         "Requirement": null,
         "HardRequirement": {
@@ -76,20 +70,18 @@
             "superClasses": [
                 "Goal"
             ],
-            "required_ports": [
-                {
-                    "application": null,
+            "required_ports": {
+                "application": {
                     "class": "Process",
                     "multiple": "unordered"
                 }
-            ],
-            "required_properties": [
-                {
-                    "apriori_importance": null,
+            },
+            "required_properties": {
+                "apriori_importance": {
                     "class": "Integer",
                     "default": 1
                 }
-            ]
+            }
         },
         "StaticCyclicScheduler": null,
         "FixedPriorityScheduler": null,
@@ -197,7 +189,7 @@
             }
         }
     },
-    "edgeClasses": {
+    "edgeTypes": {
         "Input": null,
         "Output": null,
         "Annotation": null,
@@ -215,13 +207,14 @@
             ]
         }
     },
-    "portClasses": {
-    },
+    "portClasses": {},
     "__commented__": {
-        "vertexClasses" : {
+        "vertexTypes": {
             "TypeRepresentation": null,
             "Integer": {
-                "superClasses": ["TypeRepresentation"],
+                "superClasses": [
+                    "TypeRepresentation"
+                ],
                 "requied_properties": {
                     "bits": {
                         "class": "Integer",
@@ -230,7 +223,9 @@
                 }
             },
             "Floating": {
-                "superClasses": ["TypeRepresentation"],
+                "superClasses": [
+                    "TypeRepresentation"
+                ],
                 "required_properties": {
                     "bits": {
                         "class": "Integer",
@@ -239,7 +234,9 @@
                 }
             },
             "Record": {
-                "superClasses": ["TypeRepresentation"],
+                "superClasses": [
+                    "TypeRepresentation"
+                ],
                 "required_properties": {
                     "name": {
                         "class": "String"
@@ -247,7 +244,9 @@
                 }
             },
             "Array": {
-                "superClasses": ["TypeRepresentation"],
+                "superClasses": [
+                    "TypeRepresentation"
+                ],
                 "required_properties": {
                     "size": {
                         "class": "Integer",
@@ -256,5 +255,5 @@
                 }
             }
         }
-    },
+    }
 }

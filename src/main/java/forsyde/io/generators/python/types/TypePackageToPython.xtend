@@ -39,7 +39,7 @@ class TypePackageToPython {
 	'''
 	class «cls.name»(«cls.ESuperTypes.map[name].map[n | n == "Vertex" ? "core.Vertex" : n].join(', ')»):
 	
-	    def get_type_name(self) -> str:
+	    def get_type_tag(self) -> str:
 	        return "«cls.name»"
 	        
 	    «FOR r : cls.EReferences.filter[EType.name == "Port"]»
@@ -72,7 +72,7 @@ class TypePackageToPython {
 	'''
 	class «cls.name»(«cls.ESuperTypes.map[name].map[n | n == "Edge" ? "core.Edge" : n].join(', ')»):
 	
-	    def get_type_name(self) -> str:
+	    def get_type_tag(self) -> str:
 	        return "«cls.name»"
 	'''
 	
@@ -210,7 +210,7 @@ class TypePackageToPython {
 	    Any modifications therein are likely going to be overwritten.
 	    """
 	
-	    def get_type_name(self):
+	    def get_type_tag(self):
 	        return '«cls.name»'
 	
 	    «IF !cls.ESuperTypes.isEmpty»

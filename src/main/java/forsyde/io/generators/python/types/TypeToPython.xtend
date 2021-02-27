@@ -44,7 +44,7 @@ class TypeToPython {
 		        repr=False
 		    )
 		
-		    def get_type_name(self):
+		    def get_type_tag(self):
 		        return self.type_name
 		
 		    def get_required_ports(self):

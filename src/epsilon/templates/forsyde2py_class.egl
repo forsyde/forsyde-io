@@ -16,7 +16,7 @@ class [%=class.name%](core.Vertex):
 	time modifying anything here, but on the true source which is a model file.
 	"""
 
-    def get_type_name(self) -> str:
+    def get_type_tag(self) -> str:
         return "[%= class.name %]"
         
     [% for (r in class.getEReferences().select(r | e.getEType().name == "Port")) { %]
@@ -35,13 +35,13 @@ class [%=class.name%](core.Vertex):
         raise AttributeError(f"Port [%=r.name%] of {self.identifier} does not exist.")
 
     [% } %]
-    «FOR r : cls.EReferences.filter[EType.name.contains("Property")]»
-    def get_«r.name»(self):
+    ï¿½FOR r : cls.EReferences.filter[EType.name.contains("Property")]ï¿½
+    def get_ï¿½r.nameï¿½(self):
         try:
-            return self.properties["«r.name»"]
+            return self.properties["ï¿½r.nameï¿½"]
         except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no '«r.name»' property.")
-   	«ENDFOR»
+            raise AttributeError(f"Vertex {self.identifier} has no 'ï¿½r.nameï¿½' property.")
+   	ï¿½ENDFORï¿½
 [% } %]
 [%
 @cached
