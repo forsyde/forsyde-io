@@ -16,7 +16,7 @@ from lxml import etree  # type: ignore
 import networkx as nx  # type: ignore
 import networkx.drawing.nx_pydot as nx_pydot  # type: ignore
 
-from forsyde.io.python.core import ModelType
+# from forsyde.io.python.core import ModelType
 from forsyde.io.python.core import Vertex
 from forsyde.io.python.core import Edge
 from forsyde.io.python.core import Port
@@ -101,27 +101,27 @@ class ForSyDeModel(nx.MultiDiGraph):
                            if tp else f"{t.identifier}"))
         return strg
 
-    def get_vertexes(
-            self,
-            v_type: Union[Type, Optional[ModelType]] = None,
-            filters: List[Callable[[Vertex], bool]] = []) -> Iterable[Vertex]:
-        '''Query vertexes based on their attached type and additional filters
+    # def get_vertexes(
+    #         self,
+    #         v_type: Union[Type, Optional[ModelType]] = None,
+    #         filters: List[Callable[[Vertex], bool]] = []) -> Iterable[Vertex]:
+    #     '''Query vertexes based on their attached type and additional filters
 
-        Arguments:
-            v_type:
-                Either a `ModelType` instance for a `ModelType` `type` itself,
-                which serves as a hard filter for the query.
-            filters:
-                The callables are called with every vertex fed as argument. If
-                they evaluate to `True`, then the vertex is in the result,
-                otherwise it is skipped.
-        '''
-        for v in self.nodes:
-            if v_type and v.is_type(v_type):
-                if all(f(v) for f in filters):
-                    yield v
-            elif all(f(v) for f in filters):
-                yield v
+    #     Arguments:
+    #         v_type:
+    #             Either a `ModelType` instance for a `ModelType` `type` itself,
+    #             which serves as a hard filter for the query.
+    #         filters:
+    #             The callables are called with every vertex fed as argument. If
+    #             they evaluate to `True`, then the vertex is in the result,
+    #             otherwise it is skipped.
+    #     '''
+    #     for v in self.nodes:
+    #         if v_type and v.is_type(v_type):
+    #             if all(f(v) for f in filters):
+    #                 yield v
+    #         elif all(f(v) for f in filters):
+    #             yield v
 
     def neighs(self, v: Vertex) -> Iterable[Vertex]:
         yield from self.nodes.adj[v]
