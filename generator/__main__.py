@@ -1,6 +1,11 @@
-import common as common
-import python as pygen
-import java as jgen
+import generator.common as common
+import generator.python as pygen
+import generator.java as jgen
 
-pygen.generate(common.get_spec())
-jgen.generate(common.get_spec())
+
+def main():
+    pygen.generate(common.get_spec())
+    jgen.generate(common.get_spec())
+
+
+main()

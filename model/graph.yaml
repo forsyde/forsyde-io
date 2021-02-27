@@ -1,5 +1,5 @@
 ---
-vertexClasses:
+vertexTypes:
   AbstractGrouping:
   AbstractOrdering:
     superClasses:
@@ -122,7 +122,7 @@ vertexClasses:
       slots:
         class: Integer
         default: 1
-edgeClasses:
+edgeTypes:
   Input:
   Output:
   Annotation:

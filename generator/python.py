@@ -16,7 +16,7 @@ def pythonify(t: str) -> str:
 
 
 def generate(spec):
-    env = Environment(loader=PackageLoader('templates', '.'),
+    env = Environment(loader=PackageLoader('generator', 'templates'),
                       autoescape=select_autoescape(['html', 'xml']))
     env.filters['pythonify'] = pythonify
     pak_template = env.get_template(

@@ -2,7 +2,7 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 
 def generate(spec):
-    env = Environment(loader=PackageLoader('templates', '.'),
+    env = Environment(loader=PackageLoader('generator', 'templates'),
                       autoescape=select_autoescape(['html', 'xml']))
     vertex_template = ""
     # env.filters['pythonify'] = pythonify
