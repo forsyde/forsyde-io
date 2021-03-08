@@ -13,7 +13,7 @@ from typing import Type
 from typing import Union
 
 from lxml import etree  # type: ignore
-import networkx as nx  # type: ignore
+import networkx as nx
 import networkx.drawing.nx_pydot as nx_pydot  # type: ignore
 
 # from forsyde.io.python.core import ModelType
