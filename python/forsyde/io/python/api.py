@@ -1,22 +1,8 @@
-import json
-import re
-import sqlite3
-import importlib.resources as res
-from contextlib import contextmanager
-from typing import Callable
-from typing import List
-from typing import Iterable
-from typing import Dict
-from typing import Any
 from typing import Optional
-from typing import Type
-from typing import Union
 
-from lxml import etree  # type: ignore
-import networkx as nx
-import networkx.drawing.nx_pydot as nx_pydot  # type: ignore
-
+from forsyde.io.python.core import ForSyDeModel
 from forsyde.io.python.drivers import ForSyDeMLDriver
+from forsyde.io.python.drivers import ForSyDeXMLDriver
 
 # from forsyde.io.python.core import ModelType
 # from forsyde.io.python.core import Vertex
@@ -292,8 +278,10 @@ def load_model(source: str, other_model: Optional[ForSyDeModel] = None) -> ForSy
     """
     # if '.db' in source:
     #     self.read_db(source)
-    if '.xml' in source:
+    if '.forxml' in source:
         return ForSyDeMLDriver().read(source, other_model)
+    elif '.xml' in source:
+        return ForSyDeXMLDriver().read(source, other_model)
     else:
         raise NotImplementedError
     # self._rectify_model()
