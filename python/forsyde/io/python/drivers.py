@@ -24,6 +24,10 @@ class ForSyDeModelDriver:
 
 
 class ForSyDeMLDriver(ForSyDeModelDriver):
+
+    def __init__(self):
+        self.ns = {'xmlns': 'http://graphml.graphdrawing.org/xmlns'}
+
     def type_to_str(self, t: type) -> str:
         if t is bool:
             return "boolean"
@@ -57,17 +61,17 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
             return dict
 
     def write(self, model: ForSyDeModel, sink: str) -> None:
-        tree = etree.Element(
-            'graphml', {'xmlns': 'http://graphml.graphdrawing.org/xmlns'})
-        graph = etree.SubElement(tree, 'graph')
+        xmlns = '{http://graphml.graphdrawing.org/xmlns}'
+        tree = etree.Element(xmlns + 'graphml')
+        graph = etree.SubElement(tree, xmlns + 'graph')
         graph.set('id', 'model')
         graph.set('edgedefault', 'directed')
         for v in model.nodes:
-            node_elem = etree.SubElement(tree, 'node')
+            node_elem = etree.SubElement(graph, xmlns + 'node')
             node_elem.set('id', v.identifier)
             node_elem.set('type', v.get_type_tag())
             for port in v.ports:
-                port_elem = etree.SubElement(node_elem, 'port')
+                port_elem = etree.SubElement(node_elem, xmlns + 'port')
                 port_elem.set('name', port.identifier)
             prop_to_save = [(node_elem, v.properties)]
             while len(prop_to_save) > 0:
@@ -75,7 +79,7 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
                 cur_iter = enumerate(current) if isinstance(
                     current, list) else current.items()
                 for (prop, val) in cur_iter:
-                    prop_elem = etree.SubElement(parent, 'data')
+                    prop_elem = etree.SubElement(parent, xmlns + 'data')
                     prop_elem.set('attr.name', prop)
                     prop_elem.set('attr.type', self.type_to_str(type(val)))
                     # prop_elem.text = json.dumps(val)
@@ -89,7 +93,7 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
                     else:
                         prop_to_save.append((prop_elem, val))
         for (s, t, edge) in model.edges.data("object"):
-            edge_elem = etree.SubElement(tree, 'edge')
+            edge_elem = etree.SubElement(graph, xmlns + 'edge')
             edge_elem.set('source', s.identifier)
             edge_elem.set('target', t.identifier)
             edge_elem.set('type', edge.get_type_tag())
@@ -110,17 +114,17 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
         model = ForSyDeModel() if not other_model else other_model
         with open(source, 'r') as instream:
             tree = etree.parse(instream)
-            for vnode in tree.xpath('/graphml/graph//node'):
+            for vnode in tree.xpath('/xmlns:graphml/xmlns:graph//xmlns:node', namespaces=self.ns):
                 vertex = VertexFactory.build(identifier=vnode.get('id'),
                                              type_name=vnode.get('type'))
                 model.add_node(vertex, label=vertex.identifier)
-                for portnode in vnode.xpath("port"):
+                for portnode in vnode.xpath("xmlns:port", namespaces=self.ns):
                     port = Port(identifier=portnode.get('name'))
                     vertex.ports.add(port)
                 dataopen = [(vnode, vertex.properties)]
                 while len(dataopen) > 0:
                     (parent, data) = dataopen.pop()
-                    for datanode in parent.xpath('data'):
+                    for datanode in parent.xpath('xmlns:data', namespaces=self.ns):
                         dataname = datanode.get('attr.name')
                         datatype = self.str_to_type(datanode.get('attr.type'))
                         if datatype is str\
@@ -137,10 +141,10 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
                             else:
                                 data[dataname] = child
                             dataopen.append((datanode, child))
-            for vedge in tree.xpath('/graphml/graph//edge'):
-                source_vertex = next(n for (n, nid) in self.nodes.data('label')
+            for vedge in tree.xpath('/xmlns:graphml/xmlns:graph//xmlns:edge', namespaces=self.ns):
+                source_vertex = next(n for (n, nid) in model.nodes.data('label')
                                      if nid == vedge.get('source'))
-                target_vertex = next(n for (n, nid) in self.nodes.data('label')
+                target_vertex = next(n for (n, nid) in model.nodes.data('label')
                                      if nid == vedge.get('target'))
                 edge = EdgeFactory.build(source=source_vertex,
                                          target=target_vertex,
@@ -153,10 +157,11 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
                         vedge.get('targetport'))
                 key = (f"{vedge.get('source')}:{vedge.get('sourceport')}->" +
                        f"{vedge.get('target')}:{vedge.get('targetport')}")
-                self.add_edge(source_vertex,
+                model.add_edge(source_vertex,
                               target_vertex,
                               key=key,
                               object=edge)
+        return model
 
 
 class ForSyDeXMLDriver(ForSyDeModelDriver):

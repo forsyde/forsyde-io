@@ -39,3 +39,29 @@ Mathematically, we could say it is a [labelled graph](https://en.wikipedia.org/w
 On the other hand, hardware diagrams are nearly universally drawn as some graph-like structures with ports.
 VHDL and Verilog themselves can be argued to be a component-based environment to specify hardware. It follows
 that this component styled models can also be subsumed in a graph model that has some notion of ports.
+
+Therefore, our model is a graph that has notions of ports and properties. 
+
+One last important aspect is the notion of node families, or node types. Similar to what is usually
+done in [Object Oriented Programming](https://en.wikipedia.org/wiki/Object-oriented_programming), we want to know what "kind" is each node and egde associated with, so that we
+can perform analysis and give them both semantics and syntatic correctness.
+
+hence, our labelled port graph also has a notion of types, or kinds.
+
+# Formal definition
+
+## Mathematicals
+
+It follows closely the inspiration mentioned and has been published in paper (put ref here). 
+
+## Textual specification
+
+The specification is a variant of the [graphML](http://graphml.graphdrawing.org/primer/graphml-primer.html), neither a subset or a superset.
+
+It can, however, be unambigously translated back and forth to the standard graphML whenever
+necessary. The key difference between the standard specification, or schema, is that the
+data attributes of every node cannot be nested, whereas in the ForSyDe IO specification they
+can to make our life easier.
+
+Check some examples in the [source repository]({{ site.sources.forsydeio }}/tree/master/examples) to grasp the specification and schema better, but rest assured that knowing the graphML one is more than enough to
+comprehend ForSyDe IO's.

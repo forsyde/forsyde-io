@@ -29,8 +29,10 @@ github_username:  forsyde
 
 projects:
   forsyde: https://forsyde.github.io
-  forsyde-io: https://forsyde.github.io/forsyde-io
+  forsydeio: https://forsyde.github.io/forsyde-io
   idesyde: https://github.com/forsyde/IDeSyDe
+sources:
+  forsydeio: https://github.com/forsyde/forsyde-io
 
 # Build settings
 # remote_theme: forsyde/forsyde-web-theme
