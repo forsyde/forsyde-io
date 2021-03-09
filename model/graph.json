@@ -215,7 +215,7 @@
                 "superClasses": [
                     "TypeRepresentation"
                 ],
-                "requied_properties": {
+                "required_properties": {
                     "bits": {
                         "class": "Integer",
                         "default": 0

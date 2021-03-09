@@ -1,7 +1,7 @@
 ---
-layout: page
 title: Libraries
 permalink: /libraries/
+parent: Index
 ---
 
 Implementation

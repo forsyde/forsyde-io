@@ -24,19 +24,23 @@ description: >- # this means to ignore newlines until "baseurl:"
   ForSyDe's system level model specification and supporting libraries.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: jekyllrb
-github_username:  RoJods
+# twitter_username: jekyllrb
+github_username:  forsyde
 
 projects:
   forsyde: https://forsyde.github.io
+  forsyde-io: https://forsyde.github.io/forsyde-io
   idesyde: https://github.com/forsyde/IDeSyDe
 
 # Build settings
-remote_theme: forsyde/forsyde-web-theme
-# theme: minima
+# remote_theme: forsyde/forsyde-web-theme
+# remote_theme: aksakalli/jekyll-doc-theme@gh-pages   
 plugins:
   - jekyll-feed
 
+color_scheme: "dark"
+
+remote_theme: pmarsceill/just-the-docs
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
@@ -56,3 +60,8 @@ plugins:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+
+# Extra configuration
+aux_links:
+  "ForSyDe":
+  - "https://forsyde.github.io"
