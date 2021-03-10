@@ -1,7 +1,7 @@
 ---
 title: Usage
 layout: default
-permalink: {{ site.baseurl }}/usage/
+permalink: /usage/
 nav_order: 2
 ---
 

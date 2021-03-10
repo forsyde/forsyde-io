@@ -1,7 +1,7 @@
 ---
 title: Concepts
 layout: default
-permalink: {{ site.baseurl }}/concept/
+permalink: /concept/
 nav_order: 3
 ---
 
@@ -73,7 +73,7 @@ comprehend ForSyDe IO's.
 The concepts enables some nice streamlining for the parser and writer libraries
 pertaining the model. The following image showcases the idea visually.
 
-<img src="/assets/images/svg/forsydeio-impl.svg" />
+<img src="{{ site.baseurl }}/assets/images/svg/forsydeio-impl.svg" />
 
 All core graph sub-libraries are hand-coded to use relevant graphing
 libraries available at the implementation language (e.g. NetworkX for Python
