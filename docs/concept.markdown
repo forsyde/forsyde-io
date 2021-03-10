@@ -1,7 +1,7 @@
 ---
 title: Concepts
 layout: default
-permalink: /concept/
+permalink: {{ site.baseurl }}/concept/
 nav_order: 3
 ---
 

@@ -16,8 +16,8 @@ to know about this [ForSyDe]({{ site.projects.forsyde }}) subproject and find so
   2. An exchange format to save and load this graph model in-memory,
   2. Supporting libraries implementing this save and load feature for a few languages.
 
-For more information about the model concept and specification, check [Concepts](/concept).
-For more information about the implementations, check [Implementation](/implementation).
+For more information about the model concept and specification, check [Concepts]({{ site.baseurl }}/concept).
+For more information about the implementations, check [Implementation]({{ site.baseurl }}/implementation).
 
 ## What is the motivation behind it?
 
@@ -41,11 +41,11 @@ like [IDeSyDe]({{ site.projects.idesyde }}), you're already benefiting from ForS
 
 ### 2) I am a developer and want to make ForSyDE powered tool!
 
-Howdy! Then checkout [Usage](/usage) and [Concepts](/concept) so that you can see how to consume the models in your favorite environment!
+Howdy! Then checkout [Usage]({{ site.baseurl }}/usage) and [Concepts]({{ site.baseurl }}/concept) so that you can see how to consume the models in your favorite environment!
 
 ### 3) I am both a developer and a designer and want to extend the models themselves!
 
-Well-met! Then you can checkout [Concepts](/concept) and [Implementation](/implementation) to see how the
+Well-met! Then you can checkout [Concepts]({{ site.baseurl }}/concept) and [Implementation]({{ site.baseurl }}/implementation) to see how the
 supporting libraries are generated for different languages based on the underlying model and contribute there!
 
 Unless you'd like to test out just reading to memory and dumping to disk.
