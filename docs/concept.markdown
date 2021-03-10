@@ -60,8 +60,27 @@ The specification is a variant of the [graphML](http://graphml.graphdrawing.org/
 
 It can, however, be unambigously translated back and forth to the standard graphML whenever
 necessary. The key difference between the standard specification, or schema, is that the
-data attributes of every node cannot be nested, whereas in the ForSyDe IO specification they
-can to make our life easier.
+data attributes of every node cannot be nested, whereas in the ForSyDe IO specification
+this is allowed, in order to make our life easier.
 
-Check some examples in the [source repository]({{ site.sources.forsydeio }}/tree/master/examples) to grasp the specification and schema better, but rest assured that knowing the graphML one is more than enough to
+Check some examples in the [source repository]({{ site.sources.forsydeio }}/tree/master/examples)
+to grasp the specification and schema better,
+but rest assured that knowing the graphML one is more than enough to
 comprehend ForSyDe IO's.
+
+# Supporting libraries
+
+The concepts enables some nice streamlining for the parser and writer libraries
+pertaining the model. The following image showcases the idea visually.
+
+<img src="/assets/images/svg/forsydeio-impl.svg" />
+
+All core graph sub-libraries are hand-coded to use relevant graphing
+libraries available at the implementation language (e.g. NetworkX for Python
+or jgrapht for Java). Note that relevant does not imply the most performant for
+huge graphs!
+
+We also have a meta model for our "types" or "kinds" of vertexes, edges etc, which
+are injected into the soon-to-be library so that it gets realised with the graphing
+features _and_ the types that a ForSyDe IO model contains.
+

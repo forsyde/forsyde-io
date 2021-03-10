@@ -33,6 +33,8 @@ projects:
   idesyde: https://github.com/forsyde/IDeSyDe
 sources:
   forsydeio: https://github.com/forsyde/forsyde-io
+versions:
+  forsydeio: "0.2.5"
 
 # Build settings
 # remote_theme: forsyde/forsyde-web-theme
@@ -40,9 +42,9 @@ sources:
 plugins:
   - jekyll-feed
 
-color_scheme: "dark"
-
 remote_theme: pmarsceill/just-the-docs
+
+color_scheme: "light"
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
@@ -64,6 +66,9 @@ remote_theme: pmarsceill/just-the-docs
 #   - vendor/ruby/
 
 # Extra configuration
+# logo: "https://forsyde.github.io/assets/images/forsyde-logo.svg"
 aux_links:
-  "ForSyDe":
+  '<img src="https://forsyde.github.io/assets/images/forsyde-logo.svg" height="40" width="60"/>':
   - "https://forsyde.github.io"
+  '<img src="https://cdn.worldvectorlogo.com/logos/github-icon.svg" height="40" width="40"/>':
+  - "https://github.com/forsyde/forsyde-io"

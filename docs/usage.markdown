@@ -2,6 +2,7 @@
 title: Usage
 layout: default
 permalink: /usage/
+nav_order: 2
 ---
 
 You can consume the supporting libraries code depending on your favorite language and
@@ -18,12 +19,13 @@ The libraries should quick start you in:
 
 # Python quickstart
 
-Lucky you [ForSyDe IO Python]() already exists and you can simply use it
+[ForSyDe IO Python](https://pypi.org/project/forsyde-io-python/)
+already exists and you can simply use it
 in your `pip` powered project (or `poetry` powered project) directly.
 
 This most likely translates to,
 
-    pip install forsyde-io-python
+    pip install forsyde-io-python=={{ site.versions.forsydeio }}
 
 and then declaring it as a required library in your project build tool.
 
@@ -32,7 +34,8 @@ and then declaring it as a required library in your project build tool.
 This should apply reasonably well to other JVM languages as well, but only
 plain Java (with 8+ syntax) has been tested.
 
-We try to make the supporting library as up-to-date as possible with
+We try to make the [ForSyDe IO Java](https://search.maven.org/artifact/io.github.forsyde/forsyde-io-java)
+supporting library as up-to-date as possible with
 the [upstream reference]({{ site.sources.forsydeio }}), but sometimes
 it can take some weeks to catch up. 
 
@@ -41,9 +44,9 @@ it can take some weeks to catch up.
     <dependency>
       <groupId>io.github.forsyde</groupId>
       <artifactId>forsyde-io-java</artifactId>
-      <version>0.2.4</version>
+      <version>{{ site.versions.forsydeio }}</version>
     </dependency>
 
 ## Gradle projects
 
-    implementation 'io.github.forsyde:forsyde-io-java:0.2.4'
+    implementation 'io.github.forsyde:forsyde-io-java:{{ site.versions.forsydeio }}'
