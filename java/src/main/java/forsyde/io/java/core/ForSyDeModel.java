@@ -1,7 +1,7 @@
 /**
  * 
  */
-package forsyde.io.java;
+package forsyde.io.java.core;
 
 import org.jgrapht.graph.DirectedPseudograph;
 

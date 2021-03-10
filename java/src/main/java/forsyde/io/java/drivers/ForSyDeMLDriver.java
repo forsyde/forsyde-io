@@ -1,7 +1,7 @@
 /**
  * 
  */
-package forsyde.io.java;
+package forsyde.io.java.drivers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,13 +32,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import forsyde.io.java.types.TypesFactory;
+import forsyde.io.java.core.Edge;
+import forsyde.io.java.core.ForSyDeModel;
+import forsyde.io.java.core.Port;
+import forsyde.io.java.core.Vertex;
+import forsyde.io.java.types.edge.EdgeFactory;
+import forsyde.io.java.types.vertex.VertexFactory;
 
 /**
  * @author rjordao
  *
  */
-public class ForSyDeModelXMLDriver {
+public class ForSyDeMLDriver {
 	
 	static public ForSyDeModel loadModel(String filePath) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
 		return loadModel(Files.newInputStream(Paths.get(filePath)));
@@ -66,53 +71,48 @@ public class ForSyDeModelXMLDriver {
 		Document xmlDoc = builder.parse(inStream);
 		// get the XPath object
 		XPath xPath = XPathFactory.newInstance().newXPath();
-		NodeList vertexList = (NodeList) xPath.compile("/ForSyDeModel/Vertex").evaluate(xmlDoc, XPathConstants.NODESET);
+		NodeList vertexList = (NodeList) xPath.compile("/graphml//graph/node").evaluate(xmlDoc, XPathConstants.NODESET);
 		for(int i = 0; i < vertexList.getLength(); i++) {
 			Element vertexElem = (Element) vertexList.item(i);
 			// TODO: the type creation could be safer or signal some exception
-			Vertex vertex = new Vertex(
-					vertexElem.getAttribute("id"), 
-					TypesFactory.getTypeFromName(vertexElem.getAttribute("type")).get(),
-					new HashSet<Port>(),
-					new HashMap<String, Object>()
-					);
+			Vertex vertex = VertexFactory.createVertex(
+					vertexElem.getAttribute("id"),
+					vertexElem.getAttribute("type"));
 			model.addVertex(vertex);
 			// iterate through ports and add them
-			NodeList portsList = (NodeList) xPath.compile("Port").evaluate(vertexElem, XPathConstants.NODESET);
+			NodeList portsList = (NodeList) xPath.compile("port").evaluate(vertexElem, XPathConstants.NODESET);
 			for(int j = 0; j < portsList.getLength(); j++) {
 				Element portElem = (Element) portsList.item(j);
 				// TODO: the type creation could be safer or signal some exception
 				Port port = new Port(
-						portElem.getAttribute("id"),
-						TypesFactory.getTypeFromName(portElem.getAttribute("type")).get()
+						portElem.getAttribute("name")
 						);
 				vertex.ports.add(port);
 			}
 			// iterate through properties and add them
-			NodeList propertyList = (NodeList) xPath.compile("Property").evaluate(vertexElem, XPathConstants.NODESET);
+			NodeList propertyList = (NodeList) xPath.compile("data").evaluate(vertexElem, XPathConstants.NODESET);
 			for(int j = 0; j < propertyList.getLength(); j++) {
 				Element propertyElem = (Element) propertyList.item(j);
 				// TODO: the type creation could be safer or signal some exception
-				Object property = readXMLIntoMap(propertyElem);
-				vertex.properties.put(propertyElem.getAttribute("name"), property);
+				Object property = readData(propertyElem);
+				vertex.properties.put(propertyElem.getAttribute("attr.name"), property);
 			}
 		}
-		NodeList edgeList = (NodeList) xPath.compile("/ForSyDeModel/Edge").evaluate(xmlDoc, XPathConstants.NODESET);
+		NodeList edgeList = (NodeList) xPath.compile("/graphml//graph/edge").evaluate(xmlDoc, XPathConstants.NODESET);
 		for(int i = 0; i < edgeList.getLength(); i++) {
-			Element vertex = (Element) edgeList.item(i);
-			String sid = vertex.getAttribute("source_id");
-			String tid = vertex.getAttribute("target_id");
+			Element edgeElem = (Element) edgeList.item(i);
+			String sid = edgeElem.getAttribute("source");
+			String tid = edgeElem.getAttribute("target");
 			// TODO: later put more safety here, even though for consistency should never fail
-			ModelType t = TypesFactory.getTypeFromName(vertex.getAttribute("type")).get();
 			Vertex source = model.vertexSet().stream().filter(v -> v.identifier.equals(sid)).findFirst().get();
 			Vertex target = model.vertexSet().stream().filter(v -> v.identifier.equals(tid)).findFirst().get();
-			Edge edge = new Edge(t, source, target);
-			if (vertex.hasAttribute("source_port_id")) {
-				Port sourcePort = source.ports.stream().filter(p -> p.identifier.equals(vertex.getAttribute("source_port_id"))).findFirst().get();
+			Edge edge = EdgeFactory.createEdge(source, target, edgeElem.getAttribute("type"));
+			if (edgeElem.hasAttribute("sourceport")) {
+				Port sourcePort = source.ports.stream().filter(p -> p.identifier.equals(edgeElem.getAttribute("sourceport"))).findFirst().get();
 				edge.sourcePort = Optional.of(sourcePort);
 			}
-			if (vertex.hasAttribute("target_port_id")) {
-				Port targetPort = source.ports.stream().filter(p -> p.identifier.equals(vertex.getAttribute("target_port_id"))).findFirst().get();
+			if (edgeElem.hasAttribute("targetport")) {
+				Port targetPort = source.ports.stream().filter(p -> p.identifier.equals(edgeElem.getAttribute("targetport"))).findFirst().get();
 				edge.targetPort = Optional.of(targetPort);
 			}
 			model.addEdge(source, target, edge);
@@ -124,33 +124,38 @@ public class ForSyDeModelXMLDriver {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.newDocument();
-		Element root = doc.createElement("ForSyDeModel");
-		doc.appendChild(root);
+		Element root = doc.createElement("graphml");
+		Element graph = doc.createElement("graph");
+		root.appendChild(graph);
+		doc.appendChild(graph);
 		for (Vertex v : model.vertexSet()) {
 			Element vElem = doc.createElement("Vertex");
 			vElem.setAttribute("id", v.identifier);
-			vElem.setAttribute("type", v.type.getName());
-			root.appendChild(vElem);
+			vElem.setAttribute("type", v.getTypeName());
+			graph.appendChild(vElem);
 			for (Port p : v.ports) {
 				Element pElem = doc.createElement("Port");
 				pElem.setAttribute("id", p.identifier);
-				pElem.setAttribute("type", p.type.getName());
 				vElem.appendChild(pElem);
 			}
-			writeMapIntoXML(doc, vElem, v.properties);
+			for (String key : v.properties.keySet()) {
+				Element propElem = writeData(doc, v.properties.get(key));
+				propElem.setAttribute("attr.name", key);
+				vElem.appendChild(propElem);
+			}
 		}
 		for(Edge e : model.edgeSet()) {
 			Element eElem = doc.createElement("Edge");
 			eElem.setAttribute("source_id", e.source.identifier);
 			eElem.setAttribute("target_id", e.target.identifier);
-			eElem.setAttribute("type", e.type.getName());
+			eElem.setAttribute("type", e.getTypeName());
 			if (e.sourcePort.isPresent()) {
 				eElem.setAttribute("source_port_id", e.sourcePort.get().identifier);
 			}
 			if (e.targetPort.isPresent()) {
 				eElem.setAttribute("target_port_id", e.targetPort.get().identifier);
 			}
-			root.appendChild(eElem);
+			graph.appendChild(eElem);
 		}
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
@@ -163,87 +168,72 @@ public class ForSyDeModelXMLDriver {
 	 * @param elem
 	 * @return
 	 */
-	static protected Object readXMLIntoMap(Element elem) {
+	static protected Object readData(Element elem) {
 		// it is a collection
-		NodeList children = elem.getElementsByTagName("Property");
-		if (children.getLength() > 0) {
-			Element first = (Element) children.item(0);
-			// it is a map
-			if(first.hasAttribute("name")) {
-				HashMap<String, Object> map = new HashMap<String, Object>();
-				for(int i = 0; i < children.getLength(); i++) {
-					Element child = (Element) children.item(i);
-					map.put(child.getAttribute("name"), readXMLIntoMap(child));
-				}
-				return map;
+		if (elem.getAttribute("attr.type").equals("integer")) {
+			return Integer.valueOf(elem.getTextContent());
+		} else if (elem.getAttribute("attr.type").equals("float")) {
+			return Float.valueOf(elem.getTextContent());
+		} else if (elem.getAttribute("attr.type").equals("double")) {
+			return Double.valueOf(elem.getTextContent());
+		} else if (elem.getAttribute("attr.type").equals("boolean")) {
+			return Boolean.valueOf(elem.getTextContent());
+		} else if (elem.getAttribute("attr.type").equals("object")) {
+			HashMap<String, Object> object = new HashMap<String, Object>();
+			NodeList children = elem.getElementsByTagName("data");
+			for(int i = 0; i < children.getLength(); i++) {
+				Element child = (Element) children.item(i);
+				object.put(child.getAttribute("attr.name"), readData(child));
 			}
-			// it is a list
-			else if(first.hasAttribute("index")) {
-				ArrayList<Object> list = new ArrayList<Object>();
-				for(int i = 0; i <  children.getLength(); i++) {
-					Element child = (Element) children.item(i);
-					//TODO: This can maybe break if the index are out of order, to be fixed later
-					list.add(Integer.parseInt(child.getAttribute("index")), readXMLIntoMap(child));
-				}
-				return list;
-			} 
-			// nothing, default to an unordered set
-			else {
-				HashSet<Object> set = new HashSet<Object>();
-				for(int i = 0; i <  children.getLength(); i++) {
-					Element child = (Element) children.item(i);
-					//TODO: This can maybe break if the index are out of order, to be fixed later
-					set.add(readXMLIntoMap(child));
-				}
-				return set;
+			return object;
+		} else if (elem.getAttribute("attr.type").equals("array")) {
+			NodeList children = elem.getElementsByTagName("data");
+			ArrayList<Object> array = new ArrayList<Object>(children.getLength());
+			for(int i = 0; i < children.getLength(); i++) {
+				Element child = (Element) children.item(i);
+				array.set(Integer.valueOf(child.getAttribute("attr.name")), readData(child));
 			}
-		} 
-		// it is a single value
-		else {
-			switch (elem.getAttribute("type")) {
-			case "Integer":
-				return Integer.valueOf(elem.getTextContent());
-			case "Float":
-				return Double.valueOf(elem.getTextContent());
-			default:
-				return elem.getTextContent(); 
-			}
+			return array;
+		} else {
+			return elem.getTextContent();
 		}
 	}
 	
-	static protected void writeMapIntoXML(Document doc, Element parent, Object value) {
+	static protected Element writeData(Document doc, Object value) {
+		Element newElem = doc.createElement("data");
 		if (value instanceof HashMap) {
 			HashMap<String, Object> map = (HashMap<String, Object>) value;
+			newElem.setAttribute("attr.type", "object");
 			for(String key : map.keySet()) {
-				Object mapValue = map.get(key);
-				Element child = doc.createElement("Property");
-				child.setAttribute("name", key);
-				writeMapIntoXML(doc, child, mapValue);
-				parent.appendChild(child);
+				Element child = writeData(doc, map.get(key));
+				child.setAttribute("attr.name", key);
+				newElem.appendChild(child);
 			}
 		} else if (value instanceof ArrayList) {
 			ArrayList<Object> list = (ArrayList<Object>) value;
+			newElem.setAttribute("attr.type", "array");
 			for (int i = 0; i < list.size(); i++) {
-				Element child = doc.createElement("Property");
-				child.setAttribute("index", String.valueOf(i));
-				writeMapIntoXML(doc, child, list.get(i));
-				parent.appendChild(child);
+				Element child = writeData(doc, list.get(i));
+				child.setAttribute("attr.name", String.valueOf(i));
+				newElem.appendChild(child);
 			}
-		} else if (value instanceof HashSet) {
-			HashSet<Object> set = (HashSet<Object>) value;
-			for(Object o : set) {
-				Element child = doc.createElement("Property");
-				writeMapIntoXML(doc, child, o);
-				parent.appendChild(child);
-			}
+		} else if (value instanceof Integer) {
+			newElem.setAttribute("attr.type", "integer");
+			newElem.setTextContent(value.toString());
+		} else if (value instanceof Float) {
+			newElem.setAttribute("attr.type", "float");
+			newElem.setTextContent(value.toString());
+		} else if (value instanceof Double) {
+			newElem.setAttribute("attr.type", "double");
+			newElem.setTextContent(value.toString());
+		} else if (value instanceof Boolean) {
+			newElem.setAttribute("attr.type", "boolean");
+			newElem.setTextContent(value.toString());
 		} else {
-			if (value instanceof Integer) {
-				parent.setAttribute("type", "Integer");
-			} else if (value instanceof Double) {
-				parent.setAttribute("type", "Float");
-			}
-			parent.setTextContent(value.toString());
+			newElem.setAttribute("attr.type", "string");
+			newElem.setTextContent(value.toString());
 		}
+		return newElem;
 	}
 
 }

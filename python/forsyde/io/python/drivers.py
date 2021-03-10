@@ -114,7 +114,7 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
         model = ForSyDeModel() if not other_model else other_model
         with open(source, 'r') as instream:
             tree = etree.parse(instream)
-            for vnode in tree.xpath('/xmlns:graphml/xmlns:graph//xmlns:node', namespaces=self.ns):
+            for vnode in tree.xpath('/xmlns:graphml//xmlns:graph/xmlns:node', namespaces=self.ns):
                 vertex = VertexFactory.build(identifier=vnode.get('id'),
                                              type_name=vnode.get('type'))
                 model.add_node(vertex, label=vertex.identifier)
@@ -141,7 +141,7 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
                             else:
                                 data[dataname] = child
                             dataopen.append((datanode, child))
-            for vedge in tree.xpath('/xmlns:graphml/xmlns:graph//xmlns:edge', namespaces=self.ns):
+            for vedge in tree.xpath('/xmlns:graphml//xmlns:graph/xmlns:edge', namespaces=self.ns):
                 source_vertex = next(n for (n, nid) in model.nodes.data('label')
                                      if nid == vedge.get('source'))
                 target_vertex = next(n for (n, nid) in model.nodes.data('label')

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package forsyde.io.java;
+package forsyde.io.java.core;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -17,7 +17,6 @@ import lombok.ToString;
 
 public class Edge {
 
-	public ModelType type;
 	public Vertex source;
 	public Vertex target;
 	public Optional<Port> sourcePort;
@@ -28,8 +27,7 @@ public class Edge {
 	 * @param target
 	 * @param source
 	 */
-	public Edge(ModelType type, Vertex target, Vertex source) {
-		this.type = type;
+	public Edge(Vertex target, Vertex source) {
 		this.target = target;
 		this.source = source;
 		this.sourcePort = Optional.empty();
@@ -43,8 +41,7 @@ public class Edge {
 	 * @param targetPort
 	 * @param sourcePort
 	 */
-	public Edge(ModelType type, Vertex source, Vertex target, Port sourcePort, Port targetPort) {
-		this.type = type;
+	public Edge(Vertex source, Vertex target, Port sourcePort, Port targetPort) {
 		this.target = target;
 		this.source = source;
 		this.targetPort = Optional.of(targetPort);
@@ -58,17 +55,20 @@ public class Edge {
 	 * @param targetPort
 	 * @param sourcePort
 	 */
-	public Edge(ModelType type, Vertex source, Vertex target, Optional<Port> sourcePort, Optional<Port> targetPort) {
-		this.type = type;
+	public Edge(Vertex source, Vertex target, Optional<Port> sourcePort, Optional<Port> targetPort) {
 		this.target = target;
 		this.source = source;
 		this.targetPort = targetPort;
 		this.sourcePort = sourcePort;
 	}
+	
+	public String getTypeName() {
+		return "Edge";
+	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(target, targetPort, source, sourcePort, type);
+		return Objects.hash(target, targetPort, source, sourcePort);
 	}
 
 	@Override
@@ -81,14 +81,13 @@ public class Edge {
 		}
 		Edge other = (Edge) obj;
 		return Objects.equals(target, other.target) && Objects.equals(targetPort, other.targetPort)
-				&& Objects.equals(source, other.source) && Objects.equals(sourcePort, other.sourcePort)
-				&& Objects.equals(type, other.type);
+				&& Objects.equals(source, other.source) && Objects.equals(sourcePort, other.sourcePort);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Edge [type=").append(type).append(", source=").append(source).append(", target=").append(target)
+		builder.append("Edge [type=").append(", source=").append(source).append(", target=").append(target)
 				.append(", sourcePort=").append(sourcePort).append(", targetPort=").append(targetPort).append("]");
 		return builder.toString();
 	}

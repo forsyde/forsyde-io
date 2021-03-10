@@ -1,12 +1,11 @@
 /**
  * 
  */
-package forsyde.io.java;
+package forsyde.io.java.core;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
-
-import javax.sound.sampled.Port;
 
 import lombok.Builder.Default;
 import lombok.ToString;
@@ -24,7 +23,6 @@ import java.util.Map;
 public class Vertex {
 
 	public String identifier;
-	public ModelType type;
 	public Set<Port> ports = new HashSet<Port>();
 	public Map<String, Object> properties = new HashMap<String, Object>();
 
@@ -32,9 +30,8 @@ public class Vertex {
 	 * @param identifier
 	 * @param type
 	 */
-	public Vertex(String identifier, ModelType type) {
+	public Vertex(String identifier) {
 		this.identifier = identifier;
-		this.type = type;
 	}
 
 	/**
@@ -43,9 +40,8 @@ public class Vertex {
 	 * @param ports
 	 * @param properties
 	 */
-	public Vertex(String identifier, ModelType type, Set<Port> ports, Map<String, Object> properties) {
+	public Vertex(String identifier, Set<Port> ports, Map<String, Object> properties) {
 		this.identifier = identifier;
-		this.type = type;
 		this.ports = ports;
 		this.properties = properties;
 	}
@@ -54,7 +50,7 @@ public class Vertex {
 	public String toString() {
 		final int maxLen = 5;
 		StringBuilder builder = new StringBuilder();
-		builder.append("Vertex [identifier=").append(identifier).append(", type=").append(type).append(", ports=")
+		builder.append("Vertex [identifier=").append(identifier).append(", type=").append(", ports=")
 				.append(ports != null ? toString(ports, maxLen) : null).append(", properties=")
 				.append(properties != null ? toString(properties.entrySet(), maxLen) : null).append("]");
 		return builder.toString();
@@ -65,7 +61,7 @@ public class Vertex {
 	}
 
 	public Optional<Port> getPort(String portName) {
-		return ports.stream().filter((p) -> p.identifier).findFirst();
+		return ports.stream().filter((p) -> p.identifier.equals(portName)).findFirst();
 	}
 
 	private String toString(Collection<?> collection, int maxLen) {

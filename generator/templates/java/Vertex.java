@@ -1,10 +1,12 @@
-package forsyde.io.java.types;
+package forsyde.io.java.types.vertex;
 
+import java.util.Map;
+import java.util.Set;
+import forsyde.io.java.Port;
 {% if type_data or not type_data['superClasses'] %}
 import forsyde.io.java.Vertex;
 {% endif %}
 {% if type_data and 'required_ports' in type_data %}
-import forsyde.io.java.Port;
 import forsyde.io.java.ForSyDeModel;
 {% endif %}
 
@@ -13,6 +15,24 @@ class {{type_name}} extends {{type_data['superClasses'][0]}} {
 {% else %}
 class {{type_name}} extends Vertex {
 {% endif %}
+
+    /**
+     * @param identifier
+     * @param type
+     */
+    public {{type_name}}(String identifier) {
+         super(identifier);
+    }
+ 
+    /**
+     * @param identifier
+     * @param type
+     * @param ports
+     * @param properties
+     */
+    public {{type_name}}(String identifier, Set<Port> ports, Map<String, Object> properties) {
+         super(identifier, ports, properties);
+    }
 
     @Override
     public String getTypeName() {
