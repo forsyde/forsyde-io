@@ -7,15 +7,15 @@
  */
 // Apply the java plugin to add support for Java
 plugins {
+  id 'java-library'
+  id 'maven-publish'
+  id 'signing'
   id 'java'
   id 'idea'
   id 'eclipse'
-  id 'maven-publish'
   //id "io.freefair.lombok" version "5.3.0"
-  id "com.jfrog.bintray" version "1.8.5"
+  //id "com.jfrog.bintray" version "1.8.5"
   id 'maven'
-  id 'signing'
-  id "com.github.mrsarm.jshell.plugin" version "1.0.0"
 }
 
 ext {
@@ -27,7 +27,7 @@ ext {
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = ext.artifactName
-version = '0.2.2'
+version = '0.2.5'
 
 
 // In this section you declare where to find the dependencies of your project
@@ -36,7 +36,6 @@ repositories {
   // You can declare any Maven/Ivy/file repository here.
   mavenCentral()
   jcenter()
-  mavenLocal()
 }
 
 // In this section you declare the dependencies for your production and test code
@@ -50,7 +49,7 @@ dependencies {
 
 sourceCompatibility = 1.8
 
-
+/* 
 bintray {   
     user = bintrayUser
     key = bintrayKey
@@ -66,7 +65,7 @@ bintray {
         }
     }
     publications = ['maven']
-}
+} */
 
 java { 
     withSourcesJar()
@@ -77,46 +76,52 @@ jar {
 	archiveFileName = "${artifactName}" + "-" + "${version}" + ".jar"
 }
 
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      pom.project {
-        name 'ForSyDe IO Java'
-        packaging 'jar'
-        // optionally artifactId can be defined here 
-        description 'ForSyDe IO Java Supporting libraries.'
-        url 'https://github.com/forsyde/forsyde-io'
-
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      artifactId = artifactName
+      from components.java
+      pom {
+        name = 'ForSyDe IO Java'
+        description = 'ForSYDe IO Java (+JVM) supporting library'
+        url = 'https://github.com/forsyde/forsyde-io'
+        packaging = 'jar'
         scm {
-          connection 'scm:git:https://github.com/forsyde/forsyde-io.git'
-          developerConnection 'scm:git:git@github.com:forsyde/forsyde-io.git'
-          url 'https://github.com/forsyde/forsyde-io'
+          connection = 'scm:git:https://github.com/forsyde/forsyde-io.git'
+          developerConnection = 'scm:git:git@github.com:forsyde/forsyde-io.git'
+          url = 'https://github.com/forsyde/forsyde-io'
         }
-
         licenses {
           license {
-            name 'The MIT License'
-            url 'https://choosealicense.com/licenses/mit/'
+            name = 'The MIT License'
+            url = 'https://choosealicense.com/licenses/mit/'
           }
         }
-
         developers {
           developer {
-            id 'Jordao'
-            name 'Rodolfo Jordao'
-            email 'jordao@kth.se'
+            id = 'Jordao'
+            name = 'Rodolfo Jordao'
+            email = 'jordao@kth.se'
           }
         }
+      }
+    }
+  }
+  repositories {
+    maven {
+      name = "OSSRH"
+      url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      credentials {
+        username = ossrhUsername ?: System.getenv("MAVEN_USERNAME")
+        password = ossrhPassword ?: System.getenv("MAVEN_PASSWORD")
+      }
+    }
+    maven {
+      name = "GitHubPackages"
+      url = url = uri("https://maven.pkg.github.com/forsyde/forsyde-io")
+      credentials {
+        username = System.getenv("GITHUB_ACTOR")
+        password = System.getenv("GITHUB_TOKEN")
       }
     }
   }
@@ -132,8 +137,6 @@ eclipse {
     name = artifactName
   }
 }
-
-
 
 artifacts {
     archives javadocJar, sourcesJar
