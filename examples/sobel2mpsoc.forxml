@@ -5,36 +5,36 @@
       <port name="output"/>
       <port name="combinator"/>
       <data attr.name="production" attr.type="object">
-        <data attr.name="gx" attr.type="string">6</data>
-        <data attr.name="gy" attr.type="string">6</data>
+        <data attr.name="gx" attr.type="integer">6</data>
+        <data attr.name="gy" attr.type="integer">6</data>
       </data>
     </node>
     <node id="GxCons" type="SDFComb">
       <port name="output"/>
       <port name="combinator"/>
       <data attr.name="consumption" attr.type="object">
-        <data attr.name="gx" attr.type="string">6</data>
+        <data attr.name="gx" attr.type="integer">6</data>
       </data>
       <data attr.name="production" attr.type="object">
-        <data attr.name="resx" attr.type="string">1</data>
+        <data attr.name="resx" attr.type="integer">1</data>
       </data>
     </node>
     <node id="GyCons" type="SDFComb">
       <port name="output"/>
       <port name="combinator"/>
       <data attr.name="consumption" attr.type="object">
-        <data attr.name="gy" attr.type="string">6</data>
+        <data attr.name="gy" attr.type="integer">6</data>
       </data>
       <data attr.name="production" attr.type="object">
-        <data attr.name="resy" attr.type="string">1</data>
+        <data attr.name="resy" attr.type="integer">1</data>
       </data>
     </node>
     <node id="AbsCons" type="SDFComb">
       <port name="output"/>
       <port name="combinator"/>
       <data attr.name="consumption" attr.type="object">
-        <data attr.name="resx" attr.type="string">1</data>
-        <data attr.name="resy" attr.type="string">1</data>
+        <data attr.name="resx" attr.type="integer">1</data>
+        <data attr.name="resy" attr.type="integer">1</data>
       </data>
     </node>
     <node id="getPx" type="Process">
@@ -58,22 +58,22 @@
     <node id="gxsig" type="Signal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
-      <data attr.name="size" attr.type="string">8</data>
+      <data attr.name="size" attr.type="integer">8</data>
     </node>
     <node id="gysig" type="Signal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
-      <data attr.name="size" attr.type="string">8</data>
+      <data attr.name="size" attr.type="integer">8</data>
     </node>
     <node id="absxsig" type="Signal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
-      <data attr.name="size" attr.type="string">8</data>
+      <data attr.name="size" attr.type="integer">8</data>
     </node>
     <node id="absysig" type="Signal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
-      <data attr.name="size" attr.type="string">8</data>
+      <data attr.name="size" attr.type="integer">8</data>
     </node>
     <node id="sobel" type="Process">
       <port name="imgInput"/>
@@ -99,62 +99,62 @@
     <node id="tdmabus1" type="TimeDivisionMultiplexer">
       <port name="requester"/>
       <port name="communication"/>
-      <data attr.name="slots" attr.type="string">4</data>
+      <data attr.name="slots" attr.type="integer">4</data>
     </node>
     <node id="getPxWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
       <port name="application"/>
-      <data attr.name="time" attr.type="string">4356</data>
+      <data attr.name="time" attr.type="integer">4356</data>
     </node>
     <node id="gxWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
       <port name="application"/>
-      <data attr.name="time" attr.type="string">4147</data>
+      <data attr.name="time" attr.type="integer">4147</data>
     </node>
     <node id="gyWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
       <port name="application"/>
-      <data attr.name="time" attr.type="string">4146</data>
+      <data attr.name="time" attr.type="integer">4146</data>
     </node>
     <node id="absWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
       <port name="application"/>
-      <data attr.name="time" attr.type="string">1411</data>
+      <data attr.name="time" attr.type="integer">1411</data>
     </node>
     <node id="gxsigWCCT" type="WCCT">
       <port name="signal"/>
       <port name="reciever"/>
       <port name="sender"/>
-      <data attr.name="time" attr.type="string">1</data>
+      <data attr.name="time" attr.type="integer">1</data>
     </node>
     <node id="gysigWCCT" type="WCCT">
       <port name="signal"/>
       <port name="reciever"/>
       <port name="sender"/>
-      <data attr.name="time" attr.type="string">1</data>
+      <data attr.name="time" attr.type="integer">1</data>
     </node>
     <node id="absxsigWCCT" type="WCCT">
       <port name="signal"/>
       <port name="reciever"/>
       <port name="sender"/>
-      <data attr.name="time" attr.type="string">1</data>
+      <data attr.name="time" attr.type="integer">1</data>
     </node>
     <node id="absysigWCCT" type="WCCT">
       <port name="signal"/>
       <port name="reciever"/>
       <port name="sender"/>
-      <data attr.name="time" attr.type="string">1</data>
+      <data attr.name="time" attr.type="integer">1</data>
     </node>
     <node id="min_throughput_obj" type="MinimumThroughput">
-      <data attr.name="apriori_importance" attr.type="string">1</data>
+      <data attr.name="apriori_importance" attr.type="integer">1</data>
     </node>
     <edge source="getPxCons" target="getPx" type="Output" sourceport="output"/>
     <edge source="GxCons" target="Gx" type="Output" sourceport="output"/>

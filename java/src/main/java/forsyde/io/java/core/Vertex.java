@@ -7,9 +7,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import lombok.Builder.Default;
-import lombok.ToString;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Collection;
@@ -19,6 +16,16 @@ import java.util.Map;
 /**
  * @author rjordao
  *
+ * Class holding data for a Vertex (Node) in memory.
+ * 
+ * Every vertex contains a number of {@link Port}s (which are repeated in the
+ * vertexed to increase reliability in the model, since putting
+ * them in edges would have been sufficient) with their associated types.
+ * Also, every vertex contains "Properties" which are arbitrary self-contained associated data,
+ * such as the size of bits in a Signal or the time slots in a Time Division
+ * Multiplexer.
+ * 
+ * 
  */
 public class Vertex {
 
@@ -28,7 +35,6 @@ public class Vertex {
 
 	/**
 	 * @param identifier
-	 * @param type
 	 */
 	public Vertex(String identifier) {
 		this.identifier = identifier;
@@ -36,7 +42,6 @@ public class Vertex {
 
 	/**
 	 * @param identifier
-	 * @param type
 	 * @param ports
 	 * @param properties
 	 */

@@ -109,10 +109,10 @@ class Vertex(object):
     Every vertex representes a main element in a ForSyDe model.
     Every vertex contains a number of ports (which are repeated in the
     vertexed to increase reliability in the model, since putting
-    them in edges would have been sufficient) with their associated types.
-    Also, every port contains "Properties" which are arbitrary associated data,
-    such as the size of bits in a Signal or the time slots in a Time Division
-    Multiplexer.
+    them in edges would have been sufficient).
+    Also, every vertex contains "Properties" which are arbitrary slef-contained 
+    associated data, such as the size of bits in a Signal or the time slots in 
+    a Time Division Multiplexer.
     """
 
     identifier: str = field(default_factory=_generate_vertex_id, hash=True)
@@ -154,8 +154,8 @@ class Vertex(object):
 class Edge(object):
     """Class containing all information for an Edge.
 
-    The edge contains references to the source and target vetexes
-    as well as the ports being connect on both ends, in case
+    The edge contains references to the source and target 'Vertex'es
+    as well as the 'Port's being connect on both ends, in case
     they exist. The edges also have types associated with them
     so that extra deductions can be made along the EDA flow.
     """

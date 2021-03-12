@@ -43,15 +43,7 @@ import forsyde.io.java.types.vertex.VertexFactory;
  * @author rjordao
  *
  */
-public class ForSyDeMLDriver {
-	
-	static public ForSyDeModel loadModel(String filePath) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
-		return loadModel(Files.newInputStream(Paths.get(filePath)));
-	}
-	
-	static public void writeModel(ForSyDeModel model, String filePath) throws ParserConfigurationException, TransformerException, IOException {
-		writeModel(model, Files.newOutputStream(Paths.get(filePath)));
-	}
+public class ForSyDeMLDriver extends ForSyDeModelDriver {
 	
 	/**
 	 * 
@@ -62,7 +54,7 @@ public class ForSyDeMLDriver {
 	 * @throws IOException
 	 * @throws XPathExpressionException
 	 */
-	static public ForSyDeModel loadModel(InputStream inStream) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+	public ForSyDeModel loadModel(InputStream inStream) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
 		// Build the ForSyDeModel representation
 		ForSyDeModel model = new ForSyDeModel();
 		// prepare XML internal representation and build it
@@ -112,7 +104,7 @@ public class ForSyDeMLDriver {
 				edge.sourcePort = Optional.of(sourcePort);
 			}
 			if (edgeElem.hasAttribute("targetport")) {
-				Port targetPort = source.ports.stream().filter(p -> p.identifier.equals(edgeElem.getAttribute("targetport"))).findFirst().get();
+				Port targetPort = target.ports.stream().filter(p -> p.identifier.equals(edgeElem.getAttribute("targetport"))).findFirst().get();
 				edge.targetPort = Optional.of(targetPort);
 			}
 			model.addEdge(source, target, edge);
@@ -120,22 +112,25 @@ public class ForSyDeMLDriver {
 		return model;
 	}
 	
-	static public void writeModel(ForSyDeModel model, OutputStream outStream) throws ParserConfigurationException, TransformerException {
+	public void writeModel(ForSyDeModel model, OutputStream outStream) throws ParserConfigurationException, TransformerException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.newDocument();
 		Element root = doc.createElement("graphml");
+		root.setAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns");
 		Element graph = doc.createElement("graph");
+		graph.setAttribute("id", "model");
+		graph.setAttribute("edgedefault", "directed");
 		root.appendChild(graph);
-		doc.appendChild(graph);
+		doc.appendChild(root);
 		for (Vertex v : model.vertexSet()) {
-			Element vElem = doc.createElement("Vertex");
+			Element vElem = doc.createElement("node");
 			vElem.setAttribute("id", v.identifier);
 			vElem.setAttribute("type", v.getTypeName());
 			graph.appendChild(vElem);
 			for (Port p : v.ports) {
-				Element pElem = doc.createElement("Port");
-				pElem.setAttribute("id", p.identifier);
+				Element pElem = doc.createElement("port");
+				pElem.setAttribute("name", p.identifier);
 				vElem.appendChild(pElem);
 			}
 			for (String key : v.properties.keySet()) {
@@ -145,15 +140,15 @@ public class ForSyDeMLDriver {
 			}
 		}
 		for(Edge e : model.edgeSet()) {
-			Element eElem = doc.createElement("Edge");
-			eElem.setAttribute("source_id", e.source.identifier);
-			eElem.setAttribute("target_id", e.target.identifier);
+			Element eElem = doc.createElement("edge");
+			eElem.setAttribute("source", e.source.identifier);
+			eElem.setAttribute("target", e.target.identifier);
 			eElem.setAttribute("type", e.getTypeName());
 			if (e.sourcePort.isPresent()) {
-				eElem.setAttribute("source_port_id", e.sourcePort.get().identifier);
+				eElem.setAttribute("sourceport", e.sourcePort.get().identifier);
 			}
 			if (e.targetPort.isPresent()) {
-				eElem.setAttribute("target_port_id", e.targetPort.get().identifier);
+				eElem.setAttribute("targetport", e.targetPort.get().identifier);
 			}
 			graph.appendChild(eElem);
 		}

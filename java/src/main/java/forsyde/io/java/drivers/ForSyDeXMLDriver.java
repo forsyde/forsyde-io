@@ -43,15 +43,9 @@ import forsyde.io.java.types.vertex.VertexFactory;
  * @author rjordao
  *
  */
-public class ForSyDeXMLDriver {
+@Deprecated(since = "This format support will be dropped in newer versions")
+public class ForSyDeXMLDriver extends ForSyDeModelDriver {
 	
-	static public ForSyDeModel loadModel(String filePath) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
-		return loadModel(Files.newInputStream(Paths.get(filePath)));
-	}
-	
-	static public void writeModel(ForSyDeModel model, String filePath) throws ParserConfigurationException, TransformerException, IOException {
-		writeModel(model, Files.newOutputStream(Paths.get(filePath)));
-	}
 	
 	/**
 	 * 
@@ -62,7 +56,7 @@ public class ForSyDeXMLDriver {
 	 * @throws IOException
 	 * @throws XPathExpressionException
 	 */
-	static public ForSyDeModel loadModel(InputStream inStream) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+	public ForSyDeModel loadModel(InputStream inStream) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
 		// Build the ForSyDeModel representation
 		ForSyDeModel model = new ForSyDeModel();
 		// prepare XML internal representation and build it
@@ -120,7 +114,7 @@ public class ForSyDeXMLDriver {
 		return model;
 	}
 	
-	static public void writeModel(ForSyDeModel model, OutputStream outStream) throws ParserConfigurationException, TransformerException {
+	public void writeModel(ForSyDeModel model, OutputStream outStream) throws ParserConfigurationException, TransformerException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.newDocument();

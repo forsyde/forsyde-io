@@ -8,13 +8,17 @@ import java.util.Optional;
 
 import javax.annotation.processing.Generated;
 
-import lombok.ToString;
 
 /**
  * @author rjordao
  *
+ * Class containing all information for an Edge.
+ * 
+ * The edge contains references to the source and target {@link Vertex}es
+ * as well as the {@link Port}s being connect on both ends, in case
+ * they exist. The edges also have types associated with them
+ * so that extra deductions can be made along the EDA flow.
  */
-
 public class Edge {
 
 	public Vertex source;
