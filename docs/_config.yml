@@ -25,7 +25,7 @@ description: >- # this means to ignore newlines until "baseurl:"
 baseurl: "/forsyde-io" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: jekyllrb
-github_username:  forsyde
+github_username: forsyde
 
 projects:
   forsyde: https://forsyde.github.io
@@ -33,6 +33,7 @@ projects:
   idesyde: https://github.com/forsyde/IDeSyDe
 sources:
   forsydeio: https://github.com/forsyde/forsyde-io
+  idesyde: https://github.com/forsyde/IDeSyDe
 versions:
   forsydeio: "0.2.5"
 
@@ -41,6 +42,7 @@ versions:
 # remote_theme: aksakalli/jekyll-doc-theme@gh-pages   
 plugins:
   - jekyll-feed
+  - jekyll-remote-theme
 
 remote_theme: pmarsceill/just-the-docs
 
