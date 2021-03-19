@@ -3,7 +3,7 @@
  */
 package forsyde.io.java.types.vertex;
 
-import forsyde.io.java.Vertex;
+import forsyde.io.java.core.Vertex;
 
 /**
  * @author rjordao
