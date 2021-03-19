@@ -33,9 +33,6 @@ data ForSyDeModel v e = ForSyDeModel
     edges :: [e]
   }
 
-instance Semigroup ForSyDeModel where
-  <>
-
 -- | Return an empty 'ForSyDeModel' with no 'Vertex' or 'Edge'
 emptyForSyDeModel :: ForSyDeModel idType
 emptyForSyDeModel = ForSyDeModel [] []
