@@ -9,6 +9,8 @@ import java.util.Set;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +32,7 @@ import java.util.Map;
 public class Vertex {
 
 	public String identifier;
-	public Set<Port> ports = new HashSet<Port>();
+	public List<Port> ports = new ArrayList<Port>();
 	public Map<String, Object> properties = new HashMap<String, Object>();
 
 	/**
@@ -45,7 +47,7 @@ public class Vertex {
 	 * @param ports
 	 * @param properties
 	 */
-	public Vertex(String identifier, Set<Port> ports, Map<String, Object> properties) {
+	public Vertex(String identifier, List<Port> ports, Map<String, Object> properties) {
 		this.identifier = identifier;
 		this.ports = ports;
 		this.properties = properties;

@@ -1,7 +1,7 @@
 package forsyde.io.java.types.vertex;
 
 import java.util.Map;
-import java.util.Set;
+import java.util.List;
 import forsyde.io.java.core.Port;
 {% if not type_data or not type_data['superClasses'] %}
 import forsyde.io.java.core.Vertex;
@@ -30,7 +30,7 @@ public class {{type_name}} extends Vertex {
      * @param ports
      * @param properties
      */
-    public {{type_name}}(String identifier, Set<Port> ports, Map<String, Object> properties) {
+    public {{type_name}}(String identifier, List<Port> ports, Map<String, Object> properties) {
          super(identifier, ports, properties);
     }
 
