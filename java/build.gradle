@@ -155,7 +155,7 @@ artifacts {
 signing {
   useInMemoryPgpKeys(
     System.getenv('GPG_SIGNING_KEY') ?: findProperty('signing.key'), 
-    System.getenv('GPG_SIGNING_PASSWORD') ?: findProperty('signing.password')
+    System.getenv('GPG_SIGNING_PASSWORD') ?: findProperty('signing.password') ?: '' //default to an empty password
   )
   sign publishing.publications.mavenJava
 	// useGpgCmd()

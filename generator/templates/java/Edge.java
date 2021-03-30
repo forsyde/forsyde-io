@@ -18,27 +18,21 @@ public class {{type_name}} extends Edge {
 {% endif %}
 
 	/**
-	 * Generated utility constructor for {{type_name}}.
-	 *
-	 * @see Edge for greater details.
+	 * {@inheritDoc}
 	 */
 	public {{type_name}}(Vertex target, Vertex source) {
 		super(target, source);
 	}
 	  
 	  /**
-	   * Generated utility constructor for {{type_name}}.
-	   *
-	   * @see Edge for greater details.
+	   * {@inheritDoc}
 	   */
 	  public {{type_name}}(Vertex source, Vertex target, Port sourcePort, Port targetPort) {
         super(target, source, sourcePort, targetPort);
 	  }
 	  
 	  /**
-	   * Main generated constructor for {{type_name}}.
-	   * 
-	   * @see Edge for greater details.
+	   * {@inheritDoc}
 	   */
 	  public {{type_name}}(Vertex source, Vertex target, Optional<Port> sourcePort, Optional<Port> targetPort) {
         super(target, source, sourcePort, targetPort);
