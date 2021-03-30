@@ -37,13 +37,13 @@ jobs:
         poetry run generate
     - name: Build with Gradle
       run: |
-        cd $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE/java
         ./gradlew build
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
     - name: Publish to GitHub Packages
       run: |
-        cd $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE/java
         ./gradlew publishMavenJavaPublicationToGitHubPackagesRepository
       env:
         USERNAME: ${{ github.actor }}
