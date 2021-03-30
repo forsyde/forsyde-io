@@ -1,3 +1,4 @@
+import pathlib
 from jinja2 import Environment, PackageLoader, select_autoescape
 from importlib.resources import read_text
 
@@ -21,5 +22,7 @@ def generate(spec):
     env.filters['haskellify'] = haskellify
     pak_template = env.get_template(
         'package.hs')  # read_text('templates', 'package.py')
+    pathlib.Path("haskell/src/ForSyDe/IO/Haskell").mkdir(parents=True,
+                                                         exist_ok=True)
     with open('haskell/src/ForSyDe/IO/Haskell/Types.hs', 'w') as typeout:
         typeout.write(pak_template.render(spec))
