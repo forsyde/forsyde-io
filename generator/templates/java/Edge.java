@@ -20,7 +20,7 @@ public class {{type_name}} extends Edge {
 	/**
 	 * Generated utility constructor for {{type_name}}.
 	 *
-	 * @see {@link Edge}
+	 * @see Edge for greater details.
 	 */
 	public {{type_name}}(Vertex target, Vertex source) {
 		super(target, source);
@@ -29,7 +29,7 @@ public class {{type_name}} extends Edge {
 	  /**
 	   * Generated utility constructor for {{type_name}}.
 	   *
-	   * @see {@link Edge}
+	   * @see Edge for greater details.
 	   */
 	  public {{type_name}}(Vertex source, Vertex target, Port sourcePort, Port targetPort) {
         super(target, source, sourcePort, targetPort);
@@ -38,7 +38,7 @@ public class {{type_name}} extends Edge {
 	  /**
 	   * Main generated constructor for {{type_name}}.
 	   * 
-	   * @see {@link Edge}
+	   * @see Edge for greater details.
 	   */
 	  public {{type_name}}(Vertex source, Vertex target, Optional<Port> sourcePort, Optional<Port> targetPort) {
         super(target, source, sourcePort, targetPort);
