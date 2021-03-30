@@ -14,7 +14,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - uses: abatilo/actions-poetry@v2.1.0
+      with:
+        poetry-version: '1.1.5'
     - name: Set up JDK 1.11
       uses: actions/setup-java@v1.4.3
       with:
@@ -22,13 +28,22 @@ jobs:
         server-id: io.github.forsyde # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-    - name: Build with Gradle
-      run: gradle build
+    - name: generate additional code for python supporting libs
+      run: |
+        cd $GITHUB_WORKSPACE
+        poetry update
+        poetry install
+        poetry run generate
+    
+    - name: Build with Gradle Wrapper
+      run: ./gradlew build
 
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
-    - name: Publish to GitHub Packages
-      run: java/gradlew publishMavenJavaPublicationToGitHubPackagesRepository
+    - name: Publish to GitHub Packages with gradle wrapper
+      run: |
+        cd $GITHUB_WORKSPACE/java
+        ./gradlew publishMavenJavaPublicationToGitHubPackagesRepository
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
