@@ -17,32 +17,28 @@ public class {{type_name}} extends {{type_data['superClasses'][0]}} {
 public class {{type_name}} extends Edge {
 {% endif %}
 
-    /**
-	   * @param type
-	   * @param target
-	   * @param source
-	   */
-	  public {{type_name}}(Vertex target, Vertex source) {
-        super(target, source);
-	  }
+	/**
+	 * Generated utility constructor for {{type_name}}.
+	 *
+	 * @see {@link Edge}
+	 */
+	public {{type_name}}(Vertex target, Vertex source) {
+		super(target, source);
+	}
 	  
 	  /**
-	   * @param type
-	   * @param target
-	   * @param source
-	   * @param targetPort
-	   * @param sourcePort
+	   * Generated utility constructor for {{type_name}}.
+	   *
+	   * @see {@link Edge}
 	   */
 	  public {{type_name}}(Vertex source, Vertex target, Port sourcePort, Port targetPort) {
         super(target, source, sourcePort, targetPort);
 	  }
 	  
 	  /**
-	   * @param type
-	   * @param target
-	   * @param source
-	   * @param targetPort
-	   * @param sourcePort
+	   * Main generated constructor for {{type_name}}.
+	   * 
+	   * @see {@link Edge}
 	   */
 	  public {{type_name}}(Vertex source, Vertex target, Optional<Port> sourcePort, Optional<Port> targetPort) {
         super(target, source, sourcePort, targetPort);

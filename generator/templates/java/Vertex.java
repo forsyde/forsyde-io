@@ -17,18 +17,14 @@ public class {{type_name}} extends Vertex {
 {% endif %}
 
     /**
-     * @param identifier
-     * @param type
+     * @see {@link Vertex}
      */
     public {{type_name}}(String identifier) {
          super(identifier);
     }
  
     /**
-     * @param identifier
-     * @param type
-     * @param ports
-     * @param properties
+     * @see {@link Vertex}
      */
     public {{type_name}}(String identifier, List<Port> ports, Map<String, Object> properties) {
          super(identifier, ports, properties);
