@@ -1,10 +1,10 @@
 name:                forsyde-io-haskell
-version:             0.2.7
-github:              "githubuser/forsyde-io-haskell"
+version:             0.2.6
+github:              "forsyde/forsyde-io"
 license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2020 Author name here"
+author:              "Rodolfo Jordao"
+maintainer:          "jordao@kth.com"
+copyright:           "2020 Rodolfo Jordao"
 
 extra-source-files:
 - README.md
