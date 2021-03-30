@@ -8,16 +8,15 @@ import java.util.Optional;
 
 import javax.annotation.processing.Generated;
 
-
 /**
  * @author rjordao
  *
- * Class containing all information for an Edge.
+ *         Class containing all information for an Edge.
  * 
- * The edge contains references to the source and target {@link Vertex}es
- * as well as the {@link Port}s being connect on both ends, in case
- * they exist. The edges also have types associated with them
- * so that extra deductions can be made along the EDA flow.
+ *         The edge contains references to the source and target
+ *         {@link Vertex}es as well as the {@link Port}s being connect on both
+ *         ends, in case they exist. The edges also have types associated with
+ *         them so that extra deductions can be made along the EDA flow.
  */
 public class Edge {
 
@@ -25,11 +24,14 @@ public class Edge {
 	public Vertex target;
 	public Optional<Port> sourcePort;
 	public Optional<Port> targetPort;
-	
+
 	/**
-	 * @param type
-	 * @param target
-	 * @param source
+	 * Utility constructor wrapping the source and target ports into empty optionals
+	 * for constructor {@link #Edge(Vertex, Vertex, Optional, Optional)}.
+	 * 
+	 * @param target Target Vertex for this edge.
+	 * @param source Source vertex for this edge.
+	 * @see #Edge(Vertex, Vertex, Optional, Optional)
 	 */
 	public Edge(Vertex target, Vertex source) {
 		this.target = target;
@@ -37,13 +39,16 @@ public class Edge {
 		this.sourcePort = Optional.empty();
 		this.targetPort = Optional.empty();
 	}
-	
+
 	/**
-	 * @param type
-	 * @param target
-	 * @param source
-	 * @param targetPort
-	 * @param sourcePort
+	 * Utility constructor wrapping the source and target ports into optionals for
+	 * constructor {@link #Edge(Vertex, Vertex, Optional, Optional)}.
+	 * 
+	 * @param target     Target Vertex for this edge.
+	 * @param source     Source vertex for this edge.
+	 * @param targetPort target vertex port for this edge.
+	 * @param sourcePort source vertex port for this edge.
+	 * @see #Edge(Vertex, Vertex, Optional, Optional)
 	 */
 	public Edge(Vertex source, Vertex target, Port sourcePort, Port targetPort) {
 		this.target = target;
@@ -51,13 +56,16 @@ public class Edge {
 		this.targetPort = Optional.of(targetPort);
 		this.sourcePort = Optional.of(sourcePort);
 	}
-	
+
 	/**
-	 * @param type
-	 * @param target
-	 * @param source
-	 * @param targetPort
-	 * @param sourcePort
+	 * Complete constructor for the {@link Edge} class, passing the optional ports
+	 * that it might contain as well as the references for the source and target
+	 * vertexes.
+	 * 
+	 * @param target     Target Vertex for this edge.
+	 * @param source     Source vertex for this edge.
+	 * @param targetPort {@link Optional} target vertex port for this edge.
+	 * @param sourcePort {@link Optional} source vertex port for this edge.
 	 */
 	public Edge(Vertex source, Vertex target, Optional<Port> sourcePort, Optional<Port> targetPort) {
 		this.target = target;
@@ -65,7 +73,7 @@ public class Edge {
 		this.targetPort = targetPort;
 		this.sourcePort = sourcePort;
 	}
-	
+
 	public String getTypeName() {
 		return "Edge";
 	}

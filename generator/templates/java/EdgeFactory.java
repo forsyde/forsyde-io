@@ -3,8 +3,8 @@
  */
 package forsyde.io.java.types.edge;
 
-import forsyde.io.java.Edge;
-import forsyde.io.java.Vertex;
+import forsyde.io.java.core.Edge;
+import forsyde.io.java.core.Vertex;
 
 /**
  * @author rjordao

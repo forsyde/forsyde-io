@@ -1,4 +1,6 @@
 import pathlib
+import re
+
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 
@@ -8,7 +10,8 @@ def generate(spec):
     vertex_template = ""
     # env.filters['pythonify'] = pythonify
     vertex_template = env.get_template('java/Vertex.java')
-    pathlib.Path("java/src/main/java/forsyde/io/java/types/vertex").mkdir(parents=True, exist_ok=True)
+    pathlib.Path("java/src/main/java/forsyde/io/java/types/vertex").mkdir(
+        parents=True, exist_ok=True)
     for (v, d) in spec['vertexTypes'].items():
         with open(f"java/src/main/java/forsyde/io/java/types/vertex/{v}.java",
                   'w') as typeout:
@@ -18,7 +21,8 @@ def generate(spec):
                     "type_data": d
                 }))
     edge_template = env.get_template('java/Edge.java')
-    pathlib.Path("java/src/main/java/forsyde/io/java/types/edge").mkdir(parents=True, exist_ok=True)
+    pathlib.Path("java/src/main/java/forsyde/io/java/types/edge").mkdir(
+        parents=True, exist_ok=True)
     for (e, d) in spec['edgeTypes'].items():
         with open(f"java/src/main/java/forsyde/io/java/types/edge/{e}.java",
                   'w') as typeout:
@@ -28,18 +32,28 @@ def generate(spec):
                     "type_data": d
                 }))
     vfactory_template = env.get_template('java/VertexFactory.java')
-    pathlib.Path("java/src/main/java/forsyde/io/java/types/vertex").mkdir(parents=True, exist_ok=True)
-    with open(f"java/src/main/java/forsyde/io/java/types/vertex/VertexFactory.java",
-              'w') as typeout:
-        typeout.write(
-            vfactory_template.render({
-                "vtypes": spec['vertexTypes']
-            }))
+    pathlib.Path("java/src/main/java/forsyde/io/java/types/vertex").mkdir(
+        parents=True, exist_ok=True)
+    with open(
+            f"java/src/main/java/forsyde/io/java/types/vertex/VertexFactory.java",
+            'w') as typeout:
+        typeout.write(vfactory_template.render({"vtypes":
+                                                spec['vertexTypes']}))
     efactory_template = env.get_template('java/EdgeFactory.java')
-    pathlib.Path("java/src/main/java/forsyde/io/java/types/edge").mkdir(parents=True, exist_ok=True)
-    with open(f"java/src/main/java/forsyde/io/java/types/edge/EdgeFactory.java",
-              'w') as typeout:
-        typeout.write(
-            efactory_template.render({
-                "etypes": spec['edgeTypes']
-            }))
+    pathlib.Path("java/src/main/java/forsyde/io/java/types/edge").mkdir(
+        parents=True, exist_ok=True)
+    with open(
+            f"java/src/main/java/forsyde/io/java/types/edge/EdgeFactory.java",
+            'w') as typeout:
+        typeout.write(efactory_template.render({"etypes": spec['edgeTypes']}))
+
+
+def fix_version(num: str) -> None:
+    file_name = 'java/build.gradle'
+    content = ""
+    with open(file_name, 'r') as f:
+        content = f.read()
+        content = re.sub(r"version(\s*)=(\s*)'(.+)'", f"version\\1=\\2'{num}'",
+                         content)
+    with open(file_name, 'w') as f:
+        f.write(content)

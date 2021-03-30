@@ -1,18 +1,19 @@
+import pathlib
 import re
 from importlib.resources import read_text
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 
-def pythonify(t: str) -> str:
+def haskellify(t: str) -> str:
     if t == "Integer":
-        return "int"
+        return "Int"
     elif t == "Float":
-        return "float"
+        return "Float"
     elif t == "String":
-        return "str"
+        return "String"
     elif t == "Dictionary":
-        return "dict"
+        return "MapItem"
     else:
         return "Vertex"
 
@@ -20,19 +21,21 @@ def pythonify(t: str) -> str:
 def generate(spec):
     env = Environment(loader=PackageLoader('generator', 'templates'),
                       autoescape=select_autoescape(['html', 'xml']))
-    env.filters['pythonify'] = pythonify
+    env.filters['haskellify'] = haskellify
     pak_template = env.get_template(
-        'package.py')  # read_text('templates', 'package.py')
-    with open('python/forsyde/io/python/types.py', 'w') as typeout:
+        'package.hs')  # read_text('templates', 'package.py')
+    pathlib.Path("haskell/src/ForSyDe/IO/Haskell").mkdir(parents=True,
+                                                         exist_ok=True)
+    with open('haskell/src/ForSyDe/IO/Haskell/Types.hs', 'w') as typeout:
         typeout.write(pak_template.render(spec))
 
 
 def fix_version(num: str) -> None:
-    file_name = 'python/pyproject.toml'
+    file_name = 'haskell/package.yaml'
     content = ""
     with open(file_name, 'r') as f:
         content = f.read()
-        content = re.sub(r'version(\s*)=(\s*)"(.+)"', f'version\\1=\\2"{num}"',
+        content = re.sub(r'version:(\s*)"?(.+)"?', f'version:\\1"{num}"',
                          content)
     with open(file_name, 'w') as f:
         f.write(content)

@@ -207,7 +207,7 @@
             ]
         }
     },
-    "portClasses": {},
+    "portTypes": {},
     "__commented__": {
         "vertexTypes": {
             "TypeRepresentation": null,

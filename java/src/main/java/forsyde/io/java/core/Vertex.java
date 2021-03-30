@@ -9,6 +9,8 @@ import java.util.Set;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,36 +18,46 @@ import java.util.Map;
 /**
  * @author rjordao
  *
- * Class holding data for a Vertex (Node) in memory.
+ *         Class holding data for a Vertex (Node) in memory.
  * 
- * Every vertex contains a number of {@link Port}s (which are repeated in the
- * vertexed to increase reliability in the model, since putting
- * them in edges would have been sufficient) with their associated types.
- * Also, every vertex contains "Properties" which are arbitrary self-contained associated data,
- * such as the size of bits in a Signal or the time slots in a Time Division
- * Multiplexer.
+ *         Every vertex contains a number of {@link Port}s (which are repeated
+ *         in the vertexed to increase reliability in the model, since putting
+ *         them in edges would have been sufficient) with their associated
+ *         types. Also, every vertex contains "Properties" which are arbitrary
+ *         self-contained associated data, such as the size of bits in a Signal
+ *         or the time slots in a Time Division Multiplexer.
  * 
  * 
  */
 public class Vertex {
 
 	public String identifier;
-	public Set<Port> ports = new HashSet<Port>();
+	public List<Port> ports = new ArrayList<Port>();
 	public Map<String, Object> properties = new HashMap<String, Object>();
 
 	/**
-	 * @param identifier
+	 * Utility constructor initializing all associated data as empty.
+	 * 
+	 * @param identifier the obligatory unique ID for this vertex.
+	 * @see #Vertex(String, List, Map)
 	 */
 	public Vertex(String identifier) {
 		this.identifier = identifier;
 	}
 
 	/**
-	 * @param identifier
-	 * @param ports
-	 * @param properties
+	 * Complete constructor, also initializing all the data one vertex may be
+	 * associated with. In the case of Java, the association is given by object
+	 * containment.
+	 * 
+	 * @param identifier The obligatory unique ID for this vertex.
+	 * @param ports      The list (set-like, no duplicates) of ports for this
+	 *                   vertex.
+	 * @param properties The mapping (associative array) of properties for this
+	 *                   vertex. Remember that it should be a tree of primitive
+	 *                   types such as Integers, Floats, Strings etc.
 	 */
-	public Vertex(String identifier, Set<Port> ports, Map<String, Object> properties) {
+	public Vertex(String identifier, List<Port> ports, Map<String, Object> properties) {
 		this.identifier = identifier;
 		this.ports = ports;
 		this.properties = properties;

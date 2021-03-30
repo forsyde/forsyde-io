@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns">
   <graph id="model" edgedefault="directed">
+    <!-- Sobel application definitions -->
     <node id="getPxCons" type="SDFComb">
       <port name="output"/>
       <port name="combinator"/>
@@ -79,11 +80,15 @@
       <port name="imgInput"/>
       <port name="imgOutput"/>
     </node>
+    <!-- application ends here -->
+    <!-- middle platform starts here -->
     <node id="order_1" type="AbstractOrdering"/>
     <node id="order_2" type="AbstractOrdering"/>
     <node id="order_3" type="AbstractOrdering"/>
     <node id="order_4" type="AbstractOrdering"/>
     <node id="order_5" type="AbstractOrdering"/>
+    <!-- middle platform ends here -->
+    <!-- low platform starts here -->
     <node id="tile1" type="AbstractProcessingComponent">
       <port name="communication"/>
     </node>
@@ -101,6 +106,7 @@
       <port name="communication"/>
       <data attr.name="slots" attr.type="integer">4</data>
     </node>
+    <!-- low platform ends here -->
     <node id="getPxWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>

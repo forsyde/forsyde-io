@@ -10,70 +10,28 @@ module ForSyDe.IO.Haskell
 where
 
 -- Base libraries
-
 import Data.Dynamic
--- External libraries
-import Data.Hashable
 import Data.List
 import Data.Maybe
--- Internal libraries
-import ForSyDe.IO.Haskell.Types
-  ( ModelType (Unknown),
-    getTypeDefaultProperties,
-    makeTypeFromName,
-  )
+import qualified Data.Map
+
+-- External libraries
+import Data.Hashable
 import Text.XML.HXT.Core
 import Text.XML.HXT.XPath
 
-data MapItem keyType
-  = StringMapItem String
-  | IntegerMapItem Integer
-  | FloatMapItem Float
-  | ListMapItem [MapItem keyType]
-  | DictMapItem [(keyType, MapItem keyType)]
+-- Internal libraries
+import ForSyDe.IO.Haskell.Types
+  ( Vertex(..),
+    Edge(..),
+    Port(..),
+    MapItem(..)
+  )
 
-data Port idType = Port
-  { portIdentifier :: idType,
-    portType :: ModelType
+data ForSyDeModel v e = ForSyDeModel
+  { vertexes :: [v],
+    edges :: [e]
   }
-  deriving (Eq)
-
-instance (Hashable idType) => Hashable (Port idType) where
-  hashWithSalt salt (Port id _) = hashWithSalt salt id
-
-data Vertex idType = Vertex
-  { vertexIdentifier :: idType,
-    vertexPorts :: [Port idType],
-    vertexProperties :: [(idType, MapItem idType)],
-    vertexType :: ModelType
-  }
-
-instance (Eq idType) => Eq (Vertex idType) where
-  (==) (Vertex id ports props vtype) (Vertex oid oports oprops ovtype)
-    | id == oid && vtype == ovtype && ports == oports = True
-    | otherwise = False
-
-instance (Hashable idType) => Hashable (Vertex idType) where
-  hashWithSalt salt (Vertex id _ _ _) = hashWithSalt salt id
-
-data Edge idType = Edge
-  { sourceVertex :: Vertex idType,
-    targetVertex :: Vertex idType,
-    sourceVertexPort :: Maybe (Port idType),
-    targetVertexPort :: Maybe (Port idType),
-    edgeType :: ModelType
-  }
-  deriving (Eq)
-
-instance (Hashable vIdType) => Hashable (Edge vIdType) where
-  hashWithSalt salt (Edge sId tId _ _ _) =
-    hashWithSalt salt sId + hashWithSalt salt tId
-
-data ForSyDeModel idType = ForSyDeModel
-  { vertexes :: [Vertex idType],
-    edges :: [Edge idType]
-  }
-  deriving (Eq)
 
 -- | Return an empty 'ForSyDeModel' with no 'Vertex' or 'Edge'
 emptyForSyDeModel :: ForSyDeModel idType

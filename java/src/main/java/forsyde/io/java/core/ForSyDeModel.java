@@ -6,18 +6,20 @@ package forsyde.io.java.core;
 import org.jgrapht.graph.DirectedPseudograph;
 
 import forsyde.io.java.drivers.ForSyDeModelDriver;
+import forsyde.io.java.drivers.ForSyDeModelHandler;
 
 /**
  * @author rjordao
  *
- * The main graph holder element representing a ForSyDe Model in memory.
+ *         The main graph holder element representing a ForSyDe Model in memory.
  *
- * A subclass of DirectedPseudograph from the jgrapht library, this class
- * holds the model (a graph model therefore) which can be used for
- * any purpose in the ForSyDe design flow.
+ *         A subclass of DirectedPseudograph from the jgrapht library, this
+ *         class holds the model (a graph model therefore) which can be used for
+ *         any purpose in the ForSyDe design flow.
  * 
- * to read and write this model, check subclasses of {@link ForSyDeModelDriver}
- * or simply use the 'API' class {@link ForSyDeModelHandler} directly.
+ *         to read and write this model, check subclasses of
+ *         {@link ForSyDeModelDriver} or simply use the 'API' class
+ *         {@link ForSyDeModelHandler} directly.
  * 
  * @see DirectedPseudograph
  * @see Vertex
@@ -25,9 +27,12 @@ import forsyde.io.java.drivers.ForSyDeModelDriver;
  */
 public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 
+	/**
+	 * Default constructor, returning an empty (system) model graph.
+	 */
 	public ForSyDeModel() {
 		super(Edge.class);
-		
+
 	}
 
 }
