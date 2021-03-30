@@ -29,7 +29,9 @@ public class Edge {
 	 * Utility constructor wrapping the source and target ports into empty optionals
 	 * for constructor {@link #Edge(Vertex, Vertex, Optional, Optional)}.
 	 * 
-	 * @see {@link #Edge(Vertex, Vertex, Optional, Optional)}
+	 * @param target Target Vertex for this edge.
+	 * @param source Source vertex for this edge.
+	 * @see #Edge(Vertex, Vertex, Optional, Optional)
 	 */
 	public Edge(Vertex target, Vertex source) {
 		this.target = target;
@@ -42,7 +44,11 @@ public class Edge {
 	 * Utility constructor wrapping the source and target ports into optionals for
 	 * constructor {@link #Edge(Vertex, Vertex, Optional, Optional)}.
 	 * 
-	 * @see {@link #Edge(Vertex, Vertex, Optional, Optional)}
+	 * @param target     Target Vertex for this edge.
+	 * @param source     Source vertex for this edge.
+	 * @param targetPort target vertex port for this edge.
+	 * @param sourcePort source vertex port for this edge.
+	 * @see #Edge(Vertex, Vertex, Optional, Optional)
 	 */
 	public Edge(Vertex source, Vertex target, Port sourcePort, Port targetPort) {
 		this.target = target;

@@ -28,7 +28,7 @@ ext {
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = ext.artifactName
-version = '0.2.6'
+version = '0.2.2'
 
 
 // In this section you declare where to find the dependencies of your project
@@ -153,7 +153,11 @@ artifacts {
 }
 
 signing {
+  useInMemoryPgpKeys(
+    System.getenv('GPG_SIGNING_KEY') ?: findProperty('signing.key'), 
+    System.getenv('GPG_SIGNING_PASSWORD') ?: findProperty('signing.password')
+  )
   sign publishing.publications.mavenJava
-	useGpgCmd()
-    sign configurations.archives
+	// useGpgCmd()
+  //   sign configurations.archives
 }

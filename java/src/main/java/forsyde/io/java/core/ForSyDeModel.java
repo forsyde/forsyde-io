@@ -6,6 +6,7 @@ package forsyde.io.java.core;
 import org.jgrapht.graph.DirectedPseudograph;
 
 import forsyde.io.java.drivers.ForSyDeModelDriver;
+import forsyde.io.java.drivers.ForSyDeModelHandler;
 
 /**
  * @author rjordao

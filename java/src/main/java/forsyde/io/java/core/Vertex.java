@@ -38,7 +38,8 @@ public class Vertex {
 	/**
 	 * Utility constructor initializing all associated data as empty.
 	 * 
-	 * @see {@link #Vertex(String, List, Map)}
+	 * @param identifier the obligatory unique ID for this vertex.
+	 * @see #Vertex(String, List, Map)
 	 */
 	public Vertex(String identifier) {
 		this.identifier = identifier;

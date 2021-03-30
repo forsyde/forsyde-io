@@ -46,13 +46,18 @@ import forsyde.io.java.types.vertex.VertexFactory;
 public class ForSyDeMLDriver extends ForSyDeModelDriver {
 
 	/**
+	 * Parses ForSyDe's graphML varatiation schema.
 	 * 
-	 * @param inStream
-	 * @return
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws IOException
-	 * @throws XPathExpressionException
+	 * @param inStream the {@link InputStream} to fetch the model from.
+	 * @return the parsed {@link ForSyDeModel} from whichever format was fed to the
+	 *         function.
+	 * @throws ParserConfigurationException TODO.
+	 * @throws SAXException                 In case something goes wrong with any
+	 *                                      XML input parsing.
+	 * @throws IOException                  In case something goes wrong with the
+	 *                                      input strema.
+	 * @throws XPathExpressionException     The XPaths are statically compiled, so
+	 *                                      this shound not normally happen.
 	 */
 	public ForSyDeModel loadModel(InputStream inStream)
 			throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
@@ -159,9 +164,10 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 	}
 
 	/**
+	 * Function to recursively build an data object for a {@link Vertex} object.
 	 * 
-	 * @param elem
-	 * @return
+	 * @param elem the XML element being parsed.
+	 * @return the parsed object.
 	 */
 	static protected Object readData(Element elem) {
 		// it is a collection
