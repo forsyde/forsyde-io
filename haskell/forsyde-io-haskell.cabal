@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 775d953bef1c654878626132bff2091284b737263970f671c80a24df381aff81
+-- hash: 55d9a999a55d14f21aca0ea7b83e65dff8323bea1062954a33d16c216a1725ff
 
 name:           forsyde-io-haskell
-version:        0.1.5
+version:        0.2.6
 description:    Please see the README on GitHub at <https://github.com/githubuser/forsyde-io-haskell#readme>
 homepage:       https://github.com/githubuser/forsyde-io-haskell#readme
 bug-reports:    https://github.com/githubuser/forsyde-io-haskell/issues
