@@ -1,10 +1,10 @@
 name:                forsyde-io-haskell
-version:             0.2.7
-github:              "githubuser/forsyde-io-haskell"
+version:             0.2.6
+github:              "forsyde/forsyde-io"
 license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2020 Author name here"
+author:              "Rodolfo Jordao"
+maintainer:          "jordao@kth.com"
+copyright:           "2020 Rodolfo Jordao"
 
 extra-source-files:
 - README.md
@@ -17,7 +17,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/forsyde-io-haskell#readme>
+description:         Please see the documentation at <https://forsyde.io.github/forsyde-io>
 
 dependencies:
 - base >= 4.7 && < 5
