@@ -1,0 +1,36 @@
+# This workflow will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+name: Test Building Supporting Python Library
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - uses: abatilo/actions-poetry@v2.1.0
+      with:
+        poetry-version: '1.1.5'
+    - name: generate additional code for python supporting libs
+      run: |
+        cd $GITHUB_WORKSPACE
+        poetry update
+        poetry install
+        poetry run generate
+    - name: Build and publish core and generated code
+      run: |
+        cd $GITHUB_WORKSPACE/python
+        poetry update
+        poetry build
+        poetry install
