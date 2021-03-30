@@ -44,7 +44,7 @@ import forsyde.io.java.types.vertex.VertexFactory;
  *
  */
 public class ForSyDeMLDriver extends ForSyDeModelDriver {
-	
+
 	/**
 	 * 
 	 * @param inStream
@@ -54,7 +54,8 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 	 * @throws IOException
 	 * @throws XPathExpressionException
 	 */
-	public ForSyDeModel loadModel(InputStream inStream) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+	public ForSyDeModel loadModel(InputStream inStream)
+			throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
 		// Build the ForSyDeModel representation
 		ForSyDeModel model = new ForSyDeModel();
 		// prepare XML internal representation and build it
@@ -64,26 +65,22 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 		// get the XPath object
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		NodeList vertexList = (NodeList) xPath.compile("/graphml//graph/node").evaluate(xmlDoc, XPathConstants.NODESET);
-		for(int i = 0; i < vertexList.getLength(); i++) {
+		for (int i = 0; i < vertexList.getLength(); i++) {
 			Element vertexElem = (Element) vertexList.item(i);
 			// TODO: the type creation could be safer or signal some exception
-			Vertex vertex = VertexFactory.createVertex(
-					vertexElem.getAttribute("id"),
-					vertexElem.getAttribute("type"));
+			Vertex vertex = VertexFactory.createVertex(vertexElem.getAttribute("id"), vertexElem.getAttribute("type"));
 			model.addVertex(vertex);
 			// iterate through ports and add them
 			NodeList portsList = (NodeList) xPath.compile("port").evaluate(vertexElem, XPathConstants.NODESET);
-			for(int j = 0; j < portsList.getLength(); j++) {
+			for (int j = 0; j < portsList.getLength(); j++) {
 				Element portElem = (Element) portsList.item(j);
 				// TODO: the type creation could be safer or signal some exception
-				Port port = new Port(
-						portElem.getAttribute("name")
-						);
+				Port port = new Port(portElem.getAttribute("name"));
 				vertex.ports.add(port);
 			}
 			// iterate through properties and add them
 			NodeList propertyList = (NodeList) xPath.compile("data").evaluate(vertexElem, XPathConstants.NODESET);
-			for(int j = 0; j < propertyList.getLength(); j++) {
+			for (int j = 0; j < propertyList.getLength(); j++) {
 				Element propertyElem = (Element) propertyList.item(j);
 				// TODO: the type creation could be safer or signal some exception
 				Object property = readData(propertyElem);
@@ -91,28 +88,32 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			}
 		}
 		NodeList edgeList = (NodeList) xPath.compile("/graphml//graph/edge").evaluate(xmlDoc, XPathConstants.NODESET);
-		for(int i = 0; i < edgeList.getLength(); i++) {
+		for (int i = 0; i < edgeList.getLength(); i++) {
 			Element edgeElem = (Element) edgeList.item(i);
 			String sid = edgeElem.getAttribute("source");
 			String tid = edgeElem.getAttribute("target");
-			// TODO: later put more safety here, even though for consistency should never fail
+			// TODO: later put more safety here, even though for consistency should never
+			// fail
 			Vertex source = model.vertexSet().stream().filter(v -> v.identifier.equals(sid)).findFirst().get();
 			Vertex target = model.vertexSet().stream().filter(v -> v.identifier.equals(tid)).findFirst().get();
 			Edge edge = EdgeFactory.createEdge(source, target, edgeElem.getAttribute("type"));
 			if (edgeElem.hasAttribute("sourceport")) {
-				Port sourcePort = source.ports.stream().filter(p -> p.identifier.equals(edgeElem.getAttribute("sourceport"))).findFirst().get();
+				Port sourcePort = source.ports.stream()
+						.filter(p -> p.identifier.equals(edgeElem.getAttribute("sourceport"))).findFirst().get();
 				edge.sourcePort = Optional.of(sourcePort);
 			}
 			if (edgeElem.hasAttribute("targetport")) {
-				Port targetPort = target.ports.stream().filter(p -> p.identifier.equals(edgeElem.getAttribute("targetport"))).findFirst().get();
+				Port targetPort = target.ports.stream()
+						.filter(p -> p.identifier.equals(edgeElem.getAttribute("targetport"))).findFirst().get();
 				edge.targetPort = Optional.of(targetPort);
 			}
 			model.addEdge(source, target, edge);
 		}
 		return model;
 	}
-	
-	public void writeModel(ForSyDeModel model, OutputStream outStream) throws ParserConfigurationException, TransformerException {
+
+	public void writeModel(ForSyDeModel model, OutputStream outStream)
+			throws ParserConfigurationException, TransformerException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.newDocument();
@@ -139,7 +140,7 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 				vElem.appendChild(propElem);
 			}
 		}
-		for(Edge e : model.edgeSet()) {
+		for (Edge e : model.edgeSet()) {
 			Element eElem = doc.createElement("edge");
 			eElem.setAttribute("source", e.source.identifier);
 			eElem.setAttribute("target", e.target.identifier);
@@ -153,11 +154,11 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			graph.appendChild(eElem);
 		}
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.transform(new DOMSource(doc), new StreamResult(outStream));
+		Transformer transformer = transformerFactory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.transform(new DOMSource(doc), new StreamResult(outStream));
 	}
-	
+
 	/**
 	 * 
 	 * @param elem
@@ -166,6 +167,8 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 	static protected Object readData(Element elem) {
 		// it is a collection
 		if (elem.getAttribute("attr.type").equals("integer")) {
+			return Integer.valueOf(elem.getTextContent());
+		} else if (elem.getAttribute("attr.type").equals("int")) {
 			return Integer.valueOf(elem.getTextContent());
 		} else if (elem.getAttribute("attr.type").equals("float")) {
 			return Float.valueOf(elem.getTextContent());
@@ -176,7 +179,7 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 		} else if (elem.getAttribute("attr.type").equals("object")) {
 			HashMap<String, Object> object = new HashMap<String, Object>();
 			NodeList children = elem.getElementsByTagName("data");
-			for(int i = 0; i < children.getLength(); i++) {
+			for (int i = 0; i < children.getLength(); i++) {
 				Element child = (Element) children.item(i);
 				object.put(child.getAttribute("attr.name"), readData(child));
 			}
@@ -184,7 +187,7 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 		} else if (elem.getAttribute("attr.type").equals("array")) {
 			NodeList children = elem.getElementsByTagName("data");
 			ArrayList<Object> array = new ArrayList<Object>(children.getLength());
-			for(int i = 0; i < children.getLength(); i++) {
+			for (int i = 0; i < children.getLength(); i++) {
 				Element child = (Element) children.item(i);
 				array.set(Integer.valueOf(child.getAttribute("attr.name")), readData(child));
 			}
@@ -193,13 +196,13 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			return elem.getTextContent();
 		}
 	}
-	
+
 	static protected Element writeData(Document doc, Object value) {
 		Element newElem = doc.createElement("data");
 		if (value instanceof HashMap) {
 			HashMap<String, Object> map = (HashMap<String, Object>) value;
 			newElem.setAttribute("attr.type", "object");
-			for(String key : map.keySet()) {
+			for (String key : map.keySet()) {
 				Element child = writeData(doc, map.get(key));
 				child.setAttribute("attr.name", key);
 				newElem.appendChild(child);
