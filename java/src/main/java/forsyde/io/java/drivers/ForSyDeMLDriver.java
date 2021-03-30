@@ -74,7 +74,6 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			NodeList portsList = (NodeList) xPath.compile("port").evaluate(vertexElem, XPathConstants.NODESET);
 			for (int j = 0; j < portsList.getLength(); j++) {
 				Element portElem = (Element) portsList.item(j);
-				// TODO: the type creation could be safer or signal some exception
 				Port port = new Port(portElem.getAttribute("name"));
 				vertex.ports.add(port);
 			}
@@ -82,7 +81,7 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			NodeList propertyList = (NodeList) xPath.compile("data").evaluate(vertexElem, XPathConstants.NODESET);
 			for (int j = 0; j < propertyList.getLength(); j++) {
 				Element propertyElem = (Element) propertyList.item(j);
-				// TODO: the type creation could be safer or signal some exception
+				// TODO: assure safety of this call
 				Object property = readData(propertyElem);
 				vertex.properties.put(propertyElem.getAttribute("attr.name"), property);
 			}
@@ -216,7 +215,7 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 				newElem.appendChild(child);
 			}
 		} else if (value instanceof Integer) {
-			newElem.setAttribute("attr.type", "integer");
+			newElem.setAttribute("attr.type", "int");
 			newElem.setTextContent(value.toString());
 		} else if (value instanceof Float) {
 			newElem.setAttribute("attr.type", "float");
