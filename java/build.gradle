@@ -113,16 +113,16 @@ publishing {
       name = "OSSRH"
       url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
       credentials {
-        username = ossrhUsername ?: System.getenv("MAVEN_USERNAME")
-        password = ossrhPassword ?: System.getenv("MAVEN_PASSWORD")
+        username = System.getenv("MAVEN_USERNAME") ?: ossrhUsername ?: ""
+        password = System.getenv("MAVEN_PASSWORD") ?: ossrhPassword ?: ""
       }
     }
     maven {
       name = "GitHubPackages"
       url = uri("https://maven.pkg.github.com/forsyde/forsyde-io")
       credentials {
-        username = System.getenv("GITHUB_ACTOR")
-        password = System.getenv("GITHUB_TOKEN")
+        username = System.getenv("GITHUB_ACTOR") ?: ""
+        password = System.getenv("GITHUB_TOKEN") ?: ""
       }
     }
   }
@@ -131,8 +131,8 @@ publishing {
 nexusPublishing {
   repositories {
     sonatype {
-      username = ossrhUsername ?: System.getenv("MAVEN_USERNAME")
-      password = ossrhPassword ?: System.getenv("MAVEN_PASSWORD")
+      username = System.getenv("MAVEN_USERNAME") ?: ossrhUsername ?: ""
+      password = System.getenv("MAVEN_PASSWORD") ?: ossrhPassword ?: ""
     }
   }
 }
