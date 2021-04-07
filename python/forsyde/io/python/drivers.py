@@ -1,7 +1,8 @@
 from typing import Any
 from typing import Optional
 
-from lxml import etree  # type: ignore
+# from lxml import etree  # type: ignore
+import xml.etree.ElementTree as etree
 
 from forsyde.io.python.core import Vertex
 from forsyde.io.python.core import Edge
@@ -12,18 +13,16 @@ from forsyde.io.python.types import EdgeFactory
 
 
 class ForSyDeModelDriver:
+
     def write(self, model: ForSyDeModel, sink: str) -> None:
         pass
 
-    def read(
-            self,
-            source: str,
-            other_model: Optional[ForSyDeModel] = None
-    ) -> Optional[ForSyDeModel]:
+    def read(self, source: str, other_model: Optional[ForSyDeModel] = None) -> Optional[ForSyDeModel]:
         return None
 
 
 class ForSyDeMLDriver(ForSyDeModelDriver):
+
     def __init__(self):
         self.ns = {'xmlns': 'http://graphml.graphdrawing.org/xmlns'}
 
@@ -63,8 +62,8 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
 
     def write(self, model: ForSyDeModel, sink: str) -> None:
         xmlns = '{http://graphml.graphdrawing.org/xmlns}'
-        tree = etree.Element(xmlns + 'graphml')
-        graph = etree.SubElement(tree, xmlns + 'graph')
+        root = etree.Element(xmlns + 'graphml')
+        graph = etree.SubElement(root, xmlns + 'graph')
         graph.set('id', 'model')
         graph.set('edgedefault', 'directed')
         for v in model.nodes:
@@ -77,8 +76,7 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
             prop_to_save = [(node_elem, v.properties)]
             while len(prop_to_save) > 0:
                 (parent, current) = prop_to_save.pop()
-                cur_iter = enumerate(current) if isinstance(
-                    current, list) else current.items()
+                cur_iter = enumerate(current) if isinstance(current, list) else current.items()
                 for (prop, val) in cur_iter:
                     prop_elem = etree.SubElement(parent, xmlns + 'data')
                     prop_elem.set('attr.name', str(prop))
@@ -103,31 +101,25 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
             if edge.target_vertex_port:
                 edge_elem.set('targetport', edge.target_vertex_port.identifier)
         with open(sink, 'wb') as sinkstream:
-            sinkstream.write(
-                etree.tostring(tree,
-                               pretty_print=True,
-                               xml_declaration=True,
-                               encoding='UTF-8'))
+            tree = etree.ElementTree(element=root)
+            tree.write(sinkstream, encoding="utf-8", xml_declaration=True)
+            #sinkstream.write(etree.tostring(tree, pretty_print=True, xml_declaration=True, encoding='UTF-8'))
 
-    def read(self,
-             source: str,
-             other_model: Optional[ForSyDeModel] = None) -> ForSyDeModel:
+    def read(self, source: str, other_model: Optional[ForSyDeModel] = None) -> ForSyDeModel:
+        xmlns = '{http://graphml.graphdrawing.org/xmlns}'
         model = ForSyDeModel() if not other_model else other_model
         with open(source, 'r') as instream:
             tree = etree.parse(instream)
-            for vnode in tree.xpath('/xmlns:graphml//xmlns:graph/xmlns:node',
-                                    namespaces=self.ns):
-                vertex = VertexFactory.build(identifier=vnode.get('id'),
-                                             type_name=vnode.get('type'))
+            for vnode in tree.findall('.//' + xmlns + 'graph/' + xmlns + 'node'):
+                vertex = VertexFactory.build(identifier=vnode.get('id'), type_name=vnode.get('type'))
                 model.add_node(vertex, label=vertex.identifier)
-                for portnode in vnode.xpath("xmlns:port", namespaces=self.ns):
+                for portnode in vnode.iterfind('./' + xmlns + "port"):
                     port = Port(identifier=portnode.get('name'))
                     vertex.ports.add(port)
                 dataopen = [(vnode, vertex.properties)]
                 while len(dataopen) > 0:
                     (parent, data) = dataopen.pop()
-                    for datanode in parent.xpath('xmlns:data',
-                                                 namespaces=self.ns):
+                    for datanode in parent.iterfind(xmlns + 'data'):
                         dataname = datanode.get('attr.name')
                         datatype = self.str_to_type(datanode.get('attr.type'))
                         if datatype is str\
@@ -144,33 +136,23 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
                             else:
                                 data[dataname] = child
                             dataopen.append((datanode, child))
-            for vedge in tree.xpath('/xmlns:graphml//xmlns:graph/xmlns:edge',
-                                    namespaces=self.ns):
-                source_vertex = next(n
-                                     for (n, nid) in model.nodes.data('label')
-                                     if nid == vedge.get('source'))
-                target_vertex = next(n
-                                     for (n, nid) in model.nodes.data('label')
-                                     if nid == vedge.get('target'))
-                edge = EdgeFactory.build(source=source_vertex,
-                                         target=target_vertex,
-                                         type_name=vedge.get('type'))
+            for vedge in tree.iterfind('.//' + xmlns + 'graph/' + xmlns + 'edge',
+                                      namespaces=self.ns):
+                source_vertex = next(n for (n, nid) in model.nodes.data('label') if nid == vedge.get('source'))
+                target_vertex = next(n for (n, nid) in model.nodes.data('label') if nid == vedge.get('target'))
+                edge = EdgeFactory.build(source=source_vertex, target=target_vertex, type_name=vedge.get('type'))
                 if vedge.get('sourceport'):
-                    edge.source_vertex_port = source_vertex.get_port(
-                        vedge.get('sourceport'))
+                    edge.source_vertex_port = source_vertex.get_port(vedge.get('sourceport'))
                 if vedge.get('targetport'):
-                    edge.target_vertex_port = target_vertex.get_port(
-                        vedge.get('targetport'))
+                    edge.target_vertex_port = target_vertex.get_port(vedge.get('targetport'))
                 key = (f"{vedge.get('source')}:{vedge.get('sourceport')}->" +
                        f"{vedge.get('target')}:{vedge.get('targetport')}")
-                model.add_edge(source_vertex,
-                               target_vertex,
-                               key=key,
-                               object=edge)
+                model.add_edge(source_vertex, target_vertex, key=key, object=edge)
         return model
 
 
 class ForSyDeXMLDriver(ForSyDeModelDriver):
+
     def property_to_xml(self, parent: etree.Element, prop: Any) -> None:
         '''Transform an object into the expected XML element layout
         
@@ -205,23 +187,20 @@ class ForSyDeXMLDriver(ForSyDeModelDriver):
         It collects the children recursively of 'elem' to the expected
         formats and types.
         '''
-        if len(elem.xpath("Property[@index]")) > 0:
-            elems = elem.xpath("Property[@index]")
+        if len(elem.iterfind("Property[@index]")) > 0:
+            elems = elem.iterfind("Property[@index]")
             l = [None for i in range(len(elems))]
             for e in elems:
                 l[int(e.get('index'))] = self.xml_to_property(e)
             return l
-        elif len(elem.xpath("Property[@name]")) > 0:
-            return {
-                e.get("name"): self.xml_to_property(e)
-                for e in elem.xpath("Property[@name]")
-            }
-        elif len(elem.xpath("Property")) > 0:
-            return set(self.xml_to_property(e) for e in elem.xpath("Property"))
+        elif len(elem.iterfind("Property[@name]")) > 0:
+            return {e.get("name"): self.xml_to_property(e) for e in elem.iterfind("Property[@name]")}
+        elif len(elem.iterfind("Property")) > 0:
+            return set(self.xml_to_property(e) for e in elem.iterfind("Property"))
         elif elem.text and elem.text.strip():
-            if elem.xpath('Property[@type="Integer"]'):
+            if elem.iterfind('Property[@type="Integer"]'):
                 return int(elem.text.strip())
-            elif elem.xpath('Property[@type="Float"]'):
+            elif elem.iterfind('Property[@type="Float"]'):
                 return float(elem.text.strip())
             else:
                 return elem.text.strip()
@@ -256,26 +235,20 @@ class ForSyDeXMLDriver(ForSyDeModelDriver):
             edge_elem.set('target_id', t.identifier)
             edge_elem.set('type', edge.get_type_tag())
             if edge.source_vertex_port:
-                edge_elem.set('source_port_id',
-                              edge.source_vertex_port.identifier)
+                edge_elem.set('source_port_id', edge.source_vertex_port.identifier)
             if edge.target_vertex_port:
-                edge_elem.set('target_port_id',
-                              edge.target_vertex_port.identifier)
+                edge_elem.set('target_port_id', edge.target_vertex_port.identifier)
         with open(sink, 'w') as sinkstream:
-            sinkstream.write(
-                etree.tostring(tree, pretty_print=True, encoding='unicode'))
+            sinkstream.write(etree.tostring(tree, pretty_print=True, encoding='unicode'))
 
-    def read(self,
-             source: str,
-             other_model: Optional[ForSyDeModel] = None) -> ForSyDeModel:
+    def read(self, source: str, other_model: Optional[ForSyDeModel] = None) -> ForSyDeModel:
         model = ForSyDeModel() if not other_model else other_model
         with open(source, 'r') as instream:
             tree = etree.parse(instream)
-            for vnode in tree.xpath('/ForSyDeModel/Vertex'):
-                vertex = VertexFactory.build(identifier=vnode.get('id'),
-                                             type_name=vnode.get('type'))
+            for vnode in tree.iterfind('/ForSyDeModel/Vertex'):
+                vertex = VertexFactory.build(identifier=vnode.get('id'), type_name=vnode.get('type'))
                 model.add_node(vertex, label=vertex.identifier)
-                for portnode in vnode.xpath("Port"):
+                for portnode in vnode.iterfind("Port"):
                     port = Port(identifier=portnode.get('id'))
                     if portnode.get('type') == "Integer":
                         port.port_type = int
@@ -283,39 +256,25 @@ class ForSyDeXMLDriver(ForSyDeModelDriver):
                         port.port_type = float
                     else:
                         try:
-                            port.port_type = VertexFactory.get_type_from_name(
-                                portnode.get('type'))
+                            port.port_type = VertexFactory.get_type_from_name(portnode.get('type'))
                         except NotImplementedError:
                             port.port_type = str
                     vertex.ports.add(port)
                 vertex.properties = self.xml_to_property(vnode)
-                # for propnode in vnode.xpath('Property'):
+                # for propnode in vnode.iterfind('Property'):
                 #     prop_name = propnode.get('name')
                 #     prop_val = model.xml_to_property(
                 #         propnode)  # json.loads(propnode.text)
                 #     vertex.properties[prop_name] = prop_val
-            for vedge in tree.xpath('/ForSyDeModel/Edge'):
-                source_vertex = next(n
-                                     for (n, nid) in model.nodes.data('label')
-                                     if nid == vedge.get('source_id'))
-                target_vertex = next(n
-                                     for (n, nid) in model.nodes.data('label')
-                                     if nid == vedge.get('target_id'))
-                edge = EdgeFactory.build(source=source_vertex,
-                                         target=target_vertex,
-                                         type_name=vedge.get('type'))
+            for vedge in tree.iterfind('/ForSyDeModel/Edge'):
+                source_vertex = next(n for (n, nid) in model.nodes.data('label') if nid == vedge.get('source_id'))
+                target_vertex = next(n for (n, nid) in model.nodes.data('label') if nid == vedge.get('target_id'))
+                edge = EdgeFactory.build(source=source_vertex, target=target_vertex, type_name=vedge.get('type'))
                 if vedge.get('source_port_id'):
-                    edge.source_vertex_port = source_vertex.get_port(
-                        vedge.get('source_port_id'))
+                    edge.source_vertex_port = source_vertex.get_port(vedge.get('source_port_id'))
                 if vedge.get('target_port_id'):
-                    edge.target_vertex_port = target_vertex.get_port(
-                        vedge.get('target_port_id'))
-                key = (
-                    f"{vedge.get('source_id')}:{vedge.get('source_port_id')}->"
-                    +
-                    f"{vedge.get('target_id')}:{vedge.get('target_port_id')}")
-                model.add_edge(source_vertex,
-                               target_vertex,
-                               key=key,
-                               object=edge)
+                    edge.target_vertex_port = target_vertex.get_port(vedge.get('target_port_id'))
+                key = (f"{vedge.get('source_id')}:{vedge.get('source_port_id')}->" +
+                       f"{vedge.get('target_id')}:{vedge.get('target_port_id')}")
+                model.add_edge(source_vertex, target_vertex, key=key, object=edge)
         return model
