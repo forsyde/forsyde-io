@@ -81,7 +81,7 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
                     current, list) else current.items()
                 for (prop, val) in cur_iter:
                     prop_elem = etree.SubElement(parent, xmlns + 'data')
-                    prop_elem.set('attr.name', prop)
+                    prop_elem.set('attr.name', str(prop))
                     prop_elem.set('attr.type', self.type_to_str(type(val)))
                     # prop_elem.text = json.dumps(val)
                     # it is a terminal property

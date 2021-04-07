@@ -1,3 +1,4 @@
+import pathlib
 from typing import Optional
 
 from forsyde.io.python.core import ForSyDeModel
@@ -283,7 +284,8 @@ def load_model(source: str, other_model: Optional[ForSyDeModel] = None) -> ForSy
     elif '.xml' in source:
         return ForSyDeXMLDriver().read(source, other_model)
     else:
-        raise NotImplementedError
+        ext = pathlib.Path(source).suffix
+        raise NotImplementedError(f"Format {ext} is unkown.")
     # self._rectify_model()
     # new_instance = ForSyDeModel() if not other_model else other_model
     # new_instance.read(source)
@@ -296,4 +298,5 @@ def write_model(model: ForSyDeModel, sink: str) -> None:
     elif '.xml' in sink:
         ForSyDeXMLDriver().write(model, sink)
     else:
-        raise NotImplementedError
+        ext = pathlib.Path(sink).suffix
+        raise NotImplementedError(f"Format {ext} is unkown.")
