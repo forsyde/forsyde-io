@@ -608,6 +608,64 @@ class AbstractProcessingComponent(AbstractPhysicalComponent):
     
 
 
+class InstrumentedProcessorTile(AbstractProcessingComponent):
+
+    """
+	This class has been generated automatically from the ForSyDe IO types model.
+	Any code in this file may be overwritten without notice, so it's best not to spend
+	time modifying anything here, but on the true source which is a model file.
+    
+    
+	"""
+
+    def get_type_tag(self) -> str:
+	        return "InstrumentedProcessorTile"
+            
+    
+    
+    def get_min_frequency_hz(self) -> Vertex:
+    
+        try:
+            return self.properties["min_frequency_hz"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'min_frequency_hz' property.")
+
+    
+    def get_max_memory_internal_bytes(self) -> Vertex:
+    
+        try:
+            return self.properties["max_memory_internal_bytes"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'max_memory_internal_bytes' property.")
+
+    
+    def get_clock_cycles_per_float_op(self) -> Vertex:
+    
+        try:
+            return self.properties["clock_cycles_per_float_op"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'clock_cycles_per_float_op' property.")
+
+    
+    def get_clock_cycles_per_integer_op(self) -> Vertex:
+    
+        try:
+            return self.properties["clock_cycles_per_integer_op"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'clock_cycles_per_integer_op' property.")
+
+    
+    def get_clock_cycles_per_boolean_op(self) -> Vertex:
+    
+        try:
+            return self.properties["clock_cycles_per_boolean_op"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'clock_cycles_per_boolean_op' property.")
+
+    
+    
+
+
 class AbstractStorageComponent(AbstractPhysicalComponent):
 
     """
@@ -653,6 +711,32 @@ class AbstractCommunicationComponent(AbstractPhysicalComponent):
     def get_type_tag(self) -> str:
 	        return "AbstractCommunicationComponent"
             
+    
+
+
+class InstrumentedCommunicationInterconnect(AbstractCommunicationComponent):
+
+    """
+	This class has been generated automatically from the ForSyDe IO types model.
+	Any code in this file may be overwritten without notice, so it's best not to spend
+	time modifying anything here, but on the true source which is a model file.
+    
+    
+	"""
+
+    def get_type_tag(self) -> str:
+	        return "InstrumentedCommunicationInterconnect"
+            
+    
+    
+    def get_min_bandwith_bytes_per_sec(self) -> Vertex:
+    
+        try:
+            return self.properties["min_bandwith_bytes_per_sec"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'min_bandwith_bytes_per_sec' property.")
+
+    
     
 
 
@@ -809,11 +893,15 @@ class VertexFactory:
         
         "AbstractProcessingComponent": AbstractProcessingComponent,
         
+        "InstrumentedProcessorTile": InstrumentedProcessorTile,
+        
         "AbstractStorageComponent": AbstractStorageComponent,
         
         "AbsractInterfaceComponent": AbsractInterfaceComponent,
         
         "AbstractCommunicationComponent": AbstractCommunicationComponent,
+        
+        "InstrumentedCommunicationInterconnect": InstrumentedCommunicationInterconnect,
         
         "TimeDivisionMultiplexer": TimeDivisionMultiplexer
         }

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "generator"
-version = "0.2.7"
+version = "0.2.10"
 description = "Meta generator for ForSyDe IO supporting libraries"
 authors = ["Rodolfo <jordao@kth.se>"]
 license = "MIT"
