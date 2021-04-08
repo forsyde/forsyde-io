@@ -148,105 +148,141 @@
       <port name="INS2SpeedVector"/>
       <port name="INS1LoadFactor"/>
       <port name="INS2LoadFactor"/>
+      <data attr.name="max_float_operations" attr.type="integer">0</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">0</data>
     </node>
     <node id="AltitudeCalcImpl" type="InstrumentedFunction">
       <port name="ADC1Altitude"/>
       <port name="Acc"/>
       <port name="Altitude"/>
+      <data attr.name="max_float_operations" attr.type="integer">6000000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">6000</data>
     </node>
     <node id="FormatSpeedVectorCalcImpl" type="InstrumentedFunction">
       <port name="INS1SpeedVector"/>
       <port name="INS2SpeedVector"/>
       <port name="InternalSpeedVector"/>
+      <data attr.name="max_float_operations" attr.type="integer">1200000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">2000</data>
     </node>
     <node id="SpeedVectorCalcImpl" type="InstrumentedFunction">
       <port name="InternalSpeedVector"/>
       <port name="SpeedVector"/>
       <port name="Speed"/>
+      <data attr.name="max_float_operations" attr.type="integer">4200000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">8000</data>
     </node>
     <node id="HeadingCalcImpl" type="InstrumentedFunction">
       <port name="SpeedVector"/>
       <port name="Heading"/>
+      <data attr.name="max_float_operations" attr.type="integer">6000000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">8000</data>
     </node>
     <node id="FormatLoadFactorCalcImpl" type="InstrumentedFunction">
       <port name="INS1LoadFactor"/>
       <port name="INS2LoadFactor"/>
       <port name="InternalLoadFactor"/>
+      <data attr.name="max_float_operations" attr.type="integer">1200000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">2000</data>
     </node>
     <node id="LoadFactorCalcImpl" type="InstrumentedFunction">
       <port name="InternalLoadFactor"/>
       <port name="LoadFactor"/>
+      <data attr.name="max_float_operations" attr.type="integer">12000000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">10000</data>
     </node>
     <node id="AccCalcImpl" type="InstrumentedFunction">
       <port name="LoadFactor"/>
       <port name="Acc"/>
+      <data attr.name="max_float_operations" attr.type="integer">9000000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">12000</data>
     </node>
     <node id="P2AImpl" type="InstrumentedFunction">
       <port name="Altitude"/>
       <port name="Speed"/>
       <port name="Heading"/>
+      <data attr.name="max_float_operations" attr.type="integer">0</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">0</data>
     </node>
-    <node id="ADC1Altitude" type="InstrumentedSignal">
+    <node id="ADC1AltitudeSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">200</data>
     </node>
-    <node id="INS1SpeedVector" type="InstrumentedSignal">
+    <node id="INS1SpeedVectorSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
     </node>
-    <node id="INS2SpeedVector" type="InstrumentedSignal">
+    <node id="INS2SpeedVectorSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
     </node>
-    <node id="INS1LoadFactor" type="InstrumentedSignal">
+    <node id="INS1LoadFactorSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
     </node>
-    <node id="INS2LoadFactor" type="InstrumentedSignal">
+    <node id="INS2LoadFactorSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
     </node>
-    <node id="InternalSpeedVector" type="InstrumentedSignal">
+    <node id="InternalSpeedVectorSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
     </node>
-    <node id="SpeedVector" type="InstrumentedSignal">
+    <node id="SpeedVectorSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
     </node>
-    <node id="InternalLoadFactor" type="InstrumentedSignal">
+    <node id="InternalLoadFactorSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
     </node>
-    <node id="LoadFactor" type="InstrumentedSignal">
+    <node id="LoadFactorSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
     </node>
-    <node id="Acc" type="InstrumentedSignal">
+    <node id="AccSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">500</data>
     </node>
-    <node id="Altitude" type="InstrumentedSignal">
+    <node id="AltitudeSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">200</data>
     </node>
-    <node id="Speed" type="InstrumentedSignal">
+    <node id="SpeedSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
     </node>
-    <node id="Heading" type="InstrumentedSignal">
+    <node id="HeadingSignal" type="InstrumentedSignal">
       <port name="fifoIn"/>
       <port name="fifoOut"/>
       <data attr.name="max_elem_size_bytes" attr.type="integer">500</data>
@@ -255,6 +291,23 @@
       <port name="Sensors"/>
       <port name="Display1"/>
     </node>
+    <edge source="RDC1Cons" target="RDC1" type="Output" sourceport="output"/>
+    <edge source="AltitudeCalcCons" target="AltitudeCalc" type="Output" sourceport="output"/>
+    <edge source="FormatSpeedVectorCalcCons" target="FormatLoadFactorCalc" type="Output" sourceport="output"/>
+    <edge source="SpeedVectorCalcCons" target="SpeedVectorCalc" type="Output" sourceport="output"/>
+    <edge source="HeadingCalcCons" target="HeadingCalc" type="Output" sourceport="output"/>
+    <edge source="FormatLoadFactorCalcCons" target="FormatLoadFactorCalc" type="Output" sourceport="output"/>
+    <edge source="LoadFactorCalcCons" target="LoadFactorCalc" type="Output" sourceport="output"/>
+    <edge source="AccCalcCons" target="AccCalc" type="Output" sourceport="output"/>
+    <edge source="RDC3Cons" target="RDC3" type="Output" sourceport="output"/>
+
+    <edge source="HeadingCalc" target="Heading" type="Output" sourceport="HeadingSignal" targetport="fifoIn"/>
+    <edge source="HeadingSignal" target="P2A" type="Output" sourceport="fifoOut" targetport="Heading"/>
+    <edge source="SpeedVectorCalc" target="SpeedVector" type="Output" sourceport="SpeedVectorSignal" targetport="fifoIn"/>
+    <edge source="SpeedVectorSignal" target="HeadingCalc" type="Output" sourceport="fifoOut" targetport="SpeedVector"/>
+    <edge source="SpeedVectorCalc" target="SpeedSignal" type="Output" sourceport="Speed" targetport="fifoIn"/>
+    <edge source="SpeedSignal" target="P2A" type="Output" sourceport="fifoOut" targetport="Speed"/>
+
     <!--  The end of the application model -->
     <!--  The start of the midel platform model -->
     <node id="time_triggered_schedule_1" type="TimeTriggeredScheduler"/>
@@ -264,6 +317,20 @@
     <node id="time_triggered_schedule_5" type="TimeTriggeredScheduler"/>
     <!--  The end of the midel platform model -->
     <!--  The start of the platform model -->
+    <node id="RDC1" type="InstrumentedProcessorTile">
+      <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
+      <data attr.name="max_memory_internal_bytes" attr.type="integer">0</data>
+      <data attr.name="clock_cycles_per_float_op" attr.type="integer">0</data>
+      <data attr.name="clock_cycles_per_integer_op" attr.type="integer">0</data>
+      <data attr.name="clock_cycles_per_boolean_op" attr.type="integer">0</data>
+    </node>
+    <node id="RDC3" type="InstrumentedProcessorTile">
+      <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
+      <data attr.name="max_memory_internal_bytes" attr.type="integer">0</data>
+      <data attr.name="clock_cycles_per_float_op" attr.type="integer">0</data>
+      <data attr.name="clock_cycles_per_integer_op" attr.type="integer">0</data>
+      <data attr.name="clock_cycles_per_boolean_op" attr.type="integer">0</data>
+    </node>
     <node id="ARM-R5-1" type="InstrumentedProcessorTile">
       <port name="communication"/>
       <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
@@ -319,63 +386,63 @@
     </node>
     <!--  The end of the platform model -->
     <!--  The start of the WCETs of the actors -->
-    <node id="RDC1" type="WCET">
+    <node id="RDC1WCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
       <port name="application"/>
       <data attr.name="time" attr.type="integer">4356</data>
     </node>
-    <node id="AltitudeCalc" type="WCET">
+    <node id="AltitudeCalcWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
       <port name="application"/>
       <data attr.name="time" attr.type="integer">4147</data>
     </node>
-    <node id="FormatSpeedVectorCalc" type="WCET">
+    <node id="FormatSpeedVectorCalcWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
       <port name="application"/>
       <data attr.name="time" attr.type="integer">4146</data>
     </node>
-    <node id="SpeedVectorCalc" type="WCET">
+    <node id="SpeedVectorCalcWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
       <port name="application"/>
       <data attr.name="time" attr.type="integer">1411</data>
     </node>
-    <node id="HeadingCalc" type="WCET">
+    <node id="HeadingCalcWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
       <port name="application"/>
       <data attr.name="time" attr.type="integer">4356</data>
     </node>
-    <node id="FormatLoadFactorCalc" type="WCET">
+    <node id="FormatLoadFactorCalcWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
       <port name="application"/>
       <data attr.name="time" attr.type="integer">4147</data>
     </node>
-    <node id="LoadFactorCalc" type="WCET">
+    <node id="LoadFactorCalcWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
       <port name="application"/>
       <data attr.name="time" attr.type="integer">4146</data>
     </node>
-    <node id="AccCalc" type="WCET">
+    <node id="AccCalcWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
       <port name="application"/>
       <data attr.name="time" attr.type="integer">1411</data>
     </node>
-    <node id="RDC3" type="WCET">
+    <node id="RDC3WCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
@@ -469,17 +536,7 @@
     </node>
     <!--  The end of the objectives -->
     <!--  The start of the relations -->
-    <edge source="RDC1Cons" target="RDC1" type="Output" sourceport="output"/>
-    <edge source="AltitudeCalcCons" target="AltitudeCalc" type="Output" sourceport="output"/>
-    <edge source="FormatSpeedVectorCalcCons" target="FormatLoadFactorCalc" type="Output" sourceport="output"/>
-    <edge source="SpeedVectorCalcCons" target="SpeedVectorCalc" type="Output" sourceport="output"/>
-    <edge source="HeadingCalcCons" target="HeadingCalc" type="Output" sourceport="output"/>
-    <edge source="FormatLoadFactorCalcCons" target="FormatLoadFactorCalc" type="Output" sourceport="output"/>
-    <edge source="LoadFactorCalcCons" target="LoadFactorCalc" type="Output" sourceport="output"/>
-    <edge source="AccCalcCons" target="AccCalc" type="Output" sourceport="output"/>
-    <edge source="RDC3Cons" target="RDC3" type="Output" sourceport="output"/>
 
-    <edge source="HeadingCalcCons" target="HeadingCalc" type="Output" sourceport="gx" targetport="fifoIn"/>
     <edge source="getPx" target="gysig" type="Output" sourceport="gy" targetport="fifoIn"/>
     <edge source="Gx" target="absxsig" type="Output" sourceport="resx" targetport="fifoIn"/>
     <edge source="Gy" target="absysig" type="Output" sourceport="resy" targetport="fifoIn"/>
