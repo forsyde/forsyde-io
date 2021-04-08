@@ -33,7 +33,7 @@
             },
             "required_properties": {
                 "time": {
-                    "class": "Integer",
+                    "class": "int",
                     "default": 0
                 }
             }
@@ -54,7 +54,7 @@
             },
             "required_properties": {
                 "time": {
-                    "class": "Integer",
+                    "class": "int",
                     "default": 0
                 }
             }
@@ -78,7 +78,7 @@
             },
             "required_properties": {
                 "apriori_importance": {
-                    "class": "Integer",
+                    "class": "int",
                     "default": 1
                 }
             }
@@ -88,6 +88,29 @@
         "CustomScheduler": null,
         "RoundRobinScheduler": null,
         "Function": null,
+        "InstrumentedFunction": {
+            "superClasses": [
+                "Function"
+            ],
+            "required_properties": {
+                "max_float_operations": {
+                    "class": "int",
+                    "default": 0
+                },
+                "max_int_operations": {
+                    "class": "int",
+                    "default": 0
+                },
+                "max_boolean_operations": {
+                    "class": "int",
+                    "default": 0
+                },
+                "max_memory_size_in_bytes": {
+                    "class": "int",
+                    "default": 1
+                }
+            }
+        },
         "Process": {
             "superClasses": [
                 "Function"
@@ -136,10 +159,14 @@
             },
             "required_properties": {
                 "consumption": {
-                    "class": "Dictionary"
+                    "class": "object",
+                    "key": "string",
+                    "value": "int"
                 },
                 "production": {
-                    "class": "Dictionary"
+                    "class": "object",
+                    "key": "string",
+                    "value": "int"
                 }
             }
         },
@@ -162,6 +189,33 @@
                 "AbstractPhysicalComponent"
             ]
         },
+        "InstrumentedProcessorTile": {
+            "superClasses": [
+                "AbstractProcessingComponent"
+            ],
+            "required_properties": {
+                "min_frequency_hz": {
+                    "class": "integer",
+                    "default": 50000000
+                },
+                "max_memory_internal_bytes": {
+                    "class": "integer",
+                    "default": 32000
+                },
+                "clock_cycles_per_float_op": {
+                    "class": "integer",
+                    "default": 6
+                },
+                "clock_cycles_per_integer_op": {
+                    "class": "integer",
+                    "default": 2
+                },
+                "clock_cycles_per_boolean_op": {
+                    "class": "integer",
+                    "default": 1
+                }
+            }
+        },
         "AbstractStorageComponent": {
             "superClasses": [
                 "AbstractPhysicalComponent"
@@ -177,13 +231,24 @@
                 "AbstractPhysicalComponent"
             ]
         },
+        "InstrumentedCommunicationInterconnect": {
+            "superClasses": [
+                "AbstractCommunicationComponent"
+            ],
+            "required_properties": {
+                "min_bandwith_bytes_per_sec": {
+                    "class": "integer",
+                    "default": 1000000
+                }
+            }
+        },
         "TimeDivisionMultiplexer": {
             "superClasses": [
                 "AbstractCommunicationComponent"
             ],
             "required_properties": {
                 "slots": {
-                    "class": "Integer",
+                    "class": "int",
                     "default": 1
                 }
             }
@@ -211,13 +276,13 @@
     "__commented__": {
         "vertexTypes": {
             "TypeRepresentation": null,
-            "Integer": {
+            "int": {
                 "superClasses": [
                     "TypeRepresentation"
                 ],
                 "required_properties": {
                     "bits": {
-                        "class": "Integer",
+                        "class": "int",
                         "default": 0
                     }
                 }
@@ -228,7 +293,7 @@
                 ],
                 "required_properties": {
                     "bits": {
-                        "class": "Integer",
+                        "class": "int",
                         "default": 0
                     }
                 }
@@ -249,7 +314,7 @@
                 ],
                 "required_properties": {
                     "size": {
-                        "class": "Integer",
+                        "class": "int",
                         "default": 0
                     }
                 }
