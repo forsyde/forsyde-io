@@ -5,6 +5,7 @@ from typing import Optional
 from forsyde.io.python.core import ForSyDeModel
 from forsyde.io.python.drivers import ForSyDeMLDriver
 from forsyde.io.python.drivers import ForSyDeXMLDriver
+from forsyde.io.python.drivers import ForSyDeDotDriver
 
 
 def load_model(source: str,
@@ -30,11 +31,12 @@ def load_model(source: str,
 
 
 def write_model(model: ForSyDeModel, sink: str) -> None:
-    if '.forxml' in sink:
+    ext = pathlib.Path(sink).suffix
+    if ext == '.forxml':
         ForSyDeMLDriver().write(model, sink)
-    elif '.xml' in sink:
-
+    elif ext == '.xml':
         ForSyDeXMLDriver().write(model, sink)
+    elif ext == '.dot':
+        ForSyDeDotDriver().write(model, sink)
     else:
-        ext = pathlib.Path(sink).suffix
         raise NotImplementedError(f"Format {ext} is unkown.")

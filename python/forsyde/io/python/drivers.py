@@ -332,7 +332,7 @@ class ForSyDeXMLDriver(ForSyDeModelDriver):
         return model
 
 
-class DotDriver(ForSyDeModelDriver):
+class ForSyDeDotDriver(ForSyDeModelDriver):
     '''Dot writer for some visualization of the models.
     '''
     def read(self, source: str,
