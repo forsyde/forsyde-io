@@ -6,8 +6,6 @@ package forsyde.io.java.core;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.annotation.processing.Generated;
-
 /**
  * @author rjordao
  *

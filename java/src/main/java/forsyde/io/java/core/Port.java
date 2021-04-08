@@ -3,8 +3,6 @@
  */
 package forsyde.io.java.core;
 
-import javax.annotation.processing.Generated;
-
 /**
  * @author rjordao
  *
