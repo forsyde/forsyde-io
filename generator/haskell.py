@@ -6,7 +6,7 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 
 def haskellify(t: str) -> str:
-    if t == "int":
+    if t == "int" or t == "integer":
         return "Int"
     elif t == "float":
         return "Float"

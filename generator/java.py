@@ -24,7 +24,7 @@ def javify(t: Any) -> str:
         else:
             return javify(c)
     else:
-        if t == "int":
+        if t == "int" or t == "integer":
             return "Integer"
         elif t == "float":
             return "Float"

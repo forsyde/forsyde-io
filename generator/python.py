@@ -15,7 +15,7 @@ def pythonify(t: Union[dict, int, float, str]) -> str:
         else:
             return pythonify(c)
     else:
-        if t == "int":
+        if t == "int" or t == "integer":
             return "int"
         elif t == "float":
             return "float"
