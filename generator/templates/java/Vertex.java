@@ -41,7 +41,7 @@ public class {{type_name}} extends Vertex {
         return getPort("{{req_port}}").get();
     }
     
-    public {{req_port_data | javify}} get{{req_port | capitalize }}(ForSyDeModel model) {
+    public {{req_port_data | javify}} get{{req_port | capitalize }}() {
         {% if req_port_data['default'] %}
         return {{req_port_data['default']}};
         {% else %}
@@ -53,11 +53,11 @@ public class {{type_name}} extends Vertex {
 
     {% if type_data and 'required_properties' in type_data %}
     {% for req_property, req_property_data in type_data['required_properties'].items() %}
-    public {{req_property_data | javify}} get{{req_property | snake_to_pascal }}(ForSyDeModel model) 
+    public {{req_property_data | javify}} get{{req_property | snake_to_pascal }}() 
     {%- if not 'default' in req_property_data -%}
     throws IllegalStateException
     {%- endif %} {
-        if (properties.has("{{req_property}}")) {
+        if (properties.containsKey("{{req_property}}")) {
             return ({{req_property_data | javify}}) properties.get("{{req_property}}");
         } else {
             {%- if 'default' in req_property_data %}

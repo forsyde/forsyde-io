@@ -22,7 +22,7 @@ def pythonify(t: Union[dict, int, float, str]) -> str:
         elif t == "string":
             return "str"
         else:
-            return "Vertex"
+            return t
 
 
 def generate(spec):

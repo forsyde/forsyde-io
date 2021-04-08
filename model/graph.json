@@ -33,7 +33,7 @@
             },
             "required_properties": {
                 "time": {
-                    "class": "int",
+                    "class": "integer",
                     "default": 0
                 }
             }
@@ -54,7 +54,7 @@
             },
             "required_properties": {
                 "time": {
-                    "class": "int",
+                    "class": "integer",
                     "default": 0
                 }
             }
@@ -78,7 +78,7 @@
             },
             "required_properties": {
                 "apriori_importance": {
-                    "class": "int",
+                    "class": "integer",
                     "default": 1
                 }
             }
@@ -94,19 +94,19 @@
             ],
             "required_properties": {
                 "max_float_operations": {
-                    "class": "int",
+                    "class": "integer",
                     "default": 0
                 },
                 "max_int_operations": {
-                    "class": "int",
+                    "class": "integer",
                     "default": 0
                 },
                 "max_boolean_operations": {
-                    "class": "int",
+                    "class": "integer",
                     "default": 0
                 },
                 "max_memory_size_in_bytes": {
-                    "class": "int",
+                    "class": "integer",
                     "default": 1
                 }
             }
@@ -161,12 +161,12 @@
                 "consumption": {
                     "class": "object",
                     "key": "string",
-                    "value": "int"
+                    "value": "integer"
                 },
                 "production": {
                     "class": "object",
                     "key": "string",
-                    "value": "int"
+                    "value": "integer"
                 }
             }
         },
@@ -248,7 +248,7 @@
             ],
             "required_properties": {
                 "slots": {
-                    "class": "int",
+                    "class": "integer",
                     "default": 1
                 }
             }
@@ -276,13 +276,13 @@
     "__commented__": {
         "vertexTypes": {
             "TypeRepresentation": null,
-            "int": {
+            "integer": {
                 "superClasses": [
                     "TypeRepresentation"
                 ],
                 "required_properties": {
                     "bits": {
-                        "class": "int",
+                        "class": "integer",
                         "default": 0
                     }
                 }
@@ -293,7 +293,7 @@
                 ],
                 "required_properties": {
                     "bits": {
-                        "class": "int",
+                        "class": "integer",
                         "default": 0
                     }
                 }
@@ -314,7 +314,7 @@
                 ],
                 "required_properties": {
                     "size": {
-                        "class": "int",
+                        "class": "integer",
                         "default": 0
                     }
                 }

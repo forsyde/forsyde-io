@@ -31,7 +31,7 @@ def javify(t: Any) -> str:
         elif t == "string":
             return "String"
         else:
-            return "Vertex"
+            return t
 
 
 def generate(spec):

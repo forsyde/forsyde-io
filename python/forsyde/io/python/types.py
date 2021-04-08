@@ -623,7 +623,7 @@ class InstrumentedProcessorTile(AbstractProcessingComponent):
             
     
     
-    def get_min_frequency_hz(self) -> Vertex:
+    def get_min_frequency_hz(self) -> int:
     
         try:
             return self.properties["min_frequency_hz"]
@@ -631,7 +631,7 @@ class InstrumentedProcessorTile(AbstractProcessingComponent):
             raise AttributeError(f"Vertex {self.identifier} has no required 'min_frequency_hz' property.")
 
     
-    def get_max_memory_internal_bytes(self) -> Vertex:
+    def get_max_memory_internal_bytes(self) -> int:
     
         try:
             return self.properties["max_memory_internal_bytes"]
@@ -639,7 +639,7 @@ class InstrumentedProcessorTile(AbstractProcessingComponent):
             raise AttributeError(f"Vertex {self.identifier} has no required 'max_memory_internal_bytes' property.")
 
     
-    def get_clock_cycles_per_float_op(self) -> Vertex:
+    def get_clock_cycles_per_float_op(self) -> int:
     
         try:
             return self.properties["clock_cycles_per_float_op"]
@@ -647,7 +647,7 @@ class InstrumentedProcessorTile(AbstractProcessingComponent):
             raise AttributeError(f"Vertex {self.identifier} has no required 'clock_cycles_per_float_op' property.")
 
     
-    def get_clock_cycles_per_integer_op(self) -> Vertex:
+    def get_clock_cycles_per_integer_op(self) -> int:
     
         try:
             return self.properties["clock_cycles_per_integer_op"]
@@ -655,7 +655,7 @@ class InstrumentedProcessorTile(AbstractProcessingComponent):
             raise AttributeError(f"Vertex {self.identifier} has no required 'clock_cycles_per_integer_op' property.")
 
     
-    def get_clock_cycles_per_boolean_op(self) -> Vertex:
+    def get_clock_cycles_per_boolean_op(self) -> int:
     
         try:
             return self.properties["clock_cycles_per_boolean_op"]
@@ -729,7 +729,7 @@ class InstrumentedCommunicationInterconnect(AbstractCommunicationComponent):
             
     
     
-    def get_min_bandwith_bytes_per_sec(self) -> Vertex:
+    def get_min_bandwith_bytes_per_sec(self) -> int:
     
         try:
             return self.properties["min_bandwith_bytes_per_sec"]
