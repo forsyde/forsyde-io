@@ -115,13 +115,8 @@ class WCET(ExtraFunctional):
 
     
     
-    
     def get_time(self) -> int:
-    
-        try:
-            return self.properties["time"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'time' property.")
+        return self.properties["time"] if 'time' in self.properties else 0
 
     
     
@@ -157,13 +152,8 @@ class WCCT(ExtraFunctional):
 
     
     
-    
     def get_time(self) -> int:
-    
-        try:
-            return self.properties["time"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'time' property.")
+        return self.properties["time"] if 'time' in self.properties else 0
 
     
     
@@ -272,13 +262,8 @@ class MinimumThroughput(Goal):
 
     
     
-    
     def get_apriori_importance(self) -> int:
-    
-        try:
-            return self.properties["apriori_importance"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'apriori_importance' property.")
+        return self.properties["apriori_importance"] if 'apriori_importance' in self.properties else 1
 
     
     
@@ -314,13 +299,8 @@ class TimeTriggeredScheduler(AbstractGrouping):
 	        return "TimeTriggeredScheduler"
             
     
-    
     def get_trigger_time(self) -> Dict[int, str]:
-    
-        try:
-            return self.properties["trigger_time"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'trigger_time' property.")
+        return self.properties["trigger_time"] if 'trigger_time' in self.properties else {}
 
     
     
@@ -404,37 +384,17 @@ class InstrumentedFunction(Function):
 	        return "InstrumentedFunction"
             
     
-    
     def get_max_float_operations(self) -> int:
-    
-        try:
-            return self.properties["max_float_operations"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'max_float_operations' property.")
+        return self.properties["max_float_operations"] if 'max_float_operations' in self.properties else 0
 
-    
     def get_max_int_operations(self) -> int:
-    
-        try:
-            return self.properties["max_int_operations"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'max_int_operations' property.")
+        return self.properties["max_int_operations"] if 'max_int_operations' in self.properties else 0
 
-    
     def get_max_boolean_operations(self) -> int:
-    
-        try:
-            return self.properties["max_boolean_operations"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'max_boolean_operations' property.")
+        return self.properties["max_boolean_operations"] if 'max_boolean_operations' in self.properties else 0
 
-    
     def get_max_memory_size_in_bytes(self) -> int:
-    
-        try:
-            return self.properties["max_memory_size_in_bytes"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'max_memory_size_in_bytes' property.")
+        return self.properties["max_memory_size_in_bytes"] if 'max_memory_size_in_bytes' in self.properties else 1
 
     
     
@@ -518,21 +478,14 @@ class InstrumentedSignal(Signal):
 	        return "InstrumentedSignal"
             
     
-    
     def get_max_elem_size_bytes(self) -> int:
-    
         try:
             return self.properties["max_elem_size_bytes"]
         except KeyError:
             raise AttributeError(f"Vertex {self.identifier} has no required 'max_elem_size_bytes' property.")
 
-    
     def get_max_elem_count(self) -> int:
-    
-        try:
-            return self.properties["max_elem_count"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'max_elem_count' property.")
+        return self.properties["max_elem_count"] if 'max_elem_count' in self.properties else 1
 
     
     
@@ -616,17 +569,13 @@ class SDFComb(Function):
 
     
     
-    
     def get_consumption(self) -> Dict[str, int]:
-    
         try:
             return self.properties["consumption"]
         except KeyError:
             raise AttributeError(f"Vertex {self.identifier} has no required 'consumption' property.")
 
-    
     def get_production(self) -> Dict[str, int]:
-    
         try:
             return self.properties["production"]
         except KeyError:
@@ -714,45 +663,20 @@ class InstrumentedProcessorTile(AbstractProcessingComponent):
 	        return "InstrumentedProcessorTile"
             
     
-    
     def get_min_frequency_hz(self) -> int:
-    
-        try:
-            return self.properties["min_frequency_hz"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'min_frequency_hz' property.")
+        return self.properties["min_frequency_hz"] if 'min_frequency_hz' in self.properties else 50000000
 
-    
     def get_max_memory_internal_bytes(self) -> int:
-    
-        try:
-            return self.properties["max_memory_internal_bytes"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'max_memory_internal_bytes' property.")
+        return self.properties["max_memory_internal_bytes"] if 'max_memory_internal_bytes' in self.properties else 32000
 
-    
     def get_clock_cycles_per_float_op(self) -> int:
-    
-        try:
-            return self.properties["clock_cycles_per_float_op"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'clock_cycles_per_float_op' property.")
+        return self.properties["clock_cycles_per_float_op"] if 'clock_cycles_per_float_op' in self.properties else 6
 
-    
     def get_clock_cycles_per_integer_op(self) -> int:
-    
-        try:
-            return self.properties["clock_cycles_per_integer_op"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'clock_cycles_per_integer_op' property.")
+        return self.properties["clock_cycles_per_integer_op"] if 'clock_cycles_per_integer_op' in self.properties else 2
 
-    
     def get_clock_cycles_per_boolean_op(self) -> int:
-    
-        try:
-            return self.properties["clock_cycles_per_boolean_op"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'clock_cycles_per_boolean_op' property.")
+        return self.properties["clock_cycles_per_boolean_op"] if 'clock_cycles_per_boolean_op' in self.properties else 1
 
     
     
@@ -820,13 +744,8 @@ class InstrumentedCommunicationInterconnect(AbstractCommunicationComponent):
 	        return "InstrumentedCommunicationInterconnect"
             
     
-    
     def get_min_bandwith_bytes_per_sec(self) -> int:
-    
-        try:
-            return self.properties["min_bandwith_bytes_per_sec"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'min_bandwith_bytes_per_sec' property.")
+        return self.properties["min_bandwith_bytes_per_sec"] if 'min_bandwith_bytes_per_sec' in self.properties else 1000000
 
     
     
@@ -846,13 +765,8 @@ class TimeDivisionMultiplexer(AbstractCommunicationComponent):
 	        return "TimeDivisionMultiplexer"
             
     
-    
     def get_slots(self) -> int:
-    
-        try:
-            return self.properties["slots"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'slots' property.")
+        return self.properties["slots"] if 'slots' in self.properties else 1
 
     
     

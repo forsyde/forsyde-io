@@ -1,8 +1,20 @@
 import re
 from importlib.resources import read_text
 from typing import Union
+from typing import Any
 
 from jinja2 import Environment, PackageLoader, select_autoescape
+
+
+def pythonify_value(v: Any) -> str:
+    if isinstance(v, dict):
+        return "{" + [
+            str(k) + ": " + pythonify_value(x) for (k, x) in v.items()
+        ].join(", ") + "}"
+    elif isinstance(v, list):
+        return "[" + map(pythonify_value, v).join(", ") + "]"
+    elif isinstance(v, bool):
+        return str(v)
 
 
 def pythonify(t: Union[dict, int, float, str]) -> str:

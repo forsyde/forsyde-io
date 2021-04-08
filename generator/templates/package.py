@@ -32,15 +32,15 @@ class {{type_name}}(core.Vertex):
     {% endif -%}
     {% if type_data and 'required_properties' in type_data %}
     {% for req_property, req_property_data in type_data['required_properties'].items() -%}
-    {% if 'class' in req_property_data %}
     def get_{{req_property}}(self) -> {{req_property_data | pythonify }}:
-    {% else %}
-    def get_{{req_property}}(self):
-    {% endif %}
+    {%- if 'default' in req_property_data %}
+        return self.properties["{{req_property}}"] if '{{req_property}}' in self.properties else {{req_property_data['default']}}
+    {%- else %}
         try:
             return self.properties["{{req_property}}"]
         except KeyError:
             raise AttributeError(f"Vertex {self.identifier} has no required '{{req_property}}' property.")
+    {%- endif %}
 
     {% endfor %}
     {% endif %}
