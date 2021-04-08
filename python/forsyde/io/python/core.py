@@ -9,7 +9,6 @@ from typing import Set
 from typing import Tuple
 
 import networkx as nx  # type: ignore
-import networkx.drawing.nx_pydot as nx_pydot  # type: ignore
 
 _port_id_counter = 0
 _vertex_id_counter = 0
@@ -204,82 +203,7 @@ class ForSyDeModel(nx.MultiDiGraph):
                  ],
                  *args,
                  **kwargs):
-        """TODO: to be defined. """
         nx.MultiDiGraph.__init__(self, *args, **kwargs)
-
-    def _rectify_model(self) -> None:
-        pass
-        # for v in self.nodes:
-        #     for (k, val) in v.vertex_type.get_required_properties():
-        #         if k not in v.properties:
-        #             v.properties[k] = val
-        #     for (name, port) in v.vertex_type.get_required_ports():
-        #         if name not in (p.identifier for p in v.ports):
-        #             v.ports.add(Port(identifier=name, port_type=port))
-
-    def write(self, sink: str) -> None:
-        self._rectify_model()
-        # if '.pro' in sink or '.pl' in sink:
-        #     self.write_prolog(sink)
-        if '.gexf' in sink:
-            nx.write_gexf(self.stringified(), sink)
-        elif '.graphml' in sink:
-            nx.write_graphml(self.stringified(), sink)
-        elif '.dot' in sink:
-            nx_pydot.write_dot(self.stringified(), sink)
-        elif '.xml' in sink:
-            self.write_xml(sink)
-        else:
-            raise NotImplementedError
-
-    def read(self, source: str) -> None:
-        # if '.pro' in source or '.pl' in source:
-        #     self.read_prolog(source)
-        if '.db' in source:
-            self.read_db(source)
-        elif '.xml' in source:
-            self.read_xml(source)
-        else:
-            raise NotImplementedError
-        self._rectify_model()
-
-    def stringified(self) -> nx.MultiDiGraph:
-        strg = nx.MultiDiGraph()
-        for v in self.nodes:
-            strg.add_node(f"{v.identifier}\\n{v.get_type_tag()}")
-        for (s, t, e) in self.edges.data("object"):
-            sp = e.source_vertex_port
-            tp = e.target_vertex_port
-            strg.add_edge(f"{s.identifier}\\n{s.get_type_tag()}",
-                          f"{t.identifier}\\n{t.get_type_tag()}",
-                          label=f"{e.get_type_tag()}\\n" +
-                          (f"{s.identifier}.{sp.identifier}"
-                           if sp else f"{s.identifier}") + "\\n" +
-                          (f"{t.identifier}.{tp.identifier}"
-                           if tp else f"{t.identifier}"))
-        return strg
-
-    # def get_vertexes(
-    #         self,
-    #         v_type: Union[Type, Optional[ModelType]] = None,
-    #         filters: List[Callable[[Vertex], bool]] = []) -> Iterable[Vertex]:
-    #     '''Query vertexes based on their attached type and additional filters
-
-    #     Arguments:
-    #         v_type:
-    #             Either a `ModelType` instance for a `ModelType` `type` itself,
-    #             which serves as a hard filter for the query.
-    #         filters:
-    #             The callables are called with every vertex fed as argument. If
-    #             they evaluate to `True`, then the vertex is in the result,
-    #             otherwise it is skipped.
-    #     '''
-    #     for v in self.nodes:
-    #         if v_type and v.is_type(v_type):
-    #             if all(f(v) for f in filters):
-    #                 yield v
-    #         elif all(f(v) for f in filters):
-    #             yield v
 
     def neighs(self, v: Vertex) -> Iterable[Vertex]:
         yield from self.nodes.adj[v]
@@ -294,4 +218,3 @@ class ForSyDeModel(nx.MultiDiGraph):
             if d[label_name] == label:
                 return v
         return None
-
