@@ -61,7 +61,8 @@ public class {{type_name}} extends Vertex {
             return ({{req_property_data | javify}}) properties.get("{{req_property}}");
         } else {
             {%- if 'default' in req_property_data %}
-            return {{req_property_data['default']}};
+            {{req_property_data['default'] | javify_value('value')}}
+            return value;
             {%- else %}
             throw new IllegalStateException("Object of type '{{type_name}}' has no required property '{{req_property | snake_to_pascal }}'");
             {%- endif %}

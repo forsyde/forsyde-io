@@ -14,6 +14,31 @@ def snake_to_pascal(s: str) -> str:
     return res
 
 
+def javify_value(v: Any, d: str) -> str:
+    if isinstance(v, dict):
+        res = f"Map<String, Object> {d} = new HashMap<>();"
+        for (i, (k, c)) in enumerate(v.items()):
+            res += javify_value(c, d + "_child" + str(i))
+            res += f"{d}.put({k}, (Object) {d + '_child' + str(i)});"
+        return res
+    elif isinstance(v, list):
+        res = f"List<Object> {d} = new ArrayList<>({len(v)});"
+        for (i, x) in enumerate(v):
+            res += javify_value(x, d + "_child" + str(i))
+            res += f"{d}.insert({i}, (Object) {d + '_child' + str(i)});"
+        return res
+    elif isinstance(v, int):
+        return f"Integer {d} = {v};"
+    elif isinstance(v, float):
+        return f"Double {d} = {v};"
+    elif isinstance(v, str):
+        return f'String {d} = "{v}";'
+    elif isinstance(v, bool):
+        return f'Double {d} = {v};'
+    else:
+        raise ValueError(f"Don't know how to valuefy {v}")
+
+
 def javify(t: Any) -> str:
     if isinstance(t, dict):
         c = t['class']
@@ -39,6 +64,7 @@ def generate(spec):
                       autoescape=select_autoescape(['html', 'xml']))
     vertex_template = ""
     env.filters['javify'] = javify
+    env.filters['javify_value'] = javify_value
     env.filters['snake_to_pascal'] = snake_to_pascal
     vertex_template = env.get_template('java/Vertex.java')
     pathlib.Path("java/src/main/java/forsyde/io/java/types/vertex").mkdir(
