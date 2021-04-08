@@ -201,6 +201,38 @@ class HardRequirement(Requirement):
     
 
 
+class LocationRequirement(Requirement):
+
+    """
+	This class has been generated automatically from the ForSyDe IO types model.
+	Any code in this file may be overwritten without notice, so it's best not to spend
+	time modifying anything here, but on the true source which is a model file.
+    
+    
+	"""
+
+    def get_type_tag(self) -> str:
+	        return "LocationRequirement"
+            
+    
+    
+    def get_port_process(self) -> core.Port:
+        return self.get_port("process")
+
+    def get_process(self, model) -> "Process":
+        return self.get_neigh("process")
+
+    
+    def get_port_processing_unit(self) -> core.Port:
+        return self.get_port("processing_unit")
+
+    def get_processing_unit(self, model) -> "AbstractProcessingComponent":
+        return self.get_neigh("processing_unit")
+
+    
+    
+
+
 class Goal(core.Vertex):
 
     """
@@ -265,6 +297,32 @@ class StaticCyclicScheduler(core.Vertex):
     def get_type_tag(self) -> str:
 	        return "StaticCyclicScheduler"
             
+    
+
+
+class TimeTriggeredScheduler(AbstractGrouping):
+
+    """
+	This class has been generated automatically from the ForSyDe IO types model.
+	Any code in this file may be overwritten without notice, so it's best not to spend
+	time modifying anything here, but on the true source which is a model file.
+    
+    
+	"""
+
+    def get_type_tag(self) -> str:
+	        return "TimeTriggeredScheduler"
+            
+    
+    
+    def get_trigger_time(self) -> Dict[int, str]:
+    
+        try:
+            return self.properties["trigger_time"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'trigger_time' property.")
+
+    
     
 
 
@@ -443,6 +501,40 @@ class LabelSignal(Signal):
     def get_type_tag(self) -> str:
 	        return "LabelSignal"
             
+    
+
+
+class InstrumentedSignal(Signal):
+
+    """
+	This class has been generated automatically from the ForSyDe IO types model.
+	Any code in this file may be overwritten without notice, so it's best not to spend
+	time modifying anything here, but on the true source which is a model file.
+    
+    
+	"""
+
+    def get_type_tag(self) -> str:
+	        return "InstrumentedSignal"
+            
+    
+    
+    def get_max_elem_size_bytes(self) -> int:
+    
+        try:
+            return self.properties["max_elem_size_bytes"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'max_elem_size_bytes' property.")
+
+    
+    def get_max_elem_count(self) -> int:
+    
+        try:
+            return self.properties["max_elem_count"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'max_elem_count' property.")
+
+    
     
 
 
@@ -857,11 +949,15 @@ class VertexFactory:
         
         "HardRequirement": HardRequirement,
         
+        "LocationRequirement": LocationRequirement,
+        
         "Goal": Goal,
         
         "MinimumThroughput": MinimumThroughput,
         
         "StaticCyclicScheduler": StaticCyclicScheduler,
+        
+        "TimeTriggeredScheduler": TimeTriggeredScheduler,
         
         "FixedPriorityScheduler": FixedPriorityScheduler,
         
@@ -880,6 +976,8 @@ class VertexFactory:
         "BufferSignal": BufferSignal,
         
         "LabelSignal": LabelSignal,
+        
+        "InstrumentedSignal": InstrumentedSignal,
         
         "SYComb": SYComb,
         

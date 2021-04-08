@@ -2,23 +2,23 @@
     "vertexTypes": {
         "AbstractGrouping": null,
         "AbstractOrdering": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractGrouping"
             ]
         },
         "TriggeredTask": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractOrdering"
             ]
         },
         "SporadicTask": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractOrdering"
             ]
         },
         "ExtraFunctional": null,
         "WCET": {
-            "superClasses": [
+            "superTypes": [
                 "ExtraFunctional"
             ],
             "required_ports": {
@@ -39,7 +39,7 @@
             }
         },
         "WCCT": {
-            "superClasses": [
+            "superTypes": [
                 "ExtraFunctional"
             ],
             "required_ports": {
@@ -61,13 +61,28 @@
         },
         "Requirement": null,
         "HardRequirement": {
-            "superClasses": [
+            "superTypes": [
                 "Requirement"
             ]
         },
+        "LocationRequirement": {
+            "superTypes": [
+                "Requirement"
+            ],
+            "required_ports": {
+                "process": {
+                    "class": "Process",
+                    "multiple": true
+                },
+                "processing_unit": {
+                    "class": "AbstractProcessingComponent",
+                    "multiple": true
+                }
+            }
+        },
         "Goal": null,
         "MinimumThroughput": {
-            "superClasses": [
+            "superTypes": [
                 "Goal"
             ],
             "required_ports": {
@@ -84,12 +99,25 @@
             }
         },
         "StaticCyclicScheduler": null,
+        "TimeTriggeredScheduler": {
+            "superTypes": [
+                "AbstractGrouping"
+            ],
+            "required_properties": {
+                "trigger_time": {
+                    "class": "object",
+                    "key": "integer",
+                    "value": "string",
+                    "default": {}
+                }
+            }
+        },
         "FixedPriorityScheduler": null,
         "CustomScheduler": null,
         "RoundRobinScheduler": null,
         "Function": null,
         "InstrumentedFunction": {
-            "superClasses": [
+            "superTypes": [
                 "Function"
             ],
             "required_properties": {
@@ -112,28 +140,42 @@
             }
         },
         "Process": {
-            "superClasses": [
+            "superTypes": [
                 "Function"
             ]
         },
         "Signal": null,
         "BufferSignal": {
-            "superClasses": [
+            "superTypes": [
                 "Signal"
             ]
         },
         "LabelSignal": {
-            "superClasses": [
+            "superTypes": [
                 "Signal"
             ]
         },
+        "InstrumentedSignal": {
+            "superTypes": [
+                "Signal"
+            ],
+            "required_properties": {
+                "max_elem_size_bytes": {
+                    "class": "integer"
+                },
+                "max_elem_count": {
+                    "class": "integer",
+                    "default": 1
+                }
+            }
+        },
         "SYComb": {
-            "superClasses": [
+            "superTypes": [
                 "Function"
             ]
         },
         "SYPrefix": {
-            "superClasses": [
+            "superTypes": [
                 "Function"
             ],
             "required_ports": {
@@ -146,7 +188,7 @@
             }
         },
         "SDFComb": {
-            "superClasses": [
+            "superTypes": [
                 "Function"
             ],
             "required_ports": {
@@ -171,7 +213,7 @@
             }
         },
         "SDFPrefix": {
-            "superClasses": [
+            "superTypes": [
                 "Function"
             ],
             "required_ports": {
@@ -185,12 +227,12 @@
         },
         "AbstractPhysicalComponent": null,
         "AbstractProcessingComponent": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractPhysicalComponent"
             ]
         },
         "InstrumentedProcessorTile": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractProcessingComponent"
             ],
             "required_properties": {
@@ -217,22 +259,22 @@
             }
         },
         "AbstractStorageComponent": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractPhysicalComponent"
             ]
         },
         "AbsractInterfaceComponent": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractPhysicalComponent"
             ]
         },
         "AbstractCommunicationComponent": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractPhysicalComponent"
             ]
         },
         "InstrumentedCommunicationInterconnect": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractCommunicationComponent"
             ],
             "required_properties": {
@@ -243,7 +285,7 @@
             }
         },
         "TimeDivisionMultiplexer": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractCommunicationComponent"
             ],
             "required_properties": {
@@ -262,12 +304,12 @@
         "AbstractPhysicalConnection": null,
         "AbstractDecision": null,
         "AbstractScheduling": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractDecision"
             ]
         },
         "AbstractMapping": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractDecision"
             ]
         }
@@ -277,7 +319,7 @@
         "vertexTypes": {
             "TypeRepresentation": null,
             "integer": {
-                "superClasses": [
+                "superTypes": [
                     "TypeRepresentation"
                 ],
                 "required_properties": {
@@ -288,7 +330,7 @@
                 }
             },
             "Floating": {
-                "superClasses": [
+                "superTypes": [
                     "TypeRepresentation"
                 ],
                 "required_properties": {
@@ -299,7 +341,7 @@
                 }
             },
             "Record": {
-                "superClasses": [
+                "superTypes": [
                     "TypeRepresentation"
                 ],
                 "required_properties": {
@@ -309,7 +351,7 @@
                 }
             },
             "Array": {
-                "superClasses": [
+                "superTypes": [
                     "TypeRepresentation"
                 ],
                 "required_properties": {

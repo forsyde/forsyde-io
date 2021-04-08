@@ -4,8 +4,8 @@ from typing import List
 import forsyde.io.python.core as core
 
 {% for type_name, type_data in vertexTypes.items() %}
-{% if type_data['superClasses'] %}
-class {{type_name}}({{type_data['superClasses'] | join(', ') }}):
+{% if type_data['superTypes'] %}
+class {{type_name}}({{type_data['superTypes'] | join(', ') }}):
 {% else %}
 class {{type_name}}(core.Vertex):
 {% endif %}
@@ -47,8 +47,8 @@ class {{type_name}}(core.Vertex):
 {% endfor %}
 
 {% for type_name, type_data in edgeTypes.items() %}
-{% if type_data['superClasses'] %}
-class {{type_name}}({{type_data['superClasses'] | join(', ') }}):
+{% if type_data['superTypes'] %}
+class {{type_name}}({{type_data['superTypes'] | join(', ') }}):
 {% else %}
 class {{type_name}}(core.Edge):
 {% endif %}

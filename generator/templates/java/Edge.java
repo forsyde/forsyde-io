@@ -1,7 +1,7 @@
 package forsyde.io.java.types.edge;
 
 import java.util.Optional;
-{% if not type_data or not type_data['superClasses'] %}
+{% if not type_data or not type_data['superTypes'] %}
 import forsyde.io.java.core.Edge;
 {%- endif %}
 {% if type_data and 'required_ports' in type_data %}
@@ -11,8 +11,8 @@ import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.core.Port;
 import forsyde.io.java.core.Vertex;
 
-{% if type_data and type_data['superClasses'] %}
-public class {{type_name}} extends {{type_data['superClasses'][0]}} {
+{% if type_data and type_data['superTypes'] %}
+public class {{type_name}} extends {{type_data['superTypes'][0]}} {
 {% else %}
 public class {{type_name}} extends Edge {
 {% endif %}
