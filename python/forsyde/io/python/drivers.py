@@ -5,6 +5,7 @@ from typing import Any
 from typing import Optional
 
 # from lxml import etree  # type: ignore
+import networkx as nx
 from networkx.drawing.nx_pydot import write_dot  # type: ignore
 
 from forsyde.io.python.core import Vertex
