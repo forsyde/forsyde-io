@@ -1,3 +1,6 @@
+from typing import Dict
+from typing import List
+
 import forsyde.io.python.core as core
 
 
@@ -16,7 +19,6 @@ class AbstractGrouping(core.Vertex):
 	        return "AbstractGrouping"
             
     
-    
 
 
 class AbstractOrdering(AbstractGrouping):
@@ -32,7 +34,6 @@ class AbstractOrdering(AbstractGrouping):
     def get_type_tag(self) -> str:
 	        return "AbstractOrdering"
             
-    
     
 
 
@@ -50,7 +51,6 @@ class TriggeredTask(AbstractOrdering):
 	        return "TriggeredTask"
             
     
-    
 
 
 class SporadicTask(AbstractOrdering):
@@ -67,7 +67,6 @@ class SporadicTask(AbstractOrdering):
 	        return "SporadicTask"
             
     
-    
 
 
 class ExtraFunctional(core.Vertex):
@@ -83,7 +82,6 @@ class ExtraFunctional(core.Vertex):
     def get_type_tag(self) -> str:
 	        return "ExtraFunctional"
             
-    
     
 
 
@@ -115,8 +113,6 @@ class WCET(ExtraFunctional):
     def get_platform(self, model) -> "AbstractProcessingComponent":
         return self.get_neigh("platform")
 
-    
-    
     
     
     
@@ -162,8 +158,6 @@ class WCCT(ExtraFunctional):
     
     
     
-    
-    
     def get_time(self) -> int:
     
         try:
@@ -189,7 +183,6 @@ class Requirement(core.Vertex):
 	        return "Requirement"
             
     
-    
 
 
 class HardRequirement(Requirement):
@@ -206,7 +199,6 @@ class HardRequirement(Requirement):
 	        return "HardRequirement"
             
     
-    
 
 
 class Goal(core.Vertex):
@@ -222,7 +214,6 @@ class Goal(core.Vertex):
     def get_type_tag(self) -> str:
 	        return "Goal"
             
-    
     
 
 
@@ -247,8 +238,6 @@ class MinimumThroughput(Goal):
     def get_application(self, model) -> "Process":
         return self.get_neigh("application")
 
-    
-    
     
     
     
@@ -277,7 +266,6 @@ class StaticCyclicScheduler(core.Vertex):
 	        return "StaticCyclicScheduler"
             
     
-    
 
 
 class FixedPriorityScheduler(core.Vertex):
@@ -293,7 +281,6 @@ class FixedPriorityScheduler(core.Vertex):
     def get_type_tag(self) -> str:
 	        return "FixedPriorityScheduler"
             
-    
     
 
 
@@ -311,7 +298,6 @@ class CustomScheduler(core.Vertex):
 	        return "CustomScheduler"
             
     
-    
 
 
 class RoundRobinScheduler(core.Vertex):
@@ -328,7 +314,6 @@ class RoundRobinScheduler(core.Vertex):
 	        return "RoundRobinScheduler"
             
     
-    
 
 
 class Function(core.Vertex):
@@ -344,6 +329,55 @@ class Function(core.Vertex):
     def get_type_tag(self) -> str:
 	        return "Function"
             
+    
+
+
+class InstrumentedFunction(Function):
+
+    """
+	This class has been generated automatically from the ForSyDe IO types model.
+	Any code in this file may be overwritten without notice, so it's best not to spend
+	time modifying anything here, but on the true source which is a model file.
+    
+    
+	"""
+
+    def get_type_tag(self) -> str:
+	        return "InstrumentedFunction"
+            
+    
+    
+    def get_max_float_operations(self) -> int:
+    
+        try:
+            return self.properties["max_float_operations"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'max_float_operations' property.")
+
+    
+    def get_max_int_operations(self) -> int:
+    
+        try:
+            return self.properties["max_int_operations"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'max_int_operations' property.")
+
+    
+    def get_max_boolean_operations(self) -> int:
+    
+        try:
+            return self.properties["max_boolean_operations"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'max_boolean_operations' property.")
+
+    
+    def get_max_memory_size_in_bytes(self) -> int:
+    
+        try:
+            return self.properties["max_memory_size_in_bytes"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'max_memory_size_in_bytes' property.")
+
     
     
 
@@ -362,7 +396,6 @@ class Process(Function):
 	        return "Process"
             
     
-    
 
 
 class Signal(core.Vertex):
@@ -378,7 +411,6 @@ class Signal(core.Vertex):
     def get_type_tag(self) -> str:
 	        return "Signal"
             
-    
     
 
 
@@ -396,7 +428,6 @@ class BufferSignal(Signal):
 	        return "BufferSignal"
             
     
-    
 
 
 class LabelSignal(Signal):
@@ -413,7 +444,6 @@ class LabelSignal(Signal):
 	        return "LabelSignal"
             
     
-    
 
 
 class SYComb(Function):
@@ -429,7 +459,6 @@ class SYComb(Function):
     def get_type_tag(self) -> str:
 	        return "SYComb"
             
-    
     
 
 
@@ -461,7 +490,6 @@ class SYPrefix(Function):
     def get_output(self, model) -> "Function":
         return self.get_neigh("output")
 
-    
     
     
 
@@ -497,9 +525,7 @@ class SDFComb(Function):
     
     
     
-    
-    
-    def get_consumption(self) -> dict:
+    def get_consumption(self) -> Dict[str, int]:
     
         try:
             return self.properties["consumption"]
@@ -507,8 +533,7 @@ class SDFComb(Function):
             raise AttributeError(f"Vertex {self.identifier} has no required 'consumption' property.")
 
     
-    
-    def get_production(self) -> dict:
+    def get_production(self) -> Dict[str, int]:
     
         try:
             return self.properties["production"]
@@ -549,7 +574,6 @@ class SDFPrefix(Function):
 
     
     
-    
 
 
 class AbstractPhysicalComponent(core.Vertex):
@@ -565,7 +589,6 @@ class AbstractPhysicalComponent(core.Vertex):
     def get_type_tag(self) -> str:
 	        return "AbstractPhysicalComponent"
             
-    
     
 
 
@@ -583,7 +606,6 @@ class AbstractProcessingComponent(AbstractPhysicalComponent):
 	        return "AbstractProcessingComponent"
             
     
-    
 
 
 class AbstractStorageComponent(AbstractPhysicalComponent):
@@ -599,7 +621,6 @@ class AbstractStorageComponent(AbstractPhysicalComponent):
     def get_type_tag(self) -> str:
 	        return "AbstractStorageComponent"
             
-    
     
 
 
@@ -617,7 +638,6 @@ class AbsractInterfaceComponent(AbstractPhysicalComponent):
 	        return "AbsractInterfaceComponent"
             
     
-    
 
 
 class AbstractCommunicationComponent(AbstractPhysicalComponent):
@@ -634,7 +654,6 @@ class AbstractCommunicationComponent(AbstractPhysicalComponent):
 	        return "AbstractCommunicationComponent"
             
     
-    
 
 
 class TimeDivisionMultiplexer(AbstractCommunicationComponent):
@@ -650,8 +669,6 @@ class TimeDivisionMultiplexer(AbstractCommunicationComponent):
     def get_type_tag(self) -> str:
 	        return "TimeDivisionMultiplexer"
             
-    
-    
     
     
     def get_slots(self) -> int:
@@ -738,7 +755,6 @@ class VertexFactory:
     """
 
     str_to_classes = {
-        
         "AbstractGrouping": AbstractGrouping,
         
         "AbstractOrdering": AbstractOrdering,
@@ -771,6 +787,8 @@ class VertexFactory:
         
         "Function": Function,
         
+        "InstrumentedFunction": InstrumentedFunction,
+        
         "Process": Process,
         
         "Signal": Signal,
@@ -798,8 +816,7 @@ class VertexFactory:
         "AbstractCommunicationComponent": AbstractCommunicationComponent,
         
         "TimeDivisionMultiplexer": TimeDivisionMultiplexer
-        
-    }
+        }
     
     @classmethod
     def get_type_from_name(cls,
@@ -839,7 +856,6 @@ class EdgeFactory:
     """
 
     str_to_classes = {
-        
         "Input": Input,
         
         "Output": Output,
@@ -855,8 +871,7 @@ class EdgeFactory:
         "AbstractScheduling": AbstractScheduling,
         
         "AbstractMapping": AbstractMapping
-        
-    }
+        }
 
     @classmethod
     def get_type_from_name(cls,

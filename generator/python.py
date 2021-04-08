@@ -1,20 +1,28 @@
 import re
 from importlib.resources import read_text
+from typing import Union
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 
-def pythonify(t: str) -> str:
-    if t == "Integer":
-        return "int"
-    elif t == "Float":
-        return "float"
-    elif t == "String":
-        return "str"
-    elif t == "Dictionary":
-        return "dict"
+def pythonify(t: Union[dict, int, float, str]) -> str:
+    if isinstance(t, dict):
+        c = t['class']
+        if c == "object":
+            return f'Dict[{pythonify(t["key"] if "key" in t else "string")}, {pythonify(t["value"])}]'
+        elif c == "array":
+            return f'List[{pythonify(t["value"])}]'
+        else:
+            return pythonify(c)
     else:
-        return "Vertex"
+        if t == "int":
+            return "int"
+        elif t == "float":
+            return "float"
+        elif t == "string":
+            return "str"
+        else:
+            return "Vertex"
 
 
 def generate(spec):

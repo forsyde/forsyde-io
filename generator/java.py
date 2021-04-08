@@ -1,14 +1,45 @@
 import pathlib
 import re
+from typing import Any
 
 from jinja2 import Environment, PackageLoader, select_autoescape
+
+
+def snake_to_pascal(s: str) -> str:
+    # could have used re, but this is fasters and easier to grasp
+    res = s.capitalize()
+    while '_' in res:
+        idx = res.index('_')
+        res = res[0:idx] + res[(idx + 1):].capitalize()
+    return res
+
+
+def javify(t: Any) -> str:
+    if isinstance(t, dict):
+        c = t['class']
+        if c == "object":
+            return f'Map<{javify(t["key"] if "key" in t else "string")}, {javify(t["value"])}>'
+        elif c == "array":
+            return f'List<{javify(t["value"])}>'
+        else:
+            return javify(c)
+    else:
+        if t == "int":
+            return "Integer"
+        elif t == "float":
+            return "Float"
+        elif t == "string":
+            return "String"
+        else:
+            return "Vertex"
 
 
 def generate(spec):
     env = Environment(loader=PackageLoader('generator', 'templates'),
                       autoescape=select_autoescape(['html', 'xml']))
     vertex_template = ""
-    # env.filters['pythonify'] = pythonify
+    env.filters['javify'] = javify
+    env.filters['snake_to_pascal'] = snake_to_pascal
     vertex_template = env.get_template('java/Vertex.java')
     pathlib.Path("java/src/main/java/forsyde/io/java/types/vertex").mkdir(
         parents=True, exist_ok=True)

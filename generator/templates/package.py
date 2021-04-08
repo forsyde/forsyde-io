@@ -1,3 +1,6 @@
+from typing import Dict
+from typing import List
+
 import forsyde.io.python.core as core
 
 {% for type_name, type_data in vertexTypes.items() %}
@@ -26,11 +29,11 @@ class {{type_name}}(core.Vertex):
         return self.get_neigh("{{req_port}}")
 
     {% endfor %}
-    {% endif %}
+    {% endif -%}
     {% if type_data and 'required_properties' in type_data %}
-    {% for req_property, req_property_data in type_data['required_properties'].items() %}
+    {% for req_property, req_property_data in type_data['required_properties'].items() -%}
     {% if 'class' in req_property_data %}
-    def get_{{req_property}}(self) -> {{req_property_data['class'] | pythonify }}:
+    def get_{{req_property}}(self) -> {{req_property_data | pythonify }}:
     {% else %}
     def get_{{req_property}}(self):
     {% endif %}
@@ -62,9 +65,9 @@ class VertexFactory:
     """
 
     str_to_classes = {
-        {% for type_name, type_data in vertexTypes.items() %}
+        {%- for type_name, type_data in vertexTypes.items() %}
         "{{type_name}}": {{type_name}}{{',' if not loop.last}}
-        {% endfor %}
+        {% endfor -%}
     }
     
     @classmethod
@@ -105,9 +108,9 @@ class EdgeFactory:
     """
 
     str_to_classes = {
-        {% for type_name, type_data in edgeTypes.items() %}
+        {%- for type_name, type_data in edgeTypes.items() %}
         "{{type_name}}": {{type_name}}{{',' if not loop.last}}
-        {% endfor %}
+        {% endfor -%}
     }
 
     @classmethod

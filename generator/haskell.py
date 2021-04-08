@@ -6,13 +6,13 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 
 def haskellify(t: str) -> str:
-    if t == "Integer":
+    if t == "int":
         return "Int"
-    elif t == "Float":
+    elif t == "float":
         return "Float"
-    elif t == "String":
+    elif t == "string":
         return "String"
-    elif t == "Dictionary":
+    elif t == "object":
         return "MapItem"
     else:
         return "Vertex"
