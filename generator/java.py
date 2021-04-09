@@ -14,31 +14,6 @@ def snake_to_pascal(s: str) -> str:
     return res
 
 
-def javify_value(v: Any, d: str) -> str:
-    if isinstance(v, dict):
-        res = f"Map<String, Object> {d} = new HashMap<>();"
-        for (i, (k, c)) in enumerate(v.items()):
-            res += javify_value(c, d + "_child" + str(i))
-            res += f"{d}.put({k}, (Object) {d + '_child' + str(i)});"
-        return res
-    elif isinstance(v, list):
-        res = f"List<Object> {d} = new ArrayList<>({len(v)});"
-        for (i, x) in enumerate(v):
-            res += javify_value(x, d + "_child" + str(i))
-            res += f"{d}.insert({i}, (Object) {d + '_child' + str(i)});"
-        return res
-    elif isinstance(v, int):
-        return f"Integer {d} = {v};"
-    elif isinstance(v, float):
-        return f"Double {d} = {v};"
-    elif isinstance(v, str):
-        return f'String {d} = "{v}";'
-    elif isinstance(v, bool):
-        return f'Double {d} = {v};'
-    else:
-        raise ValueError(f"Don't know how to valuefy {v}")
-
-
 def javify(t: Any) -> str:
     if isinstance(t, dict):
         c = t['class']
@@ -57,6 +32,31 @@ def javify(t: Any) -> str:
             return "String"
         else:
             return t
+
+
+def javify_value(v: Any, t: Any, d: str) -> str:
+    if isinstance(v, dict):
+        res = f"Map<{javify(t['key'])}, {javify(t['value'])}> {d} = new HashMap<>();"
+        for (i, (k, c)) in enumerate(v.items()):
+            res += javify_value(c, t['value'], d + "_child" + str(i))
+            res += f"{d}.put({k}, (Object) {d + '_child' + str(i)});"
+        return res
+    elif isinstance(v, list):
+        res = f"List<{javify(t['value'])}> {d} = new ArrayList<>({len(v)});"
+        for (i, x) in enumerate(v):
+            res += javify_value(x, t['value'], d + "_child" + str(i))
+            res += f"{d}.insert({i}, (Object) {d + '_child' + str(i)});"
+        return res
+    elif isinstance(v, int):
+        return f"Integer {d} = {v};"
+    elif isinstance(v, float):
+        return f"Double {d} = {v};"
+    elif isinstance(v, str):
+        return f'String {d} = "{v}";'
+    elif isinstance(v, bool):
+        return f'Double {d} = {v};'
+    else:
+        raise ValueError(f"Don't know how to valuefy {v}")
 
 
 def generate(spec):

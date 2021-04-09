@@ -1,7 +1,9 @@
 package forsyde.io.java.types.vertex;
 
 import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import forsyde.io.java.core.Port;
 {% if not type_data or not type_data['superTypes'] %}
 import forsyde.io.java.core.Vertex;
@@ -61,7 +63,7 @@ public class {{type_name}} extends Vertex {
             return ({{req_property_data | javify}}) properties.get("{{req_property}}");
         } else {
             {%- if 'default' in req_property_data %}
-            {{req_property_data['default'] | javify_value('value')}}
+            {{req_property_data['default'] | javify_value(req_property_data, 'value')}}
             return value;
             {%- else %}
             throw new IllegalStateException("Object of type '{{type_name}}' has no required property '{{req_property | snake_to_pascal }}'");
