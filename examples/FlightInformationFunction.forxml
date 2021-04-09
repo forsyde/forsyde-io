@@ -303,10 +303,19 @@
 
     <edge source="HeadingCalc" target="Heading" type="Output" sourceport="HeadingSignal" targetport="fifoIn"/>
     <edge source="HeadingSignal" target="P2A" type="Output" sourceport="fifoOut" targetport="Heading"/>
-    <edge source="SpeedVectorCalc" target="SpeedVector" type="Output" sourceport="SpeedVectorSignal" targetport="fifoIn"/>
-    <edge source="SpeedVectorSignal" target="HeadingCalc" type="Output" sourceport="fifoOut" targetport="SpeedVector"/>
     <edge source="SpeedVectorCalc" target="SpeedSignal" type="Output" sourceport="Speed" targetport="fifoIn"/>
     <edge source="SpeedSignal" target="P2A" type="Output" sourceport="fifoOut" targetport="Speed"/>
+    <edge source="AltitudeCalc" target="AltitudeSignal" type="Output" sourceport="Altitude" targetport="fifoIn"/>
+    <edge source="AltitudeSignal" target="P2A" type="Output" sourceport="fifoOut" targetport="Altitude"/>
+    <edge source="SpeedVectorCalc" target="SpeedVector" type="Output" sourceport="SpeedVectorSignal" targetport="fifoIn"/>
+    <edge source="SpeedVectorSignal" target="HeadingCalc" type="Output" sourceport="fifoOut" targetport="SpeedVector"/>
+    <edge source="FormatSpeedVectorCalc" target="InternalSpeedVectorSignal" type="Output" sourceport="InternalSpeedVector" targetport="fifoIn"/>
+    <edge source="InternalSpeedVectorSignal" target="SpeedVectorCalc" type="Output" sourceport="fifoOut" targetport="InternalSpeedVector"/>
+    <edge source="AccCalc" target="AccSignal" type="Output" sourceport="Acc" targetport="fifoIn"/>
+    <edge source="AccSignal" target="AltitudeCalc" type="Output" sourceport="fifoOut" targetport="Acc"/>
+    <edge source="LoadFactorCalc" target="LoadFactorSignal" type="Output" sourceport="LoadFactor" targetport="fifoIn"/>
+    <edge source="LoadFactorSignal" target="AccCalc" type="Output" sourceport="fifoOut" targetport="LoadFactor"/>
+
 
     <!--  The end of the application model -->
     <!--  The start of the midel platform model -->
