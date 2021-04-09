@@ -315,6 +315,8 @@
     <edge source="AccSignal" target="AltitudeCalc" type="Output" sourceport="fifoOut" targetport="Acc"/>
     <edge source="LoadFactorCalc" target="LoadFactorSignal" type="Output" sourceport="LoadFactor" targetport="fifoIn"/>
     <edge source="LoadFactorSignal" target="AccCalc" type="Output" sourceport="fifoOut" targetport="LoadFactor"/>
+    <edge source="FormatLoadFactorCalc" target="LoadFactorSignal" type="Output" sourceport="LoadFactor" targetport="fifoIn"/>
+    <edge source="LoadFactorSignal" target="LoadFactorCalc" type="Output" sourceport="fifoOut" targetport="LoadFactor"/>
 
 
     <!--  The end of the application model -->
