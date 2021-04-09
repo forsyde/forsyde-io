@@ -1,3 +1,6 @@
+from typing import Dict
+from typing import List
+
 import forsyde.io.python.core as core
 
 
@@ -16,7 +19,6 @@ class AbstractGrouping(core.Vertex):
 	        return "AbstractGrouping"
             
     
-    
 
 
 class AbstractOrdering(AbstractGrouping):
@@ -32,7 +34,6 @@ class AbstractOrdering(AbstractGrouping):
     def get_type_tag(self) -> str:
 	        return "AbstractOrdering"
             
-    
     
 
 
@@ -50,7 +51,6 @@ class TriggeredTask(AbstractOrdering):
 	        return "TriggeredTask"
             
     
-    
 
 
 class SporadicTask(AbstractOrdering):
@@ -67,7 +67,6 @@ class SporadicTask(AbstractOrdering):
 	        return "SporadicTask"
             
     
-    
 
 
 class ExtraFunctional(core.Vertex):
@@ -83,7 +82,6 @@ class ExtraFunctional(core.Vertex):
     def get_type_tag(self) -> str:
 	        return "ExtraFunctional"
             
-    
     
 
 
@@ -117,15 +115,8 @@ class WCET(ExtraFunctional):
 
     
     
-    
-    
-    
     def get_time(self) -> int:
-    
-        try:
-            return self.properties["time"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'time' property.")
+        return self.properties["time"] if 'time' in self.properties else 0
 
     
     
@@ -161,15 +152,8 @@ class WCCT(ExtraFunctional):
 
     
     
-    
-    
-    
     def get_time(self) -> int:
-    
-        try:
-            return self.properties["time"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'time' property.")
+        return self.properties["time"] if 'time' in self.properties else 0
 
     
     
@@ -189,7 +173,6 @@ class Requirement(core.Vertex):
 	        return "Requirement"
             
     
-    
 
 
 class HardRequirement(Requirement):
@@ -205,6 +188,37 @@ class HardRequirement(Requirement):
     def get_type_tag(self) -> str:
 	        return "HardRequirement"
             
+    
+
+
+class LocationRequirement(Requirement):
+
+    """
+	This class has been generated automatically from the ForSyDe IO types model.
+	Any code in this file may be overwritten without notice, so it's best not to spend
+	time modifying anything here, but on the true source which is a model file.
+    
+    
+	"""
+
+    def get_type_tag(self) -> str:
+	        return "LocationRequirement"
+            
+    
+    
+    def get_port_process(self) -> core.Port:
+        return self.get_port("process")
+
+    def get_process(self, model) -> "Process":
+        return self.get_neigh("process")
+
+    
+    def get_port_processing_unit(self) -> core.Port:
+        return self.get_port("processing_unit")
+
+    def get_processing_unit(self, model) -> "AbstractProcessingComponent":
+        return self.get_neigh("processing_unit")
+
     
     
 
@@ -222,7 +236,6 @@ class Goal(core.Vertex):
     def get_type_tag(self) -> str:
 	        return "Goal"
             
-    
     
 
 
@@ -249,15 +262,8 @@ class MinimumThroughput(Goal):
 
     
     
-    
-    
-    
     def get_apriori_importance(self) -> int:
-    
-        try:
-            return self.properties["apriori_importance"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'apriori_importance' property.")
+        return self.properties["apriori_importance"] if 'apriori_importance' in self.properties else 1
 
     
     
@@ -277,6 +283,26 @@ class StaticCyclicScheduler(core.Vertex):
 	        return "StaticCyclicScheduler"
             
     
+
+
+class TimeTriggeredScheduler(AbstractGrouping):
+
+    """
+	This class has been generated automatically from the ForSyDe IO types model.
+	Any code in this file may be overwritten without notice, so it's best not to spend
+	time modifying anything here, but on the true source which is a model file.
+    
+    
+	"""
+
+    def get_type_tag(self) -> str:
+	        return "TimeTriggeredScheduler"
+            
+    
+    def get_trigger_time(self) -> Dict[int, str]:
+        return self.properties["trigger_time"] if 'trigger_time' in self.properties else {}
+
+    
     
 
 
@@ -294,7 +320,6 @@ class FixedPriorityScheduler(core.Vertex):
 	        return "FixedPriorityScheduler"
             
     
-    
 
 
 class CustomScheduler(core.Vertex):
@@ -310,7 +335,6 @@ class CustomScheduler(core.Vertex):
     def get_type_tag(self) -> str:
 	        return "CustomScheduler"
             
-    
     
 
 
@@ -328,7 +352,6 @@ class RoundRobinScheduler(core.Vertex):
 	        return "RoundRobinScheduler"
             
     
-    
 
 
 class Function(core.Vertex):
@@ -344,6 +367,35 @@ class Function(core.Vertex):
     def get_type_tag(self) -> str:
 	        return "Function"
             
+    
+
+
+class InstrumentedFunction(Function):
+
+    """
+	This class has been generated automatically from the ForSyDe IO types model.
+	Any code in this file may be overwritten without notice, so it's best not to spend
+	time modifying anything here, but on the true source which is a model file.
+    
+    
+	"""
+
+    def get_type_tag(self) -> str:
+	        return "InstrumentedFunction"
+            
+    
+    def get_max_float_operations(self) -> int:
+        return self.properties["max_float_operations"] if 'max_float_operations' in self.properties else 0
+
+    def get_max_int_operations(self) -> int:
+        return self.properties["max_int_operations"] if 'max_int_operations' in self.properties else 0
+
+    def get_max_boolean_operations(self) -> int:
+        return self.properties["max_boolean_operations"] if 'max_boolean_operations' in self.properties else 0
+
+    def get_max_memory_size_in_bytes(self) -> int:
+        return self.properties["max_memory_size_in_bytes"] if 'max_memory_size_in_bytes' in self.properties else 1
+
     
     
 
@@ -362,7 +414,6 @@ class Process(Function):
 	        return "Process"
             
     
-    
 
 
 class Signal(core.Vertex):
@@ -378,7 +429,6 @@ class Signal(core.Vertex):
     def get_type_tag(self) -> str:
 	        return "Signal"
             
-    
     
 
 
@@ -396,7 +446,6 @@ class BufferSignal(Signal):
 	        return "BufferSignal"
             
     
-    
 
 
 class LabelSignal(Signal):
@@ -412,6 +461,32 @@ class LabelSignal(Signal):
     def get_type_tag(self) -> str:
 	        return "LabelSignal"
             
+    
+
+
+class InstrumentedSignal(Signal):
+
+    """
+	This class has been generated automatically from the ForSyDe IO types model.
+	Any code in this file may be overwritten without notice, so it's best not to spend
+	time modifying anything here, but on the true source which is a model file.
+    
+    
+	"""
+
+    def get_type_tag(self) -> str:
+	        return "InstrumentedSignal"
+            
+    
+    def get_max_elem_size_bytes(self) -> int:
+        try:
+            return self.properties["max_elem_size_bytes"]
+        except KeyError:
+            raise AttributeError(f"Vertex {self.identifier} has no required 'max_elem_size_bytes' property.")
+
+    def get_max_elem_count(self) -> int:
+        return self.properties["max_elem_count"] if 'max_elem_count' in self.properties else 1
+
     
     
 
@@ -429,7 +504,6 @@ class SYComb(Function):
     def get_type_tag(self) -> str:
 	        return "SYComb"
             
-    
     
 
 
@@ -461,7 +535,6 @@ class SYPrefix(Function):
     def get_output(self, model) -> "Function":
         return self.get_neigh("output")
 
-    
     
     
 
@@ -496,20 +569,13 @@ class SDFComb(Function):
 
     
     
-    
-    
-    
-    def get_consumption(self) -> dict:
-    
+    def get_consumption(self) -> Dict[str, int]:
         try:
             return self.properties["consumption"]
         except KeyError:
             raise AttributeError(f"Vertex {self.identifier} has no required 'consumption' property.")
 
-    
-    
-    def get_production(self) -> dict:
-    
+    def get_production(self) -> Dict[str, int]:
         try:
             return self.properties["production"]
         except KeyError:
@@ -549,7 +615,6 @@ class SDFPrefix(Function):
 
     
     
-    
 
 
 class AbstractPhysicalComponent(core.Vertex):
@@ -566,7 +631,6 @@ class AbstractPhysicalComponent(core.Vertex):
 	        return "AbstractPhysicalComponent"
             
     
-    
 
 
 class AbstractProcessingComponent(AbstractPhysicalComponent):
@@ -582,6 +646,38 @@ class AbstractProcessingComponent(AbstractPhysicalComponent):
     def get_type_tag(self) -> str:
 	        return "AbstractProcessingComponent"
             
+    
+
+
+class InstrumentedProcessorTile(AbstractProcessingComponent):
+
+    """
+	This class has been generated automatically from the ForSyDe IO types model.
+	Any code in this file may be overwritten without notice, so it's best not to spend
+	time modifying anything here, but on the true source which is a model file.
+    
+    
+	"""
+
+    def get_type_tag(self) -> str:
+	        return "InstrumentedProcessorTile"
+            
+    
+    def get_min_frequency_hz(self) -> int:
+        return self.properties["min_frequency_hz"] if 'min_frequency_hz' in self.properties else 50000000
+
+    def get_max_memory_internal_bytes(self) -> int:
+        return self.properties["max_memory_internal_bytes"] if 'max_memory_internal_bytes' in self.properties else 32000
+
+    def get_clock_cycles_per_float_op(self) -> int:
+        return self.properties["clock_cycles_per_float_op"] if 'clock_cycles_per_float_op' in self.properties else 6
+
+    def get_clock_cycles_per_integer_op(self) -> int:
+        return self.properties["clock_cycles_per_integer_op"] if 'clock_cycles_per_integer_op' in self.properties else 2
+
+    def get_clock_cycles_per_boolean_op(self) -> int:
+        return self.properties["clock_cycles_per_boolean_op"] if 'clock_cycles_per_boolean_op' in self.properties else 1
+
     
     
 
@@ -600,7 +696,6 @@ class AbstractStorageComponent(AbstractPhysicalComponent):
 	        return "AbstractStorageComponent"
             
     
-    
 
 
 class AbsractInterfaceComponent(AbstractPhysicalComponent):
@@ -617,7 +712,6 @@ class AbsractInterfaceComponent(AbstractPhysicalComponent):
 	        return "AbsractInterfaceComponent"
             
     
-    
 
 
 class AbstractCommunicationComponent(AbstractPhysicalComponent):
@@ -633,6 +727,26 @@ class AbstractCommunicationComponent(AbstractPhysicalComponent):
     def get_type_tag(self) -> str:
 	        return "AbstractCommunicationComponent"
             
+    
+
+
+class InstrumentedCommunicationInterconnect(AbstractCommunicationComponent):
+
+    """
+	This class has been generated automatically from the ForSyDe IO types model.
+	Any code in this file may be overwritten without notice, so it's best not to spend
+	time modifying anything here, but on the true source which is a model file.
+    
+    
+	"""
+
+    def get_type_tag(self) -> str:
+	        return "InstrumentedCommunicationInterconnect"
+            
+    
+    def get_min_bandwith_bytes_per_sec(self) -> int:
+        return self.properties["min_bandwith_bytes_per_sec"] if 'min_bandwith_bytes_per_sec' in self.properties else 1000000
+
     
     
 
@@ -651,15 +765,8 @@ class TimeDivisionMultiplexer(AbstractCommunicationComponent):
 	        return "TimeDivisionMultiplexer"
             
     
-    
-    
-    
     def get_slots(self) -> int:
-    
-        try:
-            return self.properties["slots"]
-        except KeyError:
-            raise AttributeError(f"Vertex {self.identifier} has no required 'slots' property.")
+        return self.properties["slots"] if 'slots' in self.properties else 1
 
     
     
@@ -738,7 +845,6 @@ class VertexFactory:
     """
 
     str_to_classes = {
-        
         "AbstractGrouping": AbstractGrouping,
         
         "AbstractOrdering": AbstractOrdering,
@@ -757,11 +863,15 @@ class VertexFactory:
         
         "HardRequirement": HardRequirement,
         
+        "LocationRequirement": LocationRequirement,
+        
         "Goal": Goal,
         
         "MinimumThroughput": MinimumThroughput,
         
         "StaticCyclicScheduler": StaticCyclicScheduler,
+        
+        "TimeTriggeredScheduler": TimeTriggeredScheduler,
         
         "FixedPriorityScheduler": FixedPriorityScheduler,
         
@@ -771,6 +881,8 @@ class VertexFactory:
         
         "Function": Function,
         
+        "InstrumentedFunction": InstrumentedFunction,
+        
         "Process": Process,
         
         "Signal": Signal,
@@ -778,6 +890,8 @@ class VertexFactory:
         "BufferSignal": BufferSignal,
         
         "LabelSignal": LabelSignal,
+        
+        "InstrumentedSignal": InstrumentedSignal,
         
         "SYComb": SYComb,
         
@@ -791,15 +905,18 @@ class VertexFactory:
         
         "AbstractProcessingComponent": AbstractProcessingComponent,
         
+        "InstrumentedProcessorTile": InstrumentedProcessorTile,
+        
         "AbstractStorageComponent": AbstractStorageComponent,
         
         "AbsractInterfaceComponent": AbsractInterfaceComponent,
         
         "AbstractCommunicationComponent": AbstractCommunicationComponent,
         
-        "TimeDivisionMultiplexer": TimeDivisionMultiplexer
+        "InstrumentedCommunicationInterconnect": InstrumentedCommunicationInterconnect,
         
-    }
+        "TimeDivisionMultiplexer": TimeDivisionMultiplexer
+        }
     
     @classmethod
     def get_type_from_name(cls,
@@ -839,7 +956,6 @@ class EdgeFactory:
     """
 
     str_to_classes = {
-        
         "Input": Input,
         
         "Output": Output,
@@ -855,8 +971,7 @@ class EdgeFactory:
         "AbstractScheduling": AbstractScheduling,
         
         "AbstractMapping": AbstractMapping
-        
-    }
+        }
 
     @classmethod
     def get_type_from_name(cls,

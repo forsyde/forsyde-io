@@ -1,0 +1,599 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+  <graph id="model" edgedefault="directed">
+    <!-- The start of the application model -->
+    <node id="P1A" type="Process">
+      <port name="Sensors"/>
+      <port name="ADC1Altitude"/>
+      <port name="INS1SpeedVector"/>
+      <port name="INS2SpeedVector"/>
+      <port name="INS1LoadFactor"/>
+      <port name="INS2LoadFactor"/>
+    </node>
+    <node id="AltitudeCalc" type="Process">
+      <port name="ADC1Altitude"/>
+      <port name="Acc"/>
+      <port name="Altitude"/>
+    </node>
+    <node id="FormatSpeedVectorCalc" type="Process">
+      <port name="INS1SpeedVector"/>
+      <port name="INS2SpeedVector"/>
+      <port name="InternalSpeedVector"/>
+    </node>
+    <node id="SpeedVectorCalc" type="Process">
+      <port name="InternalSpeedVector"/>
+      <port name="SpeedVector"/>
+      <port name="Speed"/>
+    </node>
+    <node id="HeadingCalc" type="Process">
+      <port name="SpeedVector"/>
+      <port name="Heading"/>
+    </node>
+    <node id="FormatLoadFactorCalc" type="Process">
+      <port name="INS1LoadFactor"/>
+      <port name="INS2LoadFactor"/>
+      <port name="InternalLoadFactor"/>
+    </node>
+    <node id="LoadFactorCalc" type="Process">
+      <port name="InternalLoadFactor"/>
+      <port name="LoadFactor"/>
+    </node>
+    <node id="AccCalc" type="Process">
+      <port name="LoadFactor"/>
+      <port name="Acc"/>
+    </node>
+    <node id="P2A" type="Process">
+      <port name="Altitude"/>
+      <port name="Speed"/>
+      <port name="Heading"/>
+    </node>
+    <node id="P1ACons" type="SDFComb">
+      <port name="output"/>
+      <port name="combinator"/>
+      <data attr.name="production" attr.type="object">
+        <data attr.name="ADC1Altitude" attr.type="integer">1</data>
+        <data attr.name="INS1SpeedVector" attr.type="integer">1</data>
+        <data attr.name="INS2SpeedVector" attr.type="integer">1</data>
+        <data attr.name="INS1LoadFactor" attr.type="integer">2</data>
+        <data attr.name="INS2LoadFactor" attr.type="integer">2</data>
+      </data>
+    </node>
+    <node id="AltitudeCalcCons" type="SDFComb">
+      <port name="output"/>
+      <port name="combinator"/>
+      <data attr.name="consumption" attr.type="object">
+        <data attr.name="ADC1Altitude" attr.type="integer">1</data>
+        <data attr.name="Acc" attr.type="integer">2</data>
+      </data>
+      <data attr.name="production" attr.type="object">
+        <data attr.name="Altitude" attr.type="integer">1</data>
+      </data>
+    </node>
+    <node id="FormatSpeedVectorCalcCons" type="SDFComb">
+      <port name="output"/>
+      <port name="combinator"/>
+      <data attr.name="consumption" attr.type="object">
+        <data attr.name="INS1SpeedVector" attr.type="integer">1</data>
+        <data attr.name="INS2SpeedVector" attr.type="integer">1</data>
+      </data>
+      <data attr.name="production" attr.type="object">
+        <data attr.name="InternalSpeedVector" attr.type="integer">1</data>
+      </data>
+    </node>
+    <node id="SpeedVectorCalcCons" type="SDFComb">
+      <port name="output"/>
+      <port name="combinator"/>
+      <data attr.name="consumption" attr.type="object">
+        <data attr.name="InternalSpeedVector" attr.type="integer">1</data>
+      </data>
+      <data attr.name="production" attr.type="object">
+        <data attr.name="SpeedVector" attr.type="integer">1</data>
+        <data attr.name="Speed" attr.type="integer">2</data>
+      </data>
+    </node>
+    <node id="HeadingCalcCons" type="SDFComb">
+      <port name="output"/>
+      <port name="combinator"/>
+      <data attr.name="consumption" attr.type="object">
+        <data attr.name="SpeedVector" attr.type="integer">1</data>
+      </data>
+      <data attr.name="production" attr.type="object">
+        <data attr.name="Heading" attr.type="integer">1</data>
+      </data>
+    </node>
+    <node id="FormatLoadFactorCalcCons" type="SDFComb">
+      <port name="output"/>
+      <port name="combinator"/>
+      <data attr.name="consumption" attr.type="object">
+        <data attr.name="INS1LoadFactor" attr.type="integer">1</data>
+        <data attr.name="INS2LoadFactor" attr.type="integer">1</data>
+      </data>
+      <data attr.name="production" attr.type="object">
+        <data attr.name="InternalLoadFactor" attr.type="integer">1</data>
+      </data>
+    </node>
+    <node id="LoadFactorCalcCons" type="SDFComb">
+      <port name="output"/>
+      <port name="combinator"/>
+      <data attr.name="consumption" attr.type="object">
+        <data attr.name="InternalLoadFactor" attr.type="integer">1</data>
+      </data>
+      <data attr.name="production" attr.type="object">
+        <data attr.name="LoadFactor" attr.type="integer">1</data>
+      </data>
+    </node>
+    <node id="AccCalcCons" type="SDFComb">
+      <port name="output"/>
+      <port name="combinator"/>
+      <data attr.name="consumption" attr.type="object">
+        <data attr.name="InternalLoadFactor" attr.type="integer">1</data>
+      </data>
+      <data attr.name="production" attr.type="object">
+        <data attr.name="Acc" attr.type="integer">1</data>
+      </data>
+    </node>
+    <node id="P2ACons" type="SDFComb">
+      <port name="output"/>
+      <port name="combinator"/>
+      <data attr.name="consumption" attr.type="object">
+        <data attr.name="Altitude" attr.type="integer">1</data>
+        <data attr.name="Speed" attr.type="integer">1</data>
+        <data attr.name="Heading" attr.type="integer">1</data>
+      </data>
+    </node>
+    <node id="P1AImpl" type="InstrumentedFunction">
+      <port name="Sensors"/>
+      <port name="ADC1Altitude"/>
+      <port name="INS1SpeedVector"/>
+      <port name="INS2SpeedVector"/>
+      <port name="INS1LoadFactor"/>
+      <port name="INS2LoadFactor"/>
+      <data attr.name="max_float_operations" attr.type="integer">0</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">0</data>
+    </node>
+    <node id="AltitudeCalcImpl" type="InstrumentedFunction">
+      <port name="ADC1Altitude"/>
+      <port name="Acc"/>
+      <port name="Altitude"/>
+      <data attr.name="max_float_operations" attr.type="integer">6000000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">6000</data>
+    </node>
+    <node id="FormatSpeedVectorCalcImpl" type="InstrumentedFunction">
+      <port name="INS1SpeedVector"/>
+      <port name="INS2SpeedVector"/>
+      <port name="InternalSpeedVector"/>
+      <data attr.name="max_float_operations" attr.type="integer">1200000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">2000</data>
+    </node>
+    <node id="SpeedVectorCalcImpl" type="InstrumentedFunction">
+      <port name="InternalSpeedVector"/>
+      <port name="SpeedVector"/>
+      <port name="Speed"/>
+      <data attr.name="max_float_operations" attr.type="integer">4200000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">8000</data>
+    </node>
+    <node id="HeadingCalcImpl" type="InstrumentedFunction">
+      <port name="SpeedVector"/>
+      <port name="Heading"/>
+      <data attr.name="max_float_operations" attr.type="integer">6000000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">8000</data>
+    </node>
+    <node id="FormatLoadFactorCalcImpl" type="InstrumentedFunction">
+      <port name="INS1LoadFactor"/>
+      <port name="INS2LoadFactor"/>
+      <port name="InternalLoadFactor"/>
+      <data attr.name="max_float_operations" attr.type="integer">1200000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">2000</data>
+    </node>
+    <node id="LoadFactorCalcImpl" type="InstrumentedFunction">
+      <port name="InternalLoadFactor"/>
+      <port name="LoadFactor"/>
+      <data attr.name="max_float_operations" attr.type="integer">12000000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">10000</data>
+    </node>
+    <node id="AccCalcImpl" type="InstrumentedFunction">
+      <port name="LoadFactor"/>
+      <port name="Acc"/>
+      <data attr.name="max_float_operations" attr.type="integer">9000000</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">12000</data>
+    </node>
+    <node id="P2AImpl" type="InstrumentedFunction">
+      <port name="Altitude"/>
+      <port name="Speed"/>
+      <port name="Heading"/>
+      <data attr.name="max_float_operations" attr.type="integer">0</data>
+      <data attr.name="max_int_operations" attr.type="integer">0</data>
+      <data attr.name="max_boolean_operations" attr.type="integer">0</data>
+      <data attr.name="max_memory_size_in_bytes" attr.type="integer">0</data>
+    </node>
+    <node id="ADC1AltitudeSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">200</data>
+    </node>
+    <node id="INS1SpeedVectorSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
+    </node>
+    <node id="INS2SpeedVectorSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
+    </node>
+    <node id="INS1LoadFactorSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
+    </node>
+    <node id="INS2LoadFactorSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
+    </node>
+    <node id="InternalSpeedVectorSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
+    </node>
+    <node id="SpeedVectorSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
+    </node>
+    <node id="InternalLoadFactorSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
+    </node>
+    <node id="LoadFactorSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
+    </node>
+    <node id="AccSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">500</data>
+    </node>
+    <node id="AltitudeSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">200</data>
+    </node>
+    <node id="SpeedSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">1000</data>
+    </node>
+    <node id="HeadingSignal" type="InstrumentedSignal">
+      <port name="fifoIn"/>
+      <port name="fifoOut"/>
+      <data attr.name="max_elem_size_bytes" attr.type="integer">500</data>
+    </node>
+    <node id="FlightInformationFunction" type="Process">
+      <port name="Sensors"/>
+      <port name="Display1"/>
+    </node>
+    <edge source="RDC1Cons" target="RDC1" type="Output" sourceport="output"/>
+    <edge source="AltitudeCalcCons" target="AltitudeCalc" type="Output" sourceport="output"/>
+    <edge source="FormatSpeedVectorCalcCons" target="FormatLoadFactorCalc" type="Output" sourceport="output"/>
+    <edge source="SpeedVectorCalcCons" target="SpeedVectorCalc" type="Output" sourceport="output"/>
+    <edge source="HeadingCalcCons" target="HeadingCalc" type="Output" sourceport="output"/>
+    <edge source="FormatLoadFactorCalcCons" target="FormatLoadFactorCalc" type="Output" sourceport="output"/>
+    <edge source="LoadFactorCalcCons" target="LoadFactorCalc" type="Output" sourceport="output"/>
+    <edge source="AccCalcCons" target="AccCalc" type="Output" sourceport="output"/>
+    <edge source="RDC3Cons" target="RDC3" type="Output" sourceport="output"/>
+
+    <edge source="HeadingCalc" target="Heading" type="Output" sourceport="HeadingSignal" targetport="fifoIn"/>
+    <edge source="HeadingSignal" target="P2A" type="Output" sourceport="fifoOut" targetport="Heading"/>
+    <edge source="SpeedVectorCalc" target="SpeedSignal" type="Output" sourceport="Speed" targetport="fifoIn"/>
+    <edge source="SpeedSignal" target="P2A" type="Output" sourceport="fifoOut" targetport="Speed"/>
+    <edge source="AltitudeCalc" target="AltitudeSignal" type="Output" sourceport="Altitude" targetport="fifoIn"/>
+    <edge source="AltitudeSignal" target="P2A" type="Output" sourceport="fifoOut" targetport="Altitude"/>
+    <edge source="SpeedVectorCalc" target="SpeedVector" type="Output" sourceport="SpeedVectorSignal" targetport="fifoIn"/>
+    <edge source="SpeedVectorSignal" target="HeadingCalc" type="Output" sourceport="fifoOut" targetport="SpeedVector"/>
+    <edge source="FormatSpeedVectorCalc" target="InternalSpeedVectorSignal" type="Output" sourceport="InternalSpeedVector" targetport="fifoIn"/>
+    <edge source="InternalSpeedVectorSignal" target="SpeedVectorCalc" type="Output" sourceport="fifoOut" targetport="InternalSpeedVector"/>
+    <edge source="AccCalc" target="AccSignal" type="Output" sourceport="Acc" targetport="fifoIn"/>
+    <edge source="AccSignal" target="AltitudeCalc" type="Output" sourceport="fifoOut" targetport="Acc"/>
+    <edge source="LoadFactorCalc" target="LoadFactorSignal" type="Output" sourceport="LoadFactor" targetport="fifoIn"/>
+    <edge source="LoadFactorSignal" target="AccCalc" type="Output" sourceport="fifoOut" targetport="LoadFactor"/>
+    <edge source="FormatLoadFactorCalc" target="LoadFactorSignal" type="Output" sourceport="LoadFactor" targetport="fifoIn"/>
+    <edge source="LoadFactorSignal" target="LoadFactorCalc" type="Output" sourceport="fifoOut" targetport="LoadFactor"/>
+
+
+    <!--  The end of the application model -->
+    <!--  The start of the midel platform model -->
+    <node id="time_triggered_schedule_1" type="TimeTriggeredScheduler"/>
+    <node id="time_triggered_schedule_2" type="TimeTriggeredScheduler"/>
+    <node id="time_triggered_schedule_3" type="TimeTriggeredScheduler"/>
+    <node id="time_triggered_schedule_4" type="TimeTriggeredScheduler"/>
+    <node id="time_triggered_schedule_5" type="TimeTriggeredScheduler"/>
+    <!--  The end of the midel platform model -->
+    <!--  The start of the platform model -->
+    <node id="RDC1" type="InstrumentedProcessorTile">
+      <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
+      <data attr.name="max_memory_internal_bytes" attr.type="integer">0</data>
+      <data attr.name="clock_cycles_per_float_op" attr.type="integer">0</data>
+      <data attr.name="clock_cycles_per_integer_op" attr.type="integer">0</data>
+      <data attr.name="clock_cycles_per_boolean_op" attr.type="integer">0</data>
+    </node>
+    <node id="RDC3" type="InstrumentedProcessorTile">
+      <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
+      <data attr.name="max_memory_internal_bytes" attr.type="integer">0</data>
+      <data attr.name="clock_cycles_per_float_op" attr.type="integer">0</data>
+      <data attr.name="clock_cycles_per_integer_op" attr.type="integer">0</data>
+      <data attr.name="clock_cycles_per_boolean_op" attr.type="integer">0</data>
+    </node>
+    <node id="ARM-R5-1" type="InstrumentedProcessorTile">
+      <port name="communication"/>
+      <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
+      <data attr.name="max_memory_internal_bytes" attr.type="integer">32000</data>
+      <data attr.name="clock_cycles_per_float_op" attr.type="integer">6</data>
+      <data attr.name="clock_cycles_per_integer_op" attr.type="integer">2</data>
+      <data attr.name="clock_cycles_per_boolean_op" attr.type="integer">1</data>
+    </node>
+    <node id="ARM-R5-2" type="InstrumentedProcessorTile">
+      <port name="communication"/>
+      <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
+      <data attr.name="max_memory_internal_bytes" attr.type="integer">32000</data>
+      <data attr.name="clock_cycles_per_float_op" attr.type="integer">6</data>
+      <data attr.name="clock_cycles_per_integer_op" attr.type="integer">2</data>
+      <data attr.name="clock_cycles_per_boolean_op" attr.type="integer">1</data>
+    </node>
+    <node id="ARM-A53-1" type="InstrumentedProcessorTile">
+      <port name="communication"/>
+      <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
+      <data attr.name="max_memory_internal_bytes" attr.type="integer">32000</data>
+      <data attr.name="clock_cycles_per_float_op" attr.type="integer">6</data>
+      <data attr.name="clock_cycles_per_integer_op" attr.type="integer">2</data>
+      <data attr.name="clock_cycles_per_boolean_op" attr.type="integer">1</data>
+    </node>
+    <node id="ARM-A53-2" type="InstrumentedProcessorTile">
+      <port name="communication"/>
+      <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
+      <data attr.name="max_memory_internal_bytes" attr.type="integer">32000</data>
+      <data attr.name="clock_cycles_per_float_op" attr.type="integer">6</data>
+      <data attr.name="clock_cycles_per_integer_op" attr.type="integer">2</data>
+      <data attr.name="clock_cycles_per_boolean_op" attr.type="integer">1</data>
+    </node>
+    <node id="ARM-A53-3" type="InstrumentedProcessorTile">
+      <port name="communication"/>
+      <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
+      <data attr.name="max_memory_internal_bytes" attr.type="integer">32000</data>
+      <data attr.name="clock_cycles_per_float_op" attr.type="integer">6</data>
+      <data attr.name="clock_cycles_per_integer_op" attr.type="integer">2</data>
+      <data attr.name="clock_cycles_per_boolean_op" attr.type="integer">1</data>
+    </node>
+    <node id="ARM-A53-4" type="InstrumentedProcessorTile">
+      <port name="communication"/>
+      <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
+      <data attr.name="max_memory_internal_bytes" attr.type="integer">32000</data>
+      <data attr.name="clock_cycles_per_float_op" attr.type="integer">6</data>
+      <data attr.name="clock_cycles_per_integer_op" attr.type="integer">2</data>
+      <data attr.name="clock_cycles_per_boolean_op" attr.type="integer">1</data>
+    </node>
+    <node id="On-Chip-OCM-RAM" type="InstrumentedCommunicationInterconnect">
+      <port name="communication"/>
+      <!-- 4 bytes per clock cycle -->
+      <data attr.name="min_bandwith_bytes_per_sec" attr.type="integer">800000000</data>
+    </node>
+    <!--  The end of the platform model -->
+    <!--  The start of the WCETs of the actors -->
+    <node id="RDC1WCET" type="WCET">
+      <port name="processor"/>
+      <port name="process"/>
+      <port name="platform"/>
+      <port name="application"/>
+      <data attr.name="time" attr.type="integer">4356</data>
+    </node>
+    <node id="AltitudeCalcWCET" type="WCET">
+      <port name="processor"/>
+      <port name="process"/>
+      <port name="platform"/>
+      <port name="application"/>
+      <data attr.name="time" attr.type="integer">4147</data>
+    </node>
+    <node id="FormatSpeedVectorCalcWCET" type="WCET">
+      <port name="processor"/>
+      <port name="process"/>
+      <port name="platform"/>
+      <port name="application"/>
+      <data attr.name="time" attr.type="integer">4146</data>
+    </node>
+    <node id="SpeedVectorCalcWCET" type="WCET">
+      <port name="processor"/>
+      <port name="process"/>
+      <port name="platform"/>
+      <port name="application"/>
+      <data attr.name="time" attr.type="integer">1411</data>
+    </node>
+    <node id="HeadingCalcWCET" type="WCET">
+      <port name="processor"/>
+      <port name="process"/>
+      <port name="platform"/>
+      <port name="application"/>
+      <data attr.name="time" attr.type="integer">4356</data>
+    </node>
+    <node id="FormatLoadFactorCalcWCET" type="WCET">
+      <port name="processor"/>
+      <port name="process"/>
+      <port name="platform"/>
+      <port name="application"/>
+      <data attr.name="time" attr.type="integer">4147</data>
+    </node>
+    <node id="LoadFactorCalcWCET" type="WCET">
+      <port name="processor"/>
+      <port name="process"/>
+      <port name="platform"/>
+      <port name="application"/>
+      <data attr.name="time" attr.type="integer">4146</data>
+    </node>
+    <node id="AccCalcWCET" type="WCET">
+      <port name="processor"/>
+      <port name="process"/>
+      <port name="platform"/>
+      <port name="application"/>
+      <data attr.name="time" attr.type="integer">1411</data>
+    </node>
+    <node id="RDC3WCET" type="WCET">
+      <port name="processor"/>
+      <port name="process"/>
+      <port name="platform"/>
+      <port name="application"/>
+      <data attr.name="time" attr.type="integer">1411</data>
+    </node>
+    <!--  The end of the WCETs of the actors -->
+    <!--  The start of the WCCTs of the arcs -->
+    <node id="ADC1Altitude" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <node id="INS1SpeedVector" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <node id="INS2SpeedVector" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <node id="INS1LoadFactor" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <node id="INS2LoadFactor" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <node id="InternalSpeedVector" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <node id="SpeedVector" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <node id="Speed" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <node id="Altitude" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <node id="Heading" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <node id="InternalLoadFactor" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <node id="LoadFactor" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <node id="Acc" type="WCCT">
+      <port name="signal"/>
+      <port name="reciever"/>
+      <port name="sender"/>
+      <data attr.name="time" attr.type="integer">1</data>
+    </node>
+    <!--  The end of the WCCTs of the arcs -->
+    <!--  The start of the objectives -->
+    <node id="min_throughput_obj" type="MinimumThroughput">
+      <data attr.name="apriori_importance" attr.type="integer">1</data>
+    </node>
+    <!--  The end of the objectives -->
+    <!--  The start of the relations -->
+
+    <edge source="getPx" target="gysig" type="Output" sourceport="gy" targetport="fifoIn"/>
+    <edge source="Gx" target="absxsig" type="Output" sourceport="resx" targetport="fifoIn"/>
+    <edge source="Gy" target="absysig" type="Output" sourceport="resy" targetport="fifoIn"/>
+    <edge source="gxsig" target="Gx" type="Output" sourceport="fifoOut" targetport="gx"/>
+    <edge source="gysig" target="Gy" type="Output" sourceport="fifoOut" targetport="gy"/>
+    <edge source="absxsig" target="Abs" type="Output" sourceport="fifoOut" targetport="resx"/>
+    <edge source="absysig" target="Abs" type="Output" sourceport="fifoOut" targetport="resy"/>
+    <edge source="sobel" target="getPx" type="Expansion" sourceport="imgInput" targetport="imgInput"/>
+    <edge source="sobel" target="Abs" type="Expansion" sourceport="imgOutput" targetport="imgOutput"/>
+    <edge source="tile1" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <edge source="tile2" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <edge source="tile3" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <edge source="tile4" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <edge source="tdmabus1" target="tile1" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <edge source="tdmabus1" target="tile2" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <edge source="tdmabus1" target="tile3" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <edge source="tdmabus1" target="tile4" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <edge source="getPxWCET" target="getPx" type="Annotation" sourceport="application"/>
+    <edge source="getPxWCET" target="tile1" type="Annotation" sourceport="platform"/>
+    <edge source="getPxWCET" target="tile2" type="Annotation" sourceport="platform"/>
+    <edge source="getPxWCET" target="tile3" type="Annotation" sourceport="platform"/>
+    <edge source="getPxWCET" target="tile4" type="Annotation" sourceport="platform"/>
+    <edge source="gxWCET" target="Gx" type="Annotation" sourceport="application"/>
+    <edge source="gxWCET" target="tile1" type="Annotation" sourceport="platform"/>
+    <edge source="gxWCET" target="tile2" type="Annotation" sourceport="platform"/>
+    <edge source="gxWCET" target="tile3" type="Annotation" sourceport="platform"/>
+    <edge source="gxWCET" target="tile4" type="Annotation" sourceport="platform"/>
+    <edge source="gyWCET" target="Gy" type="Annotation" sourceport="application"/>
+    <edge source="gyWCET" target="tile1" type="Annotation" sourceport="platform"/>
+    <edge source="gyWCET" target="tile2" type="Annotation" sourceport="platform"/>
+    <edge source="gyWCET" target="tile3" type="Annotation" sourceport="platform"/>
+    <edge source="gyWCET" target="tile4" type="Annotation" sourceport="platform"/>
+    <edge source="absWCET" target="Abs" type="Annotation" sourceport="application"/>
+    <edge source="absWCET" target="tile1" type="Annotation" sourceport="platform"/>
+    <edge source="absWCET" target="tile2" type="Annotation" sourceport="platform"/>
+    <edge source="absWCET" target="tile3" type="Annotation" sourceport="platform"/>
+    <edge source="absWCET" target="tile4" type="Annotation" sourceport="platform"/>
+    <edge source="gxsigWCCT" target="gxsig" type="Annotation"/>
+    <edge source="gxsigWCCT" target="tdmabus1" type="Annotation"/>
+    <edge source="gysigWCCT" target="gysig" type="Annotation"/>
+    <edge source="gysigWCCT" target="tdmabus1" type="Annotation"/>
+    <edge source="absxsigWCCT" target="absxsig" type="Annotation"/>
+    <edge source="absxsigWCCT" target="tdmabus1" type="Annotation"/>
+    <edge source="absysigWCCT" target="tdmabus1" type="Annotation"/>
+    <edge source="absysigWCCT" target="absysig" type="Annotation"/>
+    <edge source="min_throughput_obj" target="sobel" type="Annotation"/>
+    <!-- The end of the relations -->
+  </graph>
+</graphml>

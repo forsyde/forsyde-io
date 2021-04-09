@@ -1,8 +1,11 @@
+from typing import Dict
+from typing import List
+
 import forsyde.io.python.core as core
 
 {% for type_name, type_data in vertexTypes.items() %}
-{% if type_data['superClasses'] %}
-class {{type_name}}({{type_data['superClasses'] | join(', ') }}):
+{% if type_data['superTypes'] %}
+class {{type_name}}({{type_data['superTypes'] | join(', ') }}):
 {% else %}
 class {{type_name}}(core.Vertex):
 {% endif %}
@@ -26,26 +29,26 @@ class {{type_name}}(core.Vertex):
         return self.get_neigh("{{req_port}}")
 
     {% endfor %}
-    {% endif %}
+    {% endif -%}
     {% if type_data and 'required_properties' in type_data %}
-    {% for req_property, req_property_data in type_data['required_properties'].items() %}
-    {% if 'class' in req_property_data %}
-    def get_{{req_property}}(self) -> {{req_property_data['class'] | pythonify }}:
-    {% else %}
-    def get_{{req_property}}(self):
-    {% endif %}
+    {% for req_property, req_property_data in type_data['required_properties'].items() -%}
+    def get_{{req_property}}(self) -> {{req_property_data | pythonify }}:
+    {%- if 'default' in req_property_data %}
+        return self.properties["{{req_property}}"] if '{{req_property}}' in self.properties else {{req_property_data['default']}}
+    {%- else %}
         try:
             return self.properties["{{req_property}}"]
         except KeyError:
             raise AttributeError(f"Vertex {self.identifier} has no required '{{req_property}}' property.")
+    {%- endif %}
 
     {% endfor %}
     {% endif %}
 {% endfor %}
 
 {% for type_name, type_data in edgeTypes.items() %}
-{% if type_data['superClasses'] %}
-class {{type_name}}({{type_data['superClasses'] | join(', ') }}):
+{% if type_data['superTypes'] %}
+class {{type_name}}({{type_data['superTypes'] | join(', ') }}):
 {% else %}
 class {{type_name}}(core.Edge):
 {% endif %}
@@ -62,9 +65,9 @@ class VertexFactory:
     """
 
     str_to_classes = {
-        {% for type_name, type_data in vertexTypes.items() %}
+        {%- for type_name, type_data in vertexTypes.items() %}
         "{{type_name}}": {{type_name}}{{',' if not loop.last}}
-        {% endfor %}
+        {% endfor -%}
     }
     
     @classmethod
@@ -105,9 +108,9 @@ class EdgeFactory:
     """
 
     str_to_classes = {
-        {% for type_name, type_data in edgeTypes.items() %}
+        {%- for type_name, type_data in edgeTypes.items() %}
         "{{type_name}}": {{type_name}}{{',' if not loop.last}}
-        {% endfor %}
+        {% endfor -%}
     }
 
     @classmethod

@@ -2,23 +2,23 @@
     "vertexTypes": {
         "AbstractGrouping": null,
         "AbstractOrdering": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractGrouping"
             ]
         },
         "TriggeredTask": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractOrdering"
             ]
         },
         "SporadicTask": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractOrdering"
             ]
         },
         "ExtraFunctional": null,
         "WCET": {
-            "superClasses": [
+            "superTypes": [
                 "ExtraFunctional"
             ],
             "required_ports": {
@@ -33,13 +33,13 @@
             },
             "required_properties": {
                 "time": {
-                    "class": "Integer",
+                    "class": "integer",
                     "default": 0
                 }
             }
         },
         "WCCT": {
-            "superClasses": [
+            "superTypes": [
                 "ExtraFunctional"
             ],
             "required_ports": {
@@ -54,20 +54,35 @@
             },
             "required_properties": {
                 "time": {
-                    "class": "Integer",
+                    "class": "integer",
                     "default": 0
                 }
             }
         },
         "Requirement": null,
         "HardRequirement": {
-            "superClasses": [
+            "superTypes": [
                 "Requirement"
             ]
         },
+        "LocationRequirement": {
+            "superTypes": [
+                "Requirement"
+            ],
+            "required_ports": {
+                "process": {
+                    "class": "Process",
+                    "multiple": true
+                },
+                "processing_unit": {
+                    "class": "AbstractProcessingComponent",
+                    "multiple": true
+                }
+            }
+        },
         "Goal": null,
         "MinimumThroughput": {
-            "superClasses": [
+            "superTypes": [
                 "Goal"
             ],
             "required_ports": {
@@ -78,39 +93,89 @@
             },
             "required_properties": {
                 "apriori_importance": {
-                    "class": "Integer",
+                    "class": "integer",
                     "default": 1
                 }
             }
         },
         "StaticCyclicScheduler": null,
+        "TimeTriggeredScheduler": {
+            "superTypes": [
+                "AbstractGrouping"
+            ],
+            "required_properties": {
+                "trigger_time": {
+                    "class": "object",
+                    "key": "integer",
+                    "value": "string",
+                    "default": {}
+                }
+            }
+        },
         "FixedPriorityScheduler": null,
         "CustomScheduler": null,
         "RoundRobinScheduler": null,
         "Function": null,
+        "InstrumentedFunction": {
+            "superTypes": [
+                "Function"
+            ],
+            "required_properties": {
+                "max_float_operations": {
+                    "class": "integer",
+                    "default": 0
+                },
+                "max_int_operations": {
+                    "class": "integer",
+                    "default": 0
+                },
+                "max_boolean_operations": {
+                    "class": "integer",
+                    "default": 0
+                },
+                "max_memory_size_in_bytes": {
+                    "class": "integer",
+                    "default": 1
+                }
+            }
+        },
         "Process": {
-            "superClasses": [
+            "superTypes": [
                 "Function"
             ]
         },
         "Signal": null,
         "BufferSignal": {
-            "superClasses": [
+            "superTypes": [
                 "Signal"
             ]
         },
         "LabelSignal": {
-            "superClasses": [
+            "superTypes": [
                 "Signal"
             ]
         },
+        "InstrumentedSignal": {
+            "superTypes": [
+                "Signal"
+            ],
+            "required_properties": {
+                "max_elem_size_bytes": {
+                    "class": "integer"
+                },
+                "max_elem_count": {
+                    "class": "integer",
+                    "default": 1
+                }
+            }
+        },
         "SYComb": {
-            "superClasses": [
+            "superTypes": [
                 "Function"
             ]
         },
         "SYPrefix": {
-            "superClasses": [
+            "superTypes": [
                 "Function"
             ],
             "required_ports": {
@@ -123,7 +188,7 @@
             }
         },
         "SDFComb": {
-            "superClasses": [
+            "superTypes": [
                 "Function"
             ],
             "required_ports": {
@@ -136,15 +201,19 @@
             },
             "required_properties": {
                 "consumption": {
-                    "class": "Dictionary"
+                    "class": "object",
+                    "key": "string",
+                    "value": "integer"
                 },
                 "production": {
-                    "class": "Dictionary"
+                    "class": "object",
+                    "key": "string",
+                    "value": "integer"
                 }
             }
         },
         "SDFPrefix": {
-            "superClasses": [
+            "superTypes": [
                 "Function"
             ],
             "required_ports": {
@@ -158,32 +227,70 @@
         },
         "AbstractPhysicalComponent": null,
         "AbstractProcessingComponent": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractPhysicalComponent"
             ]
         },
+        "InstrumentedProcessorTile": {
+            "superTypes": [
+                "AbstractProcessingComponent"
+            ],
+            "required_properties": {
+                "min_frequency_hz": {
+                    "class": "integer",
+                    "default": 50000000
+                },
+                "max_memory_internal_bytes": {
+                    "class": "integer",
+                    "default": 32000
+                },
+                "clock_cycles_per_float_op": {
+                    "class": "integer",
+                    "default": 6
+                },
+                "clock_cycles_per_integer_op": {
+                    "class": "integer",
+                    "default": 2
+                },
+                "clock_cycles_per_boolean_op": {
+                    "class": "integer",
+                    "default": 1
+                }
+            }
+        },
         "AbstractStorageComponent": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractPhysicalComponent"
             ]
         },
         "AbsractInterfaceComponent": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractPhysicalComponent"
             ]
         },
         "AbstractCommunicationComponent": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractPhysicalComponent"
             ]
         },
+        "InstrumentedCommunicationInterconnect": {
+            "superTypes": [
+                "AbstractCommunicationComponent"
+            ],
+            "required_properties": {
+                "min_bandwith_bytes_per_sec": {
+                    "class": "integer",
+                    "default": 1000000
+                }
+            }
+        },
         "TimeDivisionMultiplexer": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractCommunicationComponent"
             ],
             "required_properties": {
                 "slots": {
-                    "class": "Integer",
+                    "class": "integer",
                     "default": 1
                 }
             }
@@ -197,12 +304,12 @@
         "AbstractPhysicalConnection": null,
         "AbstractDecision": null,
         "AbstractScheduling": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractDecision"
             ]
         },
         "AbstractMapping": {
-            "superClasses": [
+            "superTypes": [
                 "AbstractDecision"
             ]
         }
@@ -211,30 +318,30 @@
     "__commented__": {
         "vertexTypes": {
             "TypeRepresentation": null,
-            "Integer": {
-                "superClasses": [
+            "integer": {
+                "superTypes": [
                     "TypeRepresentation"
                 ],
                 "required_properties": {
                     "bits": {
-                        "class": "Integer",
+                        "class": "integer",
                         "default": 0
                     }
                 }
             },
             "Floating": {
-                "superClasses": [
+                "superTypes": [
                     "TypeRepresentation"
                 ],
                 "required_properties": {
                     "bits": {
-                        "class": "Integer",
+                        "class": "integer",
                         "default": 0
                     }
                 }
             },
             "Record": {
-                "superClasses": [
+                "superTypes": [
                     "TypeRepresentation"
                 ],
                 "required_properties": {
@@ -244,12 +351,12 @@
                 }
             },
             "Array": {
-                "superClasses": [
+                "superTypes": [
                     "TypeRepresentation"
                 ],
                 "required_properties": {
                     "size": {
-                        "class": "Integer",
+                        "class": "integer",
                         "default": 0
                     }
                 }

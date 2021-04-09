@@ -2,17 +2,17 @@
 vertexTypes:
   AbstractGrouping:
   AbstractOrdering:
-    superClasses:
+    superTypes:
     - AbstractGrouping
   TriggeredTask:
-    superClasses:
+    superTypes:
     - AbstractOrdering
   SporadicTask:
-    superClasses:
+    superTypes:
     - AbstractOrdering
   ExtraFunctional:
   WCET:
-    superClasses:
+    superTypes:
     - ExtraFunctional
     required_ports:
     - application:
@@ -26,7 +26,7 @@ vertexTypes:
       class: Integer
       default: 0
   WCCT:
-    superClasses:
+    superTypes:
     - ExtraFunctional
     required_ports:
     - application:
@@ -41,11 +41,11 @@ vertexTypes:
       default: 0
   Requirement:
   HardRequirement:
-    superClasses:
+    superTypes:
     - Requirement
   Goal:
   MinimumThroughput:
-    superClasses:
+    superTypes:
     - Goal
     required_ports:
     - application:
@@ -61,20 +61,20 @@ vertexTypes:
   RoundRobinScheduler:
   Function:
   Process:
-    superClasses:
+    superTypes:
     - Function
   Signal:
   BufferSignal:
-    superClasses:
+    superTypes:
     - Signal
   LabelSignal:
-    superClasses:
+    superTypes:
     - Signal
   SYComb:
-    superClasses:
+    superTypes:
     - Function
   SYPrefix:
-    superClasses:
+    superTypes:
     - Function
     required_ports:
       prefixer:
@@ -82,7 +82,7 @@ vertexTypes:
       output:
         class: Function
   SDFComb:
-    superClasses:
+    superTypes:
     - Function
     required_ports:
       combinator:
@@ -95,7 +95,7 @@ vertexTypes:
       production:
         class: Dictionary
   SDFPrefix:
-    superClasses:
+    superTypes:
     - Function
     required_ports:
       prefixer:
@@ -104,19 +104,19 @@ vertexTypes:
         class: Function
   AbstractPhysicalComponent:
   AbstractProcessingComponent:
-    superClasses:
+    superTypes:
     - AbstractPhysicalComponent
   AbstractStorageComponent:
-    superClasses:
+    superTypes:
     - AbstractPhysicalComponent
   AbsractInterfaceComponent:
-    superClasses:
+    superTypes:
     - AbstractPhysicalComponent
   AbstractCommunicationComponent:
-    superClasses:
+    superTypes:
     - AbstractPhysicalComponent
   TimeDivisionMultiplexer:
-    superClasses:
+    superTypes:
     - AbstractCommunicationComponent
     required_properties:
       slots:
@@ -130,10 +130,10 @@ edgeTypes:
   AbstractPhysicalConnection:
   AbstractDecision:
   AbstractScheduling:
-    superClasses:
+    superTypes:
     - AbstractDecision
   AbstractMapping:
-    superClasses:
+    superTypes:
     - AbstractDecision
 portClasses:
   Integer:

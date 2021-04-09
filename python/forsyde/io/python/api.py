@@ -1,7 +1,9 @@
 import pathlib
+import logging
 import warnings
 from typing import Optional
 
+from forsyde.io.python import LOGGER_NAME
 from forsyde.io.python.core import ForSyDeModel
 from forsyde.io.python.drivers import ForSyDeMLDriver
 from forsyde.io.python.drivers import ForSyDeXMLDriver
@@ -31,11 +33,14 @@ def load_model(source: str,
 
 
 def write_model(model: ForSyDeModel, sink: str) -> None:
+    logger = logging.getLogger(LOGGER_NAME)
     ext = pathlib.Path(sink).suffix
     if ext == '.forxml':
         ForSyDeMLDriver().write(model, sink)
     elif ext == '.xml':
-        ForSyDeXMLDriver().write(model, sink)
+        logger.warning(
+            f"Ad hoc xml is not supported. Converting to '.forxml' instead.")
+        ForSyDeMLDriver().write(model, sink.replace('.xml', '.forxml'))
     elif ext == '.dot':
         ForSyDeDotDriver().write(model, sink)
     else:
