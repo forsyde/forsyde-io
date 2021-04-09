@@ -241,6 +241,7 @@ class ForSyDeXMLDriver(ForSyDeModelDriver):
             return dict()
 
     def write(self, model: ForSyDeModel, sink: str) -> None:
+        raise NotImplementedError("Writing to ad-hoc XML format is not supported.")
         tree = etree.Element('ForSyDe')
         for v in model.nodes:
             node_elem = etree.SubElement(tree, 'Vertex')
@@ -249,14 +250,14 @@ class ForSyDeXMLDriver(ForSyDeModelDriver):
             for port in v.ports:
                 port_elem = etree.SubElement(node_elem, 'Port')
                 port_elem.set('id', port.identifier)
-                if port.port_type == int:
-                    port_elem.set('type', 'Integer')
-                elif port.port_type == float:
-                    port_elem.set('type', 'Integer')
-                elif issubclass(port.port_type, Vertex):
-                    port_elem.set('type', str(port.port_type))
-                else:
-                    port_elem.set('type', 'String')
+                # if port.port_type == int:
+                #     port_elem.set('type', 'Integer')
+                # elif port.port_type == float:
+                #     port_elem.set('type', 'Integer')
+                # elif issubclass(port.port_type, Vertex):
+                #     port_elem.set('type', str(port.port_type))
+                # else:
+                #     port_elem.set('type', 'String')
             for (prop, val) in v.properties.items():
                 prop_elem = etree.SubElement(node_elem, 'Property')
                 prop_elem.set('name', prop)
