@@ -41,7 +41,7 @@ def write_model(model: ForSyDeModel, sink: str) -> None:
         logger.warning(
             f"Ad hoc xml is not supported. Converting to '.forxml' instead.")
         ForSyDeMLDriver().write(model, sink.replace('.xml', '.forxml'))
-    elif ext == '.dot':
+    elif ext == '.dot' or ext == ".gv":
         ForSyDeDotDriver().write(model, sink)
     else:
         raise NotImplementedError(f"Format {ext} is unkown.")

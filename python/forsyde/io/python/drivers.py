@@ -1,12 +1,16 @@
 import abc
 import warnings
 import xml.etree.ElementTree as etree
+import pprint
+import itertools
+from functools import reduce
 from typing import Any
 from typing import Optional
 
 # from lxml import etree  # type: ignore
 import networkx as nx
-from networkx.drawing.nx_pydot import write_dot  # type: ignore
+import pydot
+#from networkx.drawing.nx_pydot import write_dot  # type: ignore
 
 from forsyde.io.python.core import Vertex
 from forsyde.io.python.core import Edge
@@ -152,12 +156,20 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
             for vedge in tree.iterfind('.//' + xmlns + 'graph/' + xmlns +
                                        'edge',
                                        namespaces=self.ns):
-                source_vertex = next(n
-                                     for (n, nid) in model.nodes.data('label')
-                                     if nid == vedge.get('source'))
-                target_vertex = next(n
-                                     for (n, nid) in model.nodes.data('label')
-                                     if nid == vedge.get('target'))
+                source_vertex = next((n
+                                      for (n, nid) in model.nodes.data('label')
+                                      if nid == vedge.get('source')), None)
+                if source_vertex is None:
+                    raise ValueError(
+                        f"Could not find source node {vedge.get('source')} to during edge building."
+                    )
+                target_vertex = next((n
+                                      for (n, nid) in model.nodes.data('label')
+                                      if nid == vedge.get('target')), None)
+                if target_vertex is None:
+                    raise ValueError(
+                        f"Could not find target node {vedge.get('target')} to during edge building."
+                    )
                 edge = EdgeFactory.build(source=source_vertex,
                                          target=target_vertex,
                                          type_name=vedge.get('type'))
@@ -241,7 +253,8 @@ class ForSyDeXMLDriver(ForSyDeModelDriver):
             return dict()
 
     def write(self, model: ForSyDeModel, sink: str) -> None:
-        raise NotImplementedError("Writing to ad-hoc XML format is not supported.")
+        raise NotImplementedError(
+            "Writing to ad-hoc XML format is not supported.")
         tree = etree.Element('ForSyDe')
         for v in model.nodes:
             node_elem = etree.SubElement(tree, 'Vertex')
@@ -343,17 +356,49 @@ class ForSyDeDotDriver(ForSyDeModelDriver):
             "The 'DotDriver' only supports writing the model to 'dot'.")
 
     def write(self, model: ForSyDeModel, sink: str) -> None:
-        strg = nx.MultiDiGraph()
+        dot = pydot.Dot("model", graph_type="digraph")
+        # create all clusters
+        graphs = {'': dot}
         for v in model.nodes:
-            strg.add_node(f"{v.identifier}\\n{v.get_type_tag()}")
+            graph_name = "/".join(v.identifier.split("/")[:-1])
+            label = f'{v.identifier}\n'
+            label += v.get_type_tag() + "\\n"
+            label += pprint.pformat(v.properties)
+            graph = graphs[graph_name] if graph_name in graphs else pydot.Subgraph(
+                    f"cluster_{graph_name}", label=graph_name, color="black")
+            graph.add_node(
+                pydot.Node(v.identifier, label=label, shape='box'))
+            while graph_name not in graphs:
+                graphs[graph_name] = graph
+                graph_name = "/".join(graph_name.split("/")[:-1])
+                parent = graphs[graph_name] if graph_name in graphs else pydot.Subgraph(f"cluster_{graph_name}",
+                                                     label=graph_name,
+                                                     color="black")
+                parent.add_subgraph(graph)
+                graph = parent
         for (s, t, e) in model.edges.data("object"):
             sp = e.source_vertex_port
             tp = e.target_vertex_port
-            strg.add_edge(f"{s.identifier}\\n{s.get_type_tag()}",
-                          f"{t.identifier}\\n{t.get_type_tag()}",
-                          label=f"{e.get_type_tag()}\\n" +
-                          (f"{s.identifier}.{sp.identifier}"
-                           if sp else f"{s.identifier}") + "\\n" +
-                          (f"{t.identifier}.{tp.identifier}"
-                           if tp else f"{t.identifier}"))
-        write_dot(strg, sink)
+            graph_name_s = "/".join(s.identifier.split("/")[:-1])
+            graph_name_t = "/".join(t.identifier.split("/")[:-1])
+            g = dot
+            if graph_name_s == graph_name_t:
+                g = graphs[graph_name_s]
+            g.add_edge(
+                pydot.Edge(s.identifier,
+                           t.identifier,
+                           label=f"{e.get_type_tag()}\\n" +
+                           (f"{s.identifier}.{sp.identifier}"
+                            if sp else f"{s.identifier}") + "\\n" +
+                           (f"{t.identifier}.{tp.identifier}"
+                            if tp else f"{t.identifier}")))
+        # for ((g1_name, g1), (g2_name, g2)) in itertools.product(graphs.items(), graphs.items()):
+        #     if g1 != g2 and g2_name.startswith(g1_name):
+        #         print(g1_name, g2_name)
+        #         g2.subgraph(g1)
+        # for (_, g) in graphs.items():
+        #     if g != dot:
+        #         dot.subgraph(g)
+        with open(sink, "w") as sinkstream:
+            sinkstream.write(dot.to_string())
+        # write_dot(strg, sink)
