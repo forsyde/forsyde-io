@@ -278,7 +278,7 @@
                 "AbstractCommunicationComponent"
             ],
             "required_properties": {
-                "min_bandwith_bytes_per_sec": {
+                "max_bandwith_bytes_per_sec": {
                     "class": "integer",
                     "default": 1000000
                 }

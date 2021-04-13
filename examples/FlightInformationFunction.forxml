@@ -126,7 +126,7 @@
       <port name="output"/>
       <port name="combinator"/>
       <data attr.name="consumption" attr.type="object">
-        <data attr.name="InternalLoadFactor" attr.type="integer">1</data>
+        <data attr.name="LoadFactor" attr.type="integer">1</data>
       </data>
       <data attr.name="production" attr.type="object">
         <data attr.name="Acc" attr.type="integer">1</data>
@@ -293,7 +293,7 @@
     </node>
     <edge source="P1ACons" target="P1A" type="Output" sourceport="output"/>
     <edge source="AltitudeCalcCons" target="AltitudeCalc" type="Output" sourceport="output"/>
-    <edge source="FormatSpeedVectorCalcCons" target="FormatLoadFactorCalc" type="Output" sourceport="output"/>
+    <edge source="FormatSpeedVectorCalcCons" target="FormatSpeedVectorCalc" type="Output" sourceport="output"/>
     <edge source="SpeedVectorCalcCons" target="SpeedVectorCalc" type="Output" sourceport="output"/>
     <edge source="HeadingCalcCons" target="HeadingCalc" type="Output" sourceport="output"/>
     <edge source="FormatLoadFactorCalcCons" target="FormatLoadFactorCalc" type="Output" sourceport="output"/>
@@ -326,6 +326,9 @@
     <node id="time_triggered_schedule_3" type="TimeTriggeredScheduler"/>
     <node id="time_triggered_schedule_4" type="TimeTriggeredScheduler"/>
     <node id="time_triggered_schedule_5" type="TimeTriggeredScheduler"/>
+    <node id="time_triggered_schedule_6" type="TimeTriggeredScheduler"/>
+    <node id="time_triggered_schedule_7" type="TimeTriggeredScheduler"/>
+
     <!--  The end of the midel platform model -->
     <!--  The start of the platform model -->
     <node id="RDC1" type="InstrumentedProcessorTile">
@@ -393,8 +396,9 @@
     <node id="On-Chip-OCM-RAM" type="InstrumentedCommunicationInterconnect">
       <port name="communication"/>
       <!-- 4 bytes per clock cycle -->
-      <data attr.name="min_bandwith_bytes_per_sec" attr.type="integer">800000000</data>
+      <data attr.name="max_bandwith_bytes_per_sec" attr.type="integer">800000000</data>
     </node>
+    <edge source="ARM-R5-1" target="On-Chip-OCM-RAM"/>
     <!--  The end of the platform model -->
     <!--  The start of the WCETs of the actors -->
     <node id="RDC1WCET" type="WCET">

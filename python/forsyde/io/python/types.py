@@ -744,8 +744,8 @@ class InstrumentedCommunicationInterconnect(AbstractCommunicationComponent):
 	        return "InstrumentedCommunicationInterconnect"
             
     
-    def get_min_bandwith_bytes_per_sec(self) -> int:
-        return self.properties["min_bandwith_bytes_per_sec"] if 'min_bandwith_bytes_per_sec' in self.properties else 1000000
+    def get_max_bandwith_bytes_per_sec(self) -> int:
+        return self.properties["max_bandwith_bytes_per_sec"] if 'max_bandwith_bytes_per_sec' in self.properties else 1000000
 
     
     
