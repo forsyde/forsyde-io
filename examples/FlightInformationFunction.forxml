@@ -51,11 +51,11 @@
       <port name="output"/>
       <port name="combinator"/>
       <data attr.name="production" attr.type="object">
-        <data attr.name="ADC1Altitude" attr.type="integer">1</data>
-        <data attr.name="INS1SpeedVector" attr.type="integer">1</data>
-        <data attr.name="INS2SpeedVector" attr.type="integer">1</data>
-        <data attr.name="INS1LoadFactor" attr.type="integer">2</data>
-        <data attr.name="INS2LoadFactor" attr.type="integer">2</data>
+        <data attr.name="ADC1Altitude" attr.type="integer">2</data>
+        <data attr.name="INS1SpeedVector" attr.type="integer">2</data>
+        <data attr.name="INS2SpeedVector" attr.type="integer">2</data>
+        <data attr.name="INS1LoadFactor" attr.type="integer">1</data>
+        <data attr.name="INS2LoadFactor" attr.type="integer">1</data>
       </data>
     </node>
     <node id="AltitudeCalcCons" type="SDFComb">
@@ -291,7 +291,7 @@
       <port name="Sensors"/>
       <port name="Display1"/>
     </node>
-    <edge source="RDC1Cons" target="RDC1" type="Output" sourceport="output"/>
+    <edge source="P1ACons" target="P1A" type="Output" sourceport="output"/>
     <edge source="AltitudeCalcCons" target="AltitudeCalc" type="Output" sourceport="output"/>
     <edge source="FormatSpeedVectorCalcCons" target="FormatLoadFactorCalc" type="Output" sourceport="output"/>
     <edge source="SpeedVectorCalcCons" target="SpeedVectorCalc" type="Output" sourceport="output"/>
@@ -299,15 +299,15 @@
     <edge source="FormatLoadFactorCalcCons" target="FormatLoadFactorCalc" type="Output" sourceport="output"/>
     <edge source="LoadFactorCalcCons" target="LoadFactorCalc" type="Output" sourceport="output"/>
     <edge source="AccCalcCons" target="AccCalc" type="Output" sourceport="output"/>
-    <edge source="RDC3Cons" target="RDC3" type="Output" sourceport="output"/>
+    <edge source="P2ACons" target="P2A" type="Output" sourceport="output"/>
 
-    <edge source="HeadingCalc" target="Heading" type="Output" sourceport="HeadingSignal" targetport="fifoIn"/>
+    <edge source="HeadingCalc" target="HeadingSignal" type="Output" sourceport="Heading" targetport="fifoIn"/>
     <edge source="HeadingSignal" target="P2A" type="Output" sourceport="fifoOut" targetport="Heading"/>
     <edge source="SpeedVectorCalc" target="SpeedSignal" type="Output" sourceport="Speed" targetport="fifoIn"/>
     <edge source="SpeedSignal" target="P2A" type="Output" sourceport="fifoOut" targetport="Speed"/>
     <edge source="AltitudeCalc" target="AltitudeSignal" type="Output" sourceport="Altitude" targetport="fifoIn"/>
     <edge source="AltitudeSignal" target="P2A" type="Output" sourceport="fifoOut" targetport="Altitude"/>
-    <edge source="SpeedVectorCalc" target="SpeedVector" type="Output" sourceport="SpeedVectorSignal" targetport="fifoIn"/>
+    <edge source="SpeedVectorCalc" target="SpeedVectorSignal" type="Output" sourceport="SpeedVector" targetport="fifoIn"/>
     <edge source="SpeedVectorSignal" target="HeadingCalc" type="Output" sourceport="fifoOut" targetport="SpeedVector"/>
     <edge source="FormatSpeedVectorCalc" target="InternalSpeedVectorSignal" type="Output" sourceport="InternalSpeedVector" targetport="fifoIn"/>
     <edge source="InternalSpeedVectorSignal" target="SpeedVectorCalc" type="Output" sourceport="fifoOut" targetport="InternalSpeedVector"/>
@@ -315,8 +315,8 @@
     <edge source="AccSignal" target="AltitudeCalc" type="Output" sourceport="fifoOut" targetport="Acc"/>
     <edge source="LoadFactorCalc" target="LoadFactorSignal" type="Output" sourceport="LoadFactor" targetport="fifoIn"/>
     <edge source="LoadFactorSignal" target="AccCalc" type="Output" sourceport="fifoOut" targetport="LoadFactor"/>
-    <edge source="FormatLoadFactorCalc" target="LoadFactorSignal" type="Output" sourceport="LoadFactor" targetport="fifoIn"/>
-    <edge source="LoadFactorSignal" target="LoadFactorCalc" type="Output" sourceport="fifoOut" targetport="LoadFactor"/>
+    <edge source="FormatLoadFactorCalc" target="LoadFactorSignal" type="Output" sourceport="InternalLoadFactor" targetport="fifoIn"/>
+    <edge source="LoadFactorSignal" target="LoadFactorCalc" type="Output" sourceport="fifoOut" targetport="InternalLoadFactor"/>
 
 
     <!--  The end of the application model -->
@@ -548,52 +548,52 @@
     <!--  The end of the objectives -->
     <!--  The start of the relations -->
 
-    <edge source="getPx" target="gysig" type="Output" sourceport="gy" targetport="fifoIn"/>
-    <edge source="Gx" target="absxsig" type="Output" sourceport="resx" targetport="fifoIn"/>
-    <edge source="Gy" target="absysig" type="Output" sourceport="resy" targetport="fifoIn"/>
-    <edge source="gxsig" target="Gx" type="Output" sourceport="fifoOut" targetport="gx"/>
-    <edge source="gysig" target="Gy" type="Output" sourceport="fifoOut" targetport="gy"/>
-    <edge source="absxsig" target="Abs" type="Output" sourceport="fifoOut" targetport="resx"/>
-    <edge source="absysig" target="Abs" type="Output" sourceport="fifoOut" targetport="resy"/>
-    <edge source="sobel" target="getPx" type="Expansion" sourceport="imgInput" targetport="imgInput"/>
-    <edge source="sobel" target="Abs" type="Expansion" sourceport="imgOutput" targetport="imgOutput"/>
-    <edge source="tile1" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
-    <edge source="tile2" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
-    <edge source="tile3" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
-    <edge source="tile4" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
-    <edge source="tdmabus1" target="tile1" type="AbstractPhysicalConnection" sourceport="communication"/>
-    <edge source="tdmabus1" target="tile2" type="AbstractPhysicalConnection" sourceport="communication"/>
-    <edge source="tdmabus1" target="tile3" type="AbstractPhysicalConnection" sourceport="communication"/>
-    <edge source="tdmabus1" target="tile4" type="AbstractPhysicalConnection" sourceport="communication"/>
-    <edge source="getPxWCET" target="getPx" type="Annotation" sourceport="application"/>
-    <edge source="getPxWCET" target="tile1" type="Annotation" sourceport="platform"/>
-    <edge source="getPxWCET" target="tile2" type="Annotation" sourceport="platform"/>
-    <edge source="getPxWCET" target="tile3" type="Annotation" sourceport="platform"/>
-    <edge source="getPxWCET" target="tile4" type="Annotation" sourceport="platform"/>
-    <edge source="gxWCET" target="Gx" type="Annotation" sourceport="application"/>
-    <edge source="gxWCET" target="tile1" type="Annotation" sourceport="platform"/>
-    <edge source="gxWCET" target="tile2" type="Annotation" sourceport="platform"/>
-    <edge source="gxWCET" target="tile3" type="Annotation" sourceport="platform"/>
-    <edge source="gxWCET" target="tile4" type="Annotation" sourceport="platform"/>
-    <edge source="gyWCET" target="Gy" type="Annotation" sourceport="application"/>
-    <edge source="gyWCET" target="tile1" type="Annotation" sourceport="platform"/>
-    <edge source="gyWCET" target="tile2" type="Annotation" sourceport="platform"/>
-    <edge source="gyWCET" target="tile3" type="Annotation" sourceport="platform"/>
-    <edge source="gyWCET" target="tile4" type="Annotation" sourceport="platform"/>
-    <edge source="absWCET" target="Abs" type="Annotation" sourceport="application"/>
-    <edge source="absWCET" target="tile1" type="Annotation" sourceport="platform"/>
-    <edge source="absWCET" target="tile2" type="Annotation" sourceport="platform"/>
-    <edge source="absWCET" target="tile3" type="Annotation" sourceport="platform"/>
-    <edge source="absWCET" target="tile4" type="Annotation" sourceport="platform"/>
-    <edge source="gxsigWCCT" target="gxsig" type="Annotation"/>
-    <edge source="gxsigWCCT" target="tdmabus1" type="Annotation"/>
-    <edge source="gysigWCCT" target="gysig" type="Annotation"/>
-    <edge source="gysigWCCT" target="tdmabus1" type="Annotation"/>
-    <edge source="absxsigWCCT" target="absxsig" type="Annotation"/>
-    <edge source="absxsigWCCT" target="tdmabus1" type="Annotation"/>
-    <edge source="absysigWCCT" target="tdmabus1" type="Annotation"/>
-    <edge source="absysigWCCT" target="absysig" type="Annotation"/>
-    <edge source="min_throughput_obj" target="sobel" type="Annotation"/>
+    <!-- <edge source="getPx" target="gysig" type="Output" sourceport="gy" targetport="fifoIn"/> -->
+    <!-- <edge source="Gx" target="absxsig" type="Output" sourceport="resx" targetport="fifoIn"/> -->
+    <!-- <edge source="Gy" target="absysig" type="Output" sourceport="resy" targetport="fifoIn"/> -->
+    <!-- <edge source="gxsig" target="Gx" type="Output" sourceport="fifoOut" targetport="gx"/> -->
+    <!-- <edge source="gysig" target="Gy" type="Output" sourceport="fifoOut" targetport="gy"/> -->
+    <!-- <edge source="absxsig" target="Abs" type="Output" sourceport="fifoOut" targetport="resx"/> -->
+    <!-- <edge source="absysig" target="Abs" type="Output" sourceport="fifoOut" targetport="resy"/> -->
+    <!-- <edge source="sobel" target="getPx" type="Expansion" sourceport="imgInput" targetport="imgInput"/> -->
+    <!-- <edge source="sobel" target="Abs" type="Expansion" sourceport="imgOutput" targetport="imgOutput"/> -->
+    <!-- <edge source="tile1" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/> -->
+    <!-- <edge source="tile2" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/> -->
+    <!-- <edge source="tile3" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/> -->
+    <!-- <edge source="tile4" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/> -->
+    <!-- <edge source="tdmabus1" target="tile1" type="AbstractPhysicalConnection" sourceport="communication"/> -->
+    <!-- <edge source="tdmabus1" target="tile2" type="AbstractPhysicalConnection" sourceport="communication"/> -->
+    <!-- <edge source="tdmabus1" target="tile3" type="AbstractPhysicalConnection" sourceport="communication"/> -->
+    <!-- <edge source="tdmabus1" target="tile4" type="AbstractPhysicalConnection" sourceport="communication"/> -->
+    <!-- <edge source="getPxWCET" target="getPx" type="Annotation" sourceport="application"/> -->
+    <!-- <edge source="getPxWCET" target="tile1" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="getPxWCET" target="tile2" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="getPxWCET" target="tile3" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="getPxWCET" target="tile4" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="gxWCET" target="Gx" type="Annotation" sourceport="application"/> -->
+    <!-- <edge source="gxWCET" target="tile1" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="gxWCET" target="tile2" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="gxWCET" target="tile3" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="gxWCET" target="tile4" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="gyWCET" target="Gy" type="Annotation" sourceport="application"/> -->
+    <!-- <edge source="gyWCET" target="tile1" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="gyWCET" target="tile2" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="gyWCET" target="tile3" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="gyWCET" target="tile4" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="absWCET" target="Abs" type="Annotation" sourceport="application"/> -->
+    <!-- <edge source="absWCET" target="tile1" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="absWCET" target="tile2" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="absWCET" target="tile3" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="absWCET" target="tile4" type="Annotation" sourceport="platform"/> -->
+    <!-- <edge source="gxsigWCCT" target="gxsig" type="Annotation"/> -->
+    <!-- <edge source="gxsigWCCT" target="tdmabus1" type="Annotation"/> -->
+    <!-- <edge source="gysigWCCT" target="gysig" type="Annotation"/> -->
+    <!-- <edge source="gysigWCCT" target="tdmabus1" type="Annotation"/> -->
+    <!-- <edge source="absxsigWCCT" target="absxsig" type="Annotation"/> -->
+    <!-- <edge source="absxsigWCCT" target="tdmabus1" type="Annotation"/> -->
+    <!-- <edge source="absysigWCCT" target="tdmabus1" type="Annotation"/> -->
+    <!-- <edge source="absysigWCCT" target="absysig" type="Annotation"/> -->
+    <!-- <edge source="min_throughput_obj" target="sobel" type="Annotation"/> -->
     <!-- The end of the relations -->
   </graph>
 </graphml>
