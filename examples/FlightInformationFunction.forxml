@@ -51,9 +51,9 @@
       <port name="output"/>
       <port name="combinator"/>
       <data attr.name="production" attr.type="object">
-        <data attr.name="ADC1Altitude" attr.type="integer">2</data>
-        <data attr.name="INS1SpeedVector" attr.type="integer">2</data>
-        <data attr.name="INS2SpeedVector" attr.type="integer">2</data>
+        <data attr.name="ADC1Altitude" attr.type="integer">1</data>
+        <data attr.name="INS1SpeedVector" attr.type="integer">1</data>
+        <data attr.name="INS2SpeedVector" attr.type="integer">1</data>
         <data attr.name="INS1LoadFactor" attr.type="integer">1</data>
         <data attr.name="INS2LoadFactor" attr.type="integer">1</data>
       </data>
@@ -63,7 +63,7 @@
       <port name="combinator"/>
       <data attr.name="consumption" attr.type="object">
         <data attr.name="ADC1Altitude" attr.type="integer">1</data>
-        <data attr.name="Acc" attr.type="integer">2</data>
+        <data attr.name="Acc" attr.type="integer">1</data>
       </data>
       <data attr.name="production" attr.type="object">
         <data attr.name="Altitude" attr.type="integer">1</data>
@@ -88,25 +88,25 @@
       </data>
       <data attr.name="production" attr.type="object">
         <data attr.name="SpeedVector" attr.type="integer">1</data>
-        <data attr.name="Speed" attr.type="integer">2</data>
+        <data attr.name="Speed" attr.type="integer">1</data>
       </data>
     </node>
     <node id="HeadingCalcCons" type="SDFComb">
       <port name="output"/>
       <port name="combinator"/>
       <data attr.name="consumption" attr.type="object">
-        <data attr.name="SpeedVector" attr.type="integer">1</data>
+        <data attr.name="SpeedVector" attr.type="integer">2</data>
       </data>
       <data attr.name="production" attr.type="object">
-        <data attr.name="Heading" attr.type="integer">1</data>
+        <data attr.name="Heading" attr.type="integer">2</data>
       </data>
     </node>
     <node id="FormatLoadFactorCalcCons" type="SDFComb">
       <port name="output"/>
       <port name="combinator"/>
       <data attr.name="consumption" attr.type="object">
-        <data attr.name="INS1LoadFactor" attr.type="integer">1</data>
-        <data attr.name="INS2LoadFactor" attr.type="integer">1</data>
+        <data attr.name="INS1LoadFactor" attr.type="integer">2</data>
+        <data attr.name="INS2LoadFactor" attr.type="integer">2</data>
       </data>
       <data attr.name="production" attr.type="object">
         <data attr.name="InternalLoadFactor" attr.type="integer">1</data>
@@ -129,7 +129,7 @@
         <data attr.name="LoadFactor" attr.type="integer">1</data>
       </data>
       <data attr.name="production" attr.type="object">
-        <data attr.name="Acc" attr.type="integer">1</data>
+        <data attr.name="Acc" attr.type="integer">2</data>
       </data>
     </node>
     <node id="P2ACons" type="SDFComb">
@@ -301,6 +301,16 @@
     <edge source="AccCalcCons" target="AccCalc" type="Output" sourceport="output"/>
     <edge source="P2ACons" target="P2A" type="Output" sourceport="output"/>
 
+    <edge source="P1A" target="ADC1AltitudeSignal" type="Output" sourceport="ADC1Altitude" targetport="fifoIn"/>
+    <edge source="ADC1AltitudeSignal" target="AltitudeCalc" type="Output" sourceport="fifoOut" targetport="ADC1Altitude"/>
+    <edge source="P1A" target="INS1SpeedVectorSignal" type="Output" sourceport="INS1SpeedVector" targetport="fifoIn"/>
+    <edge source="INS1SpeedVectorSignal" target="FormatSpeedVectorCalc" type="Output" sourceport="fifoOut" targetport="INS1SpeedVector"/>
+    <edge source="P1A" target="INS2SpeedVectorSignal" type="Output" sourceport="INS2SpeedVector" targetport="fifoIn"/>
+    <edge source="INS2SpeedVectorSignal" target="FormatSpeedVectorCalc" type="Output" sourceport="fifoOut" targetport="INS2SpeedVector"/>
+    <edge source="P1A" target="INS1LoadFactorSignal" type="Output" sourceport="INS1LoadFactor" targetport="fifoIn"/>
+    <edge source="INS1LoadFactorSignal" target="FormatLoadFactorCalc" type="Output" sourceport="fifoOut" targetport="INS1LoadFactor"/>
+    <edge source="P1A" target="INS2LoadFactorSignal" type="Output" sourceport="INS2LoadFactor" targetport="fifoIn"/>
+    <edge source="INS2LoadFactorSignal" target="FormatLoadFactorCalc" type="Output" sourceport="fifoOut" targetport="INS2LoadFactor"/>
     <edge source="HeadingCalc" target="HeadingSignal" type="Output" sourceport="Heading" targetport="fifoIn"/>
     <edge source="HeadingSignal" target="P2A" type="Output" sourceport="fifoOut" targetport="Heading"/>
     <edge source="SpeedVectorCalc" target="SpeedSignal" type="Output" sourceport="Speed" targetport="fifoIn"/>
