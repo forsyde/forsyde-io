@@ -328,10 +328,13 @@
     <node id="time_triggered_schedule_5" type="TimeTriggeredScheduler"/>
     <node id="time_triggered_schedule_6" type="TimeTriggeredScheduler"/>
     <node id="time_triggered_schedule_7" type="TimeTriggeredScheduler"/>
+    <node id="time_triggered_schedule_8" type="TimeTriggeredScheduler"/>
+    <node id="time_triggered_schedule_9" type="TimeTriggeredScheduler"/>
 
     <!--  The end of the midel platform model -->
     <!--  The start of the platform model -->
     <node id="RDC1" type="InstrumentedProcessorTile">
+      <port name="communication"/>
       <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
       <data attr.name="max_memory_internal_bytes" attr.type="integer">0</data>
       <data attr.name="clock_cycles_per_float_op" attr.type="integer">0</data>
@@ -339,6 +342,7 @@
       <data attr.name="clock_cycles_per_boolean_op" attr.type="integer">0</data>
     </node>
     <node id="RDC3" type="InstrumentedProcessorTile">
+      <port name="communication"/>
       <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
       <data attr.name="max_memory_internal_bytes" attr.type="integer">0</data>
       <data attr.name="clock_cycles_per_float_op" attr.type="integer">0</data>
@@ -398,10 +402,25 @@
       <!-- 4 bytes per clock cycle -->
       <data attr.name="max_bandwith_bytes_per_sec" attr.type="integer">800000000</data>
     </node>
-    <edge source="ARM-R5-1" target="On-Chip-OCM-RAM"/>
+    <edge source="RDC1" target="On-Chip-OCM-RAM" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="RDC3" target="On-Chip-OCM-RAM" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="ARM-R5-1" target="On-Chip-OCM-RAM" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="ARM-R5-2" target="On-Chip-OCM-RAM" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="ARM-A53-1" target="On-Chip-OCM-RAM" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="ARM-A53-2" target="On-Chip-OCM-RAM" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="ARM-A53-3" target="On-Chip-OCM-RAM" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="ARM-A53-4" target="On-Chip-OCM-RAM" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="On-Chip-OCM-RAM" target="RDC1" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="On-Chip-OCM-RAM" target="RDC3" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="On-Chip-OCM-RAM" target="ARM-R5-1" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="On-Chip-OCM-RAM" target="ARM-R5-2" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="On-Chip-OCM-RAM" target="ARM-A53-1" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="On-Chip-OCM-RAM" target="ARM-A53-2" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="On-Chip-OCM-RAM" target="ARM-A53-3" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
+    <edge source="On-Chip-OCM-RAM" target="ARM-A53-4" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/>
     <!--  The end of the platform model -->
     <!--  The start of the WCETs of the actors -->
-    <node id="RDC1WCET" type="WCET">
+    <!-- <node id="RDC1WCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
       <port name="platform"/>
@@ -463,10 +482,10 @@
       <port name="platform"/>
       <port name="application"/>
       <data attr.name="time" attr.type="integer">1411</data>
-    </node>
+    </node> -->
     <!--  The end of the WCETs of the actors -->
     <!--  The start of the WCCTs of the arcs -->
-    <node id="ADC1Altitude" type="WCCT">
+    <!-- <node id="ADC1Altitude" type="WCCT">
       <port name="signal"/>
       <port name="reciever"/>
       <port name="sender"/>
@@ -543,12 +562,21 @@
       <port name="reciever"/>
       <port name="sender"/>
       <data attr.name="time" attr.type="integer">1</data>
-    </node>
+    </node> -->
     <!--  The end of the WCCTs of the arcs -->
     <!--  The start of the objectives -->
     <node id="min_throughput_obj" type="MinimumThroughput">
       <data attr.name="apriori_importance" attr.type="integer">1</data>
     </node>
+    <edge source="min_throughput_obj" target="P1A" type="Annotation"/>
+    <edge source="min_throughput_obj" target="AltitudeCalc" type="Annotation"/>
+    <edge source="min_throughput_obj" target="FormatSpeedVectorCalc" type="Annotation"/>
+    <edge source="min_throughput_obj" target="SpeedVectorCalc" type="Annotation"/>
+    <edge source="min_throughput_obj" target="HeadingCalc" type="Annotation"/>
+    <edge source="min_throughput_obj" target="FormatLoadFactorCalc" type="Annotation"/>
+    <edge source="min_throughput_obj" target="LoadFactorCalc" type="Annotation"/>
+    <edge source="min_throughput_obj" target="AccCalc" type="Annotation"/>
+    <edge source="min_throughput_obj" target="P2A" type="Annotation"/>
     <!--  The end of the objectives -->
     <!--  The start of the relations -->
 
