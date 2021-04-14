@@ -340,8 +340,14 @@
 
     <!--  The end of the application model -->
     <!--  The start of the midel platform model -->
-    <node id="platform/schedulers/time_triggered_schedule_1" type="TimeTriggeredScheduler"/>
-    <node id="platform/schedulers/time_triggered_schedule_2" type="TimeTriggeredScheduler"/>
+    <node id="platform/schedulers/time_triggered_schedule_1" type="TimeTriggeredScheduler">
+      <port name="trigger[0]" />
+      <port name="trigger[1]" />
+    </node>
+    <node id="platform/schedulers/time_triggered_schedule_2" type="TimeTriggeredScheduler">
+      <port name="trigger[0]" />
+      <port name="trigger[1]" />
+    </node>
     <node id="platform/schedulers/time_triggered_schedule_3" type="TimeTriggeredScheduler"/>
     <node id="platform/schedulers/time_triggered_schedule_4" type="TimeTriggeredScheduler"/>
     <node id="platform/schedulers/time_triggered_schedule_5" type="TimeTriggeredScheduler"/>
@@ -439,9 +445,11 @@
     <!-- <edge source="platform/hardware/On-Chip-OCM-RAM" target="platform/hardware/ARM-A53-4" sourceport="communication" targetport="communication" type="AbstractPhysicalConnection"/> -->
     <!--  The end of the platform model -->
     <!--  The start of the WCETs of the actors -->
-    <edge source="platform/schedulers/time_triggered_schedule_1" target="applications/FLF/P1A" type="AbstractScheduling"/>
+    <edge source="platform/schedulers/time_triggered_schedule_1" target="applications/FLF/P1A" sourceport="trigger[0]" type="AbstractScheduling"/>
+    <edge source="platform/schedulers/time_triggered_schedule_1" target="applications/FLF/P1A" sourceport="trigger[1]" type="AbstractScheduling"/>
     <edge source="platform/hardware/RDC1" target="platform/schedulers/time_triggered_schedule_1" type="AbstractMapping"/>
-    <edge source="platform/schedulers/time_triggered_schedule_2" target="applications/FLF/P2A" type="AbstractScheduling"/>
+    <edge source="platform/schedulers/time_triggered_schedule_2" target="applications/FLF/P2A" sourceport="trigger[0]" type="AbstractScheduling"/>
+    <edge source="platform/schedulers/time_triggered_schedule_2" target="applications/FLF/P2A" sourceport="trigger[1]" type="AbstractScheduling"/>
     <edge source="platform/hardware/RDC3" target="platform/schedulers/time_triggered_schedule_2" type="AbstractMapping"/>
     <!-- <node id="platform/hardware/RDC1WCET" type="WCET">
       <port name="processor"/>
