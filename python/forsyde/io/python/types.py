@@ -104,14 +104,14 @@ class WCET(ExtraFunctional):
         return self.get_port("application")
 
     def get_application(self, model) -> "Process":
-        return self.get_neigh("application")
+        return self.get_neigh("application", model)
 
     
     def get_port_platform(self) -> core.Port:
         return self.get_port("platform")
 
     def get_platform(self, model) -> "AbstractProcessingComponent":
-        return self.get_neigh("platform")
+        return self.get_neigh("platform", model)
 
     
     
@@ -141,14 +141,14 @@ class WCCT(ExtraFunctional):
         return self.get_port("application")
 
     def get_application(self, model) -> "Process":
-        return self.get_neigh("application")
+        return self.get_neigh("application", model)
 
     
     def get_port_platform(self) -> core.Port:
         return self.get_port("platform")
 
     def get_platform(self, model) -> "AbstractCommunicationComponent":
-        return self.get_neigh("platform")
+        return self.get_neigh("platform", model)
 
     
     
@@ -210,14 +210,14 @@ class LocationRequirement(Requirement):
         return self.get_port("process")
 
     def get_process(self, model) -> "Process":
-        return self.get_neigh("process")
+        return self.get_neigh("process", model)
 
     
     def get_port_processing_unit(self) -> core.Port:
         return self.get_port("processing_unit")
 
     def get_processing_unit(self, model) -> "AbstractProcessingComponent":
-        return self.get_neigh("processing_unit")
+        return self.get_neigh("processing_unit", model)
 
     
     
@@ -258,7 +258,7 @@ class MinimumThroughput(Goal):
         return self.get_port("application")
 
     def get_application(self, model) -> "Process":
-        return self.get_neigh("application")
+        return self.get_neigh("application", model)
 
     
     
@@ -526,14 +526,14 @@ class SYPrefix(Function):
         return self.get_port("prefixer")
 
     def get_prefixer(self, model) -> "Function":
-        return self.get_neigh("prefixer")
+        return self.get_neigh("prefixer", model)
 
     
     def get_port_output(self) -> core.Port:
         return self.get_port("output")
 
     def get_output(self, model) -> "Function":
-        return self.get_neigh("output")
+        return self.get_neigh("output", model)
 
     
     
@@ -558,14 +558,14 @@ class SDFComb(Function):
         return self.get_port("combinator")
 
     def get_combinator(self, model) -> "Function":
-        return self.get_neigh("combinator")
+        return self.get_neigh("combinator", model)
 
     
     def get_port_output(self) -> core.Port:
         return self.get_port("output")
 
     def get_output(self, model) -> "Function":
-        return self.get_neigh("output")
+        return self.get_neigh("output", model)
 
     
     
@@ -604,14 +604,14 @@ class SDFPrefix(Function):
         return self.get_port("prefixer")
 
     def get_prefixer(self, model) -> "Function":
-        return self.get_neigh("prefixer")
+        return self.get_neigh("prefixer", model)
 
     
     def get_port_output(self) -> core.Port:
         return self.get_port("output")
 
     def get_output(self, model) -> "Function":
-        return self.get_neigh("output")
+        return self.get_neigh("output", model)
 
     
     

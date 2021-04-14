@@ -139,13 +139,14 @@ class Vertex(object):
             raise AttributeError(
                 f"Required port {name} of {self.identifier} does not exist.")
 
-    def get_neigh(self, name: str, model) -> "Vertex":
+    def get_neigh(self, name: str, model) -> Optional["Vertex"]:
         out_port = self.get_port(name)
         for n in model.adj[self]:
-            for (_, edata) in model.edges[self][n]:
+            for (_, edata) in model.get_edge_data(self, n).items():
                 edge = edata["object"]
                 if edge.source_vertex_port == out_port:
                     return edge.target_vertex
+        return None
 
 
 @dataclass

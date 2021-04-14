@@ -26,7 +26,7 @@ class {{type_name}}(core.Vertex):
         return self.get_port("{{req_port}}")
 
     def get_{{req_port}}(self, model) -> "{{req_port_data['class']}}":
-        return self.get_neigh("{{req_port}}")
+        return self.get_neigh("{{req_port}}", model)
 
     {% endfor %}
     {% endif -%}
