@@ -1,5 +1,6 @@
 from typing import Dict
 from typing import List
+from typing import Sequence
 
 import forsyde.io.python.core as core
 
@@ -10,12 +11,12 @@ class {{type_name}}({{type_data['superTypes'] | join(', ') }}):
 class {{type_name}}(core.Vertex):
 {% endif %}
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     {{type_data['doc'] if type_data and 'doc' in type_data else ''}}
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "{{type_name}}"
@@ -25,8 +26,13 @@ class {{type_name}}(core.Vertex):
     def get_port_{{req_port}}(self) -> core.Port:
         return self.get_port("{{req_port}}")
 
+    {% if 'multiple' in req_port_data and req_port_data['multiple'] %}
+    def get_{{req_port}}(self, model) -> Sequence["{{req_port_data['class']}}"]:
+        return self.get_neighs("{{req_port}}", model)
+    {% else %}
     def get_{{req_port}}(self, model) -> "{{req_port_data['class']}}":
         return self.get_neigh("{{req_port}}", model)
+    {% endif %}
 
     {% endfor %}
     {% endif -%}

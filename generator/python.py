@@ -13,7 +13,7 @@ def pythonify_value(v: Any) -> str:
         ].join(", ") + "}"
     elif isinstance(v, list):
         return "[" + map(pythonify_value, v).join(", ") + "]"
-    elif isinstance(v, bool):
+    else:
         return str(v)
 
 
@@ -33,6 +33,8 @@ def pythonify(t: Union[dict, int, float, str]) -> str:
             return "float"
         elif t == "string":
             return "str"
+        elif t == "bool" or t == "boolean":
+            return "bool"
         else:
             return t
 

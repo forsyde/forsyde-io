@@ -30,6 +30,8 @@ def javify(t: Any) -> str:
             return "Float"
         elif t == "string":
             return "String"
+        elif t == "bool" or t == "boolean":
+            return "Boolean"
         else:
             return t
 
@@ -47,14 +49,14 @@ def javify_value(v: Any, t: Any, d: str) -> str:
             res += javify_value(x, t['value'], d + "_child" + str(i))
             res += f"{d}.insert({i}, (Object) {d + '_child' + str(i)});"
         return res
+    elif isinstance(v, bool):
+        return f'Boolean {d} = {str(v).lower()};'
     elif isinstance(v, int):
         return f"Integer {d} = {v};"
     elif isinstance(v, float):
         return f"Double {d} = {v};"
     elif isinstance(v, str):
         return f'String {d} = "{v}";'
-    elif isinstance(v, bool):
-        return f'Double {d} = {v};'
     else:
         raise ValueError(f"Don't know how to valuefy {v}")
 

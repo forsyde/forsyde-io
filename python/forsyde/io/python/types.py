@@ -1,5 +1,6 @@
 from typing import Dict
 from typing import List
+from typing import Sequence
 
 import forsyde.io.python.core as core
 
@@ -8,12 +9,12 @@ import forsyde.io.python.core as core
 class AbstractGrouping(core.Vertex):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "AbstractGrouping"
@@ -24,12 +25,12 @@ class AbstractGrouping(core.Vertex):
 class AbstractOrdering(AbstractGrouping):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "AbstractOrdering"
@@ -40,12 +41,12 @@ class AbstractOrdering(AbstractGrouping):
 class TriggeredTask(AbstractOrdering):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "TriggeredTask"
@@ -56,12 +57,12 @@ class TriggeredTask(AbstractOrdering):
 class SporadicTask(AbstractOrdering):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "SporadicTask"
@@ -72,12 +73,12 @@ class SporadicTask(AbstractOrdering):
 class ExtraFunctional(core.Vertex):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "ExtraFunctional"
@@ -88,12 +89,12 @@ class ExtraFunctional(core.Vertex):
 class WCET(ExtraFunctional):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "WCET"
@@ -103,15 +104,19 @@ class WCET(ExtraFunctional):
     def get_port_application(self) -> core.Port:
         return self.get_port("application")
 
-    def get_application(self, model) -> "Process":
-        return self.get_neigh("application", model)
+    
+    def get_application(self, model) -> Sequence["Process"]:
+        return self.get_neighs("application", model)
+    
 
     
     def get_port_platform(self) -> core.Port:
         return self.get_port("platform")
 
-    def get_platform(self, model) -> "AbstractProcessingComponent":
-        return self.get_neigh("platform", model)
+    
+    def get_platform(self, model) -> Sequence["AbstractProcessingComponent"]:
+        return self.get_neighs("platform", model)
+    
 
     
     
@@ -125,12 +130,12 @@ class WCET(ExtraFunctional):
 class WCCT(ExtraFunctional):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "WCCT"
@@ -140,15 +145,19 @@ class WCCT(ExtraFunctional):
     def get_port_application(self) -> core.Port:
         return self.get_port("application")
 
-    def get_application(self, model) -> "Process":
-        return self.get_neigh("application", model)
+    
+    def get_application(self, model) -> Sequence["Process"]:
+        return self.get_neighs("application", model)
+    
 
     
     def get_port_platform(self) -> core.Port:
         return self.get_port("platform")
 
-    def get_platform(self, model) -> "AbstractCommunicationComponent":
-        return self.get_neigh("platform", model)
+    
+    def get_platform(self, model) -> Sequence["AbstractCommunicationComponent"]:
+        return self.get_neighs("platform", model)
+    
 
     
     
@@ -162,12 +171,12 @@ class WCCT(ExtraFunctional):
 class Requirement(core.Vertex):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "Requirement"
@@ -178,12 +187,12 @@ class Requirement(core.Vertex):
 class HardRequirement(Requirement):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "HardRequirement"
@@ -194,12 +203,12 @@ class HardRequirement(Requirement):
 class LocationRequirement(Requirement):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "LocationRequirement"
@@ -209,15 +218,19 @@ class LocationRequirement(Requirement):
     def get_port_process(self) -> core.Port:
         return self.get_port("process")
 
-    def get_process(self, model) -> "Process":
-        return self.get_neigh("process", model)
+    
+    def get_process(self, model) -> Sequence["Process"]:
+        return self.get_neighs("process", model)
+    
 
     
     def get_port_processing_unit(self) -> core.Port:
         return self.get_port("processing_unit")
 
-    def get_processing_unit(self, model) -> "AbstractProcessingComponent":
-        return self.get_neigh("processing_unit", model)
+    
+    def get_processing_unit(self, model) -> Sequence["AbstractProcessingComponent"]:
+        return self.get_neighs("processing_unit", model)
+    
 
     
     
@@ -226,12 +239,12 @@ class LocationRequirement(Requirement):
 class Goal(core.Vertex):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "Goal"
@@ -242,12 +255,12 @@ class Goal(core.Vertex):
 class MinimumThroughput(Goal):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "MinimumThroughput"
@@ -257,8 +270,10 @@ class MinimumThroughput(Goal):
     def get_port_application(self) -> core.Port:
         return self.get_port("application")
 
-    def get_application(self, model) -> "Process":
-        return self.get_neigh("application", model)
+    
+    def get_application(self, model) -> Sequence["Process"]:
+        return self.get_neighs("application", model)
+    
 
     
     
@@ -272,12 +287,12 @@ class MinimumThroughput(Goal):
 class StaticCyclicScheduler(core.Vertex):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "StaticCyclicScheduler"
@@ -288,12 +303,12 @@ class StaticCyclicScheduler(core.Vertex):
 class TimeTriggeredScheduler(AbstractGrouping):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "TimeTriggeredScheduler"
@@ -309,12 +324,12 @@ class TimeTriggeredScheduler(AbstractGrouping):
 class FixedPriorityScheduler(core.Vertex):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "FixedPriorityScheduler"
@@ -325,12 +340,12 @@ class FixedPriorityScheduler(core.Vertex):
 class CustomScheduler(core.Vertex):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "CustomScheduler"
@@ -341,12 +356,12 @@ class CustomScheduler(core.Vertex):
 class RoundRobinScheduler(core.Vertex):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "RoundRobinScheduler"
@@ -357,12 +372,12 @@ class RoundRobinScheduler(core.Vertex):
 class Function(core.Vertex):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "Function"
@@ -373,12 +388,12 @@ class Function(core.Vertex):
 class InstrumentedFunction(Function):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "InstrumentedFunction"
@@ -403,12 +418,12 @@ class InstrumentedFunction(Function):
 class Process(Function):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "Process"
@@ -419,12 +434,12 @@ class Process(Function):
 class Signal(core.Vertex):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "Signal"
@@ -435,12 +450,12 @@ class Signal(core.Vertex):
 class BufferSignal(Signal):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "BufferSignal"
@@ -451,12 +466,12 @@ class BufferSignal(Signal):
 class LabelSignal(Signal):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "LabelSignal"
@@ -467,12 +482,12 @@ class LabelSignal(Signal):
 class InstrumentedSignal(Signal):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "InstrumentedSignal"
@@ -494,12 +509,12 @@ class InstrumentedSignal(Signal):
 class SYComb(Function):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "SYComb"
@@ -510,12 +525,12 @@ class SYComb(Function):
 class SYPrefix(Function):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "SYPrefix"
@@ -525,15 +540,19 @@ class SYPrefix(Function):
     def get_port_prefixer(self) -> core.Port:
         return self.get_port("prefixer")
 
+    
     def get_prefixer(self, model) -> "Function":
         return self.get_neigh("prefixer", model)
+    
 
     
     def get_port_output(self) -> core.Port:
         return self.get_port("output")
 
+    
     def get_output(self, model) -> "Function":
         return self.get_neigh("output", model)
+    
 
     
     
@@ -542,12 +561,12 @@ class SYPrefix(Function):
 class SDFComb(Function):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "SDFComb"
@@ -557,15 +576,19 @@ class SDFComb(Function):
     def get_port_combinator(self) -> core.Port:
         return self.get_port("combinator")
 
+    
     def get_combinator(self, model) -> "Function":
         return self.get_neigh("combinator", model)
+    
 
     
     def get_port_output(self) -> core.Port:
         return self.get_port("output")
 
+    
     def get_output(self, model) -> "Function":
         return self.get_neigh("output", model)
+    
 
     
     
@@ -588,12 +611,12 @@ class SDFComb(Function):
 class SDFPrefix(Function):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "SDFPrefix"
@@ -603,15 +626,19 @@ class SDFPrefix(Function):
     def get_port_prefixer(self) -> core.Port:
         return self.get_port("prefixer")
 
+    
     def get_prefixer(self, model) -> "Function":
         return self.get_neigh("prefixer", model)
+    
 
     
     def get_port_output(self) -> core.Port:
         return self.get_port("output")
 
+    
     def get_output(self, model) -> "Function":
         return self.get_neigh("output", model)
+    
 
     
     
@@ -620,12 +647,12 @@ class SDFPrefix(Function):
 class AbstractPhysicalComponent(core.Vertex):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "AbstractPhysicalComponent"
@@ -636,28 +663,33 @@ class AbstractPhysicalComponent(core.Vertex):
 class AbstractProcessingComponent(AbstractPhysicalComponent):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "AbstractProcessingComponent"
             
+    
+    def get_can_be_explored(self) -> bool:
+        return self.properties["can_be_explored"] if 'can_be_explored' in self.properties else True
+
+    
     
 
 
 class InstrumentedProcessorTile(AbstractProcessingComponent):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "InstrumentedProcessorTile"
@@ -685,12 +717,12 @@ class InstrumentedProcessorTile(AbstractProcessingComponent):
 class AbstractStorageComponent(AbstractPhysicalComponent):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "AbstractStorageComponent"
@@ -701,12 +733,12 @@ class AbstractStorageComponent(AbstractPhysicalComponent):
 class AbsractInterfaceComponent(AbstractPhysicalComponent):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "AbsractInterfaceComponent"
@@ -717,12 +749,12 @@ class AbsractInterfaceComponent(AbstractPhysicalComponent):
 class AbstractCommunicationComponent(AbstractPhysicalComponent):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "AbstractCommunicationComponent"
@@ -733,12 +765,12 @@ class AbstractCommunicationComponent(AbstractPhysicalComponent):
 class InstrumentedCommunicationInterconnect(AbstractCommunicationComponent):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "InstrumentedCommunicationInterconnect"
@@ -754,12 +786,12 @@ class InstrumentedCommunicationInterconnect(AbstractCommunicationComponent):
 class TimeDivisionMultiplexer(AbstractCommunicationComponent):
 
     """
-	This class has been generated automatically from the ForSyDe IO types model.
-	Any code in this file may be overwritten without notice, so it's best not to spend
-	time modifying anything here, but on the true source which is a model file.
+    This class has been generated automatically from the ForSyDe IO types model.
+    Any code in this file may be overwritten without notice, so it's best not to spend
+    time modifying anything here, but on the true source which is a model file.
     
     
-	"""
+    """
 
     def get_type_tag(self) -> str:
 	        return "TimeDivisionMultiplexer"

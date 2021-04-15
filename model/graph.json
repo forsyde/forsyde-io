@@ -72,11 +72,11 @@
             "required_ports": {
                 "process": {
                     "class": "Process",
-                    "multiple": true
+                    "multiple": "unordered"
                 },
                 "processing_unit": {
                     "class": "AbstractProcessingComponent",
-                    "multiple": true
+                    "multiple": "unordered"
                 }
             }
         },
@@ -229,7 +229,13 @@
         "AbstractProcessingComponent": {
             "superTypes": [
                 "AbstractPhysicalComponent"
-            ]
+            ],
+            "required_properties": {
+                "can_be_explored": {
+                    "class": "bool",
+                    "default": true
+                }
+            }
         },
         "InstrumentedProcessorTile": {
             "superTypes": [
