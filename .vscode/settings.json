@@ -6,5 +6,6 @@
         "**/.settings": true,
         "**/.factorypath": true
     },
-    "python.pythonPath": "C:\\Users\\jorro\\AppData\\Local\\Programs\\Python\\Python39\\python.exe"
+    "python.pythonPath": "C:\\Users\\jorro\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
+    "java.configuration.updateBuildConfiguration": "automatic"
 }
