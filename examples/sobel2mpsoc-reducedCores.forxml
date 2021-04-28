@@ -1,7 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns">
   <graph id="model" edgedefault="directed">
-    <!-- Sobel application definitions -->
     <node id="getPxCons" type="SDFComb">
       <port name="output"/>
       <port name="combinator"/>
@@ -80,15 +79,10 @@
       <port name="imgInput"/>
       <port name="imgOutput"/>
     </node>
-    <!-- application ends here -->
-    <!-- middle platform starts here -->
     <node id="order_1" type="TimeTriggeredScheduler"/>
     <node id="order_2" type="TimeTriggeredScheduler"/>
     <node id="order_3" type="TimeTriggeredScheduler"/>
     <node id="order_4" type="TimeTriggeredScheduler"/>
-    <node id="order_5" type="TimeTriggeredScheduler"/>
-    <!-- middle platform ends here -->
-    <!-- low platform starts here -->
     <node id="tile1" type="AbstractProcessingComponent">
       <port name="communication"/>
     </node>
@@ -98,15 +92,11 @@
     <node id="tile3" type="AbstractProcessingComponent">
       <port name="communication"/>
     </node>
-    <node id="tile4" type="AbstractProcessingComponent">
-      <port name="communication"/>
-    </node>
     <node id="tdmabus1" type="TimeDivisionMultiplexer">
       <port name="requester"/>
       <port name="communication"/>
       <data attr.name="slots" attr.type="integer">4</data>
     </node>
-    <!-- low platform ends here -->
     <node id="getPxWCET" type="WCET">
       <port name="processor"/>
       <port name="process"/>
@@ -179,31 +169,25 @@
     <edge source="tile1" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
     <edge source="tile2" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
     <edge source="tile3" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
-    <edge source="tile4" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
     <edge source="tdmabus1" target="tile1" type="AbstractPhysicalConnection" sourceport="communication"/>
     <edge source="tdmabus1" target="tile2" type="AbstractPhysicalConnection" sourceport="communication"/>
     <edge source="tdmabus1" target="tile3" type="AbstractPhysicalConnection" sourceport="communication"/>
-    <edge source="tdmabus1" target="tile4" type="AbstractPhysicalConnection" sourceport="communication"/>
     <edge source="getPxWCET" target="getPx" type="Annotation" sourceport="application"/>
     <edge source="getPxWCET" target="tile1" type="Annotation" sourceport="platform"/>
     <edge source="getPxWCET" target="tile2" type="Annotation" sourceport="platform"/>
     <edge source="getPxWCET" target="tile3" type="Annotation" sourceport="platform"/>
-    <edge source="getPxWCET" target="tile4" type="Annotation" sourceport="platform"/>
     <edge source="gxWCET" target="Gx" type="Annotation" sourceport="application"/>
     <edge source="gxWCET" target="tile1" type="Annotation" sourceport="platform"/>
     <edge source="gxWCET" target="tile2" type="Annotation" sourceport="platform"/>
     <edge source="gxWCET" target="tile3" type="Annotation" sourceport="platform"/>
-    <edge source="gxWCET" target="tile4" type="Annotation" sourceport="platform"/>
     <edge source="gyWCET" target="Gy" type="Annotation" sourceport="application"/>
     <edge source="gyWCET" target="tile1" type="Annotation" sourceport="platform"/>
     <edge source="gyWCET" target="tile2" type="Annotation" sourceport="platform"/>
     <edge source="gyWCET" target="tile3" type="Annotation" sourceport="platform"/>
-    <edge source="gyWCET" target="tile4" type="Annotation" sourceport="platform"/>
     <edge source="absWCET" target="Abs" type="Annotation" sourceport="application"/>
     <edge source="absWCET" target="tile1" type="Annotation" sourceport="platform"/>
     <edge source="absWCET" target="tile2" type="Annotation" sourceport="platform"/>
     <edge source="absWCET" target="tile3" type="Annotation" sourceport="platform"/>
-    <edge source="absWCET" target="tile4" type="Annotation" sourceport="platform"/>
     <edge source="gxsigWCCT" target="gxsig" type="Annotation"/>
     <edge source="gxsigWCCT" target="tdmabus1" type="Annotation"/>
     <edge source="gysigWCCT" target="gysig" type="Annotation"/>
@@ -214,4 +198,4 @@
     <edge source="absysigWCCT" target="absysig" type="Annotation"/>
     <edge source="min_throughput_obj" target="sobel" type="Annotation"/>
   </graph>
-</graphml>
+  </graphml>

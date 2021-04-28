@@ -606,6 +606,14 @@
       <port name="process"/>
       <port name="processing_unit"/>
     </node>
+    <node id="annotations/requirements/hard-location-P1A" type="LocationRequirement">
+      <port name="process"/>
+      <port name="processing_unit"/>
+    </node>
+    <node id="annotations/requirements/hard-location-P2A" type="LocationRequirement">
+      <port name="process"/>
+      <port name="processing_unit"/>
+    </node>
     <edge source="annotations/requirements/hard-location" target="applications/FLF/AltitudeCalc" sourceport="process" type="Annotation"/>
     <edge source="annotations/requirements/hard-location" target="applications/FLF/FormatSpeedVectorCalc" sourceport="process" type="Annotation"/>
     <edge source="annotations/requirements/hard-location" target="applications/FLF/SpeedVectorCalc" sourceport="process" type="Annotation"/>
@@ -615,6 +623,10 @@
     <edge source="annotations/requirements/hard-location" target="applications/FLF/AccCalc" sourceport="process" type="Annotation"/>
     <edge source="annotations/requirements/hard-location" target="platform/hardware/node1/ARM-R5-1" sourceport="processing_unit" type="Annotation"/>
     <edge source="annotations/requirements/hard-location" target="platform/hardware/node1/ARM-R5-2" sourceport="processing_unit" type="Annotation"/>
+    <edge source="annotations/requirements/hard-location-P1A" target="applications/FLF/P1A" sourceport="process" type="Annotation"/>
+    <edge source="annotations/requirements/hard-location-P1A" target="platform/hardware/RDC1" sourceport="processing_unit" type="Annotation"/>
+    <edge source="annotations/requirements/hard-location-P2A" target="applications/FLF/P2A" sourceport="process" type="Annotation"/>
+    <edge source="annotations/requirements/hard-location-P2A" target="platform/hardware/RDC3" sourceport="processing_unit" type="Annotation"/>
     <!--  The start of the objectives -->
     <node id="annotations/goals/min_throughput_obj" type="MinimumThroughput">
       <data attr.name="apriori_importance" attr.type="integer">1</data>
