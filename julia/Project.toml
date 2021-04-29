@@ -4,6 +4,7 @@ authors = ["Rodolfo Jordão <jordao@kth.se> and contributors"]
 version = "0.1.14"
 
 [deps]
+EzXML = "8f5d6c58-4d21-5cfd-889c-e3ad7ee6a615"
 LightGraphs = "093fc24a-ae57-5d10-9952-331d41423f4d"
 
 [compat]
