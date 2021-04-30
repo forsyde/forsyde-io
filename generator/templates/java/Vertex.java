@@ -21,6 +21,8 @@ public class {{type_name}} extends Vertex {
     /**
      * Automatically generated constructor for specific
      * Vertex class '{{type_name}}'
+     *
+	 * @param identifier the obligatory unique ID for this vertex.
      */
     public {{type_name}}(String identifier) {
          super(identifier);
@@ -29,6 +31,13 @@ public class {{type_name}} extends Vertex {
     /**
      * Automatically generated constructor for specific
      * Vertex class '{{type_name}}'
+     *
+	 * @param identifier The obligatory unique ID for this vertex.
+	 * @param ports      The list (set-like, no duplicates) of ports for this
+	 *                   vertex.
+	 * @param properties The mapping (associative array) of properties for this
+	 *                   vertex. Remember that it should be a tree of primitive
+	 *                   types such as Integers, Floats, Strings etc.
      */
     public {{type_name}}(String identifier, List<Port> ports, Map<String, Object> properties) {
          super(identifier, ports, properties);

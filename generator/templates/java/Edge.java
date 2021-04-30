@@ -20,6 +20,9 @@ public class {{type_name}} extends Edge {
 	/**
 	 * Automatically generated Edge constructor for
 	 * specialized class '{{type_name}}'
+	 * 
+	 * @param target Target Vertex for this edge.
+	 * @param source Source vertex for this edge.
 	 */
 	public {{type_name}}(Vertex target, Vertex source) {
 		super(target, source);
@@ -28,6 +31,11 @@ public class {{type_name}} extends Edge {
 	/**
 	 * Automatically generated Edge constructor for
 	 * specialized class '{{type_name}}'
+	 * 
+	 * @param target     Target Vertex for this edge.
+	 * @param source     Source vertex for this edge.
+	 * @param targetPort target vertex port for this edge.
+	 * @param sourcePort source vertex port for this edge.
 	 */
     public {{type_name}}(Vertex source, Vertex target, Port sourcePort, Port targetPort) {
     super(target, source, sourcePort, targetPort);
@@ -36,6 +44,11 @@ public class {{type_name}} extends Edge {
 	/**
 	 * Automatically generated Edge constructor for
 	 * specialized class '{{type_name}}'
+	 * 
+	 * @param target     Target Vertex for this edge.
+	 * @param source     Source vertex for this edge.
+	 * @param targetPort {@link Optional} target vertex port for this edge.
+	 * @param sourcePort {@link Optional} source vertex port for this edge.
 	 */
     public {{type_name}}(Vertex source, Vertex target, Optional<Port> sourcePort, Optional<Port> targetPort) {
     super(target, source, sourcePort, targetPort);
