@@ -1,5 +1,5 @@
 name:                forsyde-io-haskell
-version:             "0.2.12"
+version:             "0.1.0"
 github:              "forsyde/forsyde-io"
 license:             BSD3
 author:              "Rodolfo Jordao"
