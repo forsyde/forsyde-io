@@ -8,6 +8,12 @@ on:
     branches: [ master, develop ]
   pull_request:
     branches: [ master, develop ]
+
+env:
+    MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+    MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+    GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+    GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
 jobs:
   test-java-build:
     strategy:

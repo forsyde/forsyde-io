@@ -7,6 +7,14 @@ on:
   release:
     types: [created]
 
+env:
+    MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+    MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+    GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+    GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
+    USERNAME: ${{ github.actor }}
+    TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   deploy-python:
     runs-on: ubuntu-latest
@@ -63,7 +71,4 @@ jobs:
     - name: Publish to GitHub Packages
       run: |
         cd $GITHUB_WORKSPACE/java
-        ./gradlew publishMavenJavaPublicationToGitHubPackagesRepository
-      env:
-        USERNAME: ${{ github.actor }}
-        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ./gradlew publish
