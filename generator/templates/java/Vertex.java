@@ -19,14 +19,16 @@ public class {{type_name}} extends Vertex {
 {% endif %}
 
     /**
-     * {@inheritDoc}
+     * Automatically generated constructor for specific
+     * Vertex class '{{type_name}}'
      */
     public {{type_name}}(String identifier) {
          super(identifier);
     }
  
     /**
-     * {@inheritDoc}
+     * Automatically generated constructor for specific
+     * Vertex class '{{type_name}}'
      */
     public {{type_name}}(String identifier, List<Port> ports, Map<String, Object> properties) {
          super(identifier, ports, properties);

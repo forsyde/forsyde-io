@@ -18,25 +18,28 @@ public class {{type_name}} extends Edge {
 {% endif %}
 
 	/**
-	 * {@inheritDoc}
+	 * Automatically generated Edge constructor for
+	 * specialized class '{{type_name}}'
 	 */
 	public {{type_name}}(Vertex target, Vertex source) {
 		super(target, source);
 	}
 	  
-	  /**
-	   * {@inheritDoc}
-	   */
-	  public {{type_name}}(Vertex source, Vertex target, Port sourcePort, Port targetPort) {
-        super(target, source, sourcePort, targetPort);
-	  }
+	/**
+	 * Automatically generated Edge constructor for
+	 * specialized class '{{type_name}}'
+	 */
+    public {{type_name}}(Vertex source, Vertex target, Port sourcePort, Port targetPort) {
+    super(target, source, sourcePort, targetPort);
+    }
 	  
-	  /**
-	   * {@inheritDoc}
-	   */
-	  public {{type_name}}(Vertex source, Vertex target, Optional<Port> sourcePort, Optional<Port> targetPort) {
-        super(target, source, sourcePort, targetPort);
-	  }
+	/**
+	 * Automatically generated Edge constructor for
+	 * specialized class '{{type_name}}'
+	 */
+    public {{type_name}}(Vertex source, Vertex target, Optional<Port> sourcePort, Optional<Port> targetPort) {
+    super(target, source, sourcePort, targetPort);
+    }
 
     @Override
     public String getTypeName() {
