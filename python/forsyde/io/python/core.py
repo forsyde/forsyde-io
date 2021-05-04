@@ -8,6 +8,8 @@ from typing import Optional
 from typing import Set
 from typing import Tuple
 from typing import Sequence
+from typing import Type
+from enum import Enum
 import itertools
 
 import networkx as nx  # type: ignore
@@ -71,6 +73,7 @@ def _generate_port_id() -> str:
 
 #     def get_required_properties(self) -> Iterable[Tuple[str, Any]]:
 #         yield from ()
+VertexTrait = Type[Enum]
 
 
 @dataclass
@@ -120,6 +123,9 @@ class Vertex(object):
     properties: Dict[str, Any] = field(default_factory=dict,
                                        compare=False,
                                        hash=False)
+    vertex_traits: Set[VertexTrait] = field(default_factory=set,
+                                            compare=False,
+                                            hash=False)
 
     # vertex_type: ModelType = field(default=ModelType(),
     #                                compare=False,
@@ -141,33 +147,24 @@ class Vertex(object):
             raise AttributeError(
                 f"Required port {name} of {self.identifier} does not exist.")
 
-    def get_neigh(self, name: str, model, out_dir=True, in_dir=False) -> Optional["Vertex"]:
+    def get_neigh(self,
+                  name: str,
+                  model,
+                  out_dir=True,
+                  in_dir=False) -> Optional["Vertex"]:
         port = self.get_port(name)
         neighs = iter(())
         if out_dir:
             neighs = itertools.chain(neighs, (n for n in model[self]))
         if in_dir:
-            neighs = itertools.chain(neighs, (n for n in model if self in model[n]))
+            neighs = itertools.chain(neighs,
+                                     (n for n in model if self in model[n]))
         for n in neighs:
             for (_, edata) in model.get_edge_data(self, n).items():
                 edge = edata["object"]
                 if edge.source_vertex_port == port or n.target_vertex_port == port:
                     return edge.target_vertex
         return None
-
-    def get_neighs(self, name: str, model) -> Sequence["Vertex"]:
-        port = self.get_port(name)
-        neighs = iter()
-        if out_dir:
-            neighs = itertools.chain(neighs, (n for n in model[self]))
-        if in_dir:
-            neighs = itertools.chain(neighs, (n for n in model if self in model[n]))
-        for n in neighs:
-            for (_, edata) in model.get_edge_data(self, n).items():
-                edge = edata["object"]
-                if edge.source_vertex_port == port or n.target_vertex_port == port:
-                    yield edge.target_vertex
-
 
 
 @dataclass
@@ -226,12 +223,6 @@ class ForSyDeModel(nx.MultiDiGraph):
                  *args,
                  **kwargs):
         nx.MultiDiGraph.__init__(self, *args, **kwargs)
-
-    def neighs(self, v: Vertex) -> Iterable[Vertex]:
-        yield from self.nodes.adj[v]
-
-    def neighs_rev(self, v: Vertex) -> Iterable[Vertex]:
-        yield from nx.reverse_view(self).adj[v]
 
     def get_vertex(self,
                    label: str,
