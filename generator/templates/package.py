@@ -1,16 +1,19 @@
-from typing import Dict
-from typing import List
-from typing import Sequence
 from enum import Enum
 from enum import auto
 
 import forsyde.io.python.core as core
 
 
-class VertexTrait(Enum):
+class VertexTrait(Enum, core.Trait):
 {%- for type_name, type_data in vertexTraits.items() %}
     {{type_name}} = auto()
 {%- endfor %}
+
+    def __lshift__(self, o) -> bool:
+        if self is o:
+            return True
+        else:
+            return any(parent << o for (s, parent) in _traits_vertex if s == self)
 
 
 _traits_vertex = [
@@ -21,17 +24,17 @@ _traits_vertex = [
 {%- endfor %}
 ]
 
-def issupertrait_vertex(t1: VertexTrait, t2: VertexTrait) -> bool:
-    if t1 is t2:
-        return True
-    else:
-        return any(issupertrait_vertex(parent, t2) for (t, parent) in _traits_vertex if t is t1)
 
-
-class EdgeTrait(Enum):
+class EdgeTrait(Enum, core.Trait):
 {%- for type_name, type_data in edgeTraits.items() %}
     {{type_name}} = auto()
 {%- endfor %}
+
+    def __lshift__(self, o) -> bool:
+        if self is o:
+            return True
+        else:
+            return any(parent << o for (s, parent) in _traits_edges if s == self)
 
 
 _traits_edges = [
@@ -42,11 +45,6 @@ _traits_edges = [
 {%- endfor %}
 ]
 
-def issupertrait_edge(t1: EdgeTrait, t2: EdgeTrait) -> bool:
-    if t1 is t2:
-        return True
-    else:
-        return any(issupertrait_edge(parent, t2) for (t, parent) in _traits_edges if t is t1)
 
 {# {% for type_name, type_data in vertexTraits.items() %}
 {% if type_data['superTraits'] %}

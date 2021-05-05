@@ -7,7 +7,7 @@ from enum import auto
 import forsyde.io.python.core as core
 
 
-class VertexTrait(Enum):
+class VertexTrait(Enum, core.VertexTrait):
     AbstractGrouping = auto()
     AbstractOrdering = auto()
     TriggeredTask = auto()
@@ -29,6 +29,7 @@ class VertexTrait(Enum):
     Signal = auto()
     BufferSignal = auto()
     LabelSignal = auto()
+    Instrumented = auto()
     InstrumentedSignal = auto()
     SYComb = auto()
     SYPrefix = auto()
@@ -58,12 +59,14 @@ _traits_vertex = [
     (VertexTrait.BufferSignal, VertexTrait.Signal),
     (VertexTrait.LabelSignal, VertexTrait.Signal),
     (VertexTrait.InstrumentedSignal, VertexTrait.Signal),
+    (VertexTrait.InstrumentedSignal, VertexTrait.Instrumented),
     (VertexTrait.SYComb, VertexTrait.Function),
     (VertexTrait.SYPrefix, VertexTrait.Function),
     (VertexTrait.SDFComb, VertexTrait.Function),
     (VertexTrait.SDFPrefix, VertexTrait.Function),
     (VertexTrait.AbstractProcessingComponent, VertexTrait.AbstractPhysicalComponent),
     (VertexTrait.InstrumentedProcessorTile, VertexTrait.AbstractProcessingComponent),
+    (VertexTrait.InstrumentedProcessorTile, VertexTrait.Instrumented),
     (VertexTrait.AbstractStorageComponent, VertexTrait.AbstractPhysicalComponent),
     (VertexTrait.AbsractInterfaceComponent, VertexTrait.AbstractPhysicalComponent),
     (VertexTrait.AbstractCommunicationComponent, VertexTrait.AbstractPhysicalComponent),

@@ -120,6 +120,9 @@
                 "Function"
             ],
             "required_properties": {
+            	"max_operations": {
+            		
+            	},
                 "max_float_operations": {
                     "class": "integer",
                     "default": 0
@@ -149,9 +152,36 @@
                 "Signal"
             ]
         },
+        "Instrumented": {
+        	"superTraits": [],
+        	"required_properties": {
+        		"requires": {
+        			"class": "object",
+        			"key": "string",
+        			"value": {
+        				"class": "object",
+        				"key": "string",
+        				"value": "int"
+        			}
+        		},
+        		"provides": {
+        			"class": "object",
+        			"key": "string",
+        			"value": {
+        				"class": "object",
+        				"key": "string",
+        				"value": "int"
+        			}
+        		},
+        		"configurations": {
+        			"class": "array",
+        			"value": "string"
+        		}
+        	}
+        },
         "InstrumentedSignal": {
             "superTraits": [
-                "Signal"
+                "Signal", "Instrumented"
             ],
             "required_properties": {
                 "max_elem_size_bytes": {
@@ -229,28 +259,35 @@
         },
         "InstrumentedProcessorTile": {
             "superTraits": [
-                "AbstractProcessingComponent"
+                "AbstractProcessingComponent", "Instrumented"
             ],
             "required_properties": {
                 "min_frequency_hz": {
-                    "class": "integer",
-                    "default": 50000000
+                    "class": "integer"
+                },
+                "max_frequency_hz": {
+                    "class": "integer"
+                },
+                "max_clock_cycles_per_op": {
+                	"class": "object",
+                	"key": "string",
+                	"value": {
+                		"class": "object",
+                		"key": "string",
+                		"value": "int"
+                	}
                 },
                 "max_memory_internal_bytes": {
-                    "class": "integer",
-                    "default": 32000
+                    "class": "integer"
                 },
                 "clock_cycles_per_float_op": {
-                    "class": "integer",
-                    "default": 6
+                    "class": "integer"
                 },
                 "clock_cycles_per_integer_op": {
-                    "class": "integer",
-                    "default": 2
+                    "class": "integer"
                 },
                 "clock_cycles_per_boolean_op": {
-                    "class": "integer",
-                    "default": 1
+                    "class": "integer"
                 }
             }
         },
@@ -276,7 +313,6 @@
             "required_properties": {
                 "max_bandwith_bytes_per_sec": {
                     "class": "integer",
-                    "default": 1000000
                 }
             }
         },
