@@ -24,3 +24,6 @@ def main() -> None:
     pygen.fix_version(version)
     jgen.fix_version(version)
     hsgen.fix_version(version)
+
+
+main()

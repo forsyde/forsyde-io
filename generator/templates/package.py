@@ -1,12 +1,56 @@
 from typing import Dict
 from typing import List
 from typing import Sequence
+from enum import Enum
+from enum import auto
 
 import forsyde.io.python.core as core
 
-{% for type_name, type_data in vertexTypes.items() %}
-{% if type_data['superTypes'] %}
-class {{type_name}}({{type_data['superTypes'] | join(', ') }}):
+
+class VertexTrait(Enum):
+{%- for type_name, type_data in vertexTraits.items() %}
+    {{type_name}} = auto()
+{%- endfor %}
+
+
+_traits_vertex = [
+{%- for type_name, type_data in vertexTraits.items() %}
+{%- for trait_name in type_data['superTraits'] %}
+    (VertexTrait.{{type_name}}, VertexTrait.{{trait_name}}),
+{%- endfor %}
+{%- endfor %}
+]
+
+def issupertrait_vertex(t1: VertexTrait, t2: VertexTrait) -> bool:
+    if t1 is t2:
+        return True
+    else:
+        return any(issupertrait_vertex(parent, t2) for (t, parent) in _traits_vertex if t is t1)
+
+
+class EdgeTrait(Enum):
+{%- for type_name, type_data in edgeTraits.items() %}
+    {{type_name}} = auto()
+{%- endfor %}
+
+
+_traits_edges = [
+{%- for type_name, type_data in edgeTraits.items() %}
+{%- for trait_name in type_data['superTraits'] %}
+    (EdgeTrait.{{type_name}}, EdgeTrait.{{trait_name}}),
+{%- endfor %}
+{%- endfor %}
+]
+
+def issupertrait_edge(t1: EdgeTrait, t2: EdgeTrait) -> bool:
+    if t1 is t2:
+        return True
+    else:
+        return any(issupertrait_edge(parent, t2) for (t, parent) in _traits_edges if t is t1)
+
+{# {% for type_name, type_data in vertexTraits.items() %}
+{% if type_data['superTraits'] %}
+class {{type_name}}({{type_data['superTraits'] | join(', ') }}):
 {% else %}
 class {{type_name}}(core.Vertex):
 {% endif %}
@@ -52,9 +96,9 @@ class {{type_name}}(core.Vertex):
     {% endif %}
 {% endfor %}
 
-{% for type_name, type_data in edgeTypes.items() %}
-{% if type_data['superTypes'] %}
-class {{type_name}}({{type_data['superTypes'] | join(', ') }}):
+{% for type_name, type_data in edgeTraits.items() %}
+{% if type_data['superTraits'] %}
+class {{type_name}}({{type_data['superTraits'] | join(', ') }}):
 {% else %}
 class {{type_name}}(core.Edge):
 {% endif %}
@@ -71,7 +115,7 @@ class VertexFactory:
     """
 
     str_to_classes = {
-        {%- for type_name, type_data in vertexTypes.items() %}
+        {%- for type_name, type_data in vertexTraits.items() %}
         "{{type_name}}": {{type_name}}{{',' if not loop.last}}
         {% endfor -%}
     }
@@ -114,7 +158,7 @@ class EdgeFactory:
     """
 
     str_to_classes = {
-        {%- for type_name, type_data in edgeTypes.items() %}
+        {%- for type_name, type_data in edgeTraits.items() %}
         "{{type_name}}": {{type_name}}{{',' if not loop.last}}
         {% endfor -%}
     }
@@ -145,4 +189,4 @@ class EdgeFactory:
         except KeyError:
             raise NotImplementedError(
                 f"The Edge type '{type_name}' is not recognized."
-            )
+            ) #}
