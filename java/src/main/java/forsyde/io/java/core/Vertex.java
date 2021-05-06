@@ -29,11 +29,12 @@ import java.util.Map;
  * 
  * 
  */
-public class Vertex {
+final public class Vertex {
 
 	public String identifier;
 	public List<Port> ports = new ArrayList<Port>();
 	public Map<String, Object> properties = new HashMap<String, Object>();
+	public Set<Trait> vertexTraits = new HashSet<Trait>();
 
 	/**
 	 * Utility constructor initializing all associated data as empty.

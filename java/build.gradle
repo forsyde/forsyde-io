@@ -44,6 +44,7 @@ dependencies {
   // The production code uses the SLF4J logging API at compile time
   implementation 'org.slf4j:slf4j-api:1.7.25'
   implementation group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.0'
+  implementation group: 'com.squareup', name: 'javapoet', version: '1.9.0'
 
   testImplementation 'junit:junit:4.12'
 }
