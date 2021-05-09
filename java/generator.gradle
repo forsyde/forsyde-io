@@ -1,0 +1,29 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'com.squareup:javapoet:1.13.0'
+  }
+}
+
+import groovy.json.JsonSlurper
+import com.squareup.javapoet.TypeSpec
+import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.JavaFile
+
+
+task generateVertexTraits {
+    def modelStr = file('meta.json').text as java.lang.String
+    def model = new JsonSlurper().parseText(modelStr)
+    def vertexEnum = TypeSpec.enumBuilder("VertexTrait")
+        //.addSuperInterface(ClassName.bestGuess("Trait"))
+        // .addModifiers(Modifier.PUBLIC)
+    for (vertexTrait in model['vertexTraits']) {
+        vertexEnum.addEnumConstant(vertexTrait.key)
+    }
+    def fileStr = JavaFile.builder('forsyde.io.java.core', vertexEnum.build())
+    file('src-gen/main/java/forsyde/io/java/core').mkdirs()
+    file('src-gen/main/java/forsyde/io/java/core/VertexTrait.java').text = fileStr.build()
+    println(fileStr.build())
+} 
