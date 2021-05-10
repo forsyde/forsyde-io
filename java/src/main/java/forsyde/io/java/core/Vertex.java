@@ -21,7 +21,7 @@ import java.util.Map;
  *         Class holding data for a Vertex (Node) in memory.
  * 
  *         Every vertex contains a number of {@link Port}s (which are repeated
- *         in the vertexed to increase reliability in the model, since putting
+ *         in the vertexes to increase reliability in the model, since putting
  *         them in edges would have been sufficient) with their associated
  *         types. Also, every vertex contains "Properties" which are arbitrary
  *         self-contained associated data, such as the size of bits in a Signal
@@ -34,7 +34,7 @@ final public class Vertex {
 	public String identifier;
 	public List<Port> ports = new ArrayList<Port>();
 	public Map<String, Object> properties = new HashMap<String, Object>();
-	public Set<Trait> vertexTraits = new HashSet<Trait>();
+	public Set<VertexTrait> vertexTraits = new HashSet<VertexTrait>();
 
 	/**
 	 * Utility constructor initializing all associated data as empty.
@@ -73,11 +73,11 @@ final public class Vertex {
 				.append(properties != null ? toString(properties.entrySet(), maxLen) : null).append("]");
 		return builder.toString();
 	}
-
-	public String getTypeName() {
-		return "Vertex";
+	
+	public Set<VertexTrait> getTraits() { 
+		return vertexTraits; 
 	}
-
+	
 	public Optional<Port> getPort(String portName) {
 		return ports.stream().filter((p) -> p.identifier.equals(portName)).findFirst();
 	}
