@@ -4,33 +4,31 @@ using LightGraphs
 
 VertexIdxType = UInt
 
-abstract type AbstractVertexTrait end
-abstract type AbstractVertexType end
-abstract type AbstractEdgeType end
+abstract type Trait end
 
-struct Vertex{Ts <: Set{<:AbstractVertexTrait}}
+refines(t1::Trait, t2::Trait) = false
+
+struct Vertex{Ts <: Set}
     id::String
     ports::Set{String}
     properties::Dict{String,Any}
     vertex_traits::Ts
 end
 
-struct OpaqueVertexType <: AbstractVertexType end
+Vertex(id::String) = Vertex(id, Set{String}(), Dict{String,Any}(), Set{Trait}())
 
-Vertex(id::String) = Vertex(id, Set{String}(), Dict{String,Any}(), Set{AbstractVertexTrait}())
-
-Vertex(id::String, ports::Set{String}) = Vertex(id, ports, Dict{String,Any}(), Set{AbstractVertexTrait}())
+Vertex(id::String, ports::Set{String}) = Vertex(id, ports, Dict{String,Any}(), Set{Trait}())
 
 ==(v1::Vertex, v2::Vertex) = v1.id == v2.id
 
 hash(v::Vertex) = hash(v.id)
 
-struct Edge{V <: Vertex,P <: Union{<:String,Nothing}}
+struct Edge{V <: Vertex,P <: Union{<:String,Nothing},Ts <: Set}
     source::V
     target::V
     source_port::P
     target_port::P
-    edge_type::AbstractEdgeType
+    edge_traits::Ts
 end
 
 ==(e1::Edge, e2::Edge) = (e1.source == e2.source && 
