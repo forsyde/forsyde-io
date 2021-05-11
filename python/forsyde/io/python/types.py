@@ -1,13 +1,9 @@
-from typing import Dict
-from typing import List
-from typing import Sequence
 from enum import Enum
 from enum import auto
 
 import forsyde.io.python.core as core
 
-
-class VertexTrait(Enum, core.VertexTrait):
+class VertexTrait(Enum, core.Trait):
     AbstractGrouping = auto()
     AbstractOrdering = auto()
     TriggeredTask = auto()
@@ -44,44 +40,146 @@ class VertexTrait(Enum, core.VertexTrait):
     InstrumentedCommunicationInterconnect = auto()
     TimeDivisionMultiplexer = auto()
 
+    @classmethod
+    def refines_static(cls, one, other):
+        if one is cls.AbstractGrouping and other is cls.AbstractGrouping:
+            return True
+        if one is cls.AbstractOrdering and other is cls.AbstractOrdering:
+            return True
+        if one is cls.AbstractOrdering and other is cls.AbstractGrouping:
+            return True
+        if one is cls.TriggeredTask and other is cls.AbstractOrdering:
+            return True
+        if one is cls.TriggeredTask and other is cls.TriggeredTask:
+            return True
+        if one is cls.TriggeredTask and other is cls.AbstractGrouping:
+            return True
+        if one is cls.SporadicTask and other is cls.SporadicTask:
+            return True
+        if one is cls.SporadicTask and other is cls.AbstractOrdering:
+            return True
+        if one is cls.SporadicTask and other is cls.AbstractGrouping:
+            return True
+        if one is cls.ExtraFunctional and other is cls.ExtraFunctional:
+            return True
+        if one is cls.WCET and other is cls.WCET:
+            return True
+        if one is cls.WCET and other is cls.ExtraFunctional:
+            return True
+        if one is cls.WCCT and other is cls.ExtraFunctional:
+            return True
+        if one is cls.WCCT and other is cls.WCCT:
+            return True
+        if one is cls.Requirement and other is cls.Requirement:
+            return True
+        if one is cls.HardRequirement and other is cls.Requirement:
+            return True
+        if one is cls.HardRequirement and other is cls.HardRequirement:
+            return True
+        if one is cls.LocationRequirement and other is cls.Requirement:
+            return True
+        if one is cls.LocationRequirement and other is cls.LocationRequirement:
+            return True
+        if one is cls.Goal and other is cls.Goal:
+            return True
+        if one is cls.MinimumThroughput and other is cls.Goal:
+            return True
+        if one is cls.MinimumThroughput and other is cls.MinimumThroughput:
+            return True
+        if one is cls.TimeTriggeredScheduler and other is cls.TimeTriggeredScheduler:
+            return True
+        if one is cls.TimeTriggeredScheduler and other is cls.AbstractGrouping:
+            return True
+        if one is cls.FixedPriorityScheduler and other is cls.FixedPriorityScheduler:
+            return True
+        if one is cls.CustomScheduler and other is cls.CustomScheduler:
+            return True
+        if one is cls.RoundRobinScheduler and other is cls.RoundRobinScheduler:
+            return True
+        if one is cls.Function and other is cls.Function:
+            return True
+        if one is cls.InstrumentedFunction and other is cls.InstrumentedFunction:
+            return True
+        if one is cls.InstrumentedFunction and other is cls.Function:
+            return True
+        if one is cls.Signal and other is cls.Signal:
+            return True
+        if one is cls.BufferSignal and other is cls.Signal:
+            return True
+        if one is cls.BufferSignal and other is cls.BufferSignal:
+            return True
+        if one is cls.LabelSignal and other is cls.Signal:
+            return True
+        if one is cls.LabelSignal and other is cls.LabelSignal:
+            return True
+        if one is cls.Instrumented and other is cls.Instrumented:
+            return True
+        if one is cls.InstrumentedSignal and other is cls.Signal:
+            return True
+        if one is cls.InstrumentedSignal and other is cls.InstrumentedSignal:
+            return True
+        if one is cls.InstrumentedSignal and other is cls.Instrumented:
+            return True
+        if one is cls.SYComb and other is cls.Function:
+            return True
+        if one is cls.SYComb and other is cls.SYComb:
+            return True
+        if one is cls.SYPrefix and other is cls.Function:
+            return True
+        if one is cls.SYPrefix and other is cls.SYPrefix:
+            return True
+        if one is cls.SDFComb and other is cls.Function:
+            return True
+        if one is cls.SDFComb and other is cls.SDFComb:
+            return True
+        if one is cls.SDFPrefix and other is cls.Function:
+            return True
+        if one is cls.SDFPrefix and other is cls.SDFPrefix:
+            return True
+        if one is cls.AbstractPhysicalComponent and other is cls.AbstractPhysicalComponent:
+            return True
+        if one is cls.AbstractProcessingComponent and other is cls.AbstractPhysicalComponent:
+            return True
+        if one is cls.AbstractProcessingComponent and other is cls.AbstractProcessingComponent:
+            return True
+        if one is cls.InstrumentedProcessorTile and other is cls.AbstractPhysicalComponent:
+            return True
+        if one is cls.InstrumentedProcessorTile and other is cls.InstrumentedProcessorTile:
+            return True
+        if one is cls.InstrumentedProcessorTile and other is cls.Instrumented:
+            return True
+        if one is cls.InstrumentedProcessorTile and other is cls.AbstractProcessingComponent:
+            return True
+        if one is cls.AbstractStorageComponent and other is cls.AbstractPhysicalComponent:
+            return True
+        if one is cls.AbstractStorageComponent and other is cls.AbstractStorageComponent:
+            return True
+        if one is cls.AbsractInterfaceComponent and other is cls.AbstractPhysicalComponent:
+            return True
+        if one is cls.AbsractInterfaceComponent and other is cls.AbsractInterfaceComponent:
+            return True
+        if one is cls.AbstractCommunicationComponent and other is cls.AbstractPhysicalComponent:
+            return True
+        if one is cls.AbstractCommunicationComponent and other is cls.AbstractCommunicationComponent:
+            return True
+        if one is cls.InstrumentedCommunicationInterconnect and other is cls.AbstractPhysicalComponent:
+            return True
+        if one is cls.InstrumentedCommunicationInterconnect and other is cls.InstrumentedCommunicationInterconnect:
+            return True
+        if one is cls.InstrumentedCommunicationInterconnect and other is cls.AbstractCommunicationComponent:
+            return True
+        if one is cls.TimeDivisionMultiplexer and other is cls.AbstractPhysicalComponent:
+            return True
+        if one is cls.TimeDivisionMultiplexer and other is cls.AbstractCommunicationComponent:
+            return True
+        if one is cls.TimeDivisionMultiplexer and other is cls.TimeDivisionMultiplexer:
+            return True
+        return False
 
-_traits_vertex = [
-    (VertexTrait.AbstractOrdering, VertexTrait.AbstractGrouping),
-    (VertexTrait.TriggeredTask, VertexTrait.AbstractOrdering),
-    (VertexTrait.SporadicTask, VertexTrait.AbstractOrdering),
-    (VertexTrait.WCET, VertexTrait.ExtraFunctional),
-    (VertexTrait.WCCT, VertexTrait.ExtraFunctional),
-    (VertexTrait.HardRequirement, VertexTrait.Requirement),
-    (VertexTrait.LocationRequirement, VertexTrait.Requirement),
-    (VertexTrait.MinimumThroughput, VertexTrait.Goal),
-    (VertexTrait.TimeTriggeredScheduler, VertexTrait.AbstractGrouping),
-    (VertexTrait.InstrumentedFunction, VertexTrait.Function),
-    (VertexTrait.BufferSignal, VertexTrait.Signal),
-    (VertexTrait.LabelSignal, VertexTrait.Signal),
-    (VertexTrait.InstrumentedSignal, VertexTrait.Signal),
-    (VertexTrait.InstrumentedSignal, VertexTrait.Instrumented),
-    (VertexTrait.SYComb, VertexTrait.Function),
-    (VertexTrait.SYPrefix, VertexTrait.Function),
-    (VertexTrait.SDFComb, VertexTrait.Function),
-    (VertexTrait.SDFPrefix, VertexTrait.Function),
-    (VertexTrait.AbstractProcessingComponent, VertexTrait.AbstractPhysicalComponent),
-    (VertexTrait.InstrumentedProcessorTile, VertexTrait.AbstractProcessingComponent),
-    (VertexTrait.InstrumentedProcessorTile, VertexTrait.Instrumented),
-    (VertexTrait.AbstractStorageComponent, VertexTrait.AbstractPhysicalComponent),
-    (VertexTrait.AbsractInterfaceComponent, VertexTrait.AbstractPhysicalComponent),
-    (VertexTrait.AbstractCommunicationComponent, VertexTrait.AbstractPhysicalComponent),
-    (VertexTrait.InstrumentedCommunicationInterconnect, VertexTrait.AbstractCommunicationComponent),
-    (VertexTrait.TimeDivisionMultiplexer, VertexTrait.AbstractCommunicationComponent),
-]
+    def refines(self, o):
+        return VertexTrait.refines_static(self, o)
 
-def issupertrait_vertex(t1: VertexTrait, t2: VertexTrait) -> bool:
-    if t1 is t2:
-        return True
-    else:
-        return any(issupertrait_vertex(parent, t2) for (t, parent) in _traits_vertex if t is t1)
-
-
-class EdgeTrait(Enum):
+class EdgeTrait(Enum, core.Trait):
     Input = auto()
     Output = auto()
     Annotation = auto()
@@ -91,15 +189,29 @@ class EdgeTrait(Enum):
     AbstractScheduling = auto()
     AbstractMapping = auto()
 
+    @classmethod
+    def refines_static(cls, one, other):
+        if one is cls.Input and other is cls.Input:
+            return True
+        if one is cls.Output and other is cls.Output:
+            return True
+        if one is cls.Annotation and other is cls.Annotation:
+            return True
+        if one is cls.Expansion and other is cls.Expansion:
+            return True
+        if one is cls.AbstractPhysicalConnection and other is cls.AbstractPhysicalConnection:
+            return True
+        if one is cls.AbstractDecision and other is cls.AbstractDecision:
+            return True
+        if one is cls.AbstractScheduling and other is cls.AbstractDecision:
+            return True
+        if one is cls.AbstractScheduling and other is cls.AbstractScheduling:
+            return True
+        if one is cls.AbstractMapping and other is cls.AbstractDecision:
+            return True
+        if one is cls.AbstractMapping and other is cls.AbstractMapping:
+            return True
+        return False
 
-_traits_edges = [
-    (EdgeTrait.AbstractScheduling, EdgeTrait.AbstractDecision),
-    (EdgeTrait.AbstractMapping, EdgeTrait.AbstractDecision),
-]
-
-def issupertrait_edge(t1: EdgeTrait, t2: EdgeTrait) -> bool:
-    if t1 is t2:
-        return True
-    else:
-        return any(issupertrait_edge(parent, t2) for (t, parent) in _traits_edges if t is t1)
-
+    def refines(self, o):
+        return EdgeTrait.refines_static(self, o)

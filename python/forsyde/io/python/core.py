@@ -34,55 +34,22 @@ def _generate_port_id() -> str:
     return "port" + str(_port_id_counter)
 
 
-"""Trait associated with a vertex or a port.
+class Trait:
+    """Trait associated with a vertex or an edge.
 
-Though Python already keeps many runtime amenities that would make this
-explicit runtime representation of Types unnecesary, having it explicitly can
-ease porting to other langauges and also usability for users that are not
-familiar with Python 'meta' built-in facilities.
+    Though Python already keeps many runtime amenities that would make this
+    explicit runtime representation of Types unnecesary, having it explicitly can
+    ease porting to other langauges and also usability for users that are not
+    familiar with Python 'meta' built-in facilities.
 
-This clas is meant to be used more of a interface than a concrete class.
-"""
-VertexTrait = Enum("VertexTrait", [k for k in _meta_model["vertexTraits"]])
+    This clas is meant to be used more of a interface than a concrete class.
+    """
 
+    def refines(self, o):
+        return False
 
-_vertex_trait_super = {
-    VertexTrait[trait_name]: [
-        VertexTrait[super_trait] for super_trait in trait_info["superTraits"]
-        if 'superTraits' in trait_info
-    ] if trait_info is not None else []
-    for (trait_name, trait_info) in _meta_model["vertexTraits"].items()
-}
-
-
-def _is_sub_vertex_trait(t: VertexTrait, o: VertexTrait) -> bool:
-    if t is o:
-        return True
-    else:
-        return any(
-            _is_sub_vertex_trait(parent, o) for parent in _vertex_trait_super.get(t, [])
-        )
-
-
-EdgeTrait = Enum("EdgeTrait", [k for k in _meta_model["edgeTraits"]])
-
-
-_edge_trait_super = {
-    EdgeTrait[trait_name]: [
-        EdgeTrait[super_trait] for super_trait in trait_info["superTraits"]
-        if 'superTraits' in trait_info
-    ] if trait_info is not None else []
-    for (trait_name, trait_info) in _meta_model["edgeTraits"].items()
-}
-
-
-def _is_sub_edge_trait(t: EdgeTrait, o: EdgeTrait) -> bool:
-    if t is o:
-        return True
-    else:
-        return any(
-            _is_sub_edge_trait(parent, o) for parent in _edge_trait_super.get(t, [])
-        )
+    def __lshift__(self, o):
+        return self.refines(o)
 
 
 @dataclass
@@ -130,9 +97,7 @@ class Vertex(object):
     identifier: str = field(default_factory=_generate_vertex_id, hash=True)
     ports: Set[Port] = field(default_factory=set, compare=False, hash=False)
     properties: Dict[str, Any] = field(default_factory=dict, compare=False, hash=False)
-    vertex_traits: Set[VertexTrait] = field(
-        default_factory=set, compare=False, hash=False
-    )
+    vertex_traits: Set[Trait] = field(default_factory=set, compare=False, hash=False)
 
     # vertex_type: ModelType = field(default=ModelType(),
     #                                compare=False,
@@ -155,10 +120,10 @@ class Vertex(object):
                 f"Required port {name} of {self.identifier} does not exist."
             )
 
-    def has_trait(self, trait: VertexTrait) -> bool:
-        return any(_is_sub_vertex_trait(t, trait) for t in self.vertex_traits)
+    def has_trait(self, trait: Trait) -> bool:
+        return any(trait.refines(t) for t in self.vertex_traits)
 
-    def has_trait_strict(self, trait: VertexTrait) -> bool:
+    def has_trait_strict(self, trait: Trait) -> bool:
         return any(t is trait for t in self.vertex_traits)
 
 
@@ -176,7 +141,7 @@ class Edge(object):
     target: Vertex = field(default=Vertex())
     source_port: Optional[Port] = field(default=None)
     target_port: Optional[Port] = field(default=None)
-    edge_traits: Set[EdgeTrait] = field(default_factory=set)
+    edge_traits: Set[Trait] = field(default_factory=set)
 
     # edge_type: ModelType = field(default=ModelType(), compare=False)
 
@@ -186,10 +151,10 @@ class Edge(object):
     def get_type_tag(self) -> str:
         return self.__class__.__name__
 
-    def has_trait(self, o: EdgeTrait) -> bool:
-        return any(_is_sub_edge_trait(t, o) for t in self.edge_traits)
+    def has_trait(self, o: Trait) -> bool:
+        return any(o.refines(t) for t in self.edge_traits)
 
-    def has_trait_strict(self, o: EdgeTrait) -> bool:
+    def has_trait_strict(self, o: Trait) -> bool:
         return any(t is o for t in self.edge_traits)
 
     # def ids_tuple(self):
