@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "forsyde-io-python"
-version = "0.2.12"
+version = "0.3.0"
 description = "Python supporting libraries for ForSyDe IO"
 authors = ["Rodolfo <jordao@kth.se>"]
 license = "MIT"

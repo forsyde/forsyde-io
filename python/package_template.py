@@ -3,7 +3,7 @@ from enum import auto
 
 import forsyde.io.python.core as core
 
-class VertexTrait(Enum, core.Trait):
+class VertexTrait(core.Trait, Enum):
 {%- for type_name, type_data in vertexTraitSuper.items() %}
     {{type_name}} = auto()
 {%- endfor %}
@@ -21,7 +21,7 @@ class VertexTrait(Enum, core.Trait):
     def refines(self, o):
         return VertexTrait.refines_static(self, o)
 
-class EdgeTrait(Enum, core.Trait):
+class EdgeTrait(core.Trait, Enum):
 {%- for type_name, type_data in edgeTraitSuper.items() %}
     {{type_name}} = auto()
 {%- endfor %}

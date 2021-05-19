@@ -19,9 +19,6 @@ import networkx as nx  # type: ignore
 _port_id_counter = 0
 _vertex_id_counter = 0
 
-_meta_model = json.loads(res.read_text("forsyde.io.python", "meta.json"))
-
-
 def _generate_vertex_id() -> str:
     global _vertex_id_counter
     _vertex_id_counter += 1
