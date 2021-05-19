@@ -2,8 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module ForSyDe.IO.Haskell
-  ( Port,
-    Vertex,
+  ( Vertex,
     Edge,
     ForSyDeModel,
   )
@@ -11,157 +10,145 @@ where
 
 -- Base libraries
 import Data.Dynamic
-import Data.List
-import Data.Maybe
-import qualified Data.Map
-
 -- External libraries
 import Data.Hashable
+import Data.List
+import qualified Data.Map
+import Data.Maybe
+-- Internal libraries
+import ForSyDe.IO.Haskell.Types
+  ( EdgeTrait (..),
+    VertexTrait (..),
+  )
 import Text.XML.HXT.Core
 import Text.XML.HXT.XPath
 
--- Internal libraries
-import ForSyDe.IO.Haskell.Traits
-  ( VertexTraits(..),
-    EdgeTraits(..)
-  )
+data Vertex = Vertex
+  { vertexId :: String,
+    vertexPorts :: [String],
+    vertexProperties :: [MapItem],
+    vertexTraits :: [VertexTrait]
+  }
 
-newtype Vertex = Vertex {
-  vertexId :: String,
-  vertexPorts :: [String],
-  vertexProperties :: [MapItem],
-  vertexTraits :: [VertexTraits]
-}
-
-newtype Edge = Edge {
-  edgeSource :: Vertex,
-  edgeTarget :: Vertex,
-  edgeSourcePort :: String,
-  edgeTargetPort :: String,
-  edgeTraits :: [EdgeTraits]
-}
+data Edge = Edge
+  { edgeSource :: Vertex,
+    edgeTarget :: Vertex,
+    edgeSourcePort :: String,
+    edgeTargetPort :: String,
+    edgeTraits :: [EdgeTrait]
+  }
 
 data MapItem
   = StringMapItem String
   | IntegerMapItem Integer
   | FloatMapItem Float
   | ListMapItem [MapItem]
-  | DictMapItem (Map String MapItem)
+  | DictMapItem (Data.Map.Map String MapItem)
 
-newtype ForSyDeModel = ForSyDeModel
+data ForSyDeModel = ForSyDeModel
   { vertexes :: [Vertex],
     edges :: [Edge]
   }
 
 -- | Return an empty 'ForSyDeModel' with no 'Vertex' or 'Edge'
-emptyForSyDeModel :: ForSyDeModel idType
+emptyForSyDeModel :: ForSyDeModel
 emptyForSyDeModel = ForSyDeModel [] []
 
-vertexFromStrings ::
-  idType ->
-  String ->
-  Vertex idType
-vertexFromStrings idV t = Vertex idV [] [] (makeTypeFromName t)
+-- vertexFromStrings ::
+--   String ->
+--   Vertex
+-- vertexFromStrings idV = Vertex idV [] [] (makeTypeFromName t)
 
--- | Queries a 'Vertex' in the model by its Id
--- returns 'Nothing' if nones exists.
-modelGetVertex ::
-  (Eq idType) =>
-  ForSyDeModel idType ->
-  idType ->
-  Maybe (Vertex idType)
-modelGetVertex (ForSyDeModel vs _) vId = find (\v -> vId == vertexIdentifier v) vs
+-- -- | Queries a 'Vertex' in the model by its Id
+-- -- returns 'Nothing' if nones exists.
+-- modelGetVertex ::
+--   ForSyDeModel ->
+--   String ->
+--   Maybe Vertex
+-- modelGetVertex (ForSyDeModel vs _) vId = find (\v -> vId == vertexIdentifier v) vs
 
--- | Add a new vertex to the model if it does not exist there yet
--- Otherwise returns the same model silently.
-modelAddVertex ::
-  (Eq idType) =>
-  ForSyDeModel idType ->
-  Vertex idType ->
-  ForSyDeModel idType
-modelAddVertex (ForSyDeModel vs es) v
-  | v `elem` vs = ForSyDeModel vs es
-  | otherwise = ForSyDeModel (v : vs) es
+-- -- | Add a new vertex to the model if it does not exist there yet
+-- -- Otherwise returns the same model silently.
+-- modelAddVertex ::
+--   ForSyDeModel ->
+--   Vertex ->
+--   ForSyDeModel
+-- modelAddVertex (ForSyDeModel vs es) v
+--   | v `elem` vs = ForSyDeModel vs es
+--   | otherwise = ForSyDeModel (v : vs) es
 
-modelGetEdges ::
-  (Eq idType) =>
-  ForSyDeModel idType ->
-  Vertex idType ->
-  Vertex idType ->
-  [Edge idType]
-modelGetEdges (ForSyDeModel _ es) s t = filter (\e -> (sourceVertex e == s) && (targetVertex e == t)) es
+-- modelGetEdges ::
+--   ForSyDeModel ->
+--   Vertex ->
+--   Vertex ->
+--   [Edge]
+-- modelGetEdges (ForSyDeModel _ es) s t = filter (\e -> (sourceVertex e == s) && (targetVertex e == t)) es
 
-modelAddEdge ::
-  (Eq idType) =>
-  ForSyDeModel idType ->
-  Edge idType ->
-  ForSyDeModel idType
-modelAddEdge m@(ForSyDeModel vs es) e@(Edge s t _ _ _)
-  | e `elem` es = ForSyDeModel vs' es
-  | otherwise = ForSyDeModel vs' (e : es)
-  where
-    vs' = vertexes $ modelAddVertex (modelAddVertex m s) t
+-- modelAddEdge ::
+--   ForSyDeModel ->
+--   Edge ->
+--   ForSyDeModel
+-- modelAddEdge m@(ForSyDeModel vs es) e@(Edge s t _ _ _)
+--   | e `elem` es = ForSyDeModel vs' es
+--   | otherwise = ForSyDeModel vs' (e : es)
+--   where
+--     vs' = vertexes $ modelAddVertex (modelAddVertex m s) t
 
-modelFromXMLTree ::
-  (Read idType, Eq idType) =>
-  XmlTree ->
-  ForSyDeModel idType
-modelFromXMLTree root = m
-  where
-    vElems = getXPath "/ForSyDeModel/Vertex" root
-    mWithVertex = foldr addVertexFromXMLTree emptyForSyDeModel vElems
-    eElems = getXPath "/ForSyDeModel/Edge" root
-    m = foldr addEdgeFromXMLTree mWithVertex eElems
+-- modelFromXMLTree ::
+--   XmlTree ->
+--   ForSyDeModel
+-- modelFromXMLTree root = m
+--   where
+--     vElems = getXPath "/ForSyDeModel/Vertex" root
+--     mWithVertex = foldr addVertexFromXMLTree emptyForSyDeModel vElems
+--     eElems = getXPath "/ForSyDeModel/Edge" root
+--     m = foldr addEdgeFromXMLTree mWithVertex eElems
 
-addEdgeFromXMLTree ::
-  (Read idType, Eq idType) =>
-  XmlTree ->
-  ForSyDeModel idType ->
-  ForSyDeModel idType
-addEdgeFromXMLTree edgeElement m = modelAddEdge m e
-  where
-    sId = read . head $ (runLA $ getAttrValue "source_id") edgeElement
-    tId = read . head $ (runLA $ getAttrValue "target_id") edgeElement
-    pSourceId = read . head $ (runLA $ getAttrValue "source_port_id") edgeElement
-    pTargetId = read . head $ (runLA $ getAttrValue "target_port_id") edgeElement
-    tString = head $ (runLA $ getAttrValue "type") edgeElement
-    source = fromJust $ modelGetVertex m sId
-    target = fromJust $ modelGetVertex m tId
-    sourcePort = find (\p -> pSourceId == portIdentifier p) (vertexPorts source)
-    targetPort = find (\p -> pTargetId == portIdentifier p) (vertexPorts target)
-    t = (makeTypeFromName . read) tString
-    e = Edge source target sourcePort targetPort t
+-- addEdgeFromXMLTree ::
+--   XmlTree ->
+--   ForSyDeModel ->
+--   ForSyDeModel
+-- addEdgeFromXMLTree edgeElement m = modelAddEdge m e
+--   where
+--     sId = read . head $ (runLA $ getAttrValue "source_id") edgeElement
+--     tId = read . head $ (runLA $ getAttrValue "target_id") edgeElement
+--     pSourceId = read . head $ (runLA $ getAttrValue "source_port_id") edgeElement
+--     pTargetId = read . head $ (runLA $ getAttrValue "target_port_id") edgeElement
+--     tString = head $ (runLA $ getAttrValue "type") edgeElement
+--     source = fromJust $ modelGetVertex m sId
+--     target = fromJust $ modelGetVertex m tId
+--     sourcePort = find (\p -> pSourceId == portIdentifier p) (vertexPorts source)
+--     targetPort = find (\p -> pTargetId == portIdentifier p) (vertexPorts target)
+--     t = (makeTypeFromName . read) tString
+--     e = Edge source target sourcePort targetPort t
 
-addVertexFromXMLTree ::
-  (Read idType, Eq idType) =>
-  XmlTree ->
-  ForSyDeModel idType ->
-  ForSyDeModel idType
-addVertexFromXMLTree vertexElement m = modelAddVertex m v
-  where
-    vidString = head $ (runLA $ getAttrValue "id") vertexElement
-    tString = head $ (runLA $ getAttrValue "type") vertexElement
-    vid = read vidString
-    t = (makeTypeFromName . read) tString
-    ports = map parsePortFromXML portsElems
-    properties = []
-    portsElems = (runLA $ getChildren >>> isElem >>> hasName "Port") vertexElement
-    v = Vertex vid ports properties t
+-- addVertexFromXMLTree ::
+--   XmlTree ->
+--   ForSyDeModel ->
+--   ForSyDeModel
+-- addVertexFromXMLTree vertexElement m = modelAddVertex m v
+--   where
+--     vidString = head $ (runLA $ getAttrValue "id") vertexElement
+--     tString = head $ (runLA $ getAttrValue "type") vertexElement
+--     vid = read vidString
+--     t = (makeTypeFromName . read) tString
+--     ports = map parsePortFromXML portsElems
+--     properties = []
+--     portsElems = (runLA $ getChildren >>> isElem >>> hasName "Port") vertexElement
+--     v = Vertex vid ports properties t
 
-parsePortFromXML ::
-  (Read idType, Eq idType) =>
-  XmlTree ->
-  Port idType
-parsePortFromXML portElement = p
-  where
-    pidString = head $ (runLA $ getAttrValue "id") portElement
-    tString = head $ (runLA $ getAttrValue "type") portElement
-    pid = read pidString
-    t = (makeTypeFromName . read) tString
-    p = Port pid t
+-- parsePortFromXML ::
+--   XmlTree ->
+--   String
+-- parsePortFromXML portElement = pid
+--   where
+--     pidString = head $ (runLA $ getAttrValue "id") portElement
+--     tString = head $ (runLA $ getAttrValue "type") portElement
+--     pid = read pidString
+--     t = (makeTypeFromName . read) tString
+--     p = Port pid t
 
-propertiesFromXMLTree ::
-  (Read keyType) =>
-  XmlTree ->
-  MapItem keyType
-propertiesFromXMLTree propElement = undefined
+-- propertiesFromXMLTree ::
+--   XmlTree ->
+--   MapItem
+-- propertiesFromXMLTree propElement = undefined

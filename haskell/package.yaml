@@ -33,7 +33,7 @@ library:
   source-dirs: src
 
 executables:
-  generate-exe:
+  generate-types:
     main:                Generate.hs
     #source-dirs:         app
     ghc-options:
@@ -42,6 +42,8 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - aeson
+    - unordered-containers
+    - text
 
 tests:
   forsyde-io-haskell-test:
