@@ -120,12 +120,12 @@
                 "Function"
             ],
             "required_properties": {
-                "max_operations": {
-                    "class": "object",
-                    "key": "string",
-                    "value": "integer",
-                    "default": {}
-                },
+            	"max_operations": {
+            		"class": "object",
+            		"key": "string",
+            		"value": "integer",
+            		"default": {}
+            	},
                 "max_float_operations": {
                     "class": "integer",
                     "default": 0
@@ -156,36 +156,35 @@
             ]
         },
         "Instrumented": {
-            "superTraits": [],
-            "required_properties": {
-                "requires": {
-                    "class": "object",
-                    "key": "string",
-                    "value": {
-                        "class": "object",
-                        "key": "string",
-                        "value": "int"
-                    }
-                },
-                "provides": {
-                    "class": "object",
-                    "key": "string",
-                    "value": {
-                        "class": "object",
-                        "key": "string",
-                        "value": "int"
-                    }
-                },
-                "configurations": {
-                    "class": "array",
-                    "value": "string"
-                }
-            }
+        	"superTraits": [],
+        	"required_properties": {
+        		"requires": {
+        			"class": "object",
+        			"key": "string",
+        			"value": {
+        				"class": "object",
+        				"key": "string",
+        				"value": "int"
+        			}
+        		},
+        		"provides": {
+        			"class": "object",
+        			"key": "string",
+        			"value": {
+        				"class": "object",
+        				"key": "string",
+        				"value": "int"
+        			}
+        		},
+        		"configurations": {
+        			"class": "array",
+        			"value": "string"
+        		}
+        	}
         },
         "InstrumentedSignal": {
             "superTraits": [
-                "Signal",
-                "Instrumented"
+                "Signal", "Instrumented"
             ],
             "required_properties": {
                 "max_elem_size_bytes": {
@@ -249,40 +248,32 @@
                 }
             }
         },
-        "ReactorElement": {
-            "superTraits": [
-                "Function"
-            ]
-        },
+        "ReactorElement": null,
         "ReactorTimer": {
-            "superTraits": [
-                "Function",
-                "ReactorElement"
-            ],
+            "superTraits": ["ReactorElement"],
             "required_properties": {
-                "period": {
+                "period_numerator_per_sec": {
                     "class": "integer"
                 },
-                "offset": {
+                "period_denominator_per_sec": {
+                    "class": "integer",
+                    "default": 1
+                },
+                "offset_numerator_per_sec": {
                     "class": "integer",
                     "default": 0
+                },
+                "offset_denominator_per_sec": {
+                    "class": "integer",
+                    "default": 1
                 }
             }
         },
         "ReactorActor": {
-            "superTraits": [
-                "Function",
-                "ReactorElement"
-            ],
-            "required_properties": {
-                "reaction_ports": {
-                    "class": "array",
-                    "value": "string"
-                }
-            },
+            "superTraits": ["ReactorElement"],
             "required_ports": {
-                "combinators": {
-                    "class": "Function",
+                "triggers": {
+                    "class": "ReactorElement",
                     "multiple": "ordered"
                 }
             }
@@ -301,8 +292,7 @@
         },
         "InstrumentedProcessorTile": {
             "superTraits": [
-                "AbstractProcessingComponent",
-                "Instrumented"
+                "AbstractProcessingComponent", "Instrumented"
             ],
             "required_properties": {
                 "min_frequency_hz": {
@@ -312,13 +302,13 @@
                     "class": "integer"
                 },
                 "max_clock_cycles_per_op": {
-                    "class": "object",
-                    "key": "string",
-                    "value": {
-                        "class": "object",
-                        "key": "string",
-                        "value": "int"
-                    }
+                	"class": "object",
+                	"key": "string",
+                	"value": {
+                		"class": "object",
+                		"key": "string",
+                		"value": "int"
+                	}
                 },
                 "max_memory_internal_bytes": {
                     "class": "integer"
