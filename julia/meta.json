@@ -248,6 +248,36 @@
                 }
             }
         },
+        "ReactorElement": null,
+        "ReactorTimer": {
+            "superTraits": ["ReactorElement"],
+            "required_properties": {
+                "period_numerator_per_sec": {
+                    "class": "integer"
+                },
+                "period_denominator_per_sec": {
+                    "class": "integer",
+                    "default": 1
+                },
+                "offset_numerator_per_sec": {
+                    "class": "integer",
+                    "default": 0
+                },
+                "offset_denominator_per_sec": {
+                    "class": "integer",
+                    "default": 1
+                }
+            }
+        },
+        "ReactorActor": {
+            "superTraits": ["ReactorElement"],
+            "required_ports": {
+                "triggers": {
+                    "class": "ReactorElement",
+                    "multiple": "ordered"
+                }
+            }
+        },
         "AbstractPhysicalComponent": null,
         "AbstractProcessingComponent": {
             "superTraits": [
