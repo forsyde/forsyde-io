@@ -21,16 +21,36 @@ import Text.XML.HXT.Core
 import Text.XML.HXT.XPath
 
 -- Internal libraries
-import ForSyDe.IO.Haskell.Types
-  ( Vertex(..),
-    Edge(..),
-    Port(..),
-    MapItem(..)
+import ForSyDe.IO.Haskell.Traits
+  ( VertexTraits(..),
+    EdgeTraits(..)
   )
 
-data ForSyDeModel v e = ForSyDeModel
-  { vertexes :: [v],
-    edges :: [e]
+newtype Vertex = Vertex {
+  vertexId :: String,
+  vertexPorts :: [String],
+  vertexProperties :: [MapItem],
+  vertexTraits :: [VertexTraits]
+}
+
+newtype Edge = Edge {
+  edgeSource :: Vertex,
+  edgeTarget :: Vertex,
+  edgeSourcePort :: String,
+  edgeTargetPort :: String,
+  edgeTraits :: [EdgeTraits]
+}
+
+data MapItem
+  = StringMapItem String
+  | IntegerMapItem Integer
+  | FloatMapItem Float
+  | ListMapItem [MapItem]
+  | DictMapItem (Map String MapItem)
+
+newtype ForSyDeModel = ForSyDeModel
+  { vertexes :: [Vertex],
+    edges :: [Edge]
   }
 
 -- | Return an empty 'ForSyDeModel' with no 'Vertex' or 'Edge'
