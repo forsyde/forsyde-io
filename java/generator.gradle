@@ -10,11 +10,13 @@ buildscript {
 
 import groovy.json.JsonSlurper
 import javax.lang.model.element.Modifier
+import java.util.Optional
 
 import com.squareup.javapoet.TypeSpec
 import com.squareup.javapoet.MethodSpec
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.TypeName
+import com.squareup.javapoet.ParameterizedTypeName
 import com.squareup.javapoet.JavaFile
 
 import org.jgrapht.*;
@@ -42,6 +44,7 @@ task generateVertexTraits {
     def vertexEnum = TypeSpec.enumBuilder("VertexTrait")
         .addSuperinterface(traitClass)
         .addModifiers(Modifier.PUBLIC)
+    // refinement method
     def refinesMethod = MethodSpec.methodBuilder("refines")
     	.returns(TypeName.BOOLEAN)
     	.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -146,4 +149,79 @@ task generateEdgeTraits {
     def fileStr = JavaFile.builder('forsyde.io.java.core', edgeEnum.build())
     file('src-gen/main/java/forsyde/io/java/core').mkdirs()
     file('src-gen/main/java/forsyde/io/java/core/EdgeTrait.java').text = fileStr.build()
-} 
+}
+
+// https://gist.github.com/two7sclash/c3835d83695b46ca2a6a4b6d71272538, with corrections
+def toCamelCase(String text, boolean capitalized=false ) {
+	text = text.replaceAll( "(_)([A-Za-z0-9])", { Object[] it -> it[2].toUpperCase() } )
+	return capitalized ? text.capitalize() : text
+}
+
+def metaToJavaType(md) {
+	if (md["class"] == "object") {
+		return ParameterizedTypeName.get(ClassName.get(Map.class), metaToJavaType(md.key), metaToJavaType(md.key))
+	}
+	else if (md["class"] == "array") {
+		return ParameterizedTypeName.get(ClassName.get(List.class), metaToJavaType(md.value))
+	}
+	else if (md["class"] == "int" || md["class"] == "integer") {
+		return ClassName.get(Integer.class)
+	}
+	else if (md["class"] == "double") {
+		return ClassName.get(Double.class)
+	}
+	else if (md["class"] == "float") {
+		return ClassName.get(Float.class)
+	}
+	else if (md["class"] == "boolean" || md["class"] == "bool") {
+		return ClassName.get(Boolean.class)
+	}
+	else
+		return ClassName.get(String.class)
+}
+
+task generateVertexAcessor(dependsOn: [generateVertexTraits]) {
+	def modelStr = file('meta.json').text
+    def model = new JsonSlurper().parseText(modelStr)
+    // first build the trait graph
+    def traitGraph = new SimpleDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
+    for (vertexTrait in model['vertexTraits']) {
+    	traitGraph.addVertex(vertexTrait.key)	
+    }
+    for (vertexTrait in model['vertexTraits']) {
+    	if (vertexTrait.value) {
+		    for (superTrait in vertexTrait.value['superTraits']) {
+				traitGraph.addEdge(vertexTrait.key, superTrait)    		
+			}
+		}
+	}
+	
+	def reversedTraitGraph = new EdgeReversedGraph(traitGraph)
+	def acessorClass = TypeSpec.classBuilder("VertexPropertyAcessor")
+		.addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+	def accessGenerated = []
+    for (vertexTrait in model['vertexTraits']) {
+    	if (vertexTrait.value) {
+	    	for (vertexProp in vertexTrait.value["required_properties"]) {
+	    		if (!accessGenerated.contains(vertexProp.key)) {
+	    			accessGenerated.add(vertexProp.key)
+		    		def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), metaToJavaType(vertexProp.value)) 
+		    		def getPropMethod = MethodSpec.methodBuilder("get" + toCamelCase(vertexProp.key, true))
+		    			.addParameter(ClassName.get("forsyde.io.java.core", "Vertex"), "vertex")
+		    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+		    			.returns(optionalOut)
+		    		getPropMethod.beginControlFlow("if (vertex.properties.containsKey(\"" + vertexProp.key + "\"))")
+		    		getPropMethod.addStatement("return Optional.of((" + metaToJavaType(vertexProp.value).toString() + ")vertex.properties.get(\"" + vertexProp.key + "\"))")
+		    		getPropMethod.nextControlFlow("else")
+		    		getPropMethod.addStatement("return Optional.empty()")
+		    		getPropMethod.endControlFlow()
+		    		acessorClass.addMethod(getPropMethod.build())
+	    		}
+	    	}
+    	}
+    }
+	// write down these nice generated enums
+    def fileStr = JavaFile.builder('forsyde.io.java.core', acessorClass.build())
+    file('src-gen/main/java/forsyde/io/java/core').mkdirs()
+    file('src-gen/main/java/forsyde/io/java/core/VertexPropertyAcessor.java').text = fileStr.build()
+}

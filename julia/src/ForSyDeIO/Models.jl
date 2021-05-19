@@ -5,6 +5,8 @@ using LightGraphs
 VertexIdxType = UInt
 
 abstract type Trait end
+abstract type VertexTrait <: Trait end
+abstract type EdgeTrait <: Trait end
 
 refines(t1::Trait, t2::Trait) = false
 

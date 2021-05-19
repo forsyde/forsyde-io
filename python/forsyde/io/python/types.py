@@ -31,6 +31,9 @@ class VertexTrait(Enum, core.Trait):
     SYPrefix = auto()
     SDFComb = auto()
     SDFPrefix = auto()
+    ReactorElement = auto()
+    ReactorTimer = auto()
+    ReactorActor = auto()
     AbstractPhysicalComponent = auto()
     AbstractProcessingComponent = auto()
     InstrumentedProcessorTile = auto()
@@ -54,17 +57,17 @@ class VertexTrait(Enum, core.Trait):
             return True
         if one is cls.TriggeredTask and other is cls.AbstractGrouping:
             return True
-        if one is cls.SporadicTask and other is cls.SporadicTask:
-            return True
         if one is cls.SporadicTask and other is cls.AbstractOrdering:
             return True
         if one is cls.SporadicTask and other is cls.AbstractGrouping:
             return True
+        if one is cls.SporadicTask and other is cls.SporadicTask:
+            return True
         if one is cls.ExtraFunctional and other is cls.ExtraFunctional:
             return True
-        if one is cls.WCET and other is cls.WCET:
-            return True
         if one is cls.WCET and other is cls.ExtraFunctional:
+            return True
+        if one is cls.WCET and other is cls.WCET:
             return True
         if one is cls.WCCT and other is cls.ExtraFunctional:
             return True
@@ -72,23 +75,23 @@ class VertexTrait(Enum, core.Trait):
             return True
         if one is cls.Requirement and other is cls.Requirement:
             return True
-        if one is cls.HardRequirement and other is cls.Requirement:
-            return True
         if one is cls.HardRequirement and other is cls.HardRequirement:
             return True
-        if one is cls.LocationRequirement and other is cls.Requirement:
+        if one is cls.HardRequirement and other is cls.Requirement:
             return True
         if one is cls.LocationRequirement and other is cls.LocationRequirement:
             return True
-        if one is cls.Goal and other is cls.Goal:
+        if one is cls.LocationRequirement and other is cls.Requirement:
             return True
-        if one is cls.MinimumThroughput and other is cls.Goal:
+        if one is cls.Goal and other is cls.Goal:
             return True
         if one is cls.MinimumThroughput and other is cls.MinimumThroughput:
             return True
-        if one is cls.TimeTriggeredScheduler and other is cls.TimeTriggeredScheduler:
+        if one is cls.MinimumThroughput and other is cls.Goal:
             return True
         if one is cls.TimeTriggeredScheduler and other is cls.AbstractGrouping:
+            return True
+        if one is cls.TimeTriggeredScheduler and other is cls.TimeTriggeredScheduler:
             return True
         if one is cls.FixedPriorityScheduler and other is cls.FixedPriorityScheduler:
             return True
@@ -114,27 +117,37 @@ class VertexTrait(Enum, core.Trait):
             return True
         if one is cls.Instrumented and other is cls.Instrumented:
             return True
-        if one is cls.InstrumentedSignal and other is cls.Signal:
-            return True
         if one is cls.InstrumentedSignal and other is cls.InstrumentedSignal:
+            return True
+        if one is cls.InstrumentedSignal and other is cls.Signal:
             return True
         if one is cls.InstrumentedSignal and other is cls.Instrumented:
             return True
-        if one is cls.SYComb and other is cls.Function:
-            return True
         if one is cls.SYComb and other is cls.SYComb:
             return True
-        if one is cls.SYPrefix and other is cls.Function:
+        if one is cls.SYComb and other is cls.Function:
             return True
         if one is cls.SYPrefix and other is cls.SYPrefix:
             return True
-        if one is cls.SDFComb and other is cls.Function:
+        if one is cls.SYPrefix and other is cls.Function:
             return True
         if one is cls.SDFComb and other is cls.SDFComb:
             return True
-        if one is cls.SDFPrefix and other is cls.Function:
+        if one is cls.SDFComb and other is cls.Function:
             return True
         if one is cls.SDFPrefix and other is cls.SDFPrefix:
+            return True
+        if one is cls.SDFPrefix and other is cls.Function:
+            return True
+        if one is cls.ReactorElement and other is cls.ReactorElement:
+            return True
+        if one is cls.ReactorTimer and other is cls.ReactorTimer:
+            return True
+        if one is cls.ReactorTimer and other is cls.ReactorElement:
+            return True
+        if one is cls.ReactorActor and other is cls.ReactorActor:
+            return True
+        if one is cls.ReactorActor and other is cls.ReactorElement:
             return True
         if one is cls.AbstractPhysicalComponent and other is cls.AbstractPhysicalComponent:
             return True
@@ -142,13 +155,13 @@ class VertexTrait(Enum, core.Trait):
             return True
         if one is cls.AbstractProcessingComponent and other is cls.AbstractProcessingComponent:
             return True
-        if one is cls.InstrumentedProcessorTile and other is cls.AbstractPhysicalComponent:
-            return True
         if one is cls.InstrumentedProcessorTile and other is cls.InstrumentedProcessorTile:
             return True
-        if one is cls.InstrumentedProcessorTile and other is cls.Instrumented:
+        if one is cls.InstrumentedProcessorTile and other is cls.AbstractPhysicalComponent:
             return True
         if one is cls.InstrumentedProcessorTile and other is cls.AbstractProcessingComponent:
+            return True
+        if one is cls.InstrumentedProcessorTile and other is cls.Instrumented:
             return True
         if one is cls.AbstractStorageComponent and other is cls.AbstractPhysicalComponent:
             return True
@@ -164,9 +177,9 @@ class VertexTrait(Enum, core.Trait):
             return True
         if one is cls.InstrumentedCommunicationInterconnect and other is cls.AbstractPhysicalComponent:
             return True
-        if one is cls.InstrumentedCommunicationInterconnect and other is cls.InstrumentedCommunicationInterconnect:
-            return True
         if one is cls.InstrumentedCommunicationInterconnect and other is cls.AbstractCommunicationComponent:
+            return True
+        if one is cls.InstrumentedCommunicationInterconnect and other is cls.InstrumentedCommunicationInterconnect:
             return True
         if one is cls.TimeDivisionMultiplexer and other is cls.AbstractPhysicalComponent:
             return True
@@ -183,7 +196,7 @@ class EdgeTrait(Enum, core.Trait):
     Input = auto()
     Output = auto()
     Annotation = auto()
-    Expansion = auto()
+    Composition = auto()
     AbstractPhysicalConnection = auto()
     AbstractDecision = auto()
     AbstractScheduling = auto()
@@ -197,7 +210,7 @@ class EdgeTrait(Enum, core.Trait):
             return True
         if one is cls.Annotation and other is cls.Annotation:
             return True
-        if one is cls.Expansion and other is cls.Expansion:
+        if one is cls.Composition and other is cls.Composition:
             return True
         if one is cls.AbstractPhysicalConnection and other is cls.AbstractPhysicalConnection:
             return True

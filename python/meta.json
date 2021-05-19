@@ -365,7 +365,9 @@
         "Input": null,
         "Output": null,
         "Annotation": null,
-        "Expansion": null,
+        "Composition": {
+            "superTraits": []
+        },
         "AbstractPhysicalConnection": null,
         "AbstractDecision": null,
         "AbstractScheduling": {
