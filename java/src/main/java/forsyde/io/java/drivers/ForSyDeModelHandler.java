@@ -31,8 +31,10 @@ public final class ForSyDeModelHandler {
 			driver = new ForSyDeXMLDriver();
 		} else if (filePath.endsWith(".forxml")) {
 			driver = new ForSyDeMLDriver();
+		} else if(filePath.endsWith(".graphml")) {
+			driver = new ForSyDeGraphMLDriver();
 		} else {
-			throw new Exception("Only '.xml' and '.forxml' formats are supported.");
+			throw new Exception("Supported write formats: ['forxml', 'graphml'].");
 		}
 		driver.writeModel(model, filePath);
 	}

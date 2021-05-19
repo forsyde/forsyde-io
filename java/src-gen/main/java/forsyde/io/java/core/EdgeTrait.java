@@ -9,7 +9,7 @@ public enum EdgeTrait implements Trait {
 
   Annotation,
 
-  Expansion,
+  Composition,
 
   AbstractPhysicalConnection,
 
@@ -36,9 +36,9 @@ public enum EdgeTrait implements Trait {
         case Annotation: return true;
         default: return false;
       }
-      case Expansion:
+      case Composition:
       switch (other) {
-        case Expansion: return true;
+        case Composition: return true;
         default: return false;
       }
       case AbstractPhysicalConnection:

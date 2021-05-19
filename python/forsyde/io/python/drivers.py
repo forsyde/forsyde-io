@@ -14,11 +14,11 @@ import pydot
 # from networkx.drawing.nx_pydot import write_dot  # type: ignore
 
 from forsyde.io.python.core import Vertex
-from forsyde.io.python.core import VertexTrait
 from forsyde.io.python.core import Edge
-from forsyde.io.python.core import EdgeTrait
 from forsyde.io.python.core import ForSyDeModel
 from forsyde.io.python.core import Port
+from forsyde.io.python.types import EdgeTrait
+from forsyde.io.python.types import VertexTrait
 
 
 class ForSyDeModelDriver(abc.ABC):
@@ -31,11 +31,6 @@ class ForSyDeModelDriver(abc.ABC):
         self, source: str, other_model: Optional[ForSyDeModel] = None
     ) -> Optional[ForSyDeModel]:
         return None
-
-
-class ForSyDeMLDriver(ForSyDeModelDriver):
-    def __init__(self):
-        self.ns = {"xmlns": "http://graphml.graphdrawing.org/xmlns"}
 
     def type_to_str(self, t: type) -> str:
         if t is bool:
@@ -71,6 +66,11 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
         else:
             return dict
 
+
+class ForSyDeMLDriver(ForSyDeModelDriver):
+    def __init__(self):
+        self.ns = {"xmlns": "http://graphml.graphdrawing.org/xmlns"}
+
     def write(self, model: ForSyDeModel, sink: str) -> None:
         xmlns = "{http://graphml.graphdrawing.org/xmlns}"
         root = etree.Element(xmlns + "graphml")
@@ -80,7 +80,7 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
         for v in model.nodes:
             node_elem = etree.SubElement(graph, xmlns + "node")
             node_elem.set("id", v.identifier)
-            node_elem.set("type", v.get_type_tag())
+            node_elem.set("traits", ";".join((str(t) for t in v.vertex_traits)))
             for port in v.ports:
                 port_elem = etree.SubElement(node_elem, xmlns + "port")
                 port_elem.set("name", port.identifier)
@@ -110,11 +110,11 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
             edge_elem = etree.SubElement(graph, xmlns + "edge")
             edge_elem.set("source", s.identifier)
             edge_elem.set("target", t.identifier)
-            edge_elem.set("type", edge.get_type_tag())
-            if edge.source_vertex_port:
-                edge_elem.set("sourceport", edge.source_vertex_port.identifier)
-            if edge.target_vertex_port:
-                edge_elem.set("targetport", edge.target_vertex_port.identifier)
+            edge_elem.set("traits", ";".join((str(t) for t in edge.edge_traits)))
+            if edge.source_port:
+                edge_elem.set("sourceport", edge.source_port.identifier)
+            if edge.target_port:
+                edge_elem.set("targetport", edge.target_port.identifier)
         with open(sink, "wb") as sinkstream:
             tree = etree.ElementTree(element=root)
             tree.write(sinkstream, encoding="utf-8", xml_declaration=True)
@@ -295,10 +295,10 @@ class ForSyDeXMLDriver(ForSyDeModelDriver):
             edge_elem.set("source_id", s.identifier)
             edge_elem.set("target_id", t.identifier)
             edge_elem.set("type", edge.get_type_tag())
-            if edge.source_vertex_port:
-                edge_elem.set("source_port_id", edge.source_vertex_port.identifier)
-            if edge.target_vertex_port:
-                edge_elem.set("target_port_id", edge.target_vertex_port.identifier)
+            if edge.source_port:
+                edge_elem.set("source_port_id", edge.source_port.identifier)
+            if edge.target_port:
+                edge_elem.set("target_port_id", edge.target_port.identifier)
         with open(sink, "w") as sinkstream:
             sinkstream.write(
                 etree.tostring(tree, pretty_print=True, encoding="unicode")
@@ -352,11 +352,11 @@ class ForSyDeXMLDriver(ForSyDeModelDriver):
                     type_name=vedge.get("type"),
                 )
                 if vedge.get("source_port_id"):
-                    edge.source_vertex_port = source_vertex.get_port(
+                    edge.source_port = source_vertex.get_port(
                         vedge.get("source_port_id")
                     )
                 if vedge.get("target_port_id"):
-                    edge.target_vertex_port = target_vertex.get_port(
+                    edge.target_port = target_vertex.get_port(
                         vedge.get("target_port_id")
                     )
                 key = (
@@ -407,8 +407,8 @@ class ForSyDeDotDriver(ForSyDeModelDriver):
                 parent.add_subgraph(graph)
                 graph = parent
         for (s, t, e) in model.edges.data("object"):
-            sp = e.source_vertex_port
-            tp = e.target_vertex_port
+            sp = e.source_port
+            tp = e.target_port
             graph_name_s = "/".join(s.identifier.split("/")[:-1])
             graph_name_t = "/".join(t.identifier.split("/")[:-1])
             g = dot
@@ -434,3 +434,75 @@ class ForSyDeDotDriver(ForSyDeModelDriver):
         with open(sink, "w") as sinkstream:
             sinkstream.write(dot.to_string())
         # write_dot(strg, sink)
+
+class ForSyDeGraphMLDriver(ForSyDeModelDriver):
+    """GraphML writer for some visualization of the models."""
+
+    def read(
+        self, source: str, other_model: Optional[ForSyDeModel]
+    ) -> Optional[ForSyDeModel]:
+        raise NotImplementedError(
+            "The 'GraphMLDriver' only supports writing the model to 'graphml'."
+        )
+
+    def write(self, model: ForSyDeModel, sink: str) -> None:
+        xmlns = "{http://graphml.graphdrawing.org/xmlns}"
+        root = etree.Element(xmlns + "graphml")
+        graph = etree.SubElement(root, xmlns + "graph")
+        graph.set("id", "model")
+        graph.set("edgedefault", "directed")
+        saved_props = []
+        for v in model.nodes:
+            node_elem = etree.SubElement(graph, xmlns + "node")
+            node_elem.set("id", v.identifier)
+            # node_elem.set("type", v.get_type_tag())
+            for port in v.ports:
+                port_elem = etree.SubElement(node_elem, xmlns + "port")
+                port_elem.set("name", port.identifier)
+            prop_to_save = [("", v.properties)]
+            while len(prop_to_save) > 0:
+                (parent, current) = prop_to_save.pop()
+                cur_iter = (
+                    enumerate(current) if isinstance(current, list) else current.items()
+                )
+                for (prop, val) in cur_iter:
+                    # prop_elem.text = json.dumps(val)
+                    # it is a terminal property
+                    name = parent + "." + prop if parent else prop
+                    if (
+                        isinstance(val, int)
+                        or isinstance(val, float)
+                        or isinstance(val, str)
+                        or isinstance(val, bool)
+                    ):
+                        prop_elem = etree.SubElement(node_elem, xmlns + "data")
+                        type_str = self.type_to_str(type(val))
+                        idx = -1 
+                        if (name, type_str) not in saved_props:
+                            saved_props.append((name, type_str))
+                            idx = len(saved_props)-1
+                        else:
+                            idx = saved_props.index((name, type_str))
+                        prop_elem.set("key", "d" + str(idx))
+                        prop_elem.text = str(val)
+                    # it is not
+                    else:
+                        prop_to_save.append((name, val))
+        for (s, t, edge) in model.edges.data("object"):
+            edge_elem = etree.SubElement(graph, xmlns + "edge")
+            edge_elem.set("source", s.identifier)
+            edge_elem.set("target", t.identifier)
+            # edge_elem.set("type", edge.get_type_tag())
+            if edge.source_port:
+                edge_elem.set("sourceport", edge.source_port.identifier)
+            if edge.target_port:
+                edge_elem.set("targetport", edge.target_port.identifier)
+        for (idx, (name, type_str)) in enumerate(saved_props):
+            data_elem = etree.SubElement(root, xmlns + "key")
+            data_elem.set("attr.name", name)
+            data_elem.set("attr.type", type_str)
+            data_elem.set("id", "d" + str(idx))
+        with open(sink, "wb") as sinkstream:
+            tree = etree.ElementTree(element=root)
+            tree.write(sinkstream, encoding="utf-8", xml_declaration=True)
+            # sinkstream.write(etree.tostring(tree, pretty_print=True, xml_declaration=True, encoding='UTF-8'))
