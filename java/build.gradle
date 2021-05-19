@@ -18,6 +18,8 @@ plugins {
 apply from: 'generator.gradle'
 
 tasks.compileJava.dependsOn generateVertexTraits
+tasks.compileJava.dependsOn generateEdgeTraits
+tasks.compileJava.dependsOn generateVertexAcessor
 
 ext {
   artifactName = 'forsyde-io-java'
