@@ -8,6 +8,7 @@ from forsyde.io.python.core import ForSyDeModel
 from forsyde.io.python.drivers import ForSyDeMLDriver
 from forsyde.io.python.drivers import ForSyDeXMLDriver
 from forsyde.io.python.drivers import ForSyDeDotDriver
+from forsyde.io.python.drivers import ForSyDeGraphMLDriver
 
 
 def load_model(source: str,
@@ -43,5 +44,7 @@ def write_model(model: ForSyDeModel, sink: str) -> None:
         ForSyDeMLDriver().write(model, sink.replace('.xml', '.forxml'))
     elif ext == '.dot' or ext == ".gv":
         ForSyDeDotDriver().write(model, sink)
+    elif ext == ".graphml":
+        ForSyDeGraphMLDriver().write(model, sink)
     else:
         raise NotImplementedError(f"Format {ext} is unkown.")

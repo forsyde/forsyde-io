@@ -3,8 +3,10 @@
  */
 package forsyde.io.java.core;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author rjordao
@@ -22,6 +24,7 @@ public class Edge {
 	public Vertex target;
 	public Optional<Port> sourcePort;
 	public Optional<Port> targetPort;
+	public Set<EdgeTrait> edgeTraits = new HashSet<EdgeTrait>();
 
 	/**
 	 * Utility constructor wrapping the source and target ports into empty optionals
@@ -71,9 +74,9 @@ public class Edge {
 		this.targetPort = targetPort;
 		this.sourcePort = sourcePort;
 	}
-
-	public String getTypeName() {
-		return "Edge";
+	
+	public Set<EdgeTrait> getTraits() {
+		return edgeTraits;
 	}
 
 	@Override
