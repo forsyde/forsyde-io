@@ -36,8 +36,6 @@ import forsyde.io.java.core.Edge;
 import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.core.Port;
 import forsyde.io.java.core.Vertex;
-import forsyde.io.java.types.edge.EdgeFactory;
-import forsyde.io.java.types.vertex.VertexFactory;
 
 /**
  * @author rjordao
@@ -74,7 +72,8 @@ public class ForSyDeXMLDriver extends ForSyDeModelDriver {
 		for (int i = 0; i < vertexList.getLength(); i++) {
 			Element vertexElem = (Element) vertexList.item(i);
 			// TODO: the type creation could be safer or signal some exception
-			Vertex vertex = VertexFactory.createVertex(vertexElem.getAttribute("id"), vertexElem.getAttribute("type"));
+			Vertex vertex = new Vertex(vertexElem.getAttribute("id"));
+			// , vertexElem.getAttribute("type")
 			model.addVertex(vertex);
 			// iterate through ports and add them
 			NodeList portsList = (NodeList) xPath.compile("Port").evaluate(vertexElem, XPathConstants.NODESET);
@@ -102,7 +101,8 @@ public class ForSyDeXMLDriver extends ForSyDeModelDriver {
 			// fail
 			Vertex source = model.vertexSet().stream().filter(v -> v.identifier.equals(sid)).findFirst().get();
 			Vertex target = model.vertexSet().stream().filter(v -> v.identifier.equals(tid)).findFirst().get();
-			Edge edge = EdgeFactory.createEdge(source, target, edgeElem.getAttribute("type"));
+			Edge edge = new Edge(source, target);
+			// , edgeElem.getAttribute("type")
 			if (edgeElem.hasAttribute("source_port_id")) {
 				Port sourcePort = source.ports.stream()
 						.filter(p -> p.identifier.equals(edgeElem.getAttribute("source_port_id"))).findFirst().get();
@@ -128,7 +128,7 @@ public class ForSyDeXMLDriver extends ForSyDeModelDriver {
 		for (Vertex v : model.vertexSet()) {
 			Element vElem = doc.createElement("Vertex");
 			vElem.setAttribute("id", v.identifier);
-			vElem.setAttribute("type", v.getTypeName());
+//			vElem.setAttribute("type", v.getTypeName());
 			root.appendChild(vElem);
 			for (Port p : v.ports) {
 				Element pElem = doc.createElement("Port");
@@ -141,7 +141,7 @@ public class ForSyDeXMLDriver extends ForSyDeModelDriver {
 			Element eElem = doc.createElement("Edge");
 			eElem.setAttribute("source_id", e.source.identifier);
 			eElem.setAttribute("target_id", e.target.identifier);
-			eElem.setAttribute("type", e.getTypeName());
+//			eElem.setAttribute("type", e.getTypeName());
 			if (e.sourcePort.isPresent()) {
 				eElem.setAttribute("source_port_id", e.sourcePort.get().identifier);
 			}

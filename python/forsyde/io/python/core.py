@@ -8,13 +8,16 @@ from typing import Optional
 from typing import Set
 from typing import Tuple
 from typing import Sequence
+from typing import Type
+from enum import Enum
+import importlib.resources as res
 import itertools
+import json
 
 import networkx as nx  # type: ignore
 
 _port_id_counter = 0
 _vertex_id_counter = 0
-
 
 def _generate_vertex_id() -> str:
     global _vertex_id_counter
@@ -28,55 +31,28 @@ def _generate_port_id() -> str:
     return "port" + str(_port_id_counter)
 
 
-# class ModelType(object):
-#     """Type associated with a vertex or a port.
+class Trait:
+    """Trait associated with a vertex or an edge.
 
-#     Though Python already keeps many runtime amenities that would make this
-#     explicit runtime representation of Types unnecesary, having it explicitly can
-#     ease porting to other langauges and also usability for users that are not
-#     familiar with Python 'meta' built-in facilities.
+    Though Python already keeps many runtime amenities that would make this
+    explicit runtime representation of Types unnecesary, having it explicitly can
+    ease porting to other langauges and also usability for users that are not
+    familiar with Python 'meta' built-in facilities.
 
-#     This clas is meant to be used more of a interface than a concrete class.
-#     """
+    This clas is meant to be used more of a interface than a concrete class.
+    """
 
-#     _instance = None
+    def refines(self, o):
+        return False
 
-#     @classmethod
-#     def get_instance(cls):
-#         if not cls._instance:
-#             cls._instance = cls()
-#         return cls._instance
-
-#     def __repr__(self):
-#         return self.get_type_tag()
-
-#     def __eq__(self, other):
-#         return self.get_type_tag() == other.get_type_tag()
-
-#     def __hash__(self):
-#         return hash(self.get_type_tag())
-
-#     def is_refinement(self, other: "ModelType") -> bool:
-#         return (self == other) or any(
-#             s.is_refinement(other) for s in self.get_super_types())
-
-#     def get_super_types(self) -> Iterable["ModelType"]:
-#         yield from ()
-
-#     def get_type_tag(self) -> str:
-#         return "UnknownType"
-
-#     def get_required_ports(self) -> Iterable[Tuple[str, "ModelType"]]:
-#         yield from ()
-
-#     def get_required_properties(self) -> Iterable[Tuple[str, Any]]:
-#         yield from ()
+    def __lshift__(self, o):
+        return self.refines(o)
 
 
 @dataclass
 class Port(object):
     """Port of a vertex.
-    
+
     This class is intended to help synthesis of components and also
     to keep things semantically sane when dealing with the model, for instance,
     to denote which slot of a time-division a piece of code is executed or
@@ -110,16 +86,15 @@ class Vertex(object):
     Every vertex contains a number of ports (which are repeated in the
     vertexed to increase reliability in the model, since putting
     them in edges would have been sufficient).
-    Also, every vertex contains "Properties" which are arbitrary slef-contained 
-    associated data, such as the size of bits in a Signal or the time slots in 
+    Also, every vertex contains "Properties" which are arbitrary slef-contained
+    associated data, such as the size of bits in a Signal or the time slots in
     a Time Division Multiplexer.
     """
 
     identifier: str = field(default_factory=_generate_vertex_id, hash=True)
-    ports: List[Port] = field(default_factory=list, compare=False, hash=False)
-    properties: Dict[str, Any] = field(default_factory=dict,
-                                       compare=False,
-                                       hash=False)
+    ports: Set[Port] = field(default_factory=set, compare=False, hash=False)
+    properties: Dict[str, Any] = field(default_factory=dict, compare=False, hash=False)
+    vertex_traits: Set[Trait] = field(default_factory=set, compare=False, hash=False)
 
     # vertex_type: ModelType = field(default=ModelType(),
     #                                compare=False,
@@ -139,35 +114,14 @@ class Vertex(object):
             return next(p for p in self.ports if p.identifier == name)
         except StopIteration:
             raise AttributeError(
-                f"Required port {name} of {self.identifier} does not exist.")
+                f"Required port {name} of {self.identifier} does not exist."
+            )
 
-    def get_neigh(self, name: str, model, out_dir=True, in_dir=False) -> Optional["Vertex"]:
-        port = self.get_port(name)
-        neighs = iter(())
-        if out_dir:
-            neighs = itertools.chain(neighs, (n for n in model[self]))
-        if in_dir:
-            neighs = itertools.chain(neighs, (n for n in model if self in model[n]))
-        for n in neighs:
-            for (_, edata) in model.get_edge_data(self, n).items():
-                edge = edata["object"]
-                if edge.source_vertex_port == port or n.target_vertex_port == port:
-                    return edge.target_vertex
-        return None
+    def has_trait(self, trait: Trait) -> bool:
+        return any(trait.refines(t) for t in self.vertex_traits)
 
-    def get_neighs(self, name: str, model) -> Sequence["Vertex"]:
-        port = self.get_port(name)
-        neighs = iter()
-        if out_dir:
-            neighs = itertools.chain(neighs, (n for n in model[self]))
-        if in_dir:
-            neighs = itertools.chain(neighs, (n for n in model if self in model[n]))
-        for n in neighs:
-            for (_, edata) in model.get_edge_data(self, n).items():
-                edge = edata["object"]
-                if edge.source_vertex_port == port or n.target_vertex_port == port:
-                    yield edge.target_vertex
-
+    def has_trait_strict(self, trait: Trait) -> bool:
+        return any(t is trait for t in self.vertex_traits)
 
 
 @dataclass
@@ -179,10 +133,12 @@ class Edge(object):
     they exist. The edges also have types associated with them
     so that extra deductions can be made along the EDA flow.
     """
-    source_vertex: Vertex = field(default=Vertex())
-    target_vertex: Vertex = field(default=Vertex())
-    source_vertex_port: Optional[Port] = field(default=None)
-    target_vertex_port: Optional[Port] = field(default=None)
+
+    source: Vertex = field(default=Vertex())
+    target: Vertex = field(default=Vertex())
+    source_port: Optional[Port] = field(default=None)
+    target_port: Optional[Port] = field(default=None)
+    edge_traits: Set[Trait] = field(default_factory=set)
 
     # edge_type: ModelType = field(default=ModelType(), compare=False)
 
@@ -191,6 +147,12 @@ class Edge(object):
 
     def get_type_tag(self) -> str:
         return self.__class__.__name__
+
+    def has_trait(self, o: Trait) -> bool:
+        return any(o.refines(t) for t in self.edge_traits)
+
+    def has_trait_strict(self, o: Trait) -> bool:
+        return any(t is o for t in self.edge_traits)
 
     # def ids_tuple(self):
     #     return (self.source_vertex.identifier, self.target_vertex.identifier,
@@ -219,23 +181,16 @@ class ForSyDeModel(nx.MultiDiGraph):
     methods to make development easier, such as directly iterating vertexes
     by their associated types.
     """
-    def __init__(self,
-                 standard_views=[
-                     'create_tables.sql', 'types.sql', 'create_views.sql'
-                 ],
-                 *args,
-                 **kwargs):
+
+    def __init__(
+        self,
+        standard_views=["create_tables.sql", "types.sql", "create_views.sql"],
+        *args,
+        **kwargs,
+    ):
         nx.MultiDiGraph.__init__(self, *args, **kwargs)
 
-    def neighs(self, v: Vertex) -> Iterable[Vertex]:
-        yield from self.nodes.adj[v]
-
-    def neighs_rev(self, v: Vertex) -> Iterable[Vertex]:
-        yield from nx.reverse_view(self).adj[v]
-
-    def get_vertex(self,
-                   label: str,
-                   label_name: str = 'label') -> Optional[Vertex]:
+    def get_vertex(self, label: str, label_name: str = "label") -> Optional[Vertex]:
         for (v, d) in self.nodes.data():
             if d[label_name] == label:
                 return v
