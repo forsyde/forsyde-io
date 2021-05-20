@@ -17,6 +17,56 @@ The libraries should quick start you in:
 3. Manipulating them in memory for any analysis purposes.
 4. Creating model-to-text and model-to-model tools based in the model.
 
+Here is a quick listing of the libraries and the formats which they support, even if partial.
+
+<table>
+<thead>
+  <tr>
+    <th>Programming<br>Language</th>
+    <th>Latest version<br><a href="https://github.com/forsyde/forsyde-io/releases"><img src="https://badgen.net/github/release/forsyde/forsyde-io?icon=github"></a></th>
+    <th>ForSyDeML<br>(.forxml)</th>
+    <th>GraphML<br>(.graphml)</th>
+    <th>Dot<br>(.dot, .gv)</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>Python</td>
+    <td><a href="https://pypi.org/project/forsyde-io-python/"><img src="https://badgen.net/pypi/v/forsyde-io-python?icon=pypi"/></a>
+    </td>
+    <td>R/W</td>
+    <td>W</td>
+    <td>W*</td>
+  </tr>
+  <tr>
+    <td>Java</td>
+    <td><a href="https://search.maven.org/artifact/io.github.forsyde/forsyde-io-java"><img src="https://badgen.net/maven/v/maven-central/io.github.forsyde/forsyde-io-java?icon=maven"></a>
+    </td>
+    <td>R/W</td>
+    <td>W</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Julia</td>
+    <td></td>
+    <td>R-</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Haskell</td>
+    <td></td>
+    <td>R-</td>
+    <td></td>
+    <td></td>
+  </tr>
+</tbody>
+<caption>Overview table of supporting formats for each supporting library.
+<br>Legend: R is "Read", W is "Write", * means it is not a trivial translation and - means it is partial implementation.
+</caption>
+</table>
+
+
 # Python quickstart
 
 [ForSyDe IO Python](https://pypi.org/project/forsyde-io-python/)
@@ -25,7 +75,7 @@ in your `pip` powered project (or `poetry` powered project) directly.
 
 This most likely translates to,
 
-    pip install forsyde-io-python=={{ site.versions.forsydeio }}
+    pip install forsyde-io-python
 
 and then declaring it as a required library in your project build tool.
 
@@ -64,12 +114,12 @@ If you have a maven-powered project, then you can add to your dependencies secti
     <dependency>
       <groupId>io.github.forsyde</groupId>
       <artifactId>forsyde-io-java</artifactId>
-      <version>{{ site.versions.forsydeio }}</version>
+      <version>LATEST</version>
     </dependency>
 
 If you otherwise have a gradle-powered gradle project, you can add to your dependencies section,
 
-    implementation 'io.github.forsyde:forsyde-io-java:{{ site.versions.forsydeio }}'
+    implementation 'io.github.forsyde:forsyde-io-java:LATEST'
 
 Then, at any point in your code, you can load a model to memory and save it later by,
 
@@ -86,7 +136,8 @@ Then, at any point in your code, you can load a model to memory and save it late
 
 
 where `<in_file>` and `<out_file>` will be the files you intend to read and write,
-respectively.
+respectively and `LATEST` does not fully exist: you have to replace it with the latest
+version available, or one you wish to use.
 
 Note that a ForSyDeModel is a 
 [jgrapht DirectedPseudograph](https://jgrapht.org/javadoc-1.3.1/org/jgrapht/graph/DirectedPseudograph.html),
