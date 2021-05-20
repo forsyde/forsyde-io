@@ -1,0 +1,224 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns0:graphml xmlns:ns0="http://graphml.graphdrawing.org/xmlns">
+  <ns0:graph id="model" edgedefault="directed">
+    <ns0:node id="getPxCons" type="SDFComb">
+      <ns0:port name="combinator"/>
+      <ns0:port name="output"/>
+      <ns0:data attr.name="production" attr.type="object">
+        <ns0:data attr.name="gx" attr.type="string">6</ns0:data>
+        <ns0:data attr.name="gy" attr.type="string">6</ns0:data>
+      </ns0:data>
+    </ns0:node>
+    <ns0:node id="GxCons" type="SDFComb">
+      <ns0:port name="combinator"/>
+      <ns0:port name="output"/>
+      <ns0:data attr.name="consumption" attr.type="object">
+        <ns0:data attr.name="gx" attr.type="string">6</ns0:data>
+      </ns0:data>
+      <ns0:data attr.name="production" attr.type="object">
+        <ns0:data attr.name="resx" attr.type="string">1</ns0:data>
+      </ns0:data>
+    </ns0:node>
+    <ns0:node id="GyCons" type="SDFComb">
+      <ns0:port name="combinator"/>
+      <ns0:port name="output"/>
+      <ns0:data attr.name="consumption" attr.type="object">
+        <ns0:data attr.name="gy" attr.type="string">6</ns0:data>
+      </ns0:data>
+      <ns0:data attr.name="production" attr.type="object">
+        <ns0:data attr.name="resy" attr.type="string">1</ns0:data>
+      </ns0:data>
+    </ns0:node>
+    <ns0:node id="AbsCons" type="SDFComb">
+      <ns0:port name="combinator"/>
+      <ns0:port name="output"/>
+      <ns0:data attr.name="consumption" attr.type="object">
+        <ns0:data attr.name="resx" attr.type="string">1</ns0:data>
+        <ns0:data attr.name="resy" attr.type="string">1</ns0:data>
+      </ns0:data>
+    </ns0:node>
+    <ns0:node id="getPx" type="Process">
+      <ns0:port name="gx"/>
+      <ns0:port name="imgInput"/>
+      <ns0:port name="gy"/>
+    </ns0:node>
+    <ns0:node id="Gx" type="Process">
+      <ns0:port name="gx"/>
+      <ns0:port name="resx"/>
+    </ns0:node>
+    <ns0:node id="Gy" type="Process">
+      <ns0:port name="resy"/>
+      <ns0:port name="gy"/>
+    </ns0:node>
+    <ns0:node id="Abs" type="Process">
+      <ns0:port name="resy"/>
+      <ns0:port name="imgOutput"/>
+      <ns0:port name="resx"/>
+    </ns0:node>
+    <ns0:node id="gxsig" type="Signal">
+      <ns0:port name="fifoOut"/>
+      <ns0:port name="fifoIn"/>
+      <ns0:data attr.name="size" attr.type="string">8</ns0:data>
+    </ns0:node>
+    <ns0:node id="gysig" type="Signal">
+      <ns0:port name="fifoOut"/>
+      <ns0:port name="fifoIn"/>
+      <ns0:data attr.name="size" attr.type="string">8</ns0:data>
+    </ns0:node>
+    <ns0:node id="absxsig" type="Signal">
+      <ns0:port name="fifoOut"/>
+      <ns0:port name="fifoIn"/>
+      <ns0:data attr.name="size" attr.type="string">8</ns0:data>
+    </ns0:node>
+    <ns0:node id="absysig" type="Signal">
+      <ns0:port name="fifoOut"/>
+      <ns0:port name="fifoIn"/>
+      <ns0:data attr.name="size" attr.type="string">8</ns0:data>
+    </ns0:node>
+    <ns0:node id="sobel" type="Process">
+      <ns0:port name="imgOutput"/>
+      <ns0:port name="imgInput"/>
+    </ns0:node>
+    <ns0:node id="order_1" type="AbstractOrdering"/>
+    <ns0:node id="order_2" type="AbstractOrdering"/>
+    <ns0:node id="order_3" type="AbstractOrdering"/>
+    <ns0:node id="order_4" type="AbstractOrdering"/>
+    <ns0:node id="order_5" type="AbstractOrdering"/>
+    <ns0:node id="tile1" type="AbstractProcessingComponent">
+      <ns0:port name="communication"/>
+    </ns0:node>
+    <ns0:node id="tile2" type="AbstractProcessingComponent">
+      <ns0:port name="communication"/>
+    </ns0:node>
+    <ns0:node id="tile3" type="AbstractProcessingComponent">
+      <ns0:port name="communication"/>
+    </ns0:node>
+    <ns0:node id="tile4" type="AbstractProcessingComponent">
+      <ns0:port name="communication"/>
+    </ns0:node>
+    <ns0:node id="tdmabus1" type="TimeDivisionMultiplexer">
+      <ns0:port name="requester"/>
+      <ns0:port name="communication"/>
+      <ns0:data attr.name="slots" attr.type="string">4</ns0:data>
+    </ns0:node>
+    <ns0:node id="getPxWCET" type="WCET">
+      <ns0:port name="processor"/>
+      <ns0:port name="application"/>
+      <ns0:port name="process"/>
+      <ns0:port name="platform"/>
+      <ns0:data attr.name="time" attr.type="string">4356</ns0:data>
+    </ns0:node>
+    <ns0:node id="gxWCET" type="WCET">
+      <ns0:port name="processor"/>
+      <ns0:port name="application"/>
+      <ns0:port name="process"/>
+      <ns0:port name="platform"/>
+      <ns0:data attr.name="time" attr.type="string">4147</ns0:data>
+    </ns0:node>
+    <ns0:node id="gyWCET" type="WCET">
+      <ns0:port name="processor"/>
+      <ns0:port name="application"/>
+      <ns0:port name="process"/>
+      <ns0:port name="platform"/>
+      <ns0:data attr.name="time" attr.type="string">4146</ns0:data>
+    </ns0:node>
+    <ns0:node id="absWCET" type="WCET">
+      <ns0:port name="processor"/>
+      <ns0:port name="application"/>
+      <ns0:port name="process"/>
+      <ns0:port name="platform"/>
+      <ns0:data attr.name="time" attr.type="string">1411</ns0:data>
+    </ns0:node>
+    <ns0:node id="gxsigWCCT" type="WCCT">
+      <ns0:port name="reciever"/>
+      <ns0:port name="signal"/>
+      <ns0:port name="sender"/>
+      <ns0:data attr.name="time" attr.type="string">1</ns0:data>
+    </ns0:node>
+    <ns0:node id="gysigWCCT" type="WCCT">
+      <ns0:port name="reciever"/>
+      <ns0:port name="signal"/>
+      <ns0:port name="sender"/>
+      <ns0:data attr.name="time" attr.type="string">1</ns0:data>
+    </ns0:node>
+    <ns0:node id="absxsigWCCT" type="WCCT">
+      <ns0:port name="reciever"/>
+      <ns0:port name="signal"/>
+      <ns0:port name="sender"/>
+      <ns0:data attr.name="time" attr.type="string">1</ns0:data>
+    </ns0:node>
+    <ns0:node id="absysigWCCT" type="WCCT">
+      <ns0:port name="reciever"/>
+      <ns0:port name="signal"/>
+      <ns0:port name="sender"/>
+      <ns0:data attr.name="time" attr.type="string">1</ns0:data>
+    </ns0:node>
+    <ns0:node id="min_throughput_obj" type="MinimumThroughput">
+      <ns0:data attr.name="apriori_importance" attr.type="string">1</ns0:data>
+    </ns0:node>
+    <ns0:edge source="getPxCons" target="getPx" type="Output" sourceport="output"/>
+    <ns0:edge source="GxCons" target="Gx" type="Output" sourceport="output"/>
+    <ns0:edge source="GyCons" target="Gy" type="Output" sourceport="output"/>
+    <ns0:edge source="AbsCons" target="Abs" type="Output" sourceport="output"/>
+    <ns0:edge source="getPx" target="gxsig" type="Output" sourceport="gx" targetport="fifoIn"/>
+    <ns0:edge source="getPx" target="gysig" type="Output" sourceport="gy" targetport="fifoIn"/>
+    <ns0:edge source="Gx" target="absxsig" type="Output" sourceport="resx" targetport="fifoIn"/>
+    <ns0:edge source="Gy" target="absysig" type="Output" sourceport="resy" targetport="fifoIn"/>
+    <ns0:edge source="gxsig" target="Gx" type="Output" sourceport="fifoOut" targetport="gx"/>
+    <ns0:edge source="gysig" target="Gy" type="Output" sourceport="fifoOut" targetport="gy"/>
+    <ns0:edge source="absxsig" target="Abs" type="Output" sourceport="fifoOut" targetport="resx"/>
+    <ns0:edge source="absysig" target="Abs" type="Output" sourceport="fifoOut" targetport="resy"/>
+    <ns0:edge source="sobel" target="getPx" type="Expansion" sourceport="imgInput" targetport="imgInput"/>
+    <ns0:edge source="sobel" target="Abs" type="Expansion" sourceport="imgOutput" targetport="imgOutput"/>
+    <ns0:edge source="order_1" target="getPx" type="AbstractScheduling" sourceport="slot[0]"/>
+    <ns0:edge source="order_2" target="Abs" type="AbstractScheduling" sourceport="slot[0]"/>
+    <ns0:edge source="order_3" target="Gx" type="AbstractScheduling" sourceport="slot[0]"/>
+    <ns0:edge source="order_4" target="Gy" type="AbstractScheduling" sourceport="slot[0]"/>
+    <ns0:edge source="order_5" target="gxsig" type="AbstractScheduling" sourceport="slot[0]"/>
+    <ns0:edge source="order_5" target="gysig" type="AbstractScheduling" sourceport="slot[1]"/>
+    <ns0:edge source="order_5" target="absxsig" type="AbstractScheduling" sourceport="slot[2]"/>
+    <ns0:edge source="order_5" target="absysig" type="AbstractScheduling" sourceport="slot[3]"/>
+    <ns0:edge source="tile1" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <ns0:edge source="tile1" target="order_1" type="AbstractMapping" sourceport="execution"/>
+    <ns0:edge source="tile2" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <ns0:edge source="tile2" target="order_2" type="AbstractMapping" sourceport="execution"/>
+    <ns0:edge source="tile3" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <ns0:edge source="tile3" target="order_3" type="AbstractMapping" sourceport="execution"/>
+    <ns0:edge source="tile4" target="tdmabus1" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <ns0:edge source="tile4" target="order_4" type="AbstractMapping" sourceport="execution"/>
+    <ns0:edge source="tdmabus1" target="tile1" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <ns0:edge source="tdmabus1" target="tile2" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <ns0:edge source="tdmabus1" target="tile3" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <ns0:edge source="tdmabus1" target="tile4" type="AbstractPhysicalConnection" sourceport="communication"/>
+    <ns0:edge source="tdmabus1" target="order_5" type="AbstractMapping" sourceport="timeslots"/>
+    <ns0:edge source="getPxWCET" target="getPx" type="Annotation" sourceport="application"/>
+    <ns0:edge source="getPxWCET" target="tile1" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="getPxWCET" target="tile2" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="getPxWCET" target="tile3" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="getPxWCET" target="tile4" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="gxWCET" target="Gx" type="Annotation" sourceport="application"/>
+    <ns0:edge source="gxWCET" target="tile1" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="gxWCET" target="tile2" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="gxWCET" target="tile3" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="gxWCET" target="tile4" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="gyWCET" target="Gy" type="Annotation" sourceport="application"/>
+    <ns0:edge source="gyWCET" target="tile1" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="gyWCET" target="tile2" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="gyWCET" target="tile3" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="gyWCET" target="tile4" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="absWCET" target="Abs" type="Annotation" sourceport="application"/>
+    <ns0:edge source="absWCET" target="tile1" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="absWCET" target="tile2" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="absWCET" target="tile3" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="absWCET" target="tile4" type="Annotation" sourceport="platform"/>
+    <ns0:edge source="gxsigWCCT" target="gxsig" type="Annotation"/>
+    <ns0:edge source="gxsigWCCT" target="tdmabus1" type="Annotation"/>
+    <ns0:edge source="gysigWCCT" target="gysig" type="Annotation"/>
+    <ns0:edge source="gysigWCCT" target="tdmabus1" type="Annotation"/>
+    <ns0:edge source="absxsigWCCT" target="absxsig" type="Annotation"/>
+    <ns0:edge source="absxsigWCCT" target="tdmabus1" type="Annotation"/>
+    <ns0:edge source="absysigWCCT" target="tdmabus1" type="Annotation"/>
+    <ns0:edge source="absysigWCCT" target="absysig" type="Annotation"/>
+    <ns0:edge source="min_throughput_obj" target="sobel" type="Annotation"/>
+  </ns0:graph>
+</ns0:graphml>

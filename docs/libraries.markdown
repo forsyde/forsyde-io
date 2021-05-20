@@ -4,4 +4,3 @@ permalink: /libraries/
 parent: Index
 ---
 
-Implementation
