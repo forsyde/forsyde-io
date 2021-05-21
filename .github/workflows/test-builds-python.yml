@@ -33,7 +33,7 @@ jobs:
       - name: Generate lib
         run: |
           cd ${{ github.workspace }}
-          python -m pip install jinja networkx
+          python -m pip install jinja2 networkx
           python generate.py
       - name: Build lib
         run: |
