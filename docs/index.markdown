@@ -16,8 +16,7 @@ to know about this [ForSyDe]({{ site.projects.forsyde }}) subproject and find so
   2. An exchange format to save and load this graph model in-memory,
   2. Supporting libraries implementing this save and load feature for a few languages.
 
-For more information about the model concept and specification, check [Concepts]({{ site.baseurl }}/concept).
-For more information about the implementations, check [Implementation]({{ site.baseurl }}/implementation).
+For more information about the model concept, specification and its implementation, check [Concepts]({{ site.baseurl }}/concept).
 
 ## What is the motivation behind it?
 
@@ -45,11 +44,11 @@ Howdy! Then checkout [Usage]({{ site.baseurl }}/usage) and [Concepts]({{ site.ba
 
 ### 3) I am both a developer and a designer and want to extend the models themselves!
 
-Well-met! Then you can checkout [Concepts]({{ site.baseurl }}/concept) and [Implementation]({{ site.baseurl }}/implementation) to see how the
+Well-met! Then you can checkout [Concepts]({{ site.baseurl }}/concept) to see how the
 supporting libraries are generated for different languages based on the underlying model and contribute there!
 
 Unless you'd like to test out just reading to memory and dumping to disk.
-This subproject is intendend to be consumed by tools and tool "vendors", 
+This subproject is intended to be consumed by tools and tool "vendors", 
 or tool developers, so that [different steps of the design flow]({{ site.projects.forsyde }}#our-vision) can share a common model. 
 
 

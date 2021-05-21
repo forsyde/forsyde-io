@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,18 +28,17 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import forsyde.io.java.core.Edge;
+import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.core.Port;
 import forsyde.io.java.core.Vertex;
-import forsyde.io.java.types.edge.EdgeFactory;
-import forsyde.io.java.types.vertex.VertexFactory;
+import forsyde.io.java.core.VertexTrait;
 
 /**
  * @author rjordao
@@ -73,7 +74,8 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 		for (int i = 0; i < vertexList.getLength(); i++) {
 			Element vertexElem = (Element) vertexList.item(i);
 			// TODO: the type creation could be safer or signal some exception
-			Vertex vertex = VertexFactory.createVertex(vertexElem.getAttribute("id"), vertexElem.getAttribute("type"));
+			Vertex vertex = new Vertex(vertexElem.getAttribute("id"));
+			vertex.vertexTraits = Stream.of(vertexElem.getAttribute("traits").split(";")).map(s -> VertexTrait.valueOf(s)).collect(Collectors.toSet());
 			model.addVertex(vertex);
 			// iterate through ports and add them
 			NodeList portsList = (NodeList) xPath.compile("port").evaluate(vertexElem, XPathConstants.NODESET);
@@ -100,7 +102,8 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			// fail
 			Vertex source = model.vertexSet().stream().filter(v -> v.identifier.equals(sid)).findFirst().get();
 			Vertex target = model.vertexSet().stream().filter(v -> v.identifier.equals(tid)).findFirst().get();
-			Edge edge = EdgeFactory.createEdge(source, target, edgeElem.getAttribute("type"));
+			Edge edge = new Edge(source, target);
+			edge.edgeTraits = Stream.of(edgeElem.getAttribute("traits").split(";")).map(s -> EdgeTrait.valueOf(s)).collect(Collectors.toSet());
 			if (edgeElem.hasAttribute("sourceport")) {
 				Port sourcePort = source.ports.stream()
 						.filter(p -> p.identifier.equals(edgeElem.getAttribute("sourceport"))).findFirst().get();
@@ -131,7 +134,7 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 		for (Vertex v : model.vertexSet()) {
 			Element vElem = doc.createElement("node");
 			vElem.setAttribute("id", v.identifier);
-			vElem.setAttribute("type", v.getTypeName());
+			vElem.setAttribute("traits", v.vertexTraits.stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
 			graph.appendChild(vElem);
 			for (Port p : v.ports) {
 				Element pElem = doc.createElement("port");
@@ -148,7 +151,7 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			Element eElem = doc.createElement("edge");
 			eElem.setAttribute("source", e.source.identifier);
 			eElem.setAttribute("target", e.target.identifier);
-			eElem.setAttribute("type", e.getTypeName());
+			eElem.setAttribute("traits", e.edgeTraits.stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
 			if (e.sourcePort.isPresent()) {
 				eElem.setAttribute("sourceport", e.sourcePort.get().identifier);
 			}

@@ -26,15 +26,14 @@ jobs:
     - uses: abatilo/actions-poetry@v2.1.0
       with:
         poetry-version: '1.1.5'
-    - name: generate additional code for python supporting libs
+    - name: Generate lib
       run: |
-        cd $GITHUB_WORKSPACE
-        poetry update
-        poetry install
-        poetry run generate ${GITHUB_REF##*/}
+        cd ${{ github.workspace }}/python
+        python -m pip install jinja2 networkx
+        python generate.py
     - name: Build and publish core and generated code
       run: |
-        cd $GITHUB_WORKSPACE/python
+        cd ${{ github.workspace }}/python
         poetry update
         poetry build
         poetry publish -u __token__ -p ${{ secrets.FORSYDE_IO_PYTHON_TOKEN }}
@@ -49,26 +48,13 @@ jobs:
         java-version: 1.11
         server-id: io.github.forsyde # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-    - uses: abatilo/actions-poetry@v2.1.0
-      with:
-        poetry-version: '1.1.5'
-    - name: generate additional code for supporting libs
-      run: |
-        cd $GITHUB_WORKSPACE
-        poetry update
-        poetry install
-        poetry run generate ${GITHUB_REF##*/}
     - name: Build with Gradle
       run: |
-        cd $GITHUB_WORKSPACE/java
+        cd ${{ github.workspace }}/java
         ./gradlew build
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
     - name: Publish to GitHub Packages
       run: |
-        cd $GITHUB_WORKSPACE/java
+        cd ${{ github.workspace }}/java
         ./gradlew publish

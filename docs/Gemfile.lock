@@ -90,6 +90,7 @@ DEPENDENCIES
   jekyll (~> 4.1.1)
   jekyll-feed (~> 0.12)
   jekyll-remote-theme
+  kramdown (>= 2.3.1)
   minima (~> 2.5)
   rake
   tzinfo (~> 1.2)
