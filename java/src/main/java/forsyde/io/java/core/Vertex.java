@@ -81,6 +81,10 @@ final public class Vertex {
 	public Optional<Port> getPort(String portName) {
 		return ports.stream().filter((p) -> p.identifier.equals(portName)).findFirst();
 	}
+	
+	public Boolean hasTrait(Trait trait) {
+		return vertexTraits.stream().anyMatch(t -> t.refines(trait));
+	}
 
 	private String toString(Collection<?> collection, int maxLen) {
 		StringBuilder builder = new StringBuilder();

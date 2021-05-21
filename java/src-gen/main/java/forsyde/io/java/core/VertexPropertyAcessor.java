@@ -24,17 +24,17 @@ public final class VertexPropertyAcessor {
     }
   }
 
-  public static Optional<Map<String, String>> getTriggerTime(Vertex vertex) {
+  public static Optional<Map<Integer, String>> getTriggerTime(Vertex vertex) {
     if (vertex.properties.containsKey("trigger_time")) {
-      return Optional.of((java.util.Map<java.lang.String, java.lang.String>)vertex.properties.get("trigger_time"));
+      return Optional.of((java.util.Map<java.lang.Integer, java.lang.String>)vertex.properties.get("trigger_time"));
     } else {
       return Optional.empty();
     }
   }
 
-  public static Optional<Map<String, String>> getMaxOperations(Vertex vertex) {
+  public static Optional<Map<String, Integer>> getMaxOperations(Vertex vertex) {
     if (vertex.properties.containsKey("max_operations")) {
-      return Optional.of((java.util.Map<java.lang.String, java.lang.String>)vertex.properties.get("max_operations"));
+      return Optional.of((java.util.Map<java.lang.String, java.lang.Integer>)vertex.properties.get("max_operations"));
     } else {
       return Optional.empty();
     }
@@ -72,17 +72,17 @@ public final class VertexPropertyAcessor {
     }
   }
 
-  public static Optional<Map<String, String>> getRequires(Vertex vertex) {
+  public static Optional<Map<String, Map<String, Integer>>> getRequires(Vertex vertex) {
     if (vertex.properties.containsKey("requires")) {
-      return Optional.of((java.util.Map<java.lang.String, java.lang.String>)vertex.properties.get("requires"));
+      return Optional.of((java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.Integer>>)vertex.properties.get("requires"));
     } else {
       return Optional.empty();
     }
   }
 
-  public static Optional<Map<String, String>> getProvides(Vertex vertex) {
+  public static Optional<Map<String, Map<String, Integer>>> getProvides(Vertex vertex) {
     if (vertex.properties.containsKey("provides")) {
-      return Optional.of((java.util.Map<java.lang.String, java.lang.String>)vertex.properties.get("provides"));
+      return Optional.of((java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.Integer>>)vertex.properties.get("provides"));
     } else {
       return Optional.empty();
     }
@@ -112,17 +112,17 @@ public final class VertexPropertyAcessor {
     }
   }
 
-  public static Optional<Map<String, String>> getConsumption(Vertex vertex) {
+  public static Optional<Map<String, Integer>> getConsumption(Vertex vertex) {
     if (vertex.properties.containsKey("consumption")) {
-      return Optional.of((java.util.Map<java.lang.String, java.lang.String>)vertex.properties.get("consumption"));
+      return Optional.of((java.util.Map<java.lang.String, java.lang.Integer>)vertex.properties.get("consumption"));
     } else {
       return Optional.empty();
     }
   }
 
-  public static Optional<Map<String, String>> getProduction(Vertex vertex) {
+  public static Optional<Map<String, Integer>> getProduction(Vertex vertex) {
     if (vertex.properties.containsKey("production")) {
-      return Optional.of((java.util.Map<java.lang.String, java.lang.String>)vertex.properties.get("production"));
+      return Optional.of((java.util.Map<java.lang.String, java.lang.Integer>)vertex.properties.get("production"));
     } else {
       return Optional.empty();
     }
@@ -184,9 +184,9 @@ public final class VertexPropertyAcessor {
     }
   }
 
-  public static Optional<Map<String, String>> getMaxClockCyclesPerOp(Vertex vertex) {
+  public static Optional<Map<String, Map<String, Integer>>> getMaxClockCyclesPerOp(Vertex vertex) {
     if (vertex.properties.containsKey("max_clock_cycles_per_op")) {
-      return Optional.of((java.util.Map<java.lang.String, java.lang.String>)vertex.properties.get("max_clock_cycles_per_op"));
+      return Optional.of((java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.Integer>>)vertex.properties.get("max_clock_cycles_per_op"));
     } else {
       return Optional.empty();
     }

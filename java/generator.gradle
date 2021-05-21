@@ -159,7 +159,7 @@ def toCamelCase(String text, boolean capitalized=false ) {
 
 def metaToJavaType(md) {
 	if (md["class"] == "object") {
-		return ParameterizedTypeName.get(ClassName.get(Map.class), metaToJavaType(md.key), metaToJavaType(md.key))
+		return ParameterizedTypeName.get(ClassName.get(Map.class), metaToJavaType(md.key), metaToJavaType(md.value))
 	}
 	else if (md["class"] == "array") {
 		return ParameterizedTypeName.get(ClassName.get(List.class), metaToJavaType(md.value))

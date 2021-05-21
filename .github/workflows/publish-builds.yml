@@ -58,3 +58,4 @@ jobs:
       run: |
         cd ${{ github.workspace }}/java
         ./gradlew publish
+        ./gradlew closeAndReleaseStagingRepository

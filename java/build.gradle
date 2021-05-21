@@ -29,7 +29,7 @@ ext {
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = ext.artifactName
-version = '0.3.0'
+version = '0.3.1'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -142,7 +142,6 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
-/*
 signing {
   // small hack to work offline or online
   if (project.hasProperty('signing.keyId')) {
@@ -156,4 +155,3 @@ signing {
   sign publishing.publications.mavenJava
   sign configurations.archives
 }
-*/

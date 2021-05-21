@@ -118,7 +118,7 @@ class Vertex(object):
             )
 
     def has_trait(self, trait: Trait) -> bool:
-        return any(trait.refines(t) for t in self.vertex_traits)
+        return any(t.refines(trait) for t in self.vertex_traits)
 
     def has_trait_strict(self, trait: Trait) -> bool:
         return any(t is trait for t in self.vertex_traits)
@@ -149,7 +149,7 @@ class Edge(object):
         return self.__class__.__name__
 
     def has_trait(self, o: Trait) -> bool:
-        return any(o.refines(t) for t in self.edge_traits)
+        return any(t.refines(o) for t in self.edge_traits)
 
     def has_trait_strict(self, o: Trait) -> bool:
         return any(t is o for t in self.edge_traits)

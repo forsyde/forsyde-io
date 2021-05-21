@@ -105,8 +105,8 @@
             "required_properties": {
                 "trigger_time": {
                     "class": "object",
-                    "key": "integer",
-                    "value": "string",
+                    "key": {"class": "integer"},
+                    "value": {"class": "string"},
                     "default": {}
                 }
             }
@@ -122,8 +122,8 @@
             "required_properties": {
             	"max_operations": {
             		"class": "object",
-            		"key": "string",
-            		"value": "integer",
+            		"key": {"class": "string"},
+            		"value": {"class": "integer"},
             		"default": {}
             	},
                 "max_float_operations": {
@@ -160,25 +160,25 @@
         	"required_properties": {
         		"requires": {
         			"class": "object",
-        			"key": "string",
+        			"key": {"class": "string"},
         			"value": {
         				"class": "object",
-        				"key": "string",
-        				"value": "int"
+        				"key": {"class": "string"},
+        				"value": {"class": "int"}
         			}
         		},
         		"provides": {
         			"class": "object",
-        			"key": "string",
+        			"key": {"class": "string"},
         			"value": {
         				"class": "object",
-        				"key": "string",
-        				"value": "int"
+        				"key": {"class": "string"},
+        				"value": {"class": "int"}
         			}
         		},
         		"configurations": {
         			"class": "array",
-        			"value": "string"
+        			"value": {"class": "string"}
         		}
         	}
         },
@@ -228,13 +228,13 @@
             "required_properties": {
                 "consumption": {
                     "class": "object",
-                    "key": "string",
-                    "value": "integer"
+                    "key": {"class": "string"},
+                    "value": {"class": "integer"}
                 },
                 "production": {
                     "class": "object",
-                    "key": "string",
-                    "value": "integer"
+                    "key": {"class": "string"},
+                    "value": {"class": "integer"}
                 }
             }
         },
@@ -303,11 +303,11 @@
                 },
                 "max_clock_cycles_per_op": {
                 	"class": "object",
-                	"key": "string",
+                	"key": {"class": "string"},
                 	"value": {
                 		"class": "object",
-                		"key": "string",
-                		"value": "int"
+                		"key": {"class": "string"},
+                		"value": {"class": "int"}
                 	}
                 },
                 "max_memory_internal_bytes": {
