@@ -51,27 +51,27 @@ class VertexTrait(core.Trait, Enum):
             return True
         if one is cls.AbstractOrdering and other is cls.AbstractGrouping:
             return True
-        if one is cls.TriggeredTask and other is cls.AbstractOrdering:
-            return True
         if one is cls.TriggeredTask and other is cls.TriggeredTask:
+            return True
+        if one is cls.TriggeredTask and other is cls.AbstractOrdering:
             return True
         if one is cls.TriggeredTask and other is cls.AbstractGrouping:
             return True
-        if one is cls.SporadicTask and other is cls.AbstractOrdering:
-            return True
         if one is cls.SporadicTask and other is cls.SporadicTask:
+            return True
+        if one is cls.SporadicTask and other is cls.AbstractOrdering:
             return True
         if one is cls.SporadicTask and other is cls.AbstractGrouping:
             return True
         if one is cls.ExtraFunctional and other is cls.ExtraFunctional:
             return True
-        if one is cls.WCET and other is cls.ExtraFunctional:
-            return True
         if one is cls.WCET and other is cls.WCET:
             return True
-        if one is cls.WCCT and other is cls.WCCT:
+        if one is cls.WCET and other is cls.ExtraFunctional:
             return True
         if one is cls.WCCT and other is cls.ExtraFunctional:
+            return True
+        if one is cls.WCCT and other is cls.WCCT:
             return True
         if one is cls.Requirement and other is cls.Requirement:
             return True
@@ -89,9 +89,9 @@ class VertexTrait(core.Trait, Enum):
             return True
         if one is cls.MinimumThroughput and other is cls.MinimumThroughput:
             return True
-        if one is cls.TimeTriggeredScheduler and other is cls.AbstractGrouping:
-            return True
         if one is cls.TimeTriggeredScheduler and other is cls.TimeTriggeredScheduler:
+            return True
+        if one is cls.TimeTriggeredScheduler and other is cls.AbstractGrouping:
             return True
         if one is cls.FixedPriorityScheduler and other is cls.FixedPriorityScheduler:
             return True
@@ -101,9 +101,9 @@ class VertexTrait(core.Trait, Enum):
             return True
         if one is cls.Function and other is cls.Function:
             return True
-        if one is cls.InstrumentedFunction and other is cls.InstrumentedFunction:
-            return True
         if one is cls.InstrumentedFunction and other is cls.Function:
+            return True
+        if one is cls.InstrumentedFunction and other is cls.InstrumentedFunction:
             return True
         if one is cls.Signal and other is cls.Signal:
             return True
@@ -111,33 +111,33 @@ class VertexTrait(core.Trait, Enum):
             return True
         if one is cls.BufferSignal and other is cls.Signal:
             return True
-        if one is cls.LabelSignal and other is cls.LabelSignal:
-            return True
         if one is cls.LabelSignal and other is cls.Signal:
+            return True
+        if one is cls.LabelSignal and other is cls.LabelSignal:
             return True
         if one is cls.Instrumented and other is cls.Instrumented:
             return True
-        if one is cls.InstrumentedSignal and other is cls.InstrumentedSignal:
+        if one is cls.InstrumentedSignal and other is cls.Instrumented:
             return True
         if one is cls.InstrumentedSignal and other is cls.Signal:
             return True
-        if one is cls.InstrumentedSignal and other is cls.Instrumented:
-            return True
-        if one is cls.SYComb and other is cls.SYComb:
+        if one is cls.InstrumentedSignal and other is cls.InstrumentedSignal:
             return True
         if one is cls.SYComb and other is cls.Function:
+            return True
+        if one is cls.SYComb and other is cls.SYComb:
             return True
         if one is cls.SYPrefix and other is cls.Function:
             return True
         if one is cls.SYPrefix and other is cls.SYPrefix:
             return True
-        if one is cls.SDFComb and other is cls.SDFComb:
-            return True
         if one is cls.SDFComb and other is cls.Function:
             return True
-        if one is cls.SDFPrefix and other is cls.SDFPrefix:
+        if one is cls.SDFComb and other is cls.SDFComb:
             return True
         if one is cls.SDFPrefix and other is cls.Function:
+            return True
+        if one is cls.SDFPrefix and other is cls.SDFPrefix:
             return True
         if one is cls.ReactorElement and other is cls.ReactorElement:
             return True
@@ -151,21 +151,21 @@ class VertexTrait(core.Trait, Enum):
             return True
         if one is cls.AbstractPhysicalComponent and other is cls.AbstractPhysicalComponent:
             return True
+        if one is cls.AbstractProcessingComponent and other is cls.AbstractPhysicalComponent:
+            return True
         if one is cls.AbstractProcessingComponent and other is cls.AbstractProcessingComponent:
             return True
-        if one is cls.AbstractProcessingComponent and other is cls.AbstractPhysicalComponent:
+        if one is cls.InstrumentedProcessorTile and other is cls.Instrumented:
+            return True
+        if one is cls.InstrumentedProcessorTile and other is cls.AbstractPhysicalComponent:
             return True
         if one is cls.InstrumentedProcessorTile and other is cls.InstrumentedProcessorTile:
             return True
         if one is cls.InstrumentedProcessorTile and other is cls.AbstractProcessingComponent:
             return True
-        if one is cls.InstrumentedProcessorTile and other is cls.AbstractPhysicalComponent:
-            return True
-        if one is cls.InstrumentedProcessorTile and other is cls.Instrumented:
+        if one is cls.AbstractStorageComponent and other is cls.AbstractPhysicalComponent:
             return True
         if one is cls.AbstractStorageComponent and other is cls.AbstractStorageComponent:
-            return True
-        if one is cls.AbstractStorageComponent and other is cls.AbstractPhysicalComponent:
             return True
         if one is cls.AbsractInterfaceComponent and other is cls.AbstractPhysicalComponent:
             return True
@@ -175,17 +175,17 @@ class VertexTrait(core.Trait, Enum):
             return True
         if one is cls.AbstractCommunicationComponent and other is cls.AbstractCommunicationComponent:
             return True
-        if one is cls.InstrumentedCommunicationInterconnect and other is cls.InstrumentedCommunicationInterconnect:
-            return True
         if one is cls.InstrumentedCommunicationInterconnect and other is cls.AbstractPhysicalComponent:
             return True
         if one is cls.InstrumentedCommunicationInterconnect and other is cls.AbstractCommunicationComponent:
             return True
-        if one is cls.TimeDivisionMultiplexer and other is cls.TimeDivisionMultiplexer:
+        if one is cls.InstrumentedCommunicationInterconnect and other is cls.InstrumentedCommunicationInterconnect:
             return True
         if one is cls.TimeDivisionMultiplexer and other is cls.AbstractPhysicalComponent:
             return True
         if one is cls.TimeDivisionMultiplexer and other is cls.AbstractCommunicationComponent:
+            return True
+        if one is cls.TimeDivisionMultiplexer and other is cls.TimeDivisionMultiplexer:
             return True
         return False
 

@@ -26,6 +26,8 @@ with 4 tiles connected by a TDMA bus. The figure (extracted from the DATE'21 pap
 Now, naturally, we need to represent this nice mental representation in a way a computer com understand. This
 is where ForSyDe IO comes in.
 
+## Base description
+
 In the future, some, or all, of these elements would be produced from programming languages that would
 function with DSLs from ForSyDe. For instance, by using [ForSyDe Shallow]({{ site.projects.forsyde }}/forsyde-shallow/), we could obtain the application
 subsection of the whole system description. Similarly, maybe with a couple modifications, we could get

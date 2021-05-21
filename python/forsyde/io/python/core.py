@@ -118,7 +118,7 @@ class Vertex(object):
             )
 
     def has_trait(self, trait: Trait) -> bool:
-        return any(trait.refines(t) for t in self.vertex_traits)
+        return any(t.refines(trait) for t in self.vertex_traits)
 
     def has_trait_strict(self, trait: Trait) -> bool:
         return any(t is trait for t in self.vertex_traits)
