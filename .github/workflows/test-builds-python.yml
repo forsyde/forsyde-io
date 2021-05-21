@@ -32,9 +32,9 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Generate lib
         run: |
-          cd ${{ github.workspace }}
-          poetry update
-          poetry run generate
+          cd ${{ github.workspace }}/python
+          python -m pip install jinja2 networkx
+          python generate.py
       - name: Build lib
         run: |
           cd ${{ github.workspace }}/python
