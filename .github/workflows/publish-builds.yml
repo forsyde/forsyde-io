@@ -28,7 +28,7 @@ jobs:
         poetry-version: '1.1.5'
     - name: Generate lib
       run: |
-        cd ${{ github.workspace }}
+        cd ${{ github.workspace }}/python
         python -m pip install jinja2 networkx
         python generate.py
     - name: Build and publish core and generated code
