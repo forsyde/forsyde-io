@@ -29,7 +29,7 @@ ext {
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = ext.artifactName
-version = '0.3.1'
+version = '0.3.2'
 
 // In this section you declare where to find the dependencies of your project
 repositories {

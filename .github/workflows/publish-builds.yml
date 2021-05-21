@@ -57,5 +57,4 @@ jobs:
     - name: Publish to GitHub Packages
       run: |
         cd ${{ github.workspace }}/java
-        ./gradlew publish
-        ./gradlew closeAndReleaseStagingRepository
+        ./gradlew publish closeSonatypeStagingRepository
