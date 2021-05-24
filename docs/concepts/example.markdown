@@ -164,8 +164,8 @@ while (1) {
     last_mark = tile_get_time()
 
     // since the first execution is at 0, we just do it immediatly
-    input_SDF_Comb_Gy_t input_SDF_Comb_Gy = read_SDF_Comb_Gy();
-    output_SDF_Comb_Gy_t output_SDF_Comb_Gy = execute_SDF_Comb_Gy(input_SDF_Comb_Gy);
+    read_SDF_Comb_Gy(input_SDF_Comb_Gy);
+    execute_SDF_Comb_Gy(input_SDF_Comb_Gy, output_SDF_Comb_Gy);
     write_SDF_Comb_Gy(output_SDF_Comb_Gy);
 
     // we wait until a certain amount of time has elapsed since the period started
