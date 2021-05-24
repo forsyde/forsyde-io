@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - id: get_version
+      uses: battila7/get-version-action@v2
     - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
@@ -28,7 +30,9 @@ jobs:
         poetry-version: '1.1.5'
     - name: Generate lib
       run: |
-        cd ${{ github.workspace }}/python
+        cd ${{ github.workspace }}
+        make prepare-version-v${{ steps.get_version.outputs.version-without-v }}
+        cd python
         python -m pip install jinja2 networkx
         python generate.py
     - name: Build and publish core and generated code
@@ -42,19 +46,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - id: get_version
+      uses: battila7/get-version-action@v2
     - name: Set up JDK 1.11
       uses: actions/setup-java@v1.4.3
       with:
         java-version: 1.11
         server-id: io.github.forsyde # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
-    - name: Build with Gradle
+    - name: Build and publish with Gradle
       run: |
-        cd ${{ github.workspace }}/java
-        ./gradlew build
+        cd ${{ github.workspace }}
+        make prepare-version-v${{ steps.get_version.outputs.version-without-v }}
+        cd java
+        ./gradlew build publish closeAndReleaseSonatypeStagingRepository
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
     - name: Publish to GitHub Packages
       run: |
-        cd ${{ github.workspace }}/java
-        ./gradlew publish closeSonatypeStagingRepository
+        
