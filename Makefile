@@ -10,6 +10,20 @@ HASKELL_SQL_DIR := $(HASKELL_DIR)/sql
 
 LIBS := PYTHON JAVA HASKELL
 
+prepare-version-%: prepare-version-v$*
+
+prepare-version-v%:
+	@echo "Copying meta model to folders"
+	cp meta.json python/meta.json
+	cp meta.json java/meta.json
+	cp meta.json julia/meta.json
+	cp meta.json haskell/meta.json
+	@echo "Correcting language specific versions"
+	sed -i "s/version = \"\w*\.\w*\.\w*\"/version = \"$*\"/" python/pyproject.toml
+	sed -i "s/version = '\w*\.\w*\.\w*'/version = '$*'/" java/build.gradle
+	sed -i "s/version = \"\w*\.\w*\.\w*\"/version = \"$*\"/" julia/Project.toml
+	sed -i "s/version:(\S*)\"\w*\.\w*\.\w*\"/version:#1\"$*\"/" haskell/package.yaml
+
 all: generate-code
 
 generate-code:\
