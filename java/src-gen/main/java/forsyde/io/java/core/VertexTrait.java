@@ -35,7 +35,7 @@ public enum VertexTrait implements Trait {
 
   RoundRobinScheduler,
 
-  Function,
+  ForSyDeFunction,
 
   InstrumentedFunction,
 
@@ -172,15 +172,15 @@ public enum VertexTrait implements Trait {
         case RoundRobinScheduler: return true;
         default: return false;
       }
-      case Function:
+      case ForSyDeFunction:
       switch (other) {
-        case Function: return true;
+        case ForSyDeFunction: return true;
         default: return false;
       }
       case InstrumentedFunction:
       switch (other) {
         case InstrumentedFunction: return true;
-        case Function: return true;
+        case ForSyDeFunction: return true;
         default: return false;
       }
       case Signal:
@@ -215,25 +215,25 @@ public enum VertexTrait implements Trait {
       case SYComb:
       switch (other) {
         case SYComb: return true;
-        case Function: return true;
+        case ForSyDeFunction: return true;
         default: return false;
       }
       case SYPrefix:
       switch (other) {
         case SYPrefix: return true;
-        case Function: return true;
+        case ForSyDeFunction: return true;
         default: return false;
       }
       case SDFComb:
       switch (other) {
         case SDFComb: return true;
-        case Function: return true;
+        case ForSyDeFunction: return true;
         default: return false;
       }
       case SDFPrefix:
       switch (other) {
         case SDFPrefix: return true;
-        case Function: return true;
+        case ForSyDeFunction: return true;
         default: return false;
       }
       case ReactorElement:
