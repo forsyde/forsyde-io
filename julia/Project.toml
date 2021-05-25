@@ -1,7 +1,7 @@
 name = "ForSyDeIO"
 uuid = "2530d2c0-90ae-4e22-bd10-17e782bf2dab"
 authors = ["Rodolfo Jordão <jordao@kth.se> and contributors"]
-version = "0.3.4"
+version = "0.3.3"
 
 [deps]
 EzXML = "8f5d6c58-4d21-5cfd-889c-e3ad7ee6a615"

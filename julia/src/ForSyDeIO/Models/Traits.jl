@@ -1,3 +1,5 @@
+# This file has been generated automatically by 'generate.jl'
+
 module Traits
 
 import ForSyDeIO.Models as Models
