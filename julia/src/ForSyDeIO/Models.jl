@@ -10,11 +10,11 @@ abstract type EdgeTrait <: Trait end
 
 refines(t1::Trait, t2::Trait) = false
 
-struct Vertex{Ts <: Set}
+struct Vertex
     id::String
     ports::Set{String}
     properties::Dict{String,Any}
-    vertex_traits::Ts
+    vertex_traits::Set{VertexTrait}
 end
 
 Vertex(id::String) = Vertex(id, Set{String}(), Dict{String,Any}(), Set{Trait}())
@@ -25,12 +25,12 @@ Vertex(id::String, ports::Set{String}) = Vertex(id, ports, Dict{String,Any}(), S
 
 hash(v::Vertex) = hash(v.id)
 
-struct Edge{V <: Vertex,P <: Union{<:String,Nothing},Ts <: Set}
-    source::V
-    target::V
-    source_port::P
-    target_port::P
-    edge_traits::Ts
+struct Edge
+    source::Base.RefValue{Vertex}
+    target::Base.RefValue{Vertex}
+    source_port::Union{Nothing, String}
+    target_port::Union{Nothing, String}
+    edge_traits::Set{EdgeTrait}
 end
 
 ==(e1::Edge, e2::Edge) = (e1.source == e2.source && 
@@ -39,24 +39,24 @@ end
                           e1.target_port == e2.target_port && 
                           e1.edge_type == e2.edge_type)
 
-dst(e::Edge) = e.target
+dst(e::Edge) = e.target[]
 
-src(e::Edge) = e.source
+src(e::Edge) = e.source[]
 
-mutable struct ForSyDeModel{V <: Vertex,VArray <: AbstractArray{V},EArray <: AbstractArray{<:Edge}} <: AbstractGraph{V}
-    vertexes::VArray
-    edges::EArray
-    vertexes_inv::Dict{Vertex,Int}
-    edges_inv::Dict{Tuple{Vertex,Vertex},EArray}
-    # edges_idx::AbstractDict{Tuple{VertexIdxType,VertexIdxType},AbstractArray{UInt}}
-    # inv_edges_idx::AbstractDict{UInt,Tuple{VertexIdxType,VertexIdxType}}
-    inedges_idx::Dict{Vertex,EArray}
-    outedges_idx::Dict{Vertex,EArray}
+mutable struct ForSyDeModel <: AbstractGraph{Vertex}
+    vertexes::Vector{Vertex}
+    vertexes_lut::Dict{String, Vertex}
+    edges::Vector{Edge}
+    edges_lut::Dict{Tuple{String,String},Vector{Edge}}
+    # edges_lut::AbstractDict{Tuple{VertexIdxType,VertexIdxType},AbstractArray{UInt}}
+    # inv_edges_lut::AbstractDict{UInt,Tuple{VertexIdxType,VertexIdxType}}
+    inedges_lut::Dict{String,Vector{Edge}}
+    outedges_lut::Dict{String,Vector{Edge}}
 end # struct
 
 # Minimum interface required by LightGraphs
 
-ForSyDeModel() = ForSyDeModel(Vertex[], Edge[], Dict{Vertex,Int}(), Dict{Tuple{Vertex,Vertex},Vector{Edge}}(), Dict{Vertex,Vector{Edge}}(), Dict{Vertex,Vector{Edge}}())
+ForSyDeModel() = ForSyDeModel(Vertex[], Dict{String,Vertex}(), Edge[], Dict{Tuple{String,String},Vector{Edge}}(), Dict{String,Vector{Edge}}(), Dict{String,Vector{Edge}}())
 
 zero(::Type{<:ForSyDeModel}) = ForSyDeModel()
 
@@ -70,15 +70,15 @@ edgetype(model::ForSyDeModel) = Edge
 
 has_edge(model::ForSyDeModel, s::Vertex, t::Vertex) = any(src(e) == s && dst(e) == t for e in model.edges) 
 
-has_vertex(model::ForSyDeModel, v::Vertex) = haskey(model.vertexes_inv, v)
+has_vertex(model::ForSyDeModel, v::Vertex) = haskey(model.vertexes_lut, v)
 
-inneighbors(model::ForSyDeModel, v::Vertex) = [src(e) for e in model.inedges_idx[v]]
+inneighbors(model::ForSyDeModel, v::Vertex) = [src(e) for e in model.inedges_lut[v.id]]
 
 is_directed(::Type{<:ForSyDeModel}) = true
 
 is_directed(model::ForSyDeModel) = true
 
-outneighbors(model::ForSyDeModel, v::Vertex) = [dst(e) for e in model.outedges_idx[v]]
+outneighbors(model::ForSyDeModel, v::Vertex) = [dst(e) for e in model.outedges_lut[v.id]]
 
 ne(model::ForSyDeModel) = length(model.edges)
 
@@ -86,33 +86,62 @@ nv(model::ForSyDeModel) = length(model.vertexes)
 
 # Additional functions for model CRUD
 
-function add_vertex!(model::ForSyDeModel, v::Vertex)
-    if haskey(model.vertexes_inv, v)
-        return false
+## Iterable interface
+Base.iterate(model::ForSyDeModel) = iterate(model.vertexes)
+
+Base.length(model::ForSyDeModel) = nv(model)
+
+function Base.push!(model::ForSyDeModel, vs::Vararg{<:Vertex})
+    for v in vs
+        if haskey(model.vertexes_lut, v.id)
+            return false
+        end
+        push!(model.vertexes, v)
+        model.vertexes_lut[v.id] = v
     end
-    push!(model.vertexes, v)
-    model.vertexes_inv[v] = length(model.vertexes)
-    return true
+    return model
 end # function
 
-function add_edge!(model::ForSyDeModel, s::Vertex, t::Vertex, e::Edge)
-    if haskey(model.edges_inv, (s, t)) && any(e == st for st in model.edges_inv[(s, t)])
-        return false
+Base.getindex(model::ForSyDeModel, key::String) = model.vertexes_lut[key]
+
+
+# Base.getindex(model::ForSyDeModel, keys::Vararg{String}) = (
+#     model.vertexes_lut[k] for k in keys if haskey(model.vertexes_lut, k)
+# )
+
+Base.firstindex(model::ForSyDeModel) = first(keys(model.vertexes_lut))
+
+Base.lastindex(model::ForSyDeModel) = last(keys(model.vertexes_lut))
+
+Base.get(model::ForSyDeModel, key::String, default) = get(model.vertexes_lut, key, default)
+
+function Base.push!(model::ForSyDeModel, es::Vararg{<:Edge})
+    for e in es
+        s = src(e)
+        t = dst(e)
+        push!(model.edges, e)
+        if !haskey(model.edges_lut, (s.id, t.id))
+            model.edges_lut[(s.id, t.id)] = Edge[]
+        end
+        if !haskey(model.inedges_lut, t.id)
+            model.inedges_lut[t.id] = Edge[]
+        end
+        if !haskey(model.outedges_lut, s.id)
+            model.outedges_lut[s.id] = Edge[]
+        end
+        push!(model.edges_lut[(s.id, t.id)], e)
+        push!(model.outedges_lut[s.id], e)
+        push!(model.inedges_lut[t.id], e)
     end
-    push!(model.edges, e)
-    if model.edges_inv[(s, t)] === nothing
-        model.edges_inv[(s, t)] = Edge[]
-    end
-    if model.inedges_idx[t] === nothing
-        model.inedges_idx[t] = Edge[]
-    end
-    if model.outedges_idx[s] === nothing
-        model.outedges_idx[s] = Edge[]
-    end
-    push!(model.edges_inv[(s, t)], e)
-    push!(model.outedges_idx[s], e)
-    push!(model.inedges_idx[t], e)
-    return true
-end # function
+    return model
+end
+
+Base.getindex(model::ForSyDeModel, source::String, target::String) = getindex(model.edges_lut, (source, target))
+
+Base.getindex(model::ForSyDeModel, source::Vertex, target::Vertex) = getindex(model, source.id, target.id)
+
+Base.get(model::ForSyDeModel, key::Tuple{String, String}, default) = get(model.edges_lut, key, default)
+
+include("Models/Traits.jl")
 
 end # module

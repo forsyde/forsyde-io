@@ -2,8 +2,9 @@ using LightGraphs
 import JSON
 
 model = JSON.parsefile("meta.json")
-code = "module Types\n\n"
-code = code * "import ForSyDeIO.Models\n\n"
+code = "# This file has been generated automatically by 'generate.jl'\n\n"
+code = code * "module Traits\n\n"
+code = code * "import ForSyDeIO.Models as Models\n\n"
 # open("package_template.py", 'r') do template_file
 #     template = jinja2.Template(template_file.read())
 # end
@@ -26,7 +27,7 @@ end
 # code = code * "struct VertexTrait <: ForSyDeIO.Model.Trait begin\n"
 for (vidx, trait_name) in enumerate(vertex_traits_idx)
     global code
-    code = code * "struct $trait_name <: ForSyDeIO.Model.VertexTrait end\n"
+    code = code * "struct $trait_name <: Models.VertexTrait end\n"
 end
 # code = code * "end\n\nfunction refines(t1::VertexTrait, t2::VertexTrait)\n"
 # code = code * "  if t1 == t2\n"
@@ -61,7 +62,7 @@ end
 #code = code * "@enum EdgeTrait <: ForSyDeIO.Model.Trait begin\n"
 for (vidx, trait_name) in enumerate(edge_traits_idx)
     global code
-    code = code * "struct $trait_name <: ForSyDeIO.Model.EdgeTrait end\n"
+    code = code * "struct $trait_name <: Models.EdgeTrait end\n"
 end
 # code = code * "end\n\nfunction refines(t1::EdgeTrait, t2::EdgeTrait)\n"
 # code = code * "  if t1 == t2\n"
@@ -77,12 +78,31 @@ for (vidx, trait_name) in enumerate(edge_traits_idx)
         end
     end
 end
-#code = code * "  else\n    return false\n  end\n"
-#code = code * "end\n\n"
+code = code * "\n"
+code = code * "vertex_trait_lut = Dict(\n"
+code = code * Base.join(map((t) -> "  \"$t\" => $t()", vertex_traits_idx), ",\n")
+code = code * ")\n\n"
+
+code = code * "\n"
+code = code * "edge_trait_lut = Dict(\n"
+code = code * Base.join(map((t) -> "  \"$t\" => $t()", edge_traits_idx), ",\n")
+code = code * ")\n\n"
 
 
+#code = code * "@enum EdgeTrait <: ForSyDeIO.Model.Trait begin\n"
+code = code * "function make_trait(label::AbstractString)::Union{Nothing, <:Models.Trait}\n"
+code = code * "  global vertex_trait_lut\n"
+code = code * "  global edge_trait_lut\n"
+code = code * "  if haskey(vertex_trait_lut, label)\n"
+code = code * "    return vertex_trait_lut[label]\n"
+code = code * "  elseif haskey(edge_trait_lut, label)\n"
+code = code * "    return edge_trait_lut[label]\n"
+code = code * "  else\n"
+code = code * "    return nothing\n"
+code = code * "  end\n"
+code = code * "end\n\n"
 
-# code = code * "end"
+code = code * "end # module"
 
 open("src/ForSyDeIO/Models/Traits.jl", "w") do out_file
     write(out_file, code)

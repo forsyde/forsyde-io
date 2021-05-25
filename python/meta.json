@@ -114,10 +114,10 @@
         "FixedPriorityScheduler": null,
         "CustomScheduler": null,
         "RoundRobinScheduler": null,
-        "Function": null,
+        "ForSyDeFunction": null,
         "InstrumentedFunction": {
             "superTraits": [
-                "Function"
+                "ForSyDeFunction"
             ],
             "required_properties": {
             	"max_operations": {
@@ -198,31 +198,31 @@
         },
         "SYComb": {
             "superTraits": [
-                "Function"
+                "ForSyDeFunction"
             ],
             "required_ports": {
                 "combinator": {
-                    "class": "Function"
+                    "class": "ForSyDeFunction"
                 }
             }
         },
         "SYPrefix": {
             "superTraits": [
-                "Function"
+                "ForSyDeFunction"
             ],
             "required_ports": {
                 "prefixer": {
-                    "class": "Function"
+                    "class": "ForSyDeFunction"
                 }
             }
         },
         "SDFComb": {
             "superTraits": [
-                "Function"
+                "ForSyDeFunction"
             ],
             "required_ports": {
                 "combinator": {
-                    "class": "Function"
+                    "class": "ForSyDeFunction"
                 }
             },
             "required_properties": {
@@ -240,11 +240,11 @@
         },
         "SDFPrefix": {
             "superTraits": [
-                "Function"
+                "ForSyDeFunction"
             ],
             "required_ports": {
                 "prefixer": {
-                    "class": "Function"
+                    "class": "ForSyDeFunction"
                 }
             }
         },

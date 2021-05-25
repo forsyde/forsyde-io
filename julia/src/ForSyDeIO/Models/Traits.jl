@@ -1,45 +1,45 @@
-module Types
+module Traits
 
-import ForSyDeIO.Models
+import ForSyDeIO.Models as Models
 
-struct CustomScheduler <: ForSyDeIO.Model.VertexTrait end
-struct InstrumentedCommunicationInterconnect <: ForSyDeIO.Model.VertexTrait end
-struct Goal <: ForSyDeIO.Model.VertexTrait end
-struct TimeDivisionMultiplexer <: ForSyDeIO.Model.VertexTrait end
-struct AbstractOrdering <: ForSyDeIO.Model.VertexTrait end
-struct FixedPriorityScheduler <: ForSyDeIO.Model.VertexTrait end
-struct BufferSignal <: ForSyDeIO.Model.VertexTrait end
-struct ExtraFunctional <: ForSyDeIO.Model.VertexTrait end
-struct SporadicTask <: ForSyDeIO.Model.VertexTrait end
-struct TimeTriggeredScheduler <: ForSyDeIO.Model.VertexTrait end
-struct SYComb <: ForSyDeIO.Model.VertexTrait end
-struct ReactorTimer <: ForSyDeIO.Model.VertexTrait end
-struct WCET <: ForSyDeIO.Model.VertexTrait end
-struct LabelSignal <: ForSyDeIO.Model.VertexTrait end
-struct HardRequirement <: ForSyDeIO.Model.VertexTrait end
-struct Signal <: ForSyDeIO.Model.VertexTrait end
-struct RoundRobinScheduler <: ForSyDeIO.Model.VertexTrait end
-struct InstrumentedSignal <: ForSyDeIO.Model.VertexTrait end
-struct AbstractPhysicalComponent <: ForSyDeIO.Model.VertexTrait end
-struct AbstractProcessingComponent <: ForSyDeIO.Model.VertexTrait end
-struct ReactorElement <: ForSyDeIO.Model.VertexTrait end
-struct WCCT <: ForSyDeIO.Model.VertexTrait end
-struct Function <: ForSyDeIO.Model.VertexTrait end
-struct AbstractGrouping <: ForSyDeIO.Model.VertexTrait end
-struct TriggeredTask <: ForSyDeIO.Model.VertexTrait end
-struct Requirement <: ForSyDeIO.Model.VertexTrait end
-struct InstrumentedFunction <: ForSyDeIO.Model.VertexTrait end
-struct SDFComb <: ForSyDeIO.Model.VertexTrait end
-struct AbsractInterfaceComponent <: ForSyDeIO.Model.VertexTrait end
-struct ReactorActor <: ForSyDeIO.Model.VertexTrait end
-struct SYPrefix <: ForSyDeIO.Model.VertexTrait end
-struct InstrumentedProcessorTile <: ForSyDeIO.Model.VertexTrait end
-struct LocationRequirement <: ForSyDeIO.Model.VertexTrait end
-struct MinimumThroughput <: ForSyDeIO.Model.VertexTrait end
-struct SDFPrefix <: ForSyDeIO.Model.VertexTrait end
-struct AbstractStorageComponent <: ForSyDeIO.Model.VertexTrait end
-struct Instrumented <: ForSyDeIO.Model.VertexTrait end
-struct AbstractCommunicationComponent <: ForSyDeIO.Model.VertexTrait end
+struct CustomScheduler <: Models.VertexTrait end
+struct InstrumentedCommunicationInterconnect <: Models.VertexTrait end
+struct Goal <: Models.VertexTrait end
+struct TimeDivisionMultiplexer <: Models.VertexTrait end
+struct AbstractOrdering <: Models.VertexTrait end
+struct FixedPriorityScheduler <: Models.VertexTrait end
+struct BufferSignal <: Models.VertexTrait end
+struct ExtraFunctional <: Models.VertexTrait end
+struct SporadicTask <: Models.VertexTrait end
+struct TimeTriggeredScheduler <: Models.VertexTrait end
+struct SYComb <: Models.VertexTrait end
+struct ReactorTimer <: Models.VertexTrait end
+struct WCET <: Models.VertexTrait end
+struct LabelSignal <: Models.VertexTrait end
+struct HardRequirement <: Models.VertexTrait end
+struct Signal <: Models.VertexTrait end
+struct RoundRobinScheduler <: Models.VertexTrait end
+struct InstrumentedSignal <: Models.VertexTrait end
+struct AbstractPhysicalComponent <: Models.VertexTrait end
+struct AbstractProcessingComponent <: Models.VertexTrait end
+struct ForSyDeFunction <: Models.VertexTrait end
+struct ReactorElement <: Models.VertexTrait end
+struct WCCT <: Models.VertexTrait end
+struct AbstractGrouping <: Models.VertexTrait end
+struct TriggeredTask <: Models.VertexTrait end
+struct Requirement <: Models.VertexTrait end
+struct InstrumentedFunction <: Models.VertexTrait end
+struct SDFComb <: Models.VertexTrait end
+struct AbsractInterfaceComponent <: Models.VertexTrait end
+struct ReactorActor <: Models.VertexTrait end
+struct SYPrefix <: Models.VertexTrait end
+struct InstrumentedProcessorTile <: Models.VertexTrait end
+struct LocationRequirement <: Models.VertexTrait end
+struct MinimumThroughput <: Models.VertexTrait end
+struct SDFPrefix <: Models.VertexTrait end
+struct AbstractStorageComponent <: Models.VertexTrait end
+struct Instrumented <: Models.VertexTrait end
+struct AbstractCommunicationComponent <: Models.VertexTrait end
 
 refines(t1::CustomScheduler, t2::CustomScheduler) = true
 
@@ -71,7 +71,7 @@ refines(t1::TimeTriggeredScheduler, t2::TimeTriggeredScheduler) = true
 refines(t1::TimeTriggeredScheduler, t2::AbstractGrouping) = true
 
 refines(t1::SYComb, t2::SYComb) = true
-refines(t1::SYComb, t2::Function) = true
+refines(t1::SYComb, t2::ForSyDeFunction) = true
 
 refines(t1::ReactorTimer, t2::ReactorTimer) = true
 refines(t1::ReactorTimer, t2::ReactorElement) = true
@@ -98,12 +98,12 @@ refines(t1::AbstractPhysicalComponent, t2::AbstractPhysicalComponent) = true
 refines(t1::AbstractProcessingComponent, t2::AbstractPhysicalComponent) = true
 refines(t1::AbstractProcessingComponent, t2::AbstractProcessingComponent) = true
 
+refines(t1::ForSyDeFunction, t2::ForSyDeFunction) = true
+
 refines(t1::ReactorElement, t2::ReactorElement) = true
 
 refines(t1::WCCT, t2::ExtraFunctional) = true
 refines(t1::WCCT, t2::WCCT) = true
-
-refines(t1::Function, t2::Function) = true
 
 refines(t1::AbstractGrouping, t2::AbstractGrouping) = true
 
@@ -113,10 +113,10 @@ refines(t1::TriggeredTask, t2::TriggeredTask) = true
 
 refines(t1::Requirement, t2::Requirement) = true
 
-refines(t1::InstrumentedFunction, t2::Function) = true
+refines(t1::InstrumentedFunction, t2::ForSyDeFunction) = true
 refines(t1::InstrumentedFunction, t2::InstrumentedFunction) = true
 
-refines(t1::SDFComb, t2::Function) = true
+refines(t1::SDFComb, t2::ForSyDeFunction) = true
 refines(t1::SDFComb, t2::SDFComb) = true
 
 refines(t1::AbsractInterfaceComponent, t2::AbstractPhysicalComponent) = true
@@ -125,7 +125,7 @@ refines(t1::AbsractInterfaceComponent, t2::AbsractInterfaceComponent) = true
 refines(t1::ReactorActor, t2::ReactorElement) = true
 refines(t1::ReactorActor, t2::ReactorActor) = true
 
-refines(t1::SYPrefix, t2::Function) = true
+refines(t1::SYPrefix, t2::ForSyDeFunction) = true
 refines(t1::SYPrefix, t2::SYPrefix) = true
 
 refines(t1::InstrumentedProcessorTile, t2::AbstractPhysicalComponent) = true
@@ -139,7 +139,7 @@ refines(t1::LocationRequirement, t2::LocationRequirement) = true
 refines(t1::MinimumThroughput, t2::Goal) = true
 refines(t1::MinimumThroughput, t2::MinimumThroughput) = true
 
-refines(t1::SDFPrefix, t2::Function) = true
+refines(t1::SDFPrefix, t2::ForSyDeFunction) = true
 refines(t1::SDFPrefix, t2::SDFPrefix) = true
 
 refines(t1::AbstractStorageComponent, t2::AbstractPhysicalComponent) = true
@@ -151,14 +151,14 @@ refines(t1::AbstractCommunicationComponent, t2::AbstractPhysicalComponent) = tru
 refines(t1::AbstractCommunicationComponent, t2::AbstractCommunicationComponent) = true
 
 
-struct Output <: ForSyDeIO.Model.EdgeTrait end
-struct Composition <: ForSyDeIO.Model.EdgeTrait end
-struct AbstractScheduling <: ForSyDeIO.Model.EdgeTrait end
-struct AbstractMapping <: ForSyDeIO.Model.EdgeTrait end
-struct AbstractPhysicalConnection <: ForSyDeIO.Model.EdgeTrait end
-struct AbstractDecision <: ForSyDeIO.Model.EdgeTrait end
-struct Annotation <: ForSyDeIO.Model.EdgeTrait end
-struct Input <: ForSyDeIO.Model.EdgeTrait end
+struct Output <: Models.EdgeTrait end
+struct Composition <: Models.EdgeTrait end
+struct AbstractScheduling <: Models.EdgeTrait end
+struct AbstractMapping <: Models.EdgeTrait end
+struct AbstractPhysicalConnection <: Models.EdgeTrait end
+struct AbstractDecision <: Models.EdgeTrait end
+struct Annotation <: Models.EdgeTrait end
+struct Input <: Models.EdgeTrait end
 
 refines(t1::Output, t2::Output) = true
 
@@ -177,3 +177,68 @@ refines(t1::AbstractDecision, t2::AbstractDecision) = true
 refines(t1::Annotation, t2::Annotation) = true
 
 refines(t1::Input, t2::Input) = true
+
+vertex_trait_lut = Dict(
+  "CustomScheduler" => CustomScheduler(),
+  "InstrumentedCommunicationInterconnect" => InstrumentedCommunicationInterconnect(),
+  "Goal" => Goal(),
+  "TimeDivisionMultiplexer" => TimeDivisionMultiplexer(),
+  "AbstractOrdering" => AbstractOrdering(),
+  "FixedPriorityScheduler" => FixedPriorityScheduler(),
+  "BufferSignal" => BufferSignal(),
+  "ExtraFunctional" => ExtraFunctional(),
+  "SporadicTask" => SporadicTask(),
+  "TimeTriggeredScheduler" => TimeTriggeredScheduler(),
+  "SYComb" => SYComb(),
+  "ReactorTimer" => ReactorTimer(),
+  "WCET" => WCET(),
+  "LabelSignal" => LabelSignal(),
+  "HardRequirement" => HardRequirement(),
+  "Signal" => Signal(),
+  "RoundRobinScheduler" => RoundRobinScheduler(),
+  "InstrumentedSignal" => InstrumentedSignal(),
+  "AbstractPhysicalComponent" => AbstractPhysicalComponent(),
+  "AbstractProcessingComponent" => AbstractProcessingComponent(),
+  "ForSyDeFunction" => ForSyDeFunction(),
+  "ReactorElement" => ReactorElement(),
+  "WCCT" => WCCT(),
+  "AbstractGrouping" => AbstractGrouping(),
+  "TriggeredTask" => TriggeredTask(),
+  "Requirement" => Requirement(),
+  "InstrumentedFunction" => InstrumentedFunction(),
+  "SDFComb" => SDFComb(),
+  "AbsractInterfaceComponent" => AbsractInterfaceComponent(),
+  "ReactorActor" => ReactorActor(),
+  "SYPrefix" => SYPrefix(),
+  "InstrumentedProcessorTile" => InstrumentedProcessorTile(),
+  "LocationRequirement" => LocationRequirement(),
+  "MinimumThroughput" => MinimumThroughput(),
+  "SDFPrefix" => SDFPrefix(),
+  "AbstractStorageComponent" => AbstractStorageComponent(),
+  "Instrumented" => Instrumented(),
+  "AbstractCommunicationComponent" => AbstractCommunicationComponent())
+
+
+edge_trait_lut = Dict(
+  "Output" => Output(),
+  "Composition" => Composition(),
+  "AbstractScheduling" => AbstractScheduling(),
+  "AbstractMapping" => AbstractMapping(),
+  "AbstractPhysicalConnection" => AbstractPhysicalConnection(),
+  "AbstractDecision" => AbstractDecision(),
+  "Annotation" => Annotation(),
+  "Input" => Input())
+
+function make_trait(label::AbstractString)::Union{Nothing, <:Models.Trait}
+  global vertex_trait_lut
+  global edge_trait_lut
+  if haskey(vertex_trait_lut, label)
+    return vertex_trait_lut[label]
+  elseif haskey(edge_trait_lut, label)
+    return edge_trait_lut[label]
+  else
+    return nothing
+  end
+end
+
+end # module
