@@ -28,8 +28,8 @@ hash(v::Vertex) = hash(v.id)
 struct Edge
     source::Base.RefValue{Vertex}
     target::Base.RefValue{Vertex}
-    source_port::Union{Nothing, String}
-    target_port::Union{Nothing, String}
+    source_port::Union{Nothing,String}
+    target_port::Union{Nothing,String}
     edge_traits::Set{EdgeTrait}
 end
 
@@ -45,7 +45,7 @@ src(e::Edge) = e.source[]
 
 mutable struct ForSyDeModel <: AbstractGraph{Vertex}
     vertexes::Vector{Vertex}
-    vertexes_lut::Dict{String, Vertex}
+    vertexes_lut::Dict{String,Vertex}
     edges::Vector{Edge}
     edges_lut::Dict{Tuple{String,String},Vector{Edge}}
     # edges_lut::AbstractDict{Tuple{VertexIdxType,VertexIdxType},AbstractArray{UInt}}
@@ -136,11 +136,14 @@ function Base.push!(model::ForSyDeModel, es::Vararg{<:Edge})
     return model
 end
 
-Base.getindex(model::ForSyDeModel, source::String, target::String) = getindex(model.edges_lut, (source, target))
 
 Base.getindex(model::ForSyDeModel, source::Vertex, target::Vertex) = getindex(model, source.id, target.id)
 
-Base.get(model::ForSyDeModel, key::Tuple{String, String}, default) = get(model.edges_lut, key, default)
+Base.getindex(model::ForSyDeModel, source::String, target::String) = get(model, (source, target), Edge[])
+
+Base.getindex(model::ForSyDeModel, st::Tuple{Vertex,Vertex}) = get(model, st, Edge[])
+
+Base.get(model::ForSyDeModel, key::Tuple{String,String}, default) = get(model.edges_lut, key, default)
 
 include("Models/Traits.jl")
 

@@ -1,14 +1,19 @@
 package forsyde.io.epsilon;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.epsilon.common.util.StringProperties;
+import org.eclipse.epsilon.eol.compile.context.MetamodelRepository;
 import org.eclipse.epsilon.eol.compile.m3.Metamodel;
+import org.eclipse.epsilon.eol.compile.m3.MetamodelFactory;
+import org.eclipse.epsilon.eol.exceptions.EolNotApplicableOperationException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
@@ -20,10 +25,13 @@ import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 import org.eclipse.epsilon.eol.models.transactions.IModelTransactionSupport;
 import org.jgrapht.Graphs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import forsyde.io.java.core.Edge;
 import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeModel;
+import forsyde.io.java.core.Port;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.drivers.ForSyDeModelHandler;
@@ -31,7 +39,9 @@ import forsyde.io.java.drivers.ForSyDeModelHandler;
 public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 	
 
+	private Logger logger = LoggerFactory.getLogger(ForSyDeEspilonModel.class);
 	private static final long serialVersionUID = 1L;
+	private long genSymCounter = 0L;
 	public String modelName = "Model";
 
 	@Override
@@ -144,6 +154,10 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 			return Edge.class;
 		} else if (instance instanceof ForSyDeModel) {
 			return ForSyDeModel.class;
+		} else if (instance instanceof VertexTrait) {
+			return  VertexTrait.class;
+		} else if (instance instanceof EdgeTrait) {
+			return  EdgeTrait.class;
 		}
 		return null;
 	}
@@ -167,40 +181,90 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 
 	@Override
 	public String getFullyQualifiedTypeNameOf(Object instance) {
-		// TODO Auto-generated method stub
-		return null;
+		return "ForSyDeIO!" + getTypeNameOf(instance);
 	}
 
 	@Override
 	public Object createInstance(String type)
 			throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
-		// TODO Auto-generated method stub
-		return null;
+		if (type.equals("ForSyDeModel")) {
+			return this;
+		} else if (type.equals("Vertex")) {
+			return new Vertex(genSym("vertex"));
+		} else if (type.equals("Edge")) {
+			return new Edge(null, null);
+		} else if (isVertexTrait(type)) {
+			return VertexTrait.valueOf(type);
+		} else if (isEdgeTrait(type)) {
+			return EdgeTrait.valueOf(type);
+		} else {
+			throw new EolModelElementTypeNotFoundException(getName(), "ForSyDeIO");
+		}
 	}
 
 	@Override
 	public Object createInstance(String type, Collection<Object> parameters)
 			throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
-		// TODO Auto-generated method stub
-		return null;
+		logger.debug(parameters.toString());
+		return createInstance(type);
 	}
 
 	@Override
 	public Object getElementById(String id) {
-		// TODO Auto-generated method stub
+		if (id.startsWith(".edge.")) {
+			String[] edgeString = id.substring(6).strip().split(",");
+			String sourceId = edgeString[0];
+			Optional<String> sourcePort = edgeString[1].length() > 0 ? Optional.of(edgeString[1]) : Optional.empty();
+			String targetId = edgeString[2];
+			Optional<String> targetPort = edgeString[3].length() > 0 ? Optional.of(edgeString[3]) : Optional.empty();
+			Set<EdgeTrait> traits = Set.of(edgeString[4].split(";")).stream().map(s -> EdgeTrait.valueOf(s)).collect(Collectors.toSet());
+			for (Edge e : edgeSet()) {
+				if (e.source.identifier.equals(sourceId) &&
+					e.target.identifier.equals(targetId) &&
+					e.sourcePort.equals(sourcePort) &&
+					e.targetPort.equals(targetPort) &&
+					e.edgeTraits.equals(traits)) {
+					return e;
+				}
+			}
+		} else {
+			for (Vertex v : vertexSet()) {
+				if (v.identifier.equals(id))
+					return v;
+			}			
+		}
 		return null;
 	}
 
 	@Override
 	public String getElementId(Object instance) {
-		// TODO Auto-generated method stub
+		if (instance instanceof Vertex) {
+			return ((Vertex) instance).identifier;
+		} else if (instance instanceof Edge) {
+			Edge edge = (Edge) instance;
+			return new StringBuilder()
+					.append(".edge.")
+					.append(edge.source.identifier)
+					.append(",")
+					.append(edge.sourcePort.map(p -> p.identifier).orElse(""))
+					.append(",")
+					.append(edge.target.identifier)
+					.append(",")
+					.append(edge.targetPort.map(p -> p.identifier).orElse(""))
+					.append(",")
+					.append(edge.edgeTraits.stream().map(t -> t.toString()).reduce("", (s1, s2) -> s1 + ";" + s2))
+					.toString();
+		}
 		return null;
 	}
 
 	@Override
 	public void setElementId(Object instance, String newId) {
-		// TODO Auto-generated method stub
-
+		if (instance instanceof Vertex) {
+			((Vertex) instance).identifier = newId;
+		} else {
+			//throw new EolRuntimeException("Cannot set new id for instance '" + instance.toString() + "'");
+		}
 	}
 
 	@Override
@@ -320,7 +384,9 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 	@Override
 	public Metamodel getMetamodel(StringProperties properties, IRelativePathResolver resolver) {
 		// TODO Auto-generated method stub
-		return null;
+		Metamodel meta = new Metamodel();
+		meta.setName("ForSyDeIO");
+		return meta;
 	}
 	
 	protected boolean isVertexTrait(String type) {
@@ -329,6 +395,12 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 	
 	protected boolean isEdgeTrait(String type) {
 		return Stream.of(EdgeTrait.values()).anyMatch(et -> et.getName().equals(type));
+	}
+	
+	protected String genSym(String prefix) {
+		String out = prefix + String.valueOf(genSymCounter);
+		genSymCounter += 1L;
+		return out;
 	}
 
 }
