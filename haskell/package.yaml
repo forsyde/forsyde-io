@@ -29,6 +29,7 @@ dependencies:
 - hxt-xpath >= 9.1.2.1
 - split
 - bytestring
+- algebraic-graphs >= 0.5
 
 library:
   source-dirs: src

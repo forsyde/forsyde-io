@@ -36,6 +36,7 @@ packages:
 #
 extra-deps:
   - hxt-xpath-9.1.2.2
+  - algebraic-graphs-0.5
 #  - containers-0.6.4.1
 #  - hashable-1.3.0.0
 #  - regex-base-0.94.0.0
