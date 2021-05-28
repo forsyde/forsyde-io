@@ -27,6 +27,7 @@ with open('package_template.py', 'r') as template_file:
     template = jinja2.Template(template_file.read())
 
 property_map = {}
+default_property_map = {}
 
 # build the trait vertex graph
 vertexTraitGraph = nx.DiGraph()
@@ -39,6 +40,8 @@ for (vname, vdata) in model['vertexTraits'].items():
                 property_map[prop_name] = ([vname], meta_to_py(prop_data))
             else:
                 property_map[prop_name][0].append(vname)
+            if 'default' in prop_data:
+                default_property_map[prop_name] = prop_data['default']
 for (vname, vdata) in model['vertexTraits'].items():
     if vdata and 'superTraits' in vdata:
         for superTrait in vdata['superTraits']:
@@ -71,5 +74,6 @@ with open('forsyde/io/python/types.py', 'w') as out_file:
     out_file.write(template.render(
         vertexTraitSuper=vertexTraitSuper,
         edgeTraitSuper=edgeTraitSuper,
-        property_map=property_map
+        property_map=property_map,
+        default_property_map=default_property_map
         ))

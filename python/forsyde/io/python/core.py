@@ -123,6 +123,19 @@ class Vertex(object):
     def has_trait_strict(self, trait: Trait) -> bool:
         return any(t is trait for t in self.vertex_traits)
 
+    def refines(self, other: "Vertex") -> bool:
+        """Check if 'self' refines 'other'
+
+        One vertex refines other if every trait of other is
+        a refineable to at least one trait of one.
+        """
+        if self.identifier != other.identifier:
+            return False
+        for to in other.vertex_traits:
+            if not any(t.refines(to) for t in self.vertex_traits):
+                return False
+        return True
+
 
 @dataclass
 class Edge(object):
@@ -141,7 +154,6 @@ class Edge(object):
     edge_traits: Set[Trait] = field(default_factory=set)
 
     # edge_type: ModelType = field(default=ModelType(), compare=False)
-
     def __hash__(self):
         return hash((self.source_vertex, self.target_vertex))
 
@@ -153,6 +165,20 @@ class Edge(object):
 
     def has_trait_strict(self, o: Trait) -> bool:
         return any(t is o for t in self.edge_traits)
+
+    def refines(self, other: "Edge") -> bool:
+        if self.source.identifier != other.source.identifier:
+            return False
+        if self.target.identifier != other.target.identifier:
+            return False
+        if self.source_port != other.source_port:
+            return False
+        if self.target_port != other.target_port:
+            return False
+        for to in other.edge_traits:
+            if not any(t.refines(to) for t in self.edge_traits):
+                return False
+        return True
 
     # def ids_tuple(self):
     #     return (self.source_vertex.identifier, self.target_vertex.identifier,

@@ -53,8 +53,14 @@ class VertexAcessor(object):
             return v.properties["{{prop_name}}"]
         else:
         {%- for trait_name in prop_data[0] %}
+        {%- if prop_name in default_property_map %}
             if v.has_trait(VertexTrait.{{trait_name}}):
-                raise ValueError("Property {{prop_name}} should exist in vertex with trait {{trait_name}}, but does not.")
+                return {{default_property_map[prop_name]}}
+        {%- else %}
+            if v.has_trait(VertexTrait.{{trait_name}}):
+                raise ValueError("Property {{prop_name}} should exist in vertex '" + v.identifier + "' with trait {{trait_name}}, but does not.")
+        {%- endif %}
         {%- endfor %}
-            return None
+            else:
+                return None
 {% endfor %}

@@ -355,7 +355,7 @@
       <port name="communication"/>
       <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
       <data attr.name="max_memory_internal_bytes" attr.type="integer">0</data>
-      <data attr.name="clock_cycles_per_operation" attr.type="object">
+      <data attr.name="max_clock_cycles_per_op" attr.type="object">
           <data attr.name="float" attr.type="integer">0</data>
           <data attr.name="integer" attr.type="integer">0</data>
           <data attr.name="boolean" attr.type="integer">0</data>
@@ -365,7 +365,7 @@
       <port name="communication"/>
       <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
       <data attr.name="max_memory_internal_bytes" attr.type="integer">0</data>
-      <data attr.name="clock_cycles_per_operation" attr.type="object">
+      <data attr.name="max_clock_cycles_per_op" attr.type="object">
           <data attr.name="float" attr.type="integer">0</data>
           <data attr.name="integer" attr.type="integer">0</data>
           <data attr.name="boolean" attr.type="integer">0</data>
@@ -375,7 +375,7 @@
       <port name="communication"/>
       <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
       <data attr.name="max_memory_internal_bytes" attr.type="integer">32000</data>
-      <data attr.name="clock_cycles_per_operation" attr.type="object">
+      <data attr.name="max_clock_cycles_per_op" attr.type="object">
           <data attr.name="float" attr.type="integer">6</data>
           <data attr.name="integer" attr.type="integer">2</data>
           <data attr.name="boolean" attr.type="integer">1</data>
@@ -385,7 +385,7 @@
       <port name="communication"/>
       <data attr.name="min_frequency_hz" attr.type="integer">200000000</data>
       <data attr.name="max_memory_internal_bytes" attr.type="integer">32000</data>
-      <data attr.name="clock_cycles_per_operation" attr.type="object">
+      <data attr.name="max_clock_cycles_per_op" attr.type="object">
           <data attr.name="float" attr.type="integer">6</data>
           <data attr.name="integer" attr.type="integer">2</data>
           <data attr.name="boolean" attr.type="integer">1</data>
@@ -395,7 +395,7 @@
     <!--   <port name="communication"/> -->
     <!--   <data attr.name="min_frequency_hz" attr.type="integer">200000000</data> -->
     <!--   <data attr.name="max_memory_internal_bytes" attr.type="integer">32000</data> -->
-    <!-- <data attr.name="clock_cycles_per_operation" attr.type="object"> -->
+    <!-- <data attr.name="max_clock_cycles_per_op" attr.type="object"> -->
         <!--   <data attr.name="float" attr.type="integer">6</data> -->
         <!--   <data attr.name="integer" attr.type="integer">2</data> -->
         <!--   <data attr.name="boolean" attr.type="integer">1</data> -->
@@ -405,7 +405,7 @@
     <!--   <port name="communication"/> -->
     <!--   <data attr.name="min_frequency_hz" attr.type="integer">200000000</data> -->
     <!--   <data attr.name="max_memory_internal_bytes" attr.type="integer">32000</data> -->
-    <!-- <data attr.name="clock_cycles_per_operation" attr.type="object"> -->
+    <!-- <data attr.name="max_clock_cycles_per_op" attr.type="object"> -->
         <!--   <data attr.name="float" attr.type="integer">6</data> -->
         <!--   <data attr.name="integer" attr.type="integer">2</data> -->
         <!--   <data attr.name="boolean" attr.type="integer">1</data> -->
@@ -415,7 +415,7 @@
     <!--   <port name="communication"/> -->
     <!--   <data attr.name="min_frequency_hz" attr.type="integer">200000000</data> -->
     <!--   <data attr.name="max_memory_internal_bytes" attr.type="integer">32000</data> -->
-    <!-- <data attr.name="clock_cycles_per_operation" attr.type="object"> -->
+    <!-- <data attr.name="max_clock_cycles_per_op" attr.type="object"> -->
         <!--   <data attr.name="float" attr.type="integer">6</data> -->
         <!--   <data attr.name="integer" attr.type="integer">2</data> -->
         <!--   <data attr.name="boolean" attr.type="integer">1</data> -->
@@ -425,7 +425,7 @@
     <!--   <port name="communication"/> -->
     <!--   <data attr.name="min_frequency_hz" attr.type="integer">200000000</data> -->
     <!--   <data attr.name="max_memory_internal_bytes" attr.type="integer">32000</data> -->
-    <!-- <data attr.name="clock_cycles_per_operation" attr.type="object"> -->
+    <!-- <data attr.name="max_clock_cycles_per_op" attr.type="object"> -->
         <!--   <data attr.name="float" attr.type="integer">6</data> -->
         <!--   <data attr.name="integer" attr.type="integer">2</data> -->
         <!--   <data attr.name="boolean" attr.type="integer">1</data> -->

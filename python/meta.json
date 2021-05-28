@@ -126,18 +126,6 @@
             		"value": {"class": "integer"},
             		"default": {}
             	},
-                "max_float_operations": {
-                    "class": "integer",
-                    "default": 0
-                },
-                "max_int_operations": {
-                    "class": "integer",
-                    "default": 0
-                },
-                "max_boolean_operations": {
-                    "class": "integer",
-                    "default": 0
-                },
                 "max_memory_size_in_bytes": {
                     "class": "integer",
                     "default": 1
@@ -313,22 +301,9 @@
                 "max_clock_cycles_per_op": {
                 	"class": "object",
                 	"key": {"class": "string"},
-                	"value": {
-                		"class": "object",
-                		"key": {"class": "string"},
-                		"value": {"class": "int"}
-                	}
+            		"value": {"class": "int"}
                 },
                 "max_memory_internal_bytes": {
-                    "class": "integer"
-                },
-                "clock_cycles_per_float_op": {
-                    "class": "integer"
-                },
-                "clock_cycles_per_integer_op": {
-                    "class": "integer"
-                },
-                "clock_cycles_per_boolean_op": {
                     "class": "integer"
                 }
             }
