@@ -285,7 +285,7 @@
                 "reaction_implementation": {
                 	"class": "ForSyDeFunction"
                 }
-            },
+                }
         },
         "AbstractPhysicalComponent": null,
         "AbstractProcessingComponent": {

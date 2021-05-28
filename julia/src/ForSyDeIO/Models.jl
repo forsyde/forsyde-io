@@ -1,6 +1,6 @@
 module Models
 
-using LightGraphs
+import LightGraphs
 
 VertexIdxType = UInt
 
@@ -39,11 +39,7 @@ end
                           e1.target_port == e2.target_port && 
                           e1.edge_type == e2.edge_type)
 
-dst(e::Edge) = e.target[]
-
-src(e::Edge) = e.source[]
-
-mutable struct ForSyDeModel <: AbstractGraph{Vertex}
+mutable struct ForSyDeModel <: LightGraphs.AbstractGraph{Vertex}
     vertexes::Vector{Vertex}
     vertexes_lut::Dict{String,Vertex}
     edges::Vector{Edge}
@@ -58,31 +54,37 @@ end # struct
 
 ForSyDeModel() = ForSyDeModel(Vertex[], Dict{String,Vertex}(), Edge[], Dict{Tuple{String,String},Vector{Edge}}(), Dict{String,Vector{Edge}}(), Dict{String,Vector{Edge}}())
 
-zero(::Type{<:ForSyDeModel}) = ForSyDeModel()
+# LightGraphs interfaces
 
-zero(model::ForSyDeModel) = ForSyDeModel()
+LightGraphs.dst(e::Edge) = e.target[]
 
-edges(model::ForSyDeModel) = model.edges
+LightGraphs.src(e::Edge) = e.source[]
 
-vertices(model::ForSyDeModel) = model.vertexes
+LightGraphs.zero(::Type{<:ForSyDeModel}) = ForSyDeModel()
 
-edgetype(model::ForSyDeModel) = Edge
+LightGraphs.zero(model::ForSyDeModel) = ForSyDeModel()
 
-has_edge(model::ForSyDeModel, s::Vertex, t::Vertex) = any(src(e) == s && dst(e) == t for e in model.edges) 
+LightGraphs.edges(model::ForSyDeModel) = model.edges
 
-has_vertex(model::ForSyDeModel, v::Vertex) = haskey(model.vertexes_lut, v)
+LightGraphs.vertices(model::ForSyDeModel) = model.vertexes
 
-inneighbors(model::ForSyDeModel, v::Vertex) = [src(e) for e in model.inedges_lut[v.id]]
+LightGraphs.edgetype(model::ForSyDeModel) = Edge
 
-is_directed(::Type{<:ForSyDeModel}) = true
+LightGraphs.has_edge(model::ForSyDeModel, s::Vertex, t::Vertex) = any(src(e) == s && dst(e) == t for e in model.edges) 
 
-is_directed(model::ForSyDeModel) = true
+LightGraphs.has_vertex(model::ForSyDeModel, v::Vertex) = haskey(model.vertexes_lut, v)
 
-outneighbors(model::ForSyDeModel, v::Vertex) = [dst(e) for e in model.outedges_lut[v.id]]
+LightGraphs.inneighbors(model::ForSyDeModel, v::Vertex) = [src(e) for e in model.inedges_lut[v.id]]
 
-ne(model::ForSyDeModel) = length(model.edges)
+LightGraphs.is_directed(::Type{<:ForSyDeModel}) = true
 
-nv(model::ForSyDeModel) = length(model.vertexes)
+LightGraphs.is_directed(model::ForSyDeModel) = true
+
+LightGraphs.outneighbors(model::ForSyDeModel, v::Vertex) = [dst(e) for e in model.outedges_lut[v.id]]
+
+LightGraphs.ne(model::ForSyDeModel) = length(model.edges)
+
+LightGraphs.nv(model::ForSyDeModel) = length(model.vertexes)
 
 # Additional functions for model CRUD
 
@@ -117,8 +119,8 @@ Base.get(model::ForSyDeModel, key::String, default) = get(model.vertexes_lut, ke
 
 function Base.push!(model::ForSyDeModel, es::Vararg{<:Edge})
     for e in es
-        s = src(e)
-        t = dst(e)
+        s = LightGraphs.src(e)
+        t = LightGraphs.dst(e)
         push!(model.edges, e)
         if !haskey(model.edges_lut, (s.id, t.id))
             model.edges_lut[(s.id, t.id)] = Edge[]

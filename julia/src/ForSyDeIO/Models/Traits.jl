@@ -124,6 +124,7 @@ refines(t1::SDFComb, t2::SDFComb) = true
 refines(t1::AbsractInterfaceComponent, t2::AbstractPhysicalComponent) = true
 refines(t1::AbsractInterfaceComponent, t2::AbsractInterfaceComponent) = true
 
+refines(t1::ReactorActor, t2::ForSyDeFunction) = true
 refines(t1::ReactorActor, t2::ReactorElement) = true
 refines(t1::ReactorActor, t2::ReactorActor) = true
 

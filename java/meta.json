@@ -267,16 +267,25 @@
                     "class": "integer",
                     "default": 1
                 }
+            },
+            "required_ports": {
+            	"output": {
+            		"class": "ReactorElement",
+            		"multiple": "unordered"
+            	}
             }
         },
         "ReactorActor": {
-            "superTraits": ["ReactorElement"],
+            "superTraits": ["ReactorElement", "ForSyDeFunction"],
             "required_ports": {
                 "triggers": {
                     "class": "ReactorElement",
                     "multiple": "ordered"
+                },
+                "reaction_implementation": {
+                	"class": "ForSyDeFunction"
                 }
-            }
+                }
         },
         "AbstractPhysicalComponent": null,
         "AbstractProcessingComponent": {
