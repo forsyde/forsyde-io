@@ -17,20 +17,26 @@ struct PropertyArray <: PropertyStruct
     wrapped_vector::Vector{PropertyElement}
 end
 
-iterate(v::PropertyArray) = Base.iterate(v.wrapped_vector)
+Base.iterate(v::PropertyArray) = Base.iterate(v.wrapped_vector)
 
-getindex(v::PropertyArray, idx...) = getindex(v.wrapped_vector, idx...)
+Base.iterate(v::PropertyArray, s) = Base.iterate(v.wrapped_vector, s)
 
-setindex!(v::PropertyArray, X, idx...) = setindex!(v.wrapped_vector, X, idx...)
+Base.getindex(v::PropertyArray, idx...) = Base.getindex(v.wrapped_vector, idx...)
+
+Base.setindex!(v::PropertyArray, X, idx...) = Base.setindex!(v.wrapped_vector, X, idx...)
 struct PropertyDict <: PropertyStruct
     wrapped_dict::Dict{String, PropertyElement}
 end
 
-getindex(d::PropertyDict, idx...) = getindex(d.wrapped_dict, idx...)
+Base.iterate(d::PropertyDict) = Base.iterate(d.wrapped_dict)
 
-setindex!(d::PropertyDict, X, idx...) = setindex!(d.wrapped_dict, X, idx...)
+Base.iterate(d::PropertyDict, s) = Base.iterate(d.wrapped_dict, s)
 
-get(d::PropertyDict, k, default) = get(d.wrapped_dict, k, default)
+Base.getindex(d::PropertyDict, idx...) = Base.getindex(d.wrapped_dict, idx...)
+
+Base.setindex!(d::PropertyDict, X, idx...) = Base.setindex!(d.wrapped_dict, X, idx...)
+
+Base.get(d::PropertyDict, k, default) = Base.get(d.wrapped_dict, k, default)
 
 struct Vertex
     id::String
@@ -127,16 +133,16 @@ function Base.push!(model::ForSyDeModel, vs::Vararg{V}) where V <: Vertex
     return model
 end # function
 
-Base.getindex(model::ForSyDeModel, key::String) = first(v for v in model.vertexes if Base.isequal(v.id,key))
+Base.getindex(model::ForSyDeModel, key::String) = Base.first(v for v in model.vertexes if Base.isequal(v.id,key))
 
 
 # Base.getindex(model::ForSyDeModel, keys::Vararg{String}) = (
 #     model.vertexes_lut[k] for k in keys if haskey(model.vertexes_lut, k)
 # )
 
-Base.firstindex(model::ForSyDeModel) = firstindex(model.vertexes)
+Base.firstindex(model::ForSyDeModel) = Base.firstindex(model.vertexes)
 
-Base.lastindex(model::ForSyDeModel) = lastindex(model.vertexes)
+Base.lastindex(model::ForSyDeModel) = Base.lastindex(model.vertexes)
 
 function Base.push!(model::ForSyDeModel, es::Vararg{E}) where E <: Edge
     for e in es
@@ -146,12 +152,12 @@ function Base.push!(model::ForSyDeModel, es::Vararg{E}) where E <: Edge
 end
 
 
-Base.getindex(model::ForSyDeModel, source::Vertex, target::Vertex) = getindex(model, source.id, target.id)
+Base.getindex(model::ForSyDeModel, source::Vertex, target::Vertex) = Base.getindex(model, source.id, target.id)
 
-Base.getindex(model::ForSyDeModel, source::String, target::String) = get(model, (source, target), Edge[])
+Base.getindex(model::ForSyDeModel, source::String, target::String) = Base.get(model, (source, target), Edge[])
 
-Base.getindex(model::ForSyDeModel, st::Tuple{Vertex,Vertex}) = get(model, st, Edge[])
+Base.getindex(model::ForSyDeModel, st::Tuple{Vertex,Vertex}) = Base.get(model, st, Edge[])
 
-Base.get(model::ForSyDeModel, key::Tuple{String,String}, default) = get(model.edges, key, default)
+Base.get(model::ForSyDeModel, key::Tuple{String,String}, default) = Base.get(model.edges, key, default)
 
 end # module

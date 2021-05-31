@@ -78,6 +78,10 @@ public class Edge {
 	public Set<EdgeTrait> getTraits() {
 		return edgeTraits;
 	}
+	
+	public boolean hasTrait(EdgeTrait trait) {
+		return edgeTraits.stream().anyMatch(t -> t.refines(trait));
+	}
 
 	@Override
 	public int hashCode() {

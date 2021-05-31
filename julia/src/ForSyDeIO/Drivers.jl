@@ -92,6 +92,64 @@ function load_model(name::AbstractString)::Models.ForSyDeModel
     end
 end
 
+function write_model_property_forxml(nodeprop::Models.PropertyArray)
+    newnode = ElementNode("data")
+    link!(newnode, AttributeNode("attr.type", "array"))
+    for (i, v) in enumerate(nodeprop)
+        childnode = write_model_property_forxml(v)
+        link!(childnode, AttributeNode("attr.name", string(i)))
+        link!(newnode, childnode)
+    end
+    return newnode
+end
+
+function write_model_property_forxml(nodeprop::Models.PropertyDict)
+    newnode = ElementNode("data")
+    link!(newnode, AttributeNode("attr.type", "object"))
+    for (k, v) in nodeprop
+        childnode = write_model_property_forxml(v)
+        link!(childnode, AttributeNode("attr.name", k))
+        link!(newnode, childnode)
+    end
+    return newnode
+end
+
+function write_model_property_forxml(nodeprop::Int)
+    newnode = ElementNode("data")
+    link!(newnode, AttributeNode("attr.type", "integer"))
+    link!(newnode, TextNode(string(nodeprop)))
+    return newnode
+end
+
+function write_model_property_forxml(nodeprop::Float32)
+    newnode = ElementNode("data")
+    link!(newnode, AttributeNode("attr.type", "float"))
+    link!(newnode, TextNode(string(nodeprop)))
+    return newnode
+end
+
+function write_model_property_forxml(nodeprop::Float64)
+    newnode = ElementNode("data")
+    link!(newnode, AttributeNode("attr.type", "double"))
+    link!(newnode, TextNode(string(nodeprop)))
+    return newnode
+end
+
+function write_model_property_forxml(nodeprop::Bool)
+    newnode = ElementNode("data")
+    link!(newnode, AttributeNode("attr.type", "bool"))
+    link!(newnode, TextNode(string(nodeprop)))
+    return newnode
+end
+
+function write_model_property_forxml(nodeprop::String)
+    newnode = ElementNode("data")
+    link!(newnode, AttributeNode("attr.type", "string"))
+    link!(newnode, TextNode(string(nodeprop)))
+    return newnode
+end
+
+
 function build_model_forxml(model::Models.ForSyDeModel)::EzXML.Node
     graphmlnode = ElementNode("graphml")
     link!(graphmlnode, AttributeNode("xmlns", "http://graphml.graphdrawing.org/xmlns"))
@@ -106,6 +164,11 @@ function build_model_forxml(model::Models.ForSyDeModel)::EzXML.Node
             portnode = ElementNode("port")
             link!(portnode, AttributeNode("name", port))
             link!(vnode, portnode)
+        end
+        for (propname, propelem) in v.properties
+            datanode = write_model_property_forxml(propelem)
+            link!(datanode, AttributeNode("attr.name", propname))
+            link!(vnode, datanode)
         end
         link!(vnode, AttributeNode("traits", join([string(t) for t in v.vertex_traits], ";")))
         link!(graphnode, vnode)

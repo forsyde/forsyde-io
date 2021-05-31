@@ -40,30 +40,6 @@ public final class VertexPropertyAcessor {
     }
   }
 
-  public static Optional<Integer> getMaxFloatOperations(Vertex vertex) {
-    if (vertex.properties.containsKey("max_float_operations")) {
-      return Optional.of((java.lang.Integer)vertex.properties.get("max_float_operations"));
-    } else {
-      return Optional.empty();
-    }
-  }
-
-  public static Optional<Integer> getMaxIntOperations(Vertex vertex) {
-    if (vertex.properties.containsKey("max_int_operations")) {
-      return Optional.of((java.lang.Integer)vertex.properties.get("max_int_operations"));
-    } else {
-      return Optional.empty();
-    }
-  }
-
-  public static Optional<Integer> getMaxBooleanOperations(Vertex vertex) {
-    if (vertex.properties.containsKey("max_boolean_operations")) {
-      return Optional.of((java.lang.Integer)vertex.properties.get("max_boolean_operations"));
-    } else {
-      return Optional.empty();
-    }
-  }
-
   public static Optional<Integer> getMaxMemorySizeInBytes(Vertex vertex) {
     if (vertex.properties.containsKey("max_memory_size_in_bytes")) {
       return Optional.of((java.lang.Integer)vertex.properties.get("max_memory_size_in_bytes"));
@@ -184,9 +160,9 @@ public final class VertexPropertyAcessor {
     }
   }
 
-  public static Optional<Map<String, Map<String, Integer>>> getMaxClockCyclesPerOp(Vertex vertex) {
+  public static Optional<Map<String, Integer>> getMaxClockCyclesPerOp(Vertex vertex) {
     if (vertex.properties.containsKey("max_clock_cycles_per_op")) {
-      return Optional.of((java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.Integer>>)vertex.properties.get("max_clock_cycles_per_op"));
+      return Optional.of((java.util.Map<java.lang.String, java.lang.Integer>)vertex.properties.get("max_clock_cycles_per_op"));
     } else {
       return Optional.empty();
     }
@@ -195,30 +171,6 @@ public final class VertexPropertyAcessor {
   public static Optional<Integer> getMaxMemoryInternalBytes(Vertex vertex) {
     if (vertex.properties.containsKey("max_memory_internal_bytes")) {
       return Optional.of((java.lang.Integer)vertex.properties.get("max_memory_internal_bytes"));
-    } else {
-      return Optional.empty();
-    }
-  }
-
-  public static Optional<Integer> getClockCyclesPerFloatOp(Vertex vertex) {
-    if (vertex.properties.containsKey("clock_cycles_per_float_op")) {
-      return Optional.of((java.lang.Integer)vertex.properties.get("clock_cycles_per_float_op"));
-    } else {
-      return Optional.empty();
-    }
-  }
-
-  public static Optional<Integer> getClockCyclesPerIntegerOp(Vertex vertex) {
-    if (vertex.properties.containsKey("clock_cycles_per_integer_op")) {
-      return Optional.of((java.lang.Integer)vertex.properties.get("clock_cycles_per_integer_op"));
-    } else {
-      return Optional.empty();
-    }
-  }
-
-  public static Optional<Integer> getClockCyclesPerBooleanOp(Vertex vertex) {
-    if (vertex.properties.containsKey("clock_cycles_per_boolean_op")) {
-      return Optional.of((java.lang.Integer)vertex.properties.get("clock_cycles_per_boolean_op"));
     } else {
       return Optional.empty();
     }

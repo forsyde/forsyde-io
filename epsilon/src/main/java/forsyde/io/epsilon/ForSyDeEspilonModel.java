@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import forsyde.io.java.core.Edge;
 import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeModel;
-import forsyde.io.java.core.Port;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.drivers.ForSyDeModelHandler;
@@ -269,32 +268,73 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 
 	@Override
 	public void deleteElement(Object instance) throws EolRuntimeException {
-		// TODO Auto-generated method stub
+		if (instance instanceof Vertex) {
+			removeVertex((Vertex) instance);
+		} else if (instance instanceof Edge) {
+			removeEdge((Edge) instance);
+		}
 
 	}
 
 	@Override
 	public boolean isOfKind(Object instance, String type) throws EolModelElementTypeNotFoundException {
-		// TODO Auto-generated method stub
+		if (type.equals("ForSyDeModel") && instance instanceof ForSyDeModel) {
+			return true;
+		} else if (type.equals("Vertex") && instance instanceof Vertex) {
+			return true;
+		} else if (type.equals("Edge") && instance instanceof Edge) {
+			return true;
+		} else if (isVertexTrait(type) && instance instanceof Vertex) {
+			return ((Vertex) instance).hasTrait(VertexTrait.valueOf(type));
+		} else if (isEdgeTrait(type)  && instance instanceof Edge) {
+			return ((Edge) instance).hasTrait(EdgeTrait.valueOf(type));
+		} else {
+			throw new EolModelElementTypeNotFoundException(getName(), "ForSyDeIO");
+		}
 		return false;
 	}
 
 	@Override
 	public boolean isOfType(Object instance, String type) throws EolModelElementTypeNotFoundException {
-		// TODO Auto-generated method stub
-		return false;
+		if (type.equals("ForSyDeModel") && instance instanceof ForSyDeModel) {
+			return true;
+		} else if (type.equals("Vertex") && instance instanceof Vertex) {
+			return true;
+		} else if (type.equals("Edge") && instance instanceof Edge) {
+			return true;
+		} else if (isVertexTrait(type) && instance instanceof Vertex) {
+			return ((Vertex) instance).vertexTraits.contains(VertexTrait.valueOf(type));
+		} else if (isEdgeTrait(type)  && instance instanceof Edge) {
+			return ((Edge) instance).edgeTraits.contains(EdgeTrait.valueOf(type));
+		} else {
+			throw new EolModelElementTypeNotFoundException(getName(), "ForSyDeIO");
+		}
 	}
 
 	@Override
 	public boolean owns(Object instance) {
-		// TODO Auto-generated method stub
-		return false;
+		if (instance instanceof Vertex) {
+			return vertexSet().contains(instance);
+		} else if (instance instanceof Edge) {
+			return edgeSet().contains(instance);
+		} else if (instance instanceof ForSyDeModel) {
+			return instance == this;
+		} else if (instance instanceof VertexTrait) {
+			return true;
+		} else if (instance instanceof EdgeTrait) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public boolean knowsAboutProperty(Object instance, String property) {
-		// TODO Auto-generated method stub
-		return false;
+		if (instance instanceof Vertex) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
@@ -323,14 +363,22 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 
 	@Override
 	public boolean store(String location) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			ForSyDeModelHandler.writeModel(this, location);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override
 	public boolean store() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			ForSyDeModelHandler.writeModel(this, "epsilon-forsyde-model.forxml");
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override

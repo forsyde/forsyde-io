@@ -250,6 +250,7 @@ public enum VertexTrait implements Trait {
       case ReactorActor:
       switch (other) {
         case ReactorActor: return true;
+        case ForSyDeFunction: return true;
         case ReactorElement: return true;
         default: return false;
       }
