@@ -1,3 +1,4 @@
+__precompile__()
 module ForSyDeIO
 
 include("ForSyDeIO/Models.jl")

@@ -1,3 +1,4 @@
+__precompile__()
 module Models
 
 import LightGraphs
@@ -10,10 +11,33 @@ abstract type EdgeTrait <: Trait end
 
 refines(t1::Trait, t2::Trait) = false
 
+abstract type PropertyStruct end
+
+const PropertyValues = Union{Int, Float32, Float64, String, Bool}
+
+const PropertyElement = Union{PropertyStruct, PropertyValues}
+
+struct PropertyArray <: PropertyStruct
+    wrapped_vector::Vector{PropertyElement}
+end
+
+getindex(v::PropertyArray, idx...) = getindex(v.wrapped_vector, idx...)
+
+setindex!(v::PropertyArray, X, idx...) = setindex!(v.wrapped_vector, X, idx...)
+struct PropertyDict <: PropertyStruct
+    wrapped_dict::Dict{String, PropertyElement}
+end
+
+getindex(d::PropertyDict, idx...) = getindex(d.wrapped_dict, idx...)
+
+setindex!(d::PropertyDict, X, idx...) = setindex!(d.wrapped_dict, X, idx...)
+
+get(d::PropertyDict, k, default) = get(d.wrapped_dict, k, default)
+
 struct Vertex
     id::String
     ports::Set{String}
-    properties::Dict{String,Any}
+    properties::Dict{String,PropertyElement}
     vertex_traits::Set{VertexTrait}
 end
 
@@ -41,18 +65,18 @@ end
 
 mutable struct ForSyDeModel <: LightGraphs.AbstractGraph{Vertex}
     vertexes::Vector{Vertex}
-    vertexes_lut::Dict{String,Vertex}
     edges::Vector{Edge}
-    edges_lut::Dict{Tuple{String,String},Vector{Edge}}
+    # properties::Vector{Dict{String, PropertyElement}}
+    # edges_lut::Dict{Tuple{String,String},Vector{Edge}}
     # edges_lut::AbstractDict{Tuple{VertexIdxType,VertexIdxType},AbstractArray{UInt}}
     # inv_edges_lut::AbstractDict{UInt,Tuple{VertexIdxType,VertexIdxType}}
-    inedges_lut::Dict{String,Vector{Edge}}
-    outedges_lut::Dict{String,Vector{Edge}}
+    # inedges_lut::Dict{String,Vector{Edge}}
+    # outedges_lut::Dict{String,Vector{Edge}}
 end # struct
 
 # Minimum interface required by LightGraphs
 
-ForSyDeModel() = ForSyDeModel(Vertex[], Dict{String,Vertex}(), Edge[], Dict{Tuple{String,String},Vector{Edge}}(), Dict{String,Vector{Edge}}(), Dict{String,Vector{Edge}}())
+ForSyDeModel() = ForSyDeModel(Vertex[], Edge[])#, Dict{String, PropertyElement}[])
 
 # LightGraphs interfaces
 
@@ -70,17 +94,17 @@ LightGraphs.vertices(model::ForSyDeModel) = model.vertexes
 
 LightGraphs.edgetype(model::ForSyDeModel) = Edge
 
-LightGraphs.has_edge(model::ForSyDeModel, s::Vertex, t::Vertex) = any(src(e) == s && dst(e) == t for e in model.edges) 
+LightGraphs.has_edge(model::ForSyDeModel, s::Vertex, t::Vertex) = any(Base.isequal(src(e),s) && Base.isequal(dst(e),t) for e in model.edges) 
 
-LightGraphs.has_vertex(model::ForSyDeModel, v::Vertex) = haskey(model.vertexes_lut, v)
+LightGraphs.has_vertex(model::ForSyDeModel, v::Vertex) = any(Base.isequal(vert, v) for vert in model.vertexes)
 
-LightGraphs.inneighbors(model::ForSyDeModel, v::Vertex) = [src(e) for e in model.inedges_lut[v.id]]
+LightGraphs.inneighbors(model::ForSyDeModel, v::Vertex) = (src(e) for e in model.edges if Base.isequal(dst(e),v))
 
 LightGraphs.is_directed(::Type{<:ForSyDeModel}) = true
 
 LightGraphs.is_directed(model::ForSyDeModel) = true
 
-LightGraphs.outneighbors(model::ForSyDeModel, v::Vertex) = [dst(e) for e in model.outedges_lut[v.id]]
+LightGraphs.outneighbors(model::ForSyDeModel, v::Vertex) = (dst(e) for e in model.edges if Base.isequal(src(e),v))
 
 LightGraphs.ne(model::ForSyDeModel) = length(model.edges)
 
@@ -93,47 +117,27 @@ Base.iterate(model::ForSyDeModel) = iterate(model.vertexes)
 
 Base.length(model::ForSyDeModel) = nv(model)
 
-function Base.push!(model::ForSyDeModel, vs::Vararg{<:Vertex})
+function Base.push!(model::ForSyDeModel, vs::Vararg{V}) where V <: Vertex
     for v in vs
-        if haskey(model.vertexes_lut, v.id)
-            return false
-        end
         push!(model.vertexes, v)
-        model.vertexes_lut[v.id] = v
     end
     return model
 end # function
 
-Base.getindex(model::ForSyDeModel, key::String) = model.vertexes_lut[key]
+Base.getindex(model::ForSyDeModel, key::String) = first(v for v in model.vertexes if Base.isequal(v.id,key))
 
 
 # Base.getindex(model::ForSyDeModel, keys::Vararg{String}) = (
 #     model.vertexes_lut[k] for k in keys if haskey(model.vertexes_lut, k)
 # )
 
-Base.firstindex(model::ForSyDeModel) = first(keys(model.vertexes_lut))
+Base.firstindex(model::ForSyDeModel) = firstindex(model.vertexes)
 
-Base.lastindex(model::ForSyDeModel) = last(keys(model.vertexes_lut))
+Base.lastindex(model::ForSyDeModel) = lastindex(model.vertexes)
 
-Base.get(model::ForSyDeModel, key::String, default) = get(model.vertexes_lut, key, default)
-
-function Base.push!(model::ForSyDeModel, es::Vararg{<:Edge})
+function Base.push!(model::ForSyDeModel, es::Vararg{E}) where E <: Edge
     for e in es
-        s = LightGraphs.src(e)
-        t = LightGraphs.dst(e)
         push!(model.edges, e)
-        if !haskey(model.edges_lut, (s.id, t.id))
-            model.edges_lut[(s.id, t.id)] = Edge[]
-        end
-        if !haskey(model.inedges_lut, t.id)
-            model.inedges_lut[t.id] = Edge[]
-        end
-        if !haskey(model.outedges_lut, s.id)
-            model.outedges_lut[s.id] = Edge[]
-        end
-        push!(model.edges_lut[(s.id, t.id)], e)
-        push!(model.outedges_lut[s.id], e)
-        push!(model.inedges_lut[t.id], e)
     end
     return model
 end
@@ -145,7 +149,7 @@ Base.getindex(model::ForSyDeModel, source::String, target::String) = get(model, 
 
 Base.getindex(model::ForSyDeModel, st::Tuple{Vertex,Vertex}) = get(model, st, Edge[])
 
-Base.get(model::ForSyDeModel, key::Tuple{String,String}, default) = get(model.edges_lut, key, default)
+Base.get(model::ForSyDeModel, key::Tuple{String,String}, default) = get(model.edges, key, default)
 
 include("Models/Traits.jl")
 

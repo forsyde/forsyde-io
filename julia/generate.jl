@@ -3,6 +3,7 @@ import JSON
 
 model = JSON.parsefile("meta.json")
 code = "# This file has been generated automatically by 'generate.jl'\n\n"
+code = code * "__precompile__()\n\n"
 code = code * "module Traits\n\n"
 code = code * "import ForSyDeIO.Models as Models\n\n"
 # open("package_template.py", 'r') do template_file
@@ -79,12 +80,12 @@ for (vidx, trait_name) in enumerate(edge_traits_idx)
     end
 end
 code = code * "\n"
-code = code * "vertex_trait_lut = Dict(\n"
+code = code * "const vertex_trait_lut = Dict(\n"
 code = code * Base.join(map((t) -> "  \"$t\" => $t()", vertex_traits_idx), ",\n")
 code = code * ")\n\n"
 
 code = code * "\n"
-code = code * "edge_trait_lut = Dict(\n"
+code = code * "const edge_trait_lut = Dict(\n"
 code = code * Base.join(map((t) -> "  \"$t\" => $t()", edge_traits_idx), ",\n")
 code = code * ")\n\n"
 
@@ -100,6 +101,12 @@ code = code * "    return edge_trait_lut[label]\n"
 code = code * "  else\n"
 code = code * "    return nothing\n"
 code = code * "  end\n"
+code = code * "end\n\n"
+
+code = code * "function is_trait(label::AbstractString)::Bool\n"
+code = code * "  global vertex_trait_lut\n"
+code = code * "  global edge_trait_lut\n"
+code = code * "  return haskey(vertex_trait_lut, label) || haskey(edge_trait_lut, label)\n"
 code = code * "end\n\n"
 
 code = code * "end # module"

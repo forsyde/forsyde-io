@@ -1,5 +1,7 @@
 # This file has been generated automatically by 'generate.jl'
 
+__precompile__()
+
 module Traits
 
 import ForSyDeIO.Models as Models
@@ -181,7 +183,7 @@ refines(t1::Annotation, t2::Annotation) = true
 
 refines(t1::Input, t2::Input) = true
 
-vertex_trait_lut = Dict(
+const vertex_trait_lut = Dict(
   "CustomScheduler" => CustomScheduler(),
   "InstrumentedCommunicationInterconnect" => InstrumentedCommunicationInterconnect(),
   "Goal" => Goal(),
@@ -222,7 +224,7 @@ vertex_trait_lut = Dict(
   "AbstractCommunicationComponent" => AbstractCommunicationComponent())
 
 
-edge_trait_lut = Dict(
+const edge_trait_lut = Dict(
   "Output" => Output(),
   "Composition" => Composition(),
   "AbstractScheduling" => AbstractScheduling(),
@@ -242,6 +244,12 @@ function make_trait(label::AbstractString)::Union{Nothing, <:Models.Trait}
   else
     return nothing
   end
+end
+
+function is_trait(label::AbstractString)::Bool
+  global vertex_trait_lut
+  global edge_trait_lut
+  return haskey(vertex_trait_lut, label) || haskey(edge_trait_lut, label)
 end
 
 end # module
