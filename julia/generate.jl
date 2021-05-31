@@ -5,7 +5,8 @@ model = JSON.parsefile("meta.json")
 code = "# This file has been generated automatically by 'generate.jl'\n\n"
 code = code * "__precompile__()\n\n"
 code = code * "module Traits\n\n"
-code = code * "import ForSyDeIO.Models as Models\n\n"
+code = code * "export VertexTrait, EdgeTrait, refines\n\n"
+# code = code * "import ForSyDeIO.Models as Models\n\n"
 # open("package_template.py", 'r') do template_file
 #     template = jinja2.Template(template_file.read())
 # end
@@ -25,28 +26,37 @@ for (vidx, (vname, vdata)) in enumerate(model["vertexTraits"])
     end
 end
 
-# code = code * "struct VertexTrait <: ForSyDeIO.Model.Trait begin\n"
+code = code * "@enum VertexTrait begin\n"
 for (vidx, trait_name) in enumerate(vertex_traits_idx)
     global code
-    code = code * "struct $trait_name <: Models.VertexTrait end\n"
+    code = code * "  $trait_name\n"
 end
-# code = code * "end\n\nfunction refines(t1::VertexTrait, t2::VertexTrait)\n"
+code = code * "end\n\n"
 # code = code * "  if t1 == t2\n"
 # code = code * "\n"
+# for (vidx, trait_name) in enumerate(vertex_traits_idx)
+#     global code
+#     instance_name = trait_name * "Instance"
+#     code = code * "const $instance_name = $trait_name()\n"
+# end
+
+code = code * "function refines(t1::VertexTrait, t2::VertexTrait)\n"
 for (vidx, trait_name) in enumerate(vertex_traits_idx)
     global code
-    code = code * "\n"
+    code = code * "  if t1 == $trait_name\n"
     for (oidx, trait_name_other) in enumerate(vertex_traits_idx)
         if has_path(vertexTraitGraph, vidx, oidx)
             global code
-            code = code * "refines(t1::$trait_name, t2::$trait_name_other) = true\n" 
+            code = code * "    if t2 == $trait_name_other\n"#"refines(t1::$trait_name, t2::$trait_name_other) = true\n" 
+            code = code * "      return true\n"
             #  elseif t1 == $trait_name && t2 == $trait_name_other\n"
-            # code = code * "    return true\n"
+            code = code * "    end\n"
         end
     end
+    code = code * "  end\n"
 end
-# code = code * "  else\n    return false\n  end\n"
-code = code * "\n\n"
+code = code * "  return false\n"
+code = code * "end\n\n"
 
 # build the trait edge graph
 edge_traits_idx = [m for m in keys(model["edgeTraits"])]
@@ -60,54 +70,91 @@ for (vidx, (vname, vdata)) in enumerate(model["edgeTraits"])
     end
 end
 
-#code = code * "@enum EdgeTrait <: ForSyDeIO.Model.Trait begin\n"
+code = code * "@enum EdgeTrait begin\n"
 for (vidx, trait_name) in enumerate(edge_traits_idx)
     global code
-    code = code * "struct $trait_name <: Models.EdgeTrait end\n"
+    code = code * "  $trait_name\n"
 end
-# code = code * "end\n\nfunction refines(t1::EdgeTrait, t2::EdgeTrait)\n"
-# code = code * "  if t1 == t2\n"
+code = code * "end\n\n"
+    # code = code * "  if t1 == t2\n"
+    # code = code * "\n"
+    # for (vidx, trait_name) in enumerate(vertex_traits_idx)
+    #     global code
+    #     instance_name = trait_name * "Instance"
+    #     code = code * "const $instance_name = $trait_name()\n"
+    # end
+    
+code = code * "function refines(t1::EdgeTrait, t2::EdgeTrait)\n"
 for (vidx, trait_name) in enumerate(edge_traits_idx)
     global code
-    code = code * "\n"
+    code = code * "  if t1 == $trait_name\n"
     for (oidx, trait_name_other) in enumerate(edge_traits_idx)
         if has_path(edgeTraitGraph, vidx, oidx)
             global code
-            code = code * "refines(t1::$trait_name, t2::$trait_name_other) = true\n" 
-            #code = code * "  elseif t1 == $trait_name && t2 == $trait_name_other\n"
-            #code = code * "    return true\n"
+            code = code * "    if t2 == $trait_name_other\n"#"refines(t1::$trait_name, t2::$trait_name_other) = true\n" 
+            code = code * "      return true\n"
+            #  elseif t1 == $trait_name && t2 == $trait_name_other\n"
+            code = code * "    end\n"
         end
     end
+    code = code * "  end\n"
 end
+code = code * "  return false\n"
+code = code * "end\n\n"
+
+#code = code * "@enum EdgeTrait <: ForSyDeIO.Model.Trait begin\n"
+# for (vidx, trait_name) in enumerate(edge_traits_idx)
+#     global code
+#     code = code * "struct $trait_name <: Models.EdgeTrait end\n"
+# end
+
+# code = code * "\n"
+# for (vidx, trait_name) in enumerate(edge_traits_idx)
+#     global code
+#     instance_name = trait_name * "Instance"
+#     code = code * "const $instance_name = $trait_name()\n"
+# end
+# code = code * "end\n\nfunction refines(t1::EdgeTrait, t2::EdgeTrait)\n"
+# code = code * "  if t1 == t2\n"
+# for (vidx, trait_name) in enumerate(edge_traits_idx)
+#     global code
+#     code = code * "\n"
+#     for (oidx, trait_name_other) in enumerate(edge_traits_idx)
+#         if has_path(edgeTraitGraph, vidx, oidx)
+#             global code
+#             code = code * "refines(t1::$trait_name, t2::$trait_name_other) = true\n" 
+#             #code = code * "  elseif t1 == $trait_name && t2 == $trait_name_other\n"
+#             #code = code * "    return true\n"
+#         end
+#     end
+# end
 code = code * "\n"
 code = code * "const vertex_trait_lut = Dict(\n"
-code = code * Base.join(map((t) -> "  \"$t\" => $t()", vertex_traits_idx), ",\n")
+code = code * Base.join(map((t) -> "  \"$t\" => $t", vertex_traits_idx), ",\n")
 code = code * ")\n\n"
 
 code = code * "\n"
 code = code * "const edge_trait_lut = Dict(\n"
-code = code * Base.join(map((t) -> "  \"$t\" => $t()", edge_traits_idx), ",\n")
+code = code * Base.join(map((t) -> "  \"$t\" => $t", edge_traits_idx), ",\n")
 code = code * ")\n\n"
 
 
 #code = code * "@enum EdgeTrait <: ForSyDeIO.Model.Trait begin\n"
-code = code * "function make_trait(label::AbstractString)::Union{Nothing, <:Models.Trait}\n"
-code = code * "  global vertex_trait_lut\n"
-code = code * "  global edge_trait_lut\n"
-code = code * "  if haskey(vertex_trait_lut, label)\n"
-code = code * "    return vertex_trait_lut[label]\n"
-code = code * "  elseif haskey(edge_trait_lut, label)\n"
-code = code * "    return edge_trait_lut[label]\n"
-code = code * "  else\n"
-code = code * "    return nothing\n"
-code = code * "  end\n"
-code = code * "end\n\n"
+code = code * "make_trait_vertex(label::AbstractString) = vertex_trait_lut[label]\n"
 
-code = code * "function is_trait(label::AbstractString)::Bool\n"
-code = code * "  global vertex_trait_lut\n"
-code = code * "  global edge_trait_lut\n"
-code = code * "  return haskey(vertex_trait_lut, label) || haskey(edge_trait_lut, label)\n"
-code = code * "end\n\n"
+code = code * "make_trait_edge(label::AbstractString) = edge_trait_lut[label]\n"
+
+# code = code * "function make_trait(label::AbstractString)::M where M <: Models.Trait\n"
+# code = code * "  global vertex_trait_lut\n"
+# code = code * "  global edge_trait_lut\n"
+# code = code * "  if haskey(vertex_trait_lut, label)\n"
+# code = code * "    return vertex_trait_lut[label]\n"
+# code = code * "  else\n"
+# code = code * "    return edge_trait_lut[label]\n"
+# code = code * "end\n\n"
+
+code = code * "is_trait(label::AbstractString)::Bool = haskey(vertex_trait_lut, label) || haskey(edge_trait_lut, label)\n"
+# code = code * "end\n\n"
 
 code = code * "end # module"
 

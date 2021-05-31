@@ -1,15 +1,11 @@
 __precompile__()
 module Models
 
+include("Models/Traits.jl")
+
 import LightGraphs
 
-VertexIdxType = UInt
-
-abstract type Trait end
-abstract type VertexTrait <: Trait end
-abstract type EdgeTrait <: Trait end
-
-refines(t1::Trait, t2::Trait) = false
+using ForSyDeIO.Models.Traits
 
 abstract type PropertyStruct end
 
@@ -20,6 +16,8 @@ const PropertyElement = Union{PropertyStruct, PropertyValues}
 struct PropertyArray <: PropertyStruct
     wrapped_vector::Vector{PropertyElement}
 end
+
+iterate(v::PropertyArray) = Base.iterate(v.wrapped_vector)
 
 getindex(v::PropertyArray, idx...) = getindex(v.wrapped_vector, idx...)
 
@@ -45,7 +43,7 @@ Vertex(id::String) = Vertex(id, Set{String}(), Dict{String,Any}(), Set{Trait}())
 
 Vertex(id::String, ports::Set{String}) = Vertex(id, ports, Dict{String,Any}(), Set{Trait}())
 
-==(v1::Vertex, v2::Vertex) = v1.id == v2.id
+isequal(v1::Vertex, v2::Vertex) = v1.id == v2.id
 
 hash(v::Vertex) = hash(v.id)
 
@@ -57,7 +55,7 @@ struct Edge
     edge_traits::Set{EdgeTrait}
 end
 
-==(e1::Edge, e2::Edge) = (e1.source == e2.source && 
+isequal(e1::Edge, e2::Edge) = (e1.source == e2.source && 
                           e1.target == e2.target && 
                           e1.source_port == e2.source_port && 
                           e1.target_port == e2.target_port && 
@@ -79,6 +77,10 @@ end # struct
 ForSyDeModel() = ForSyDeModel(Vertex[], Edge[])#, Dict{String, PropertyElement}[])
 
 # LightGraphs interfaces
+
+dst(e::Edge) = LightGraphs.dst(e::Edge)
+
+src(e::Edge) = LightGraphs.src(e::Edge)
 
 LightGraphs.dst(e::Edge) = e.target[]
 
@@ -113,13 +115,14 @@ LightGraphs.nv(model::ForSyDeModel) = length(model.vertexes)
 # Additional functions for model CRUD
 
 ## Iterable interface
-Base.iterate(model::ForSyDeModel) = iterate(model.vertexes)
+Base.iterate(model::ForSyDeModel) = Base.iterate(model.vertexes)
+Base.iterate(model::ForSyDeModel, state) = Base.iterate(model.vertexes, state)
 
 Base.length(model::ForSyDeModel) = nv(model)
 
 function Base.push!(model::ForSyDeModel, vs::Vararg{V}) where V <: Vertex
     for v in vs
-        push!(model.vertexes, v)
+        Base.push!(model.vertexes, v)
     end
     return model
 end # function
@@ -137,7 +140,7 @@ Base.lastindex(model::ForSyDeModel) = lastindex(model.vertexes)
 
 function Base.push!(model::ForSyDeModel, es::Vararg{E}) where E <: Edge
     for e in es
-        push!(model.edges, e)
+        Base.push!(model.edges, e)
     end
     return model
 end
@@ -150,7 +153,5 @@ Base.getindex(model::ForSyDeModel, source::String, target::String) = get(model, 
 Base.getindex(model::ForSyDeModel, st::Tuple{Vertex,Vertex}) = get(model, st, Edge[])
 
 Base.get(model::ForSyDeModel, key::Tuple{String,String}, default) = get(model.edges, key, default)
-
-include("Models/Traits.jl")
 
 end # module

@@ -5,7 +5,7 @@ using ForSyDeIO.Models
 using ForSyDeIO.Models.Traits
 using EzXML
 
-export load_model
+export load_model, write_model
 
 load_model_forxml(name::String) = load_model_forxml(open(name, "r"))
 
@@ -20,7 +20,7 @@ function load_model_forxml(doc::EzXML.Document)::Models.ForSyDeModel
         traits = Set{Models.VertexTrait}()
         for tname in split(vnode["traits"], ";")
             if Traits.is_trait(tname)
-                push!(traits, Traits.make_trait(tname))
+                push!(traits, Traits.make_trait_vertex(tname))
             end
         end
         ports = Set{String}()
@@ -49,7 +49,7 @@ function load_model_forxml(doc::EzXML.Document)::Models.ForSyDeModel
         targetport = haskey(enode, "targetport") ? enode["targetport"] : nothing
         for tname in split(enode["traits"], ";")
             if Traits.is_trait(tname)
-                push!(traits, Traits.make_trait(tname))
+                push!(traits, Traits.make_trait_edge(tname))
             end
         end
         push!(new_model, Models.Edge(source, target, sourceport, targetport, traits))
@@ -84,12 +84,67 @@ function load_model_property_forxml(node)::Models.PropertyElement
     end
 end
 
-function load_model(name::String)::Models.ForSyDeModel
+function load_model(name::AbstractString)::Models.ForSyDeModel
     if endswith(name, ".forxml")
         return load_model_forxml(name)
     else
         error("File '$name' is not in a supported readable format.")
     end
 end
+
+function build_model_forxml(model::Models.ForSyDeModel)::EzXML.Node
+    graphmlnode = ElementNode("graphml")
+    link!(graphmlnode, AttributeNode("xmlns", "http://graphml.graphdrawing.org/xmlns"))
+    graphnode = ElementNode("graph")
+    link!(graphnode, AttributeNode("id", "model"))
+    link!(graphnode, AttributeNode("edgedefault", "directed"))
+    link!(graphmlnode, graphnode)
+    for v in model
+        vnode = ElementNode("node")
+        link!(vnode, AttributeNode("id", v.id))
+        for port in v.ports
+            portnode = ElementNode("port")
+            link!(portnode, AttributeNode("name", port))
+            link!(vnode, portnode)
+        end
+        link!(vnode, AttributeNode("traits", join([string(t) for t in v.vertex_traits], ";")))
+        link!(graphnode, vnode)
+    end
+    for e in model.edges
+        enode = ElementNode("edge")
+        link!(enode, AttributeNode("source", Models.src(e).id))
+        link!(enode, AttributeNode("target", Models.dst(e).id))
+        if !isnothing(e.source_port)
+            link!(enode, AttributeNode("sourceport", e.source_port))
+        end
+        if !isnothing(e.target_port)
+            link!(enode, AttributeNode("targetport", e.target_port))
+        end
+        link!(enode, AttributeNode("traits", join([string(t) for t in e.edge_traits], ";")))
+        link!(graphnode, enode)
+    end
+    return graphmlnode
+end
+
+function write_model_forxml(model::Models.ForSyDeModel, outstream::IO)
+    doc = XMLDocument()
+    setroot!(doc, build_model_forxml(model))
+    print(outstream, doc)
+end
+
+function write_model_forxml(model, name::AbstractString)
+    open(name, "w") do f
+        write_model_forxml(model, f)    
+    end
+end
+
+function write_model(model::Models.ForSyDeModel, name::AbstractString)
+    if endswith(name, ".forxml")
+        write_model_forxml(model, name)
+    else
+        error("File '$name' is not in a supported writable format.")
+    end
+end
+
 
 end # module

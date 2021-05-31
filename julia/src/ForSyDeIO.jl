@@ -4,9 +4,9 @@ module ForSyDeIO
 include("ForSyDeIO/Models.jl")
 include("ForSyDeIO/Drivers.jl")
 
-import ForSyDeIO.Drivers: load_model
+using ForSyDeIO.Drivers
 
-export load_model 
+export load_model, write_model
 
 # Write your package code here.
 
