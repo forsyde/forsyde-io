@@ -272,6 +272,8 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 			removeVertex((Vertex) instance);
 		} else if (instance instanceof Edge) {
 			removeEdge((Edge) instance);
+		} else {
+			throw new EolRuntimeException("Cannot delete instance " + instance.toString());
 		}
 
 	}
@@ -331,6 +333,79 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 	@Override
 	public boolean knowsAboutProperty(Object instance, String property) {
 		if (instance instanceof Vertex) {
+			switch (property) {
+			case "id": return true;
+			case "ports": return true;
+			case "properties": return true;
+			case "traits": return true;
+			default:
+				Vertex v = (Vertex) instance;
+				return v.properties.containsKey(property);
+			}
+		} else if (instance instanceof Edge) {
+			switch (property) {
+			case "source": return true;
+			case "target": return true;
+			case "sourceport": return true;
+			case "targetport": return true;
+			case "traits": return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isPropertySet(Object instance, String property) throws EolRuntimeException {
+		if (instance instanceof Vertex) {
+			Vertex v = (Vertex) instance;
+			switch (property) {
+			case "id": return v.identifier != null && !v.identifier.isBlank();
+			case "ports": return true;
+			case "properties": return true;
+			case "traits": return true;
+			default:
+				return v.properties.containsKey(property);
+			}
+		} else if (instance instanceof Edge) {
+			Edge e = (Edge) instance;
+			switch (property) {
+			case "source": return e.source != null;
+			case "target": return e.target != null;
+			case "sourceport": return e.sourcePort.isPresent();
+			case "targetport": return e.targetPort.isPresent();
+			case "traits": return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isInstantiable(String type) {
+		if (type.equals("ForSyDeModel")) {
+			return true;
+		} else if (type.equals("Vertex")) {
+			return true;
+		} else if (type.equals("Edge")) {
+			return true;
+		} else if (isVertexTrait(type)) {
+			return true;
+		} else if (isEdgeTrait(type)) {
+			return true;
+		} 
+		return false;
+	}
+
+	@Override
+	public boolean isModelElement(Object instance) {
+		if (instance instanceof Vertex) {
+			return true;
+		} else if (instance instanceof Edge) {
+			return true;
+		} else if (instance instanceof ForSyDeModel) {
+			return true;
+		} else if (instance instanceof VertexTrait) {
+			return true;
+		} else if (instance instanceof EdgeTrait) {
 			return true;
 		} else {
 			return false;
@@ -338,26 +413,18 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 	}
 
 	@Override
-	public boolean isPropertySet(Object instance, String property) throws EolRuntimeException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isInstantiable(String type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isModelElement(Object instance) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean hasType(String type) {
-		// TODO Auto-generated method stub
+		if (type.equals("ForSyDeModel")) {
+			return true;
+		} else if (type.equals("Vertex")) {
+			return true;
+		} else if (type.equals("Edge")) {
+			return true;
+		} else if (isVertexTrait(type)) {
+			return true;
+		} else if (isEdgeTrait(type)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -383,8 +450,8 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		removeAllEdges(edgeSet());
+		removeAllVertices(vertexSet());
 	}
 
 	@Override

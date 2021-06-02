@@ -29,7 +29,7 @@ function load_model_forxml(doc::EzXML.Document)::Models.ForSyDeModel
         end
         # ports = Set(pnode["name"] for pnode in findall("forsyde:port", vnode, model_ns))
 		# traits = filter(!isnothing, Set(Traits.make_trait(tname) for tname in split(vnode["traits"], ";")))
-        props = Dict{String, Models.PropertyElement}()
+        props = Dict{String,Models.PropertyElement}()
         for propnode in findall("forsyde:data", vnode, model_ns)
             props[propnode["attr.name"]] = load_model_property_forxml(propnode)
         end
@@ -58,12 +58,12 @@ function load_model_forxml(doc::EzXML.Document)::Models.ForSyDeModel
 end # function
 
 function load_model_property_forxml(node)::Models.PropertyElement
-    if node["attr.type"] == "object"
-        new_dict = Dict{String, Models.PropertyElement}()
+        if node["attr.type"] == "object"
+        new_dict = Dict{String,Models.PropertyElement}()
         for e in eachelement(node)
             new_dict[e["attr.name"]] = load_model_property_forxml(e)
         end
-        return Models.PropertyDict(new_dict)
+    return Models.PropertyDict(new_dict)
     elseif node["attr.type"] == "array"
         new_array = Vector{Models.PropertyElement}()
         for e in eachelement(node)
@@ -177,10 +177,10 @@ function build_model_forxml(model::Models.ForSyDeModel)::EzXML.Node
         enode = ElementNode("edge")
         link!(enode, AttributeNode("source", Models.src(e).id))
         link!(enode, AttributeNode("target", Models.dst(e).id))
-        if !isnothing(e.source_port)
+            if !isnothing(e.source_port)
             link!(enode, AttributeNode("sourceport", e.source_port))
         end
-        if !isnothing(e.target_port)
+            if !isnothing(e.target_port)
             link!(enode, AttributeNode("targetport", e.target_port))
         end
         link!(enode, AttributeNode("traits", join([string(t) for t in e.edge_traits], ";")))
