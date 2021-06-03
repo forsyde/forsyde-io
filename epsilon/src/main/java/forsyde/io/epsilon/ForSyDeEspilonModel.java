@@ -1,19 +1,9 @@
 package forsyde.io.epsilon;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import forsyde.io.java.core.*;
+import forsyde.io.java.drivers.ForSyDeModelHandler;
 import org.eclipse.epsilon.common.util.StringProperties;
-import org.eclipse.epsilon.eol.compile.context.MetamodelRepository;
 import org.eclipse.epsilon.eol.compile.m3.Metamodel;
-import org.eclipse.epsilon.eol.compile.m3.MetamodelFactory;
-import org.eclipse.epsilon.eol.exceptions.EolNotApplicableOperationException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
@@ -28,44 +18,50 @@ import org.jgrapht.Graphs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import forsyde.io.java.core.Edge;
-import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeModel;
-import forsyde.io.java.core.Vertex;
-import forsyde.io.java.core.VertexTrait;
-import forsyde.io.java.drivers.ForSyDeModelHandler;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 	
-
+	private String modelPath = "model.forxml";
 	private Logger logger = LoggerFactory.getLogger(ForSyDeEspilonModel.class);
 	private static final long serialVersionUID = 1L;
 	private long genSymCounter = 0L;
+	private boolean readOnLoad = false;
+	private boolean storedOnDisposal = false;
+	// until the setter has object in its calling method, they have to be created everytime
+	// for parallel execution to work.
+	// https://www.eclipse.org/lists//epsilon-dev/msg00492.html
+	// protected ForSyDeEpsilonIPropSetter setter = new ForSyDeEpsilonIPropSetter();
+	protected ForSyDeEpsilonIPropGetter getter = new ForSyDeEpsilonIPropGetter();
 	public String modelName = "Model";
 
 	@Override
 	public void load(StringProperties properties) throws EolModelLoadingException {
-		//TODO what is this?
+		load();
 	}
 
 	@Override
 	public void load(StringProperties properties, String basePath) throws EolModelLoadingException {
-		try {
-			Graphs.addGraph(this, ForSyDeModelHandler.loadModel(basePath));
-		} catch (Exception e) {
-			throw new EolModelLoadingException(e, this);		
-		}
+		modelPath = basePath;
+		load(properties);
 	}
 
 	@Override
 	public void load(StringProperties properties, IRelativePathResolver relativePathResolver)
 			throws EolModelLoadingException {
-		// TODO implement this
+		modelPath = relativePathResolver.resolve(modelPath);
+		load(properties);
 	}
 
 	@Override
 	public void load() throws EolModelLoadingException {
-		//TODO what is this?
+		try {
+			Graphs.addGraph(this, ForSyDeModelHandler.loadModel(modelPath));
+		} catch (Exception e) {
+			throw new EolModelLoadingException(e, this);		
+		}
 	}
 
 	@Override
@@ -189,7 +185,9 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 		if (type.equals("ForSyDeModel")) {
 			return this;
 		} else if (type.equals("Vertex")) {
-			return new Vertex(genSym("vertex"));
+			Vertex v = new Vertex(genSym("vertex"));
+			addVertex(v);
+			return v;
 		} else if (type.equals("Edge")) {
 			return new Edge(null, null);
 		} else if (isVertexTrait(type)) {
@@ -205,7 +203,27 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 	public Object createInstance(String type, Collection<Object> parameters)
 			throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
 		logger.debug(parameters.toString());
-		return createInstance(type);
+		if (type.equals("ForSyDeModel")) {
+			return this;
+		} else if (type.equals("Vertex") && parameters.size() == 1) {
+			String id = (String) parameters.iterator().next();
+			Vertex v = new Vertex(id);
+			addVertex(v);
+			return v;
+		} else if (type.equals("Edge") && parameters.size() == 2) {
+			Iterator<Object> inputs = parameters.iterator();
+			Vertex source = (Vertex) inputs.next();
+			Vertex target = (Vertex) inputs.next();
+			Edge e = new Edge(source, target); 
+			addEdge(source, target, e);
+			return e;
+		} else if (isVertexTrait(type)) {
+			return VertexTrait.valueOf(type);
+		} else if (isEdgeTrait(type)) {
+			return EdgeTrait.valueOf(type);
+		} else {
+			return createInstance(type);
+		}
 	}
 
 	@Override
@@ -293,7 +311,6 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 		} else {
 			throw new EolModelElementTypeNotFoundException(getName(), "ForSyDeIO");
 		}
-		return false;
 	}
 
 	@Override
@@ -332,51 +349,12 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 
 	@Override
 	public boolean knowsAboutProperty(Object instance, String property) {
-		if (instance instanceof Vertex) {
-			switch (property) {
-			case "id": return true;
-			case "ports": return true;
-			case "properties": return true;
-			case "traits": return true;
-			default:
-				Vertex v = (Vertex) instance;
-				return v.properties.containsKey(property);
-			}
-		} else if (instance instanceof Edge) {
-			switch (property) {
-			case "source": return true;
-			case "target": return true;
-			case "sourceport": return true;
-			case "targetport": return true;
-			case "traits": return true;
-			}
-		}
-		return false;
+		return getter.hasProperty(instance, property);
 	}
 
 	@Override
 	public boolean isPropertySet(Object instance, String property) throws EolRuntimeException {
-		if (instance instanceof Vertex) {
-			Vertex v = (Vertex) instance;
-			switch (property) {
-			case "id": return v.identifier != null && !v.identifier.isBlank();
-			case "ports": return true;
-			case "properties": return true;
-			case "traits": return true;
-			default:
-				return v.properties.containsKey(property);
-			}
-		} else if (instance instanceof Edge) {
-			Edge e = (Edge) instance;
-			switch (property) {
-			case "source": return e.source != null;
-			case "target": return e.target != null;
-			case "sourceport": return e.sourcePort.isPresent();
-			case "targetport": return e.targetPort.isPresent();
-			case "traits": return true;
-			}
-		}
-		return false;
+		return getter.isPropertySet(instance, property);
 	}
 
 	@Override
@@ -450,44 +428,52 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 
 	@Override
 	public void dispose() {
-		removeAllEdges(edgeSet());
-		removeAllVertices(vertexSet());
+		if (storedOnDisposal) {
+			try {
+				ForSyDeModelHandler.writeModel(this, modelPath);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		// the next loops are necessary to avoid concurrent modification exceptions
+		for (Vertex v : vertexSet()) {
+			for (Vertex o : vertexSet()) {
+				removeAllEdges(v, o);
+			}
+		}
+		for (Vertex v : new HashSet<>(vertexSet())) {
+			removeVertex(v);
+		}
 	}
 
 	@Override
 	public IPropertyGetter getPropertyGetter() {
-		// TODO Auto-generated method stub
-		return null;
+		return getter;
 	}
 
 	@Override
 	public IPropertySetter getPropertySetter() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ForSyDeEpsilonIPropSetter();
 	}
 
 	@Override
 	public boolean isStoredOnDisposal() {
-		// TODO Auto-generated method stub
-		return false;
+		return storedOnDisposal;
 	}
 
 	@Override
 	public void setStoredOnDisposal(boolean storedOnDisposal) {
-		// TODO Auto-generated method stub
-
+		this.storedOnDisposal = storedOnDisposal;
 	}
 
 	@Override
 	public boolean isReadOnLoad() {
-		// TODO Auto-generated method stub
-		return false;
+		return readOnLoad;
 	}
 
 	@Override
 	public void setReadOnLoad(boolean readOnLoad) {
-		// TODO Auto-generated method stub
-
+		this.readOnLoad = readOnLoad;
 	}
 
 	@Override
@@ -503,7 +489,7 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 		meta.setName("ForSyDeIO");
 		return meta;
 	}
-	
+	 
 	protected boolean isVertexTrait(String type) {
 		return Stream.of(VertexTrait.values()).anyMatch(vt -> vt.getName().equals(type));
 	}
@@ -517,5 +503,8 @@ public class ForSyDeEspilonModel extends ForSyDeModel implements IModel {
 		genSymCounter += 1L;
 		return out;
 	}
-
+	
+	protected Object getTypeOf(Vertex v) {
+		return Vertex.class;
+	};
 }
