@@ -9,15 +9,17 @@
 plugins {
   id 'java-library'
   id 'maven-publish'
-  // id 'signing'
+  id 'signing'
   id 'java'
-  id 'eclipse'
   id 'idea'
+  id 'eclipse'
   //id "io.freefair.lombok" version "5.3.0"
   //id "com.jfrog.bintray" version "1.8.5"
   id 'maven'
   id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
 }
+
+sourceCompatibility = 1.11
 
 ext {
   artifactName = 'forsyde-io-epsilon'
@@ -30,7 +32,6 @@ version = '0.3.5'
 
 repositories {
   mavenCentral()
-  mavenLocal()
   jcenter()
 }
 
@@ -55,3 +56,96 @@ eclipse {
     name = artifactName
   }
 }
+
+java {
+  withSourcesJar()
+  withJavadocJar()
+}
+
+jar {
+    archiveFileName = "${artifactName}" + '-' + "${version}" + '.jar'
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      artifactId = artifactName
+      from components.java
+      pom {
+        name = 'ForSyDe IO Epsilon'
+        description = 'ForSyDe IO Epsilon Driver'
+        url = 'https://github.com/forsyde/forsyde-io'
+        packaging = 'jar'
+        scm {
+          connection = 'scm:git:https://github.com/forsyde/forsyde-io.git'
+          developerConnection = 'scm:git:git@github.com:forsyde/forsyde-io.git'
+          url = 'https://github.com/forsyde/forsyde-io'
+        }
+        licenses {
+          license {
+            name = 'The MIT License'
+            url = 'https://choosealicense.com/licenses/mit/'
+          }
+        }
+        developers {
+          developer {
+            id = 'Jordao'
+            name = 'Rodolfo Jordao'
+            email = 'jordao@kth.se'
+          }
+        }
+      }
+    }
+  }
+  repositories {
+    maven {
+      name = 'OSSRH'
+      url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+      credentials {
+        username = project.hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('MAVEN_USERNAME') ?: System.getenv('OSSRH_USERNAME') ?: ''
+        password = project.hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('MAVEN_PASSWORD') ?: System.getenv('OSSRH_PASSWORD') ?: ''
+      }
+    }
+  // maven {
+  //   name = "GitHubPackages"
+  //   url = uri("https://maven.pkg.github.com/forsyde/forsyde-io")
+  //   credentials {
+  //     username = System.getenv("GITHUB_ACTOR") ?: ""
+  //     password = System.getenv("GITHUB_TOKEN") ?: ""
+  //   }
+  // }
+  }
+}
+
+nexusPublishing {
+  repositories {
+    sonatype {
+      username = project.hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('MAVEN_USERNAME') ?: System.getenv('OSSRH_USERNAME') ?: ''
+      password = project.hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('MAVEN_PASSWORD') ?: System.getenv('OSSRH_PASSWORD') ?: ''
+    }
+  }
+}
+
+test {
+    useJUnit()
+    maxHeapSize = '1G'
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+  // small hack to work offline or online
+  if (project.hasProperty('signing.keyId') && findProperty('signing.gnupg') == "true") {
+    useGpgCmd()
+  } else {
+    useInMemoryPgpKeys(
+      System.getenv('GPG_SIGNING_KEY') ?: findProperty('signing.key'),
+      System.getenv('GPG_SIGNING_PASSWORD') ?: findProperty('signing.password') ?: '' //default to an empty password
+    )
+  }
+  sign publishing.publications.mavenJava
+  sign configurations.archives
+}
+
