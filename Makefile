@@ -21,8 +21,11 @@ prepare-version-v%:
 	@echo "Correcting language specific versions"
 	sed -i "s/version = \"\w*\.\w*\.\w*\"/version = \"$*\"/" python/pyproject.toml
 	sed -i "s/version = '\w*\.\w*\.\w*'/version = '$*'/" java/build.gradle
+	sed -i "s/version = '\w*\.\w*\.\w*'/version = '$*'/" epsilon/build.gradle
 	sed -i "s/version = \"\w*\.\w*\.\w*\"/version = \"$*\"/" julia/Project.toml
 	sed -i "s/version:(\S*)\"\w*\.\w*\.\w*\"/version:#1\"$*\"/" haskell/package.yaml
+	@echo "Correct libraries interdependencies"
+	sed -i "s/forsyde-io-java:\w*\.\w*\.\w*/forsyde-io-java:$*/" epsilon/build.gradle
 
 all: generate-code
 

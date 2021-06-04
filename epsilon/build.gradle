@@ -27,7 +27,7 @@ ext {
 
 group = 'io.github.forsyde'
 archivesBaseName = ext.artifactName
-version = '0.3.5'
+version = '0.3.6'
 
 
 repositories {
@@ -40,7 +40,7 @@ dependencies {
     // The production code uses the SLF4J logging API at compile time
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'org.eclipse.epsilon:epsilon-core:1.5.1'
-    implementation 'io.github.forsyde:forsyde-io-java:0.3.5'
+    implementation 'io.github.forsyde:forsyde-io-java:0.3.6'
     implementation 'org.jgrapht:jgrapht-core:1.5.1'
 
     // Declare the dependency for your favourite test framework you want to use in your tests.
