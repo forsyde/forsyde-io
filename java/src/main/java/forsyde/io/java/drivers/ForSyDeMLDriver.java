@@ -75,14 +75,14 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			Element vertexElem = (Element) vertexList.item(i);
 			// TODO: the type creation could be safer or signal some exception
 			Vertex vertex = new Vertex(vertexElem.getAttribute("id"));
-			vertex.vertexTraits = Stream.of(vertexElem.getAttribute("traits").split(";")).map(s -> VertexTrait.valueOf(s)).collect(Collectors.toSet());
+			vertex.vertexTraits = Stream.of(vertexElem.getAttribute("traits").split(";"))
+					.map(s -> VertexTrait.valueOf(s)).collect(Collectors.toSet());
 			model.addVertex(vertex);
 			// iterate through ports and add them
 			NodeList portsList = (NodeList) xPath.compile("port").evaluate(vertexElem, XPathConstants.NODESET);
 			for (int j = 0; j < portsList.getLength(); j++) {
 				Element portElem = (Element) portsList.item(j);
-				Port port = new Port(portElem.getAttribute("name"));
-				vertex.ports.add(port);
+				vertex.ports.add(portElem.getAttribute("name"));
 			}
 			// iterate through properties and add them
 			NodeList propertyList = (NodeList) xPath.compile("data").evaluate(vertexElem, XPathConstants.NODESET);
@@ -103,15 +103,16 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			Vertex source = model.vertexSet().stream().filter(v -> v.identifier.equals(sid)).findFirst().get();
 			Vertex target = model.vertexSet().stream().filter(v -> v.identifier.equals(tid)).findFirst().get();
 			Edge edge = new Edge(source, target);
-			edge.edgeTraits = Stream.of(edgeElem.getAttribute("traits").split(";")).map(s -> EdgeTrait.valueOf(s)).collect(Collectors.toSet());
+			edge.edgeTraits = Stream.of(edgeElem.getAttribute("traits").split(";")).map(s -> EdgeTrait.valueOf(s))
+					.collect(Collectors.toSet());
 			if (edgeElem.hasAttribute("sourceport")) {
-				Port sourcePort = source.ports.stream()
-						.filter(p -> p.identifier.equals(edgeElem.getAttribute("sourceport"))).findFirst().get();
+				String sourcePort = source.ports.stream().filter(p -> p.equals(edgeElem.getAttribute("sourceport")))
+						.findFirst().get();
 				edge.sourcePort = Optional.of(sourcePort);
 			}
 			if (edgeElem.hasAttribute("targetport")) {
-				Port targetPort = target.ports.stream()
-						.filter(p -> p.identifier.equals(edgeElem.getAttribute("targetport"))).findFirst().get();
+				String targetPort = target.ports.stream().filter(p -> p.equals(edgeElem.getAttribute("targetport")))
+						.findFirst().get();
 				edge.targetPort = Optional.of(targetPort);
 			}
 			model.addEdge(source, target, edge);
@@ -134,11 +135,12 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 		for (Vertex v : model.vertexSet()) {
 			Element vElem = doc.createElement("node");
 			vElem.setAttribute("id", v.identifier);
-			vElem.setAttribute("traits", v.vertexTraits.stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
+			vElem.setAttribute("traits",
+					v.vertexTraits.stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
 			graph.appendChild(vElem);
-			for (Port p : v.ports) {
+			for (String p : v.ports) {
 				Element pElem = doc.createElement("port");
-				pElem.setAttribute("name", p.identifier);
+				pElem.setAttribute("name", p);
 				vElem.appendChild(pElem);
 			}
 			for (String key : v.properties.keySet()) {
@@ -151,12 +153,13 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			Element eElem = doc.createElement("edge");
 			eElem.setAttribute("source", e.source.identifier);
 			eElem.setAttribute("target", e.target.identifier);
-			eElem.setAttribute("traits", e.edgeTraits.stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
+			eElem.setAttribute("traits",
+					e.edgeTraits.stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
 			if (e.sourcePort.isPresent()) {
-				eElem.setAttribute("sourceport", e.sourcePort.get().identifier);
+				eElem.setAttribute("sourceport", e.sourcePort.get());
 			}
 			if (e.targetPort.isPresent()) {
-				eElem.setAttribute("targetport", e.targetPort.get().identifier);
+				eElem.setAttribute("targetport", e.targetPort.get());
 			}
 			graph.appendChild(eElem);
 		}

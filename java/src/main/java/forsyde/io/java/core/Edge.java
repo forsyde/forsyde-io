@@ -22,8 +22,8 @@ public class Edge {
 
 	public Vertex source;
 	public Vertex target;
-	public Optional<Port> sourcePort;
-	public Optional<Port> targetPort;
+	public Optional<String> sourcePort;
+	public Optional<String> targetPort;
 	public Set<EdgeTrait> edgeTraits = new HashSet<EdgeTrait>();
 
 	/**
@@ -51,7 +51,7 @@ public class Edge {
 	 * @param sourcePort source vertex port for this edge.
 	 * @see #Edge(Vertex, Vertex, Optional, Optional)
 	 */
-	public Edge(Vertex source, Vertex target, Port sourcePort, Port targetPort) {
+	public Edge(Vertex source, Vertex target, String sourcePort, String targetPort) {
 		this.target = target;
 		this.source = source;
 		this.targetPort = Optional.of(targetPort);
@@ -68,17 +68,17 @@ public class Edge {
 	 * @param targetPort {@link Optional} target vertex port for this edge.
 	 * @param sourcePort {@link Optional} source vertex port for this edge.
 	 */
-	public Edge(Vertex source, Vertex target, Optional<Port> sourcePort, Optional<Port> targetPort) {
+	public Edge(Vertex source, Vertex target, Optional<String> sourcePort, Optional<String> targetPort) {
 		this.target = target;
 		this.source = source;
 		this.targetPort = targetPort;
 		this.sourcePort = sourcePort;
 	}
-	
+
 	public Set<EdgeTrait> getTraits() {
 		return edgeTraits;
 	}
-	
+
 	public boolean hasTrait(EdgeTrait trait) {
 		return edgeTraits.stream().anyMatch(t -> t.refines(trait));
 	}

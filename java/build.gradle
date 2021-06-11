@@ -152,6 +152,6 @@ signing {
       System.getenv('GPG_SIGNING_PASSWORD') ?: findProperty('signing.password') ?: '' //default to an empty password
     )
   }
-  sign publishing.publications.mavenJava
-  sign configurations.archives
+  // sign publishing.publications.mavenJava
+  // sign configurations.archives
 }
