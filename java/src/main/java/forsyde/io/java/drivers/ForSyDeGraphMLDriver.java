@@ -48,11 +48,12 @@ public class ForSyDeGraphMLDriver extends ForSyDeModelDriver {
 		for (Vertex v : model.vertexSet()) {
 			Element vElem = doc.createElement("node");
 			vElem.setAttribute("id", v.identifier);
-			// vElem.setAttribute("traits", v.vertexTraits.stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
+			// vElem.setAttribute("traits", v.vertexTraits.stream().map(t ->
+			// t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
 			graph.appendChild(vElem);
-			for (Port p : v.ports) {
+			for (String p : v.ports) {
 				Element pElem = doc.createElement("port");
-				pElem.setAttribute("name", p.identifier);
+				pElem.setAttribute("name", p);
 				vElem.appendChild(pElem);
 			}
 			for (String key : v.properties.keySet()) {
@@ -67,16 +68,17 @@ public class ForSyDeGraphMLDriver extends ForSyDeModelDriver {
 			Element eElem = doc.createElement("edge");
 			eElem.setAttribute("source", e.source.identifier);
 			eElem.setAttribute("target", e.target.identifier);
-			// eElem.setAttribute("traits", e.edgeTraits.stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
+			// eElem.setAttribute("traits", e.edgeTraits.stream().map(t ->
+			// t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
 			if (e.sourcePort.isPresent()) {
-				eElem.setAttribute("sourceport", e.sourcePort.get().identifier);
+				eElem.setAttribute("sourceport", e.sourcePort.get());
 			}
 			if (e.targetPort.isPresent()) {
-				eElem.setAttribute("targetport", e.targetPort.get().identifier);
+				eElem.setAttribute("targetport", e.targetPort.get());
 			}
 			graph.appendChild(eElem);
 		}
-		for(int i = 0; i < vertexDataNames.size(); i++) {
+		for (int i = 0; i < vertexDataNames.size(); i++) {
 			Element dataElem = doc.createElement("key");
 			dataElem.setAttribute("for", "node");
 			dataElem.setAttribute("id", "d" + String.valueOf(i));
@@ -89,7 +91,7 @@ public class ForSyDeGraphMLDriver extends ForSyDeModelDriver {
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		transformer.transform(new DOMSource(doc), new StreamResult(out));
 	}
-	
+
 	static protected List<Integer> writeData(List<String> names, List<String> types, String name, Object value) {
 		if (!names.contains(name)) {
 			List<Integer> indexes = new ArrayList<>();
@@ -125,7 +127,7 @@ public class ForSyDeGraphMLDriver extends ForSyDeModelDriver {
 				indexes.add(names.size());
 			}
 			return indexes;
-		}  else {
+		} else {
 			return List.of(names.indexOf(name));
 		}
 	}

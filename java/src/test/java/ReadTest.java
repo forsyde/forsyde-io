@@ -1,15 +1,7 @@
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
-
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.drivers.ForSyDeModelHandler;
-import forsyde.io.java.drivers.ForSyDeXMLDriver;
 
 public class ReadTest {
 	

@@ -24,10 +24,12 @@
             "required_ports": {
                 "application": {
                     "class": "Process",
+                    "direction": 1,
                     "multiple": "unordered"
                 },
                 "platform": {
                     "class": "AbstractProcessingComponent",
+                    "direction": 1,
                     "multiple": "unordered"
                 }
             },
@@ -43,12 +45,14 @@
                 "ExtraFunctional"
             ],
             "required_ports": {
-                "application": {
+                "signal": {
                     "class": "Process",
+                    "direction": 1,
                     "multiple": "unordered"
                 },
-                "platform": {
+                "platform_element": {
                     "class": "AbstractCommunicationComponent",
+                    "direction": 1,
                     "multiple": "unordered"
                 }
             },
@@ -72,10 +76,12 @@
             "required_ports": {
                 "process": {
                     "class": "Process",
+                    "direction": 1,
                     "multiple": "unordered"
                 },
                 "processing_unit": {
                     "class": "AbstractProcessingComponent",
+                    "direction": 1,
                     "multiple": "unordered"
                 }
             }
@@ -88,6 +94,7 @@
             "required_ports": {
                 "application": {
                     "class": "Process",
+                    "direction": 1,
                     "multiple": "unordered"
                 }
             },
@@ -105,8 +112,12 @@
             "required_properties": {
                 "trigger_time": {
                     "class": "object",
-                    "key": {"class": "integer"},
-                    "value": {"class": "string"},
+                    "key": {
+                        "class": "integer"
+                    },
+                    "value": {
+                        "class": "string"
+                    },
                     "default": {}
                 }
             }
@@ -120,12 +131,16 @@
                 "ForSyDeFunction"
             ],
             "required_properties": {
-            	"max_operations": {
-            		"class": "object",
-            		"key": {"class": "string"},
-            		"value": {"class": "integer"},
-            		"default": {}
-            	},
+                "max_operations": {
+                    "class": "object",
+                    "key": {
+                        "class": "string"
+                    },
+                    "value": {
+                        "class": "integer"
+                    },
+                    "default": {}
+                },
                 "max_memory_size_in_bytes": {
                     "class": "integer",
                     "default": 1
@@ -144,35 +159,50 @@
             ]
         },
         "Instrumented": {
-        	"superTraits": [],
-        	"required_properties": {
-        		"requires": {
-        			"class": "object",
-        			"key": {"class": "string"},
-        			"value": {
-        				"class": "object",
-        				"key": {"class": "string"},
-        				"value": {"class": "int"}
-        			}
-        		},
-        		"provides": {
-        			"class": "object",
-        			"key": {"class": "string"},
-        			"value": {
-        				"class": "object",
-        				"key": {"class": "string"},
-        				"value": {"class": "int"}
-        			}
-        		},
-        		"configurations": {
-        			"class": "array",
-        			"value": {"class": "string"}
-        		}
-        	}
+            "superTraits": [],
+            "required_properties": {
+                "requires": {
+                    "class": "object",
+                    "key": {
+                        "class": "string"
+                    },
+                    "value": {
+                        "class": "object",
+                        "key": {
+                            "class": "string"
+                        },
+                        "value": {
+                            "class": "int"
+                        }
+                    }
+                },
+                "provides": {
+                    "class": "object",
+                    "key": {
+                        "class": "string"
+                    },
+                    "value": {
+                        "class": "object",
+                        "key": {
+                            "class": "string"
+                        },
+                        "value": {
+                            "class": "int"
+                        }
+                    }
+                },
+                "configurations": {
+                    "class": "array",
+                    "value": {
+                        "class": "string"
+                    }
+                }
+            }
         },
         "InstrumentedSignal": {
             "superTraits": [
-                "Signal", "Instrumented"
+                "Signal",
+                "Instrumented"
             ],
             "required_properties": {
                 "max_elem_size_bytes": {
@@ -190,7 +220,8 @@
             ],
             "required_ports": {
                 "combinator": {
-                    "class": "ForSyDeFunction"
+                    "class": "ForSyDeFunction",
+                    "direction": 0
                 }
             }
         },
@@ -200,7 +231,8 @@
             ],
             "required_ports": {
                 "prefixer": {
-                    "class": "ForSyDeFunction"
+                    "class": "ForSyDeFunction",
+                    "direction": 0
                 }
             }
         },
@@ -210,19 +242,28 @@
             ],
             "required_ports": {
                 "combinator": {
-                    "class": "ForSyDeFunction"
+                    "class": "ForSyDeFunction",
+                    "direction": 0
                 }
             },
             "required_properties": {
                 "consumption": {
                     "class": "object",
-                    "key": {"class": "string"},
-                    "value": {"class": "integer"}
+                    "key": {
+                        "class": "string"
+                    },
+                    "value": {
+                        "class": "integer"
+                    }
                 },
                 "production": {
                     "class": "object",
-                    "key": {"class": "string"},
-                    "value": {"class": "integer"}
+                    "key": {
+                        "class": "string"
+                    },
+                    "value": {
+                        "class": "integer"
+                    }
                 }
             }
         },
@@ -232,13 +273,16 @@
             ],
             "required_ports": {
                 "prefixer": {
-                    "class": "ForSyDeFunction"
+                    "class": "ForSyDeFunction",
+                    "direction": 0
                 }
             }
         },
         "ReactorElement": null,
         "ReactorTimer": {
-            "superTraits": ["ReactorElement"],
+            "superTraits": [
+                "ReactorElement"
+            ],
             "required_properties": {
                 "period_numerator_per_sec": {
                     "class": "integer"
@@ -257,23 +301,29 @@
                 }
             },
             "required_ports": {
-            	"output": {
-            		"class": "ReactorElement",
-            		"multiple": "unordered"
-            	}
+                "output": {
+                    "class": "ReactorElement",
+                    "multiple": "unordered",
+                    "direction": 1
+                }
             }
         },
         "ReactorActor": {
-            "superTraits": ["ReactorElement", "ForSyDeFunction"],
+            "superTraits": [
+                "ReactorElement",
+                "ForSyDeFunction"
+            ],
             "required_ports": {
                 "triggers": {
                     "class": "ReactorElement",
-                    "multiple": "ordered"
+                    "multiple": "ordered",
+                    "direction": -1
                 },
                 "reaction_implementation": {
-                	"class": "ForSyDeFunction"
+                    "class": "ForSyDeFunction",
+                    "direction": 0
                 }
-                }
+            }
         },
         "AbstractPhysicalComponent": null,
         "AbstractProcessingComponent": {
@@ -289,7 +339,8 @@
         },
         "InstrumentedProcessorTile": {
             "superTraits": [
-                "AbstractProcessingComponent", "Instrumented"
+                "AbstractProcessingComponent",
+                "Instrumented"
             ],
             "required_properties": {
                 "min_frequency_hz": {
@@ -299,9 +350,13 @@
                     "class": "integer"
                 },
                 "max_clock_cycles_per_op": {
-                	"class": "object",
-                	"key": {"class": "string"},
-            		"value": {"class": "int"}
+                    "class": "object",
+                    "key": {
+                        "class": "string"
+                    },
+                    "value": {
+                        "class": "int"
+                    }
                 },
                 "max_memory_internal_bytes": {
                     "class": "integer"

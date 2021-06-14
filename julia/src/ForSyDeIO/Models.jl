@@ -38,6 +38,8 @@ Base.setindex!(d::PropertyDict, X, idx...) = Base.setindex!(d.wrapped_dict, X, i
 
 Base.get(d::PropertyDict, k, default) = Base.get(d.wrapped_dict, k, default)
 
+const Property = Union{Integer,Float32,Float64,String,Bool,Vector,Dict}
+
 struct Vertex
     id::String
     ports::Set{String}

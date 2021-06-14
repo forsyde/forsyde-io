@@ -3,17 +3,15 @@
  */
 package forsyde.io.java.core;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author rjordao
@@ -29,18 +27,17 @@ import java.util.Map;
  * 
  * 
  */
-final public class Vertex {
+public class Vertex {
 
 	public String identifier;
-	public List<Port> ports = new ArrayList<Port>();
-	public Map<String, Object> properties = new HashMap<String, Object>();
+	public Set<String> ports = new HashSet<String>();
+	public Map<String, VertexPropertyElement> properties = new HashMap<String, VertexPropertyElement>();
 	public Set<VertexTrait> vertexTraits = new HashSet<VertexTrait>();
 
 	/**
 	 * Utility constructor initializing all associated data as empty.
 	 * 
 	 * @param identifier the obligatory unique ID for this vertex.
-	 * @see #Vertex(String, List, Map)
 	 */
 	public Vertex(String identifier) {
 		this.identifier = identifier;
@@ -58,7 +55,7 @@ final public class Vertex {
 	 *                   vertex. Remember that it should be a tree of primitive
 	 *                   types such as Integers, Floats, Strings etc.
 	 */
-	public Vertex(String identifier, List<Port> ports, Map<String, Object> properties) {
+	public Vertex(String identifier, Set<String> ports, Map<String, VertexPropertyElement> properties) {
 		this.identifier = identifier;
 		this.ports = ports;
 		this.properties = properties;
@@ -73,15 +70,11 @@ final public class Vertex {
 				.append(properties != null ? toString(properties.entrySet(), maxLen) : null).append("]");
 		return builder.toString();
 	}
-	
-	public Set<VertexTrait> getTraits() { 
-		return vertexTraits; 
+
+	public Set<VertexTrait> getTraits() {
+		return vertexTraits;
 	}
-	
-	public Optional<Port> getPort(String portName) {
-		return ports.stream().filter((p) -> p.identifier.equals(portName)).findFirst();
-	}
-	
+
 	public Boolean hasTrait(Trait trait) {
 		return vertexTraits.stream().anyMatch(t -> t.refines(trait));
 	}
@@ -114,6 +107,12 @@ final public class Vertex {
 		}
 		Vertex other = (Vertex) obj;
 		return Objects.equals(identifier, other.identifier);
+	}
+
+	public boolean mergeInPlace(Vertex other) {
+		if (identifier != other.identifier) return false;
+		// if (properties.keySet().stream().allMatch())
+		return true;
 	}
 
 }

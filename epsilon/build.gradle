@@ -9,7 +9,7 @@
 plugins {
   id 'java-library'
   id 'maven-publish'
-  // id 'signing'
+  id 'signing'
   id 'java'
   id 'idea'
   id 'eclipse'
@@ -19,13 +19,15 @@ plugins {
   id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
 }
 
+sourceCompatibility = 1.11
+
 ext {
   artifactName = 'forsyde-io-epsilon'
 }
 
 group = 'io.github.forsyde'
 archivesBaseName = ext.artifactName
-version = '0.3.2'
+version = '0.3.6'
 
 
 repositories {
@@ -36,15 +38,17 @@ repositories {
 // In this section you declare the dependencies for your production and test code
 dependencies {
     // The production code uses the SLF4J logging API at compile time
-    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'org.eclipse.epsilon:epsilon-core:1.5.1'
-    implementation 'io.github.forsyde:forsyde-io-java:0.3.2'
+    implementation 'io.github.forsyde:forsyde-io-java:0.3.6'
+    implementation 'org.jgrapht:jgrapht-core:1.5.1'
 
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
     // 'test.useTestNG()' to your build script.
     testImplementation 'junit:junit:4.12'
+    testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
 }
 
 eclipse {
@@ -52,3 +56,96 @@ eclipse {
     name = artifactName
   }
 }
+
+java {
+  withSourcesJar()
+  withJavadocJar()
+}
+
+jar {
+    archiveFileName = "${artifactName}" + '-' + "${version}" + '.jar'
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      artifactId = artifactName
+      from components.java
+      pom {
+        name = 'ForSyDe IO Epsilon'
+        description = 'ForSyDe IO Epsilon Driver'
+        url = 'https://github.com/forsyde/forsyde-io'
+        packaging = 'jar'
+        scm {
+          connection = 'scm:git:https://github.com/forsyde/forsyde-io.git'
+          developerConnection = 'scm:git:git@github.com:forsyde/forsyde-io.git'
+          url = 'https://github.com/forsyde/forsyde-io'
+        }
+        licenses {
+          license {
+            name = 'The MIT License'
+            url = 'https://choosealicense.com/licenses/mit/'
+          }
+        }
+        developers {
+          developer {
+            id = 'Jordao'
+            name = 'Rodolfo Jordao'
+            email = 'jordao@kth.se'
+          }
+        }
+      }
+    }
+  }
+  repositories {
+    maven {
+      name = 'OSSRH'
+      url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+      credentials {
+        username = project.hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('MAVEN_USERNAME') ?: System.getenv('OSSRH_USERNAME') ?: ''
+        password = project.hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('MAVEN_PASSWORD') ?: System.getenv('OSSRH_PASSWORD') ?: ''
+      }
+    }
+  // maven {
+  //   name = "GitHubPackages"
+  //   url = uri("https://maven.pkg.github.com/forsyde/forsyde-io")
+  //   credentials {
+  //     username = System.getenv("GITHUB_ACTOR") ?: ""
+  //     password = System.getenv("GITHUB_TOKEN") ?: ""
+  //   }
+  // }
+  }
+}
+
+nexusPublishing {
+  repositories {
+    sonatype {
+      username = project.hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('MAVEN_USERNAME') ?: System.getenv('OSSRH_USERNAME') ?: ''
+      password = project.hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('MAVEN_PASSWORD') ?: System.getenv('OSSRH_PASSWORD') ?: ''
+    }
+  }
+}
+
+test {
+    useJUnit()
+    maxHeapSize = '1G'
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+  // small hack to work offline or online
+  if (project.hasProperty('signing.keyId') && findProperty('signing.gnupg') == "true") {
+    useGpgCmd()
+  } else {
+    useInMemoryPgpKeys(
+      System.getenv('GPG_SIGNING_KEY') ?: findProperty('signing.key'),
+      System.getenv('GPG_SIGNING_PASSWORD') ?: findProperty('signing.password') ?: '' //default to an empty password
+    )
+  }
+  sign publishing.publications.mavenJava
+  sign configurations.archives
+}
+
