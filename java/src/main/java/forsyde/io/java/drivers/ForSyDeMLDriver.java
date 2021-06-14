@@ -33,11 +33,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import forsyde.io.java.core.ArrayVertexProperty;
+import forsyde.io.java.core.BooleanVertexProperty;
 import forsyde.io.java.core.Edge;
 import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeModel;
+import forsyde.io.java.core.MapVertexProperty;
+import forsyde.io.java.core.NumberVertexProperty;
 import forsyde.io.java.core.Port;
+import forsyde.io.java.core.StringVertexProperty;
 import forsyde.io.java.core.Vertex;
+import forsyde.io.java.core.VertexPropertyElement;
 import forsyde.io.java.core.VertexTrait;
 
 /**
@@ -89,7 +95,7 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			for (int j = 0; j < propertyList.getLength(); j++) {
 				Element propertyElem = (Element) propertyList.item(j);
 				// TODO: assure safety of this call
-				Object property = readData(propertyElem);
+				VertexPropertyElement property = readData(propertyElem);
 				vertex.properties.put(propertyElem.getAttribute("attr.name"), property);
 			}
 		}
@@ -175,74 +181,103 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 	 * @param elem the XML element being parsed.
 	 * @return the parsed object.
 	 */
-	static protected Object readData(Element elem) {
+	static protected VertexPropertyElement readData(Element elem) {
 		// it is a collection
-		if (elem.getAttribute("attr.type").equals("integer")) {
-			return Integer.valueOf(elem.getTextContent());
-		} else if (elem.getAttribute("attr.type").equals("int")) {
-			return Integer.valueOf(elem.getTextContent());
+		if (elem.getAttribute("attr.type").equals("integer") || elem.getAttribute("attr.type").equals("int")) {
+			return new NumberVertexProperty(Integer.valueOf(elem.getTextContent()));
 		} else if (elem.getAttribute("attr.type").equals("float")) {
-			return Float.valueOf(elem.getTextContent());
+			return new NumberVertexProperty(Float.valueOf(elem.getTextContent()));
 		} else if (elem.getAttribute("attr.type").equals("double")) {
-			return Double.valueOf(elem.getTextContent());
-		} else if (elem.getAttribute("attr.type").equals("boolean")) {
-			return Boolean.valueOf(elem.getTextContent());
+			return new NumberVertexProperty(Double.valueOf(elem.getTextContent()));
+		} else if (elem.getAttribute("attr.type").equals("boolean") || elem.getAttribute("attr.type").equals("bool")) {
+			return new BooleanVertexProperty(Boolean.valueOf(elem.getTextContent()));
 		} else if (elem.getAttribute("attr.type").equals("object")) {
-			HashMap<String, Object> object = new HashMap<String, Object>();
+			MapVertexProperty map = new MapVertexProperty();
 			NodeList children = elem.getElementsByTagName("data");
 			for (int i = 0; i < children.getLength(); i++) {
 				Element child = (Element) children.item(i);
-				object.put(child.getAttribute("attr.name"), readData(child));
+				map.put(child.getAttribute("attr.name"), readData(child));
 			}
-			return object;
+			return map;
 		} else if (elem.getAttribute("attr.type").equals("array")) {
 			NodeList children = elem.getElementsByTagName("data");
-			ArrayList<Object> array = new ArrayList<Object>(children.getLength());
+			ArrayVertexProperty array = new ArrayVertexProperty(children.getLength());
 			for (int i = 0; i < children.getLength(); i++) {
 				Element child = (Element) children.item(i);
 				array.set(Integer.valueOf(child.getAttribute("attr.name")), readData(child));
 			}
 			return array;
 		} else {
-			return elem.getTextContent();
+			return new StringVertexProperty(elem.getTextContent());
 		}
 	}
 
-	static protected Element writeData(Document doc, Object value) {
+	static protected Element writeData(Document doc, MapVertexProperty map) {
 		Element newElem = doc.createElement("data");
-		if (value instanceof HashMap) {
-			HashMap<String, Object> map = (HashMap<String, Object>) value;
-			newElem.setAttribute("attr.type", "object");
-			for (String key : map.keySet()) {
-				Element child = writeData(doc, map.get(key));
-				child.setAttribute("attr.name", key);
-				newElem.appendChild(child);
-			}
-		} else if (value instanceof ArrayList) {
-			ArrayList<Object> list = (ArrayList<Object>) value;
-			newElem.setAttribute("attr.type", "array");
-			for (int i = 0; i < list.size(); i++) {
-				Element child = writeData(doc, list.get(i));
-				child.setAttribute("attr.name", String.valueOf(i));
-				newElem.appendChild(child);
-			}
-		} else if (value instanceof Integer) {
-			newElem.setAttribute("attr.type", "int");
-			newElem.setTextContent(value.toString());
-		} else if (value instanceof Float) {
-			newElem.setAttribute("attr.type", "float");
-			newElem.setTextContent(value.toString());
-		} else if (value instanceof Double) {
-			newElem.setAttribute("attr.type", "double");
-			newElem.setTextContent(value.toString());
-		} else if (value instanceof Boolean) {
-			newElem.setAttribute("attr.type", "boolean");
-			newElem.setTextContent(value.toString());
-		} else {
-			newElem.setAttribute("attr.type", "string");
-			newElem.setTextContent(value.toString());
+		newElem.setAttribute("attr.type", "object");
+		for (String key : map.keySet()) {
+			Element child = writeData(doc, map.get(key));
+			child.setAttribute("attr.name", key);
+			newElem.appendChild(child);
 		}
 		return newElem;
+	}
+
+	static protected Element writeData(Document doc, ArrayVertexProperty array) {
+		Element newElem = doc.createElement("data");
+		newElem.setAttribute("attr.type", "array");
+		for (int i = 0; i < array.size(); i++) {
+			Element child = writeData(doc, array.get(i));
+			child.setAttribute("attr.name", String.valueOf(i));
+			newElem.appendChild(child);
+		}
+		return newElem;
+	}
+
+	static protected Element writeData(Document doc, NumberVertexProperty num) {
+		Element newElem = doc.createElement("data");
+		if (num.isInt()) {
+			newElem.setAttribute("attr.type", "int");
+			newElem.setTextContent(String.valueOf(num.intValue()));
+		} else if (num.isLong()) {
+			newElem.setAttribute("attr.type", "long");
+			newElem.setTextContent(String.valueOf(num.longValue()));
+		} else if (num.isFloat()) {
+			newElem.setAttribute("attr.type", "float");
+			newElem.setTextContent(String.valueOf(num.floatValue()));
+		} else if (num.isDouble()) {
+			newElem.setAttribute("attr.type", "double");
+			newElem.setTextContent(String.valueOf(num.doubleValue()));
+		}
+		return newElem;
+	}
+
+	static protected Element writeData(Document doc, BooleanVertexProperty b) {
+		Element newElem = doc.createElement("data");
+		newElem.setAttribute("attr.type", "boolean");
+		newElem.setTextContent(b.toString());
+		return newElem;
+	}
+
+	static protected Element writeData(Document doc, StringVertexProperty str) {
+		Element newElem = doc.createElement("data");
+		newElem.setAttribute("attr.type", "string");
+		newElem.setTextContent(str.toString());
+		return newElem;
+	}
+
+	static protected Element writeData(Document doc, VertexPropertyElement value) {
+		if (value instanceof NumberVertexProperty) {
+			return writeData(doc, (NumberVertexProperty) value);
+		} else if (value instanceof MapVertexProperty) {
+			return writeData(doc, (MapVertexProperty) value);
+		} else if (value instanceof ArrayVertexProperty) {
+			return writeData(doc, (ArrayVertexProperty) value);
+		} else if (value instanceof BooleanVertexProperty) {
+			return writeData(doc, (BooleanVertexProperty) value);
+		} else {
+			return writeData(doc, (StringVertexProperty) value);
+		}
 	}
 
 }

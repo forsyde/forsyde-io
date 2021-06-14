@@ -164,19 +164,19 @@ def metaToJavaType(md) {
         return ParameterizedTypeName.get(ClassName.get(List.class), metaToJavaType(md.value))
     }
     else if (md['class'] == 'int' || md['class'] == 'integer') {
-        return ClassName.get(Integer.class)
+        return ClassName.get("forsyde.io.java.core", "NumberVertexProperty")
     }
     else if (md['class'] == 'double') {
-        return ClassName.get(Double.class)
+        return ClassName.get("forsyde.io.java.core", "NumberVertexProperty")
     }
     else if (md['class'] == 'float') {
-        return ClassName.get(Float.class)
+        return ClassName.get("forsyde.io.java.core", "NumberVertexProperty")
     }
     else if (md['class'] == 'boolean' || md['class'] == 'bool') {
-        return ClassName.get(Boolean.class)
+        return ClassName.get("forsyde.io.java.core", "BooleanVertexProperty")
     }
     else
-        return ClassName.get(String.class)
+        return ClassName.get("forsyde.io.java.core", "StringVertexProperty")
 }
 
 task generateVertexAcessor(dependsOn: [generateVertexTraits]) {
@@ -184,6 +184,7 @@ task generateVertexAcessor(dependsOn: [generateVertexTraits]) {
     def model = new JsonSlurper().parseText(modelStr)
     // first build the trait graph
     def traitGraph = new SimpleDirectedGraph<String, DefaultEdge>(DefaultEdge.class)
+    def accessGenerated = [:]
     for (vertexTrait in model['vertexTraits']) {
         traitGraph.addVertex(vertexTrait.key)
     }
@@ -195,95 +196,131 @@ task generateVertexAcessor(dependsOn: [generateVertexTraits]) {
         }
     }
 
-    // def accessGenerated = []
     for (vertexTrait in model['vertexTraits']) {
 		def className = vertexTrait.key + 'Acessor'
         def acessorClass = TypeSpec.classBuilder(className)
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         if (vertexTrait.value) {
 			def superIterator = new DepthFirstIterator<String, DefaultEdge>(traitGraph, vertexTrait.key)
+            def currentTrait = model['vertexTraits'][superIterator.next()]
+            for(vertexProp in currentTrait['required_properties']) {
+                // accessGenerated.add(vertexProp.key)
+                def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), metaToJavaType(vertexProp.value))
+                def getPropMethod = MethodSpec.methodBuilder('get' + toCamelCase(vertexProp.key, true))
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .addParameter(ClassName.get('forsyde.io.java.core', 'Vertex'), "vertex")
+                    .returns(optionalOut)
+                getPropMethod.beginControlFlow("if (vertex.properties.containsKey(\"" + vertexProp.key + "\"))")
+                getPropMethod.addStatement('return Optional.of((' + metaToJavaType(vertexProp.value).toString() + ") vertex.properties.get(\"" + vertexProp.key + "\"))")
+                getPropMethod.nextControlFlow('else')
+                getPropMethod.addStatement('return Optional.empty()')
+                getPropMethod.endControlFlow()
+                acessorClass.addMethod(getPropMethod.build())
+            }
+            // port acessors are generated depending in the multiplicity of their connections and possible directions
+            for(vertexPort in currentTrait['required_ports']) {
+                // accessGenerated.add(vertexPort.key)
+                def vertexClass = ClassName.get('forsyde.io.java.core', 'Vertex')
+                def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), vertexClass)
+                def listOut = ParameterizedTypeName.get(ClassName.get(List.class), vertexClass)
+                def setOut = ParameterizedTypeName.get(ClassName.get(Set.class), vertexClass)
+                def arrayType = ParameterizedTypeName.get(ClassName.get(ArrayList.class), vertexClass)
+                def setType = ParameterizedTypeName.get(ClassName.get(HashSet.class), vertexClass)
+                def getPortName = 'get' + toCamelCase(vertexPort.key + 'Port', true)
+                def getPortMethod = MethodSpec.methodBuilder(getPortName)
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .addParameter(ClassName.get('forsyde.io.java.core', 'ForSyDeModel'), "model")
+                    .addParameter(vertexClass, "vertex")
+                if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "ordered")
+                    getPortMethod.returns(arrayType)
+                else if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "unordered")
+                    getPortMethod.returns(setType)
+                else
+                    getPortMethod.returns(optionalOut)
+                // decide if a collection needs to be generated
+                if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "ordered")
+                    getPortMethod.addStatement('$T outList = new $T()', arrayType, arrayType)
+                else if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "unordered")
+                    getPortMethod.addStatement('$T outList = new $T()', setType, setType)
+                // generate the iteration to collect or find vertexes
+                if (vertexPort.value['direction'] == null || (vertexPort.value['direction'] != null && vertexPort.value['direction'] >= 0)) {
+                        getPortMethod.beginControlFlow('for ($T e: model.outgoingEdgesOf(vertex))', ClassName.get('forsyde.io.java.core', 'Edge'))
+                        getPortMethod.beginControlFlow("if (e.sourcePort.orElse(\"\").equals(\"" + vertexPort.key + "\"))")
+                        // this decides for every iteration if first found is good or if a list is being built.
+                        if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "ordered")
+                            getPortMethod.addStatement('outList.add(e.target)')
+                        else if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "unordered")
+                            getPortMethod.addStatement('outList.add(e.target)')
+                        else
+                            getPortMethod.addStatement('return Optional.of(e.target)')
+                        getPortMethod.endControlFlow()	
+                        getPortMethod.endControlFlow()	
+                }
+                if (vertexPort.value['direction'] == null || (vertexPort.value['direction'] != null && vertexPort.value['direction'] <= 0)) {
+                        getPortMethod.beginControlFlow('for ($T e: model.incomingEdgesOf(vertex))', ClassName.get('forsyde.io.java.core', 'Edge'))
+                        getPortMethod.beginControlFlow("if (e.targetPort.orElse(\"\").equals(\"" + vertexPort.key + "\"))")
+                        // this decides for every iteration if first found is good or if a list is being built.
+                        if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "ordered")
+                            getPortMethod.addStatement('outList.add(e.source)')
+                        else if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "unordered")
+                            getPortMethod.addStatement('outList.add(e.source)')
+                        else
+                            getPortMethod.addStatement('return Optional.of(e.source)')
+                        getPortMethod.endControlFlow()	
+                        getPortMethod.endControlFlow()	
+                }
+                if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "ordered")
+                    getPortMethod.addStatement("return outList")
+                else if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "unordered")
+                    getPortMethod.addStatement("return outList")
+                else
+                    getPortMethod.addStatement("return Optional.empty()")
+                // getPortMethod.beginControlFlow("if (vertex.properties.containsKey(\"" + vertexPort.key + "\"))")
+                // getPortMethod.addStatement('return Optional.of((' + metaToJavaType(vertexPort.value).toString() + ") vertex.properties.get(\"" + vertexPort.key + "\"))")
+                // getPortMethod.nextControlFlow('else')
+                // getPortMethod.endControlFlow()
+                acessorClass.addMethod(getPortMethod.build())
+            }
             for (traitName in superIterator) {
-				def currentTrait = model['vertexTraits'][traitName]
-				if (currentTrait != null) {
-					for(vertexProp in currentTrait['required_properties']) {
+				def superCurrentTrait = model['vertexTraits'][traitName]
+				if (superCurrentTrait != null) {
+					for(vertexProp in superCurrentTrait['required_properties']) {
 						// accessGenerated.add(vertexProp.key)
+                        def getPropName = 'get' + toCamelCase(vertexProp.key, true)
 						def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), metaToJavaType(vertexProp.value))
-						def getPropMethod = MethodSpec.methodBuilder('get' + toCamelCase(vertexProp.key, true))
+						def getPropMethod = MethodSpec.methodBuilder(getPropName)
 							.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
 							.addParameter(ClassName.get('forsyde.io.java.core', 'Vertex'), "vertex")
 							.returns(optionalOut)
-						getPropMethod.beginControlFlow("if (vertex.properties.containsKey(\"" + vertexProp.key + "\"))")
-						getPropMethod.addStatement('return Optional.of((' + metaToJavaType(vertexProp.value).toString() + ") vertex.properties.get(\"" + vertexProp.key + "\"))")
-						getPropMethod.nextControlFlow('else')
-						getPropMethod.addStatement('return Optional.empty()')
-						getPropMethod.endControlFlow()
+						// getPropMethod.beginControlFlow("if (vertex.properties.containsKey(\"" + vertexProp.key + "\"))")
+						// getPropMethod.addStatement('return Optional.of((' + metaToJavaType(vertexProp.value).toString() + ") vertex.properties.get(\"" + vertexProp.key + "\"))")
+						// getPropMethod.nextControlFlow('else')
+                        // println(superCurrentTrait)
+						getPropMethod.addStatement('return $T.' + getPropName  + '(vertex)', ClassName.get('forsyde.io.java.typed.acessor', traitName + 'Acessor'))
+						// getPropMethod.endControlFlow()
 						acessorClass.addMethod(getPropMethod.build())
 					}
-					for(vertexPort in currentTrait['required_ports']) {
+                    // port acessors are generated depending in the multiplicity of their connections and possible directions
+					for(vertexPort in superCurrentTrait['required_ports']) {
 						// accessGenerated.add(vertexPort.key)
 						def vertexClass = ClassName.get('forsyde.io.java.core', 'Vertex')
+                        def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), vertexClass)
 						def listOut = ParameterizedTypeName.get(ClassName.get(List.class), vertexClass)
 						def setOut = ParameterizedTypeName.get(ClassName.get(Set.class), vertexClass)
-						def getPortMethod = MethodSpec.methodBuilder('get' + toCamelCase(vertexPort.key + 'Port', true))
+                        def arrayType = ParameterizedTypeName.get(ClassName.get(ArrayList.class), vertexClass)
+                        def setType = ParameterizedTypeName.get(ClassName.get(HashSet.class), vertexClass)
+                        def getPortName = 'get' + toCamelCase(vertexPort.key + 'Port', true)
+						def getPortMethod = MethodSpec.methodBuilder(getPortName)
 							.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
 							.addParameter(ClassName.get('forsyde.io.java.core', 'ForSyDeModel'), "model")
 							.addParameter(vertexClass, "vertex")
-						if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "ordered") {
-							def arrayType = ParameterizedTypeName.get(ClassName.get(ArrayList.class), vertexClass)
-							getPortMethod.addStatement('$T outList = new $T()', arrayType, arraType)
-							if (vertexPort.value['direction'] != null && vertexPort.value['direction'] >= 0) {
-								getPortMethod.beginControlFlow('for ($T e: model.outgoingEdgesOf(vertex))', ClassName.get('forsyde.io.java.core', 'Edge'))
-								getPortMethod.beginControlFlow("if (e.sourcePort.orElse(\"\").equals(\"" + vertexPort.key + "\"))")
-								getPortMethod.addStatement('outList.add(e.target)')
-								getPortMethod.endControlFlow()	
-								getPortMethod.endControlFlow()	
-							}
-							if (vertexPort.value['direction'] != null && vertexPort.value['direction'] <= 0) {
-								getPortMethod.beginControlFlow('for ($T e: model.incomingEdgesOf(vertex))', ClassName.get('forsyde.io.java.core', 'Edge'))
-								getPortMethod.beginControlFlow("if (e.targetPort.orElse(\"\").equals(\"" + vertexPort.key + "\"))")
-								getPortMethod.addStatement('outList.add(e.source)')
-								getPortMethod.endControlFlow()	
-								getPortMethod.endControlFlow()	
-							}
-							getPortMethod.addStatement('return outList')
-							getPortMethod.returns(listOut)
-						} else if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "unordered") {
-							def setType = ParameterizedTypeName.get(ClassName.get(HashSet.class), vertexClass)
-							getPortMethod.addStatement('$T outList = new $T()', setType, setType)
-							if (vertexPort.value['direction'] != null && vertexPort.value['direction'] >= 0) {
-								getPortMethod.beginControlFlow('for ($T e: model.outgoingEdgesOf(vertex))', ClassName.get('forsyde.io.java.core', 'Edge'))
-								getPortMethod.beginControlFlow("if (e.sourcePort.orElse(\"\").equals(\"" + vertexPort.key + "\"))")
-								getPortMethod.addStatement('outList.add(e.target)')
-								getPortMethod.endControlFlow()	
-								getPortMethod.endControlFlow()	
-							}
-							if (vertexPort.value['direction'] != null && vertexPort.value['direction'] <= 0) {
-								getPortMethod.beginControlFlow('for ($T e: model.incomingEdgesOf(vertex))', ClassName.get('forsyde.io.java.core', 'Edge'))
-								getPortMethod.beginControlFlow("if (e.targetPort.orElse(\"\").equals(\"" + vertexPort.key + "\"))")
-								getPortMethod.addStatement('outList.add(e.source)')
-								getPortMethod.endControlFlow()	
-								getPortMethod.endControlFlow()	
-							}
-							getPortMethod.addStatement('return outList')
-							getPortMethod.returns(setOut)
-						} else {
-							getPortMethod.returns(vertexOut)
-							if (vertexPort.value['direction'] != null && vertexPort.value['direction'] >= 0) {
-								getPortMethod.beginControlFlow('for ($T e: model.outgoingEdgesOf(vertex))', ClassName.get('forsyde.io.java.core', 'Edge'))
-								getPortMethod.beginControlFlow("if (e.sourcePort.orElse(\"\").equals(\"" + vertexPort.key + "\"))")
-								getPortMethod.addStatement('return e.target')
-								getPortMethod.endControlFlow()	
-								getPortMethod.endControlFlow()	
-							}
-							if (vertexPort.value['direction'] != null && vertexPort.value['direction'] <= 0) {
-								getPortMethod.beginControlFlow('for ($T e: model.incomingEdgesOf(vertex))', ClassName.get('forsyde.io.java.core', 'Edge'))
-								getPortMethod.beginControlFlow("if (e.targetPort.orElse(\"\").equals(\"" + vertexPort.key + "\"))")
-								getPortMethod.addStatement('return e.source')
-								getPortMethod.endControlFlow()	
-								getPortMethod.endControlFlow()	
-							}
-							getPortMethod.addStatement('return null')
-						}
+                        if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "ordered")
+                            getPortMethod.returns(arrayType)
+                        else if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "unordered")
+                            getPortMethod.returns(setType)
+                        else
+                            getPortMethod.returns(optionalOut)
+                        getPropMethod.addStatement('return $T.' + getPortName + '(model, vertex)', ClassName.get('forsyde.io.java.typed.acessor', traitName + 'Acessor'))
 						// getPortMethod.beginControlFlow("if (vertex.properties.containsKey(\"" + vertexPort.key + "\"))")
 						// getPortMethod.addStatement('return Optional.of((' + metaToJavaType(vertexPort.value).toString() + ") vertex.properties.get(\"" + vertexPort.key + "\"))")
 						// getPortMethod.nextControlFlow('else')
