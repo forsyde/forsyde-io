@@ -35,4 +35,14 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 
 	}
 
+	public void mergeInPlace(ForSyDeModel other) {
+		for (Vertex v: other.vertexSet()) {
+			if (!vertexSet().contains(v)) {
+				addVertex(v);
+			} else {
+				
+			}
+		}
+	}
+
 }

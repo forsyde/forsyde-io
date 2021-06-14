@@ -363,6 +363,11 @@
             "superTraits": [
                 "AbstractDecision"
             ]
+        },
+        "AbstractAllocation": {
+            "superTraits": [
+                "AbstractDecision"
+            ]
         }
     },
     "portTraits": {},

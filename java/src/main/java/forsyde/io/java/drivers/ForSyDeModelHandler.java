@@ -3,6 +3,8 @@
  */
 package forsyde.io.java.drivers;
 
+import java.io.File;
+
 import forsyde.io.java.core.ForSyDeModel;
 
 /**
@@ -16,12 +18,25 @@ public final class ForSyDeModelHandler {
 		ForSyDeModelDriver driver;
 		if(filePath.endsWith(".xml")) {
 			driver = new ForSyDeXMLDriver();
-		} else if (filePath.endsWith(".forxml")) {
+		} else if (filePath.endsWith(".forxml") || filePath.endsWith(".forsyde.xml")) {
 			driver = new ForSyDeMLDriver();
 		} else {
 			throw new Exception("Only '.xml' and '.forxml' formats are supported.");
 		}
 		return driver.loadModel(filePath);
+	}
+
+	@SuppressWarnings("deprecation")
+	public static ForSyDeModel loadModel(File file) throws Exception {
+		ForSyDeModelDriver driver;
+		if(file.getName().endsWith(".xml")) {
+			driver = new ForSyDeXMLDriver();
+		} else if (file.getName().endsWith(".forxml") || file.getName().endsWith(".forsyde.xml")) {
+			driver = new ForSyDeMLDriver();
+		} else {
+			throw new Exception("Only '.xml' and '.forxml' formats are supported.");
+		}
+		return driver.loadModel(file);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -37,5 +52,20 @@ public final class ForSyDeModelHandler {
 			throw new Exception("Supported write formats: ['forxml', 'graphml'].");
 		}
 		driver.writeModel(model, filePath);
+	}
+
+	@SuppressWarnings("deprecation")
+	public static void writeModel(ForSyDeModel model, File file) throws Exception {
+		ForSyDeModelDriver driver;
+		if(file.getName().endsWith(".xml")) {
+			driver = new ForSyDeXMLDriver();
+		} else if (file.getName().endsWith(".forxml") || file.getName().endsWith(".forsyde.xml")) {
+			driver = new ForSyDeMLDriver();
+		} else if(file.getName().endsWith(".graphml")) {
+			driver = new ForSyDeGraphMLDriver();
+		} else {
+			throw new Exception("Supported write formats: ['forxml', 'graphml'].");
+		}
+		driver.writeModel(model, file);
 	}
 }

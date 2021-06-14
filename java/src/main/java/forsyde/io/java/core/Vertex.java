@@ -33,7 +33,7 @@ final public class Vertex {
 
 	public String identifier;
 	public List<Port> ports = new ArrayList<Port>();
-	public Map<String, Object> properties = new HashMap<String, Object>();
+	public Map<String, VertexPropertyInterface> properties = new HashMap<String, VertexPropertyInterface>();
 	public Set<VertexTrait> vertexTraits = new HashSet<VertexTrait>();
 
 	/**
@@ -58,7 +58,7 @@ final public class Vertex {
 	 *                   vertex. Remember that it should be a tree of primitive
 	 *                   types such as Integers, Floats, Strings etc.
 	 */
-	public Vertex(String identifier, List<Port> ports, Map<String, Object> properties) {
+	public Vertex(String identifier, List<Port> ports, Map<String, VertexPropertyInterface> properties) {
 		this.identifier = identifier;
 		this.ports = ports;
 		this.properties = properties;
@@ -114,6 +114,12 @@ final public class Vertex {
 		}
 		Vertex other = (Vertex) obj;
 		return Objects.equals(identifier, other.identifier);
+	}
+
+	public boolean mergeInPlace(Vertex other) {
+		if (identifier != other.identifier) return false;
+		// if (properties.keySet().stream().allMatch())
+		return true;
 	}
 
 }
