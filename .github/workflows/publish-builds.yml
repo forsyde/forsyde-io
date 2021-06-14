@@ -31,7 +31,7 @@ jobs:
     - name: Generate lib
       run: |
         cd ${{ github.workspace }}
-        make prepare-version-v${{ steps.get_version.outputs.version-without-v }}
+        make prepare-version-${{ steps.get_version.outputs.version }}
         cd python
         python -m pip install jinja2 networkx
         python generate.py
@@ -57,7 +57,7 @@ jobs:
     - name: Build and publish with Gradle
       run: |
         cd ${{ github.workspace }}
-        make prepare-version-v${{ steps.get_version.outputs.version-without-v }}
+        make prepare-version-${{ steps.get_version.outputs.version }}
         cd java
         ./gradlew build publish closeAndReleaseSonatypeStagingRepository
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
