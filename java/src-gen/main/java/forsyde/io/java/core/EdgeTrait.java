@@ -17,7 +17,9 @@ public enum EdgeTrait implements Trait {
 
   AbstractScheduling,
 
-  AbstractMapping;
+  AbstractMapping,
+
+  AbstractAllocation;
 
   public static boolean refines(EdgeTrait one, EdgeTrait other) {
     switch (one) {
@@ -60,6 +62,12 @@ public enum EdgeTrait implements Trait {
       case AbstractMapping:
       switch (other) {
         case AbstractMapping: return true;
+        case AbstractDecision: return true;
+        default: return false;
+      }
+      case AbstractAllocation:
+      switch (other) {
+        case AbstractAllocation: return true;
         case AbstractDecision: return true;
         default: return false;
       }
