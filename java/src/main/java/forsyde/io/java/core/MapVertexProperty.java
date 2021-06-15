@@ -3,7 +3,7 @@ package forsyde.io.java.core;
 import java.util.HashMap;
 import java.util.Optional;
 
-final public class MapVertexProperty extends HashMap<String, VertexPropertyElement> implements VertexPropertyElement{
+final public class MapVertexProperty extends HashMap<String, VertexPropertyElement> implements VertexPropertyElement {
 
     @Override
     public boolean mergeInPlace(VertexPropertyElement other) {
@@ -31,6 +31,13 @@ final public class MapVertexProperty extends HashMap<String, VertexPropertyEleme
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Object unwrap() {
+        HashMap<String, Object> unwrapped = new HashMap<>();
+        this.forEach((k, v) -> unwrapped.put(k, v.unwrap()));
+        return unwrapped;
     }
 
 }

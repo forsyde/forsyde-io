@@ -6,11 +6,6 @@ package forsyde.io.java.drivers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,6 +23,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -35,12 +31,14 @@ import org.xml.sax.SAXException;
 
 import forsyde.io.java.core.ArrayVertexProperty;
 import forsyde.io.java.core.BooleanVertexProperty;
+import forsyde.io.java.core.DoubleVertexProperty;
 import forsyde.io.java.core.Edge;
 import forsyde.io.java.core.EdgeTrait;
+import forsyde.io.java.core.FloatVertexProperty;
 import forsyde.io.java.core.ForSyDeModel;
+import forsyde.io.java.core.IntegerVertexProperty;
+import forsyde.io.java.core.LongVertexProperty;
 import forsyde.io.java.core.MapVertexProperty;
-import forsyde.io.java.core.NumberVertexProperty;
-import forsyde.io.java.core.Port;
 import forsyde.io.java.core.StringVertexProperty;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexPropertyElement;
@@ -184,11 +182,11 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 	static protected VertexPropertyElement readData(Element elem) {
 		// it is a collection
 		if (elem.getAttribute("attr.type").equals("integer") || elem.getAttribute("attr.type").equals("int")) {
-			return new NumberVertexProperty(Integer.valueOf(elem.getTextContent()));
+			return new IntegerVertexProperty(Integer.valueOf(elem.getTextContent()));
 		} else if (elem.getAttribute("attr.type").equals("float")) {
-			return new NumberVertexProperty(Float.valueOf(elem.getTextContent()));
+			return new FloatVertexProperty(Float.valueOf(elem.getTextContent()));
 		} else if (elem.getAttribute("attr.type").equals("double")) {
-			return new NumberVertexProperty(Double.valueOf(elem.getTextContent()));
+			return new DoubleVertexProperty(Double.valueOf(elem.getTextContent()));
 		} else if (elem.getAttribute("attr.type").equals("boolean") || elem.getAttribute("attr.type").equals("bool")) {
 			return new BooleanVertexProperty(Boolean.valueOf(elem.getTextContent()));
 		} else if (elem.getAttribute("attr.type").equals("object")) {
@@ -234,21 +232,31 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 		return newElem;
 	}
 
-	static protected Element writeData(Document doc, NumberVertexProperty num) {
+	static protected Element writeData(Document doc, IntegerVertexProperty num) {
 		Element newElem = doc.createElement("data");
-		if (num.isInt()) {
-			newElem.setAttribute("attr.type", "int");
-			newElem.setTextContent(String.valueOf(num.intValue()));
-		} else if (num.isLong()) {
-			newElem.setAttribute("attr.type", "long");
-			newElem.setTextContent(String.valueOf(num.longValue()));
-		} else if (num.isFloat()) {
-			newElem.setAttribute("attr.type", "float");
-			newElem.setTextContent(String.valueOf(num.floatValue()));
-		} else if (num.isDouble()) {
-			newElem.setAttribute("attr.type", "double");
-			newElem.setTextContent(String.valueOf(num.doubleValue()));
-		}
+		newElem.setAttribute("attr.type", "int");
+		newElem.setTextContent(String.valueOf(num.intValue()));
+		return newElem;
+	}
+
+	static protected Element writeData(Document doc, LongVertexProperty num) {
+		Element newElem = doc.createElement("data");
+		newElem.setAttribute("attr.type", "long");
+		newElem.setTextContent(String.valueOf(num.longValue()));
+		return newElem;
+	}
+
+	static protected Element writeData(Document doc, FloatVertexProperty num) {
+		Element newElem = doc.createElement("data");
+		newElem.setAttribute("attr.type", "float");
+		newElem.setTextContent(String.valueOf(num.floatValue()));
+		return newElem;
+	}
+
+	static protected Element writeData(Document doc, DoubleVertexProperty num) {
+		Element newElem = doc.createElement("data");
+		newElem.setAttribute("attr.type", "double");
+		newElem.setTextContent(String.valueOf(num.doubleValue()));
 		return newElem;
 	}
 
@@ -267,8 +275,14 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 	}
 
 	static protected Element writeData(Document doc, VertexPropertyElement value) {
-		if (value instanceof NumberVertexProperty) {
-			return writeData(doc, (NumberVertexProperty) value);
+		if (value instanceof IntegerVertexProperty) {
+			return writeData(doc, (IntegerVertexProperty) value);
+		} else if (value instanceof LongVertexProperty) {
+			return writeData(doc, (LongVertexProperty) value);
+		} else if (value instanceof FloatVertexProperty) {
+			return writeData(doc, (FloatVertexProperty) value);
+		} else if (value instanceof DoubleVertexProperty) {
+			return writeData(doc, (DoubleVertexProperty) value);
 		} else if (value instanceof MapVertexProperty) {
 			return writeData(doc, (MapVertexProperty) value);
 		} else if (value instanceof ArrayVertexProperty) {

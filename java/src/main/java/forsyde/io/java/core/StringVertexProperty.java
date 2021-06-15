@@ -24,7 +24,7 @@ final public class StringVertexProperty implements VertexPropertyElement, CharSe
     public CharSequence subSequence(int start, int end) {
         return innerString.subSequence(start, end);
     }
-    
+
     @Override
     public String toString() {
         return innerString;
@@ -35,7 +35,8 @@ final public class StringVertexProperty implements VertexPropertyElement, CharSe
         if (other instanceof StringVertexProperty) {
             StringVertexProperty otherString = (StringVertexProperty) other;
             return this.innerString.equals(otherString.innerString);
-        } {
+        }
+        {
             return false;
         }
     }
@@ -48,5 +49,10 @@ final public class StringVertexProperty implements VertexPropertyElement, CharSe
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Object unwrap() {
+        return innerString;
     }
 }

@@ -37,5 +37,12 @@ final public class ArrayVertexProperty extends ArrayList<VertexPropertyElement> 
             return Optional.empty();
         }
     }
-    
+
+    @Override
+    public Object unwrap() {
+        ArrayList<Object> unwrapped = new ArrayList<>(this.size());
+        this.forEach(v -> v.unwrap());
+        return unwrapped;
+    }
+
 }

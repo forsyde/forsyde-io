@@ -18,12 +18,12 @@ import java.util.Set;
  * 
  * Class holding data for a Vertex (Node) in memory.
  * 
- * Every vertex contains a number of {@link Port}s (which are repeated
- * in the vertexes to increase reliability in the model, since putting
- * them in edges would have been sufficient) with their associated
- * types. Also, every vertex contains "Properties" which are arbitrary
- * self-contained associated data, such as the size of bits in a Signal
- * or the time slots in a Time Division Multiplexer.
+ * Every vertex contains a number of {@link Port}s (which are repeated in the
+ * vertexes to increase reliability in the model, since putting them in edges
+ * would have been sufficient) with their associated types. Also, every vertex
+ * contains "Properties" which are arbitrary self-contained associated data,
+ * such as the size of bits in a Signal or the time slots in a Time Division
+ * Multiplexer.
  * 
  * @author Rodolfo Jordao (jordao@kth.se)
  */
@@ -111,7 +111,8 @@ public class Vertex {
 
 	public boolean mergeInPlace(Vertex other) {
 		boolean mergeDefined = true;
-		if (identifier != other.identifier) return false;
+		if (identifier != other.identifier)
+			return false;
 		ports.addAll(other.ports);
 		vertexTraits.addAll(other.vertexTraits);
 		for (String key : other.properties.keySet()) {
@@ -125,7 +126,8 @@ public class Vertex {
 	}
 
 	public Optional<Vertex> merge(Vertex other) {
-		if (identifier != other.identifier) return Optional.empty();
+		if (identifier != other.identifier)
+			return Optional.empty();
 		else {
 			Vertex merged = new Vertex(identifier);
 			if (merged.mergeInPlace(this) && merged.mergeInPlace(other)) {

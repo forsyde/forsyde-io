@@ -35,5 +35,10 @@ final public class BooleanVertexProperty implements VertexPropertyElement, Boole
             return Optional.empty();
         }
     }
-    
+
+    @Override
+    public Object unwrap() {
+        return innerBoolean;
+    }
+
 }
