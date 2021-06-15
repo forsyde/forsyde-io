@@ -1,34 +1,32 @@
 package forsyde.io.java.typed.acessor;
 
-import forsyde.io.java.core.NumberVertexProperty;
-import forsyde.io.java.core.StringVertexProperty;
 import forsyde.io.java.core.Vertex;
+import java.lang.Integer;
+import java.lang.String;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public abstract class InstrumentedAcessor {
-  public static Optional<Map<StringVertexProperty, Map<StringVertexProperty, NumberVertexProperty>>> getRequires(
-      Vertex vertex) {
+  public static Optional<Map<String, Map<String, Integer>>> getRequires(Vertex vertex) {
     if (vertex.properties.containsKey("requires")) {
-      return Optional.of((java.util.Map<forsyde.io.java.core.StringVertexProperty, java.util.Map<forsyde.io.java.core.StringVertexProperty, forsyde.io.java.core.NumberVertexProperty>>) vertex.properties.get("requires"));
+      return Optional.of((java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.Integer>>) vertex.properties.get("requires").unwrap());
     } else {
       return Optional.empty();
     }
   }
 
-  public static Optional<Map<StringVertexProperty, Map<StringVertexProperty, NumberVertexProperty>>> getProvides(
-      Vertex vertex) {
+  public static Optional<Map<String, Map<String, Integer>>> getProvides(Vertex vertex) {
     if (vertex.properties.containsKey("provides")) {
-      return Optional.of((java.util.Map<forsyde.io.java.core.StringVertexProperty, java.util.Map<forsyde.io.java.core.StringVertexProperty, forsyde.io.java.core.NumberVertexProperty>>) vertex.properties.get("provides"));
+      return Optional.of((java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.Integer>>) vertex.properties.get("provides").unwrap());
     } else {
       return Optional.empty();
     }
   }
 
-  public static Optional<List<StringVertexProperty>> getConfigurations(Vertex vertex) {
+  public static Optional<List<String>> getConfigurations(Vertex vertex) {
     if (vertex.properties.containsKey("configurations")) {
-      return Optional.of((java.util.List<forsyde.io.java.core.StringVertexProperty>) vertex.properties.get("configurations"));
+      return Optional.of((java.util.List<java.lang.String>) vertex.properties.get("configurations").unwrap());
     } else {
       return Optional.empty();
     }

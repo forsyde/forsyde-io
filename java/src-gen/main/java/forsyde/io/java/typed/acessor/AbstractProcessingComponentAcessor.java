@@ -1,13 +1,13 @@
 package forsyde.io.java.typed.acessor;
 
-import forsyde.io.java.core.BooleanVertexProperty;
 import forsyde.io.java.core.Vertex;
+import java.lang.Boolean;
 import java.util.Optional;
 
 public abstract class AbstractProcessingComponentAcessor {
-  public static Optional<BooleanVertexProperty> getCanBeExplored(Vertex vertex) {
+  public static Optional<Boolean> getCanBeExplored(Vertex vertex) {
     if (vertex.properties.containsKey("can_be_explored")) {
-      return Optional.of((forsyde.io.java.core.BooleanVertexProperty) vertex.properties.get("can_be_explored"));
+      return Optional.of((java.lang.Boolean) vertex.properties.get("can_be_explored").unwrap());
     } else {
       return Optional.empty();
     }

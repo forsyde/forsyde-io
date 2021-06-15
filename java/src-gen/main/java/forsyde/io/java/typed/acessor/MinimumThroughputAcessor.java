@@ -2,15 +2,15 @@ package forsyde.io.java.typed.acessor;
 
 import forsyde.io.java.core.Edge;
 import forsyde.io.java.core.ForSyDeModel;
-import forsyde.io.java.core.NumberVertexProperty;
 import forsyde.io.java.core.Vertex;
+import java.lang.Integer;
 import java.util.HashSet;
 import java.util.Optional;
 
 public abstract class MinimumThroughputAcessor {
-  public static Optional<NumberVertexProperty> getAprioriImportance(Vertex vertex) {
+  public static Optional<Integer> getAprioriImportance(Vertex vertex) {
     if (vertex.properties.containsKey("apriori_importance")) {
-      return Optional.of((forsyde.io.java.core.NumberVertexProperty) vertex.properties.get("apriori_importance"));
+      return Optional.of((java.lang.Integer) vertex.properties.get("apriori_importance").unwrap());
     } else {
       return Optional.empty();
     }

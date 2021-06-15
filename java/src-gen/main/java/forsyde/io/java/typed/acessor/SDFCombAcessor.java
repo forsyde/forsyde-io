@@ -2,26 +2,24 @@ package forsyde.io.java.typed.acessor;
 
 import forsyde.io.java.core.Edge;
 import forsyde.io.java.core.ForSyDeModel;
-import forsyde.io.java.core.NumberVertexProperty;
-import forsyde.io.java.core.StringVertexProperty;
 import forsyde.io.java.core.Vertex;
+import java.lang.Integer;
+import java.lang.String;
 import java.util.Map;
 import java.util.Optional;
 
 public abstract class SDFCombAcessor {
-  public static Optional<Map<StringVertexProperty, NumberVertexProperty>> getConsumption(
-      Vertex vertex) {
+  public static Optional<Map<String, Integer>> getConsumption(Vertex vertex) {
     if (vertex.properties.containsKey("consumption")) {
-      return Optional.of((java.util.Map<forsyde.io.java.core.StringVertexProperty, forsyde.io.java.core.NumberVertexProperty>) vertex.properties.get("consumption"));
+      return Optional.of((java.util.Map<java.lang.String, java.lang.Integer>) vertex.properties.get("consumption").unwrap());
     } else {
       return Optional.empty();
     }
   }
 
-  public static Optional<Map<StringVertexProperty, NumberVertexProperty>> getProduction(
-      Vertex vertex) {
+  public static Optional<Map<String, Integer>> getProduction(Vertex vertex) {
     if (vertex.properties.containsKey("production")) {
-      return Optional.of((java.util.Map<forsyde.io.java.core.StringVertexProperty, forsyde.io.java.core.NumberVertexProperty>) vertex.properties.get("production"));
+      return Optional.of((java.util.Map<java.lang.String, java.lang.Integer>) vertex.properties.get("production").unwrap());
     } else {
       return Optional.empty();
     }
