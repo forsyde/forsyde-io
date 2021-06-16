@@ -13,7 +13,6 @@ import forsyde.io.java.core.ForSyDeModel;
  */
 public final class ForSyDeModelHandler {
 
-	@SuppressWarnings("deprecation")
 	public static ForSyDeModel loadModel(String filePath) throws Exception {
 		ForSyDeModelDriver driver;
 		if (filePath.endsWith(".forxml") || filePath.endsWith(".forsyde.xml")) {
@@ -24,7 +23,6 @@ public final class ForSyDeModelHandler {
 		return driver.loadModel(filePath);
 	}
 
-	@SuppressWarnings("deprecation")
 	public static ForSyDeModel loadModel(File file) throws Exception {
 		ForSyDeModelDriver driver;
 		if (file.getName().endsWith(".forxml") || file.getName().endsWith(".forsyde.xml")) {
@@ -35,7 +33,6 @@ public final class ForSyDeModelHandler {
 		return driver.loadModel(file);
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static void writeModel(ForSyDeModel model, String filePath) throws Exception {
 		ForSyDeModelDriver driver;
 		if (filePath.endsWith(".forxml")) {
@@ -48,7 +45,6 @@ public final class ForSyDeModelHandler {
 		driver.writeModel(model, filePath);
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void writeModel(ForSyDeModel model, File file) throws Exception {
 		ForSyDeModelDriver driver;
 		if (file.getName().endsWith(".forxml") || file.getName().endsWith(".forsyde.xml")) {
