@@ -3,72 +3,72 @@ package forsyde.io.java.core;
 import java.lang.String;
 
 public enum EdgeTrait implements Trait {
-  Input,
+  InputTrait,
 
-  Output,
+  OutputTrait,
 
-  Annotation,
+  AnnotationTrait,
 
-  Composition,
+  CompositionTrait,
 
-  AbstractPhysicalConnection,
+  AbstractPhysicalConnectionTrait,
 
-  AbstractDecision,
+  AbstractDecisionTrait,
 
-  AbstractScheduling,
+  AbstractSchedulingTrait,
 
-  AbstractMapping,
+  AbstractMappingTrait,
 
-  AbstractAllocation;
+  AbstractAllocationTrait;
 
   public static boolean refines(EdgeTrait one, EdgeTrait other) {
     switch (one) {
-      case Input:
+      case InputTrait:
       switch (other) {
-        case Input: return true;
+        case InputTrait: return true;
         default: return false;
       }
-      case Output:
+      case OutputTrait:
       switch (other) {
-        case Output: return true;
+        case OutputTrait: return true;
         default: return false;
       }
-      case Annotation:
+      case AnnotationTrait:
       switch (other) {
-        case Annotation: return true;
+        case AnnotationTrait: return true;
         default: return false;
       }
-      case Composition:
+      case CompositionTrait:
       switch (other) {
-        case Composition: return true;
+        case CompositionTrait: return true;
         default: return false;
       }
-      case AbstractPhysicalConnection:
+      case AbstractPhysicalConnectionTrait:
       switch (other) {
-        case AbstractPhysicalConnection: return true;
+        case AbstractPhysicalConnectionTrait: return true;
         default: return false;
       }
-      case AbstractDecision:
+      case AbstractDecisionTrait:
       switch (other) {
-        case AbstractDecision: return true;
+        case AbstractDecisionTrait: return true;
         default: return false;
       }
-      case AbstractScheduling:
+      case AbstractSchedulingTrait:
       switch (other) {
-        case AbstractScheduling: return true;
-        case AbstractDecision: return true;
+        case AbstractSchedulingTrait: return true;
+        case AbstractDecisionTrait: return true;
         default: return false;
       }
-      case AbstractMapping:
+      case AbstractMappingTrait:
       switch (other) {
-        case AbstractMapping: return true;
-        case AbstractDecision: return true;
+        case AbstractMappingTrait: return true;
+        case AbstractDecisionTrait: return true;
         default: return false;
       }
-      case AbstractAllocation:
+      case AbstractAllocationTrait:
       switch (other) {
-        case AbstractAllocation: return true;
-        case AbstractDecision: return true;
+        case AbstractAllocationTrait: return true;
+        case AbstractDecisionTrait: return true;
         default: return false;
       }
       default: return false;

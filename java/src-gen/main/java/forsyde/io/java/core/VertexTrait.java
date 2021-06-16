@@ -3,306 +3,306 @@ package forsyde.io.java.core;
 import java.lang.String;
 
 public enum VertexTrait implements Trait {
-  AbstractGrouping,
+  AbstractGroupingTrait,
 
-  AbstractOrdering,
+  AbstractOrderingTrait,
 
-  TriggeredTask,
+  TriggeredTaskTrait,
 
-  SporadicTask,
+  SporadicTaskTrait,
 
-  ExtraFunctional,
+  ExtraFunctionalTrait,
 
-  WCET,
+  WCETTrait,
 
-  WCCT,
+  WCCTTrait,
 
-  Requirement,
+  RequirementTrait,
 
-  HardRequirement,
+  HardRequirementTrait,
 
-  LocationRequirement,
+  LocationRequirementTrait,
 
-  Goal,
+  GoalTrait,
 
-  MinimumThroughput,
+  MinimumThroughputTrait,
 
-  TimeTriggeredScheduler,
+  TimeTriggeredSchedulerTrait,
 
-  FixedPriorityScheduler,
+  FixedPrioritySchedulerTrait,
 
-  CustomScheduler,
+  CustomSchedulerTrait,
 
-  RoundRobinScheduler,
+  RoundRobinSchedulerTrait,
 
-  ForSyDeFunction,
+  ForSyDeFunctionTrait,
 
-  InstrumentedFunction,
+  InstrumentedFunctionTrait,
 
-  Signal,
+  SignalTrait,
 
-  BufferSignal,
+  BufferSignalTrait,
 
-  LabelSignal,
+  LabelSignalTrait,
 
-  Instrumented,
+  InstrumentedTrait,
 
-  InstrumentedSignal,
+  InstrumentedSignalTrait,
 
-  SYComb,
+  SYCombTrait,
 
-  SYPrefix,
+  SYPrefixTrait,
 
-  SDFComb,
+  SDFCombTrait,
 
-  SDFPrefix,
+  SDFPrefixTrait,
 
-  ReactorElement,
+  ReactorElementTrait,
 
-  ReactorTimer,
+  ReactorTimerTrait,
 
-  ReactorActor,
+  ReactorActorTrait,
 
-  AbstractPhysicalComponent,
+  AbstractPhysicalComponentTrait,
 
-  AbstractProcessingComponent,
+  AbstractProcessingComponentTrait,
 
-  InstrumentedProcessorTile,
+  InstrumentedProcessorTileTrait,
 
-  AbstractStorageComponent,
+  AbstractStorageComponentTrait,
 
-  AbsractInterfaceComponent,
+  AbsractInterfaceComponentTrait,
 
-  AbstractCommunicationComponent,
+  AbstractCommunicationComponentTrait,
 
-  InstrumentedCommunicationInterconnect,
+  InstrumentedCommunicationInterconnectTrait,
 
-  TimeDivisionMultiplexer;
+  TimeDivisionMultiplexerTrait;
 
   public static boolean refines(VertexTrait one, VertexTrait other) {
     switch (one) {
-      case AbstractGrouping:
+      case AbstractGroupingTrait:
       switch (other) {
-        case AbstractGrouping: return true;
+        case AbstractGroupingTrait: return true;
         default: return false;
       }
-      case AbstractOrdering:
+      case AbstractOrderingTrait:
       switch (other) {
-        case AbstractOrdering: return true;
-        case AbstractGrouping: return true;
+        case AbstractOrderingTrait: return true;
+        case AbstractGroupingTrait: return true;
         default: return false;
       }
-      case TriggeredTask:
+      case TriggeredTaskTrait:
       switch (other) {
-        case TriggeredTask: return true;
-        case AbstractOrdering: return true;
-        case AbstractGrouping: return true;
+        case TriggeredTaskTrait: return true;
+        case AbstractOrderingTrait: return true;
+        case AbstractGroupingTrait: return true;
         default: return false;
       }
-      case SporadicTask:
+      case SporadicTaskTrait:
       switch (other) {
-        case SporadicTask: return true;
-        case AbstractOrdering: return true;
-        case AbstractGrouping: return true;
+        case SporadicTaskTrait: return true;
+        case AbstractOrderingTrait: return true;
+        case AbstractGroupingTrait: return true;
         default: return false;
       }
-      case ExtraFunctional:
+      case ExtraFunctionalTrait:
       switch (other) {
-        case ExtraFunctional: return true;
+        case ExtraFunctionalTrait: return true;
         default: return false;
       }
-      case WCET:
+      case WCETTrait:
       switch (other) {
-        case WCET: return true;
-        case ExtraFunctional: return true;
+        case WCETTrait: return true;
+        case ExtraFunctionalTrait: return true;
         default: return false;
       }
-      case WCCT:
+      case WCCTTrait:
       switch (other) {
-        case WCCT: return true;
-        case ExtraFunctional: return true;
+        case WCCTTrait: return true;
+        case ExtraFunctionalTrait: return true;
         default: return false;
       }
-      case Requirement:
+      case RequirementTrait:
       switch (other) {
-        case Requirement: return true;
+        case RequirementTrait: return true;
         default: return false;
       }
-      case HardRequirement:
+      case HardRequirementTrait:
       switch (other) {
-        case HardRequirement: return true;
-        case Requirement: return true;
+        case HardRequirementTrait: return true;
+        case RequirementTrait: return true;
         default: return false;
       }
-      case LocationRequirement:
+      case LocationRequirementTrait:
       switch (other) {
-        case LocationRequirement: return true;
-        case Requirement: return true;
+        case LocationRequirementTrait: return true;
+        case RequirementTrait: return true;
         default: return false;
       }
-      case Goal:
+      case GoalTrait:
       switch (other) {
-        case Goal: return true;
+        case GoalTrait: return true;
         default: return false;
       }
-      case MinimumThroughput:
+      case MinimumThroughputTrait:
       switch (other) {
-        case MinimumThroughput: return true;
-        case Goal: return true;
+        case MinimumThroughputTrait: return true;
+        case GoalTrait: return true;
         default: return false;
       }
-      case TimeTriggeredScheduler:
+      case TimeTriggeredSchedulerTrait:
       switch (other) {
-        case TimeTriggeredScheduler: return true;
-        case AbstractGrouping: return true;
+        case TimeTriggeredSchedulerTrait: return true;
+        case AbstractGroupingTrait: return true;
         default: return false;
       }
-      case FixedPriorityScheduler:
+      case FixedPrioritySchedulerTrait:
       switch (other) {
-        case FixedPriorityScheduler: return true;
+        case FixedPrioritySchedulerTrait: return true;
         default: return false;
       }
-      case CustomScheduler:
+      case CustomSchedulerTrait:
       switch (other) {
-        case CustomScheduler: return true;
+        case CustomSchedulerTrait: return true;
         default: return false;
       }
-      case RoundRobinScheduler:
+      case RoundRobinSchedulerTrait:
       switch (other) {
-        case RoundRobinScheduler: return true;
+        case RoundRobinSchedulerTrait: return true;
         default: return false;
       }
-      case ForSyDeFunction:
+      case ForSyDeFunctionTrait:
       switch (other) {
-        case ForSyDeFunction: return true;
+        case ForSyDeFunctionTrait: return true;
         default: return false;
       }
-      case InstrumentedFunction:
+      case InstrumentedFunctionTrait:
       switch (other) {
-        case InstrumentedFunction: return true;
-        case ForSyDeFunction: return true;
+        case InstrumentedFunctionTrait: return true;
+        case ForSyDeFunctionTrait: return true;
         default: return false;
       }
-      case Signal:
+      case SignalTrait:
       switch (other) {
-        case Signal: return true;
+        case SignalTrait: return true;
         default: return false;
       }
-      case BufferSignal:
+      case BufferSignalTrait:
       switch (other) {
-        case BufferSignal: return true;
-        case Signal: return true;
+        case BufferSignalTrait: return true;
+        case SignalTrait: return true;
         default: return false;
       }
-      case LabelSignal:
+      case LabelSignalTrait:
       switch (other) {
-        case LabelSignal: return true;
-        case Signal: return true;
+        case LabelSignalTrait: return true;
+        case SignalTrait: return true;
         default: return false;
       }
-      case Instrumented:
+      case InstrumentedTrait:
       switch (other) {
-        case Instrumented: return true;
+        case InstrumentedTrait: return true;
         default: return false;
       }
-      case InstrumentedSignal:
+      case InstrumentedSignalTrait:
       switch (other) {
-        case InstrumentedSignal: return true;
-        case Instrumented: return true;
-        case Signal: return true;
+        case InstrumentedSignalTrait: return true;
+        case InstrumentedTrait: return true;
+        case SignalTrait: return true;
         default: return false;
       }
-      case SYComb:
+      case SYCombTrait:
       switch (other) {
-        case SYComb: return true;
-        case ForSyDeFunction: return true;
+        case SYCombTrait: return true;
+        case ForSyDeFunctionTrait: return true;
         default: return false;
       }
-      case SYPrefix:
+      case SYPrefixTrait:
       switch (other) {
-        case SYPrefix: return true;
-        case ForSyDeFunction: return true;
+        case SYPrefixTrait: return true;
+        case ForSyDeFunctionTrait: return true;
         default: return false;
       }
-      case SDFComb:
+      case SDFCombTrait:
       switch (other) {
-        case SDFComb: return true;
-        case ForSyDeFunction: return true;
+        case SDFCombTrait: return true;
+        case ForSyDeFunctionTrait: return true;
         default: return false;
       }
-      case SDFPrefix:
+      case SDFPrefixTrait:
       switch (other) {
-        case SDFPrefix: return true;
-        case ForSyDeFunction: return true;
+        case SDFPrefixTrait: return true;
+        case ForSyDeFunctionTrait: return true;
         default: return false;
       }
-      case ReactorElement:
+      case ReactorElementTrait:
       switch (other) {
-        case ReactorElement: return true;
+        case ReactorElementTrait: return true;
         default: return false;
       }
-      case ReactorTimer:
+      case ReactorTimerTrait:
       switch (other) {
-        case ReactorTimer: return true;
-        case ReactorElement: return true;
+        case ReactorTimerTrait: return true;
+        case ReactorElementTrait: return true;
         default: return false;
       }
-      case ReactorActor:
+      case ReactorActorTrait:
       switch (other) {
-        case ReactorActor: return true;
-        case ForSyDeFunction: return true;
-        case ReactorElement: return true;
+        case ReactorActorTrait: return true;
+        case ForSyDeFunctionTrait: return true;
+        case ReactorElementTrait: return true;
         default: return false;
       }
-      case AbstractPhysicalComponent:
+      case AbstractPhysicalComponentTrait:
       switch (other) {
-        case AbstractPhysicalComponent: return true;
+        case AbstractPhysicalComponentTrait: return true;
         default: return false;
       }
-      case AbstractProcessingComponent:
+      case AbstractProcessingComponentTrait:
       switch (other) {
-        case AbstractProcessingComponent: return true;
-        case AbstractPhysicalComponent: return true;
+        case AbstractProcessingComponentTrait: return true;
+        case AbstractPhysicalComponentTrait: return true;
         default: return false;
       }
-      case InstrumentedProcessorTile:
+      case InstrumentedProcessorTileTrait:
       switch (other) {
-        case InstrumentedProcessorTile: return true;
-        case Instrumented: return true;
-        case AbstractProcessingComponent: return true;
-        case AbstractPhysicalComponent: return true;
+        case InstrumentedProcessorTileTrait: return true;
+        case InstrumentedTrait: return true;
+        case AbstractProcessingComponentTrait: return true;
+        case AbstractPhysicalComponentTrait: return true;
         default: return false;
       }
-      case AbstractStorageComponent:
+      case AbstractStorageComponentTrait:
       switch (other) {
-        case AbstractStorageComponent: return true;
-        case AbstractPhysicalComponent: return true;
+        case AbstractStorageComponentTrait: return true;
+        case AbstractPhysicalComponentTrait: return true;
         default: return false;
       }
-      case AbsractInterfaceComponent:
+      case AbsractInterfaceComponentTrait:
       switch (other) {
-        case AbsractInterfaceComponent: return true;
-        case AbstractPhysicalComponent: return true;
+        case AbsractInterfaceComponentTrait: return true;
+        case AbstractPhysicalComponentTrait: return true;
         default: return false;
       }
-      case AbstractCommunicationComponent:
+      case AbstractCommunicationComponentTrait:
       switch (other) {
-        case AbstractCommunicationComponent: return true;
-        case AbstractPhysicalComponent: return true;
+        case AbstractCommunicationComponentTrait: return true;
+        case AbstractPhysicalComponentTrait: return true;
         default: return false;
       }
-      case InstrumentedCommunicationInterconnect:
+      case InstrumentedCommunicationInterconnectTrait:
       switch (other) {
-        case InstrumentedCommunicationInterconnect: return true;
-        case AbstractCommunicationComponent: return true;
-        case AbstractPhysicalComponent: return true;
+        case InstrumentedCommunicationInterconnectTrait: return true;
+        case AbstractCommunicationComponentTrait: return true;
+        case AbstractPhysicalComponentTrait: return true;
         default: return false;
       }
-      case TimeDivisionMultiplexer:
+      case TimeDivisionMultiplexerTrait:
       switch (other) {
-        case TimeDivisionMultiplexer: return true;
-        case AbstractCommunicationComponent: return true;
-        case AbstractPhysicalComponent: return true;
+        case TimeDivisionMultiplexerTrait: return true;
+        case AbstractCommunicationComponentTrait: return true;
+        case AbstractPhysicalComponentTrait: return true;
         default: return false;
       }
       default: return false;

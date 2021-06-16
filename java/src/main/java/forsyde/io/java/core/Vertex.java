@@ -29,10 +29,21 @@ import java.util.Set;
  */
 public class Vertex {
 
+	private volatile static long genSymSuffix = 0L;
+
 	public String identifier;
 	public Set<String> ports = new HashSet<String>();
 	public Map<String, VertexPropertyElement> properties = new HashMap<String, VertexPropertyElement>();
 	public Set<VertexTrait> vertexTraits = new HashSet<VertexTrait>();
+
+	/**
+	 * Utility constructor initializing all associated data as empty and the vertex with a unique random identifier.
+	 * 
+	 */
+	public Vertex() {
+		genSymSuffix += 1L;
+		this.identifier = "v" + String.valueOf(genSymSuffix);
+	}
 
 	/**
 	 * Utility constructor initializing all associated data as empty.
