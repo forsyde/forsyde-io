@@ -35,14 +35,42 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 
 	}
 
-	public void mergeInPlace(ForSyDeModel other) {
+	public boolean mergeInPlace(ForSyDeModel other) {
+		boolean mergeDefined = true;
+		// do the double for since we would need to
+		// find the conflicting vertex anyhow. Indexing/hashing
+		// approaches can speed this up in the future.
 		for (Vertex v: other.vertexSet()) {
-			if (!vertexSet().contains(v)) {
+			boolean present = false;
+			for (Vertex thisV : vertexSet()) {
+				// found a match
+				if (v.identifier == thisV.identifier) {
+					mergeDefined = mergeDefined && thisV.mergeInPlace(v);
+					present = true;
+					break;
+				}
+			}
+			if (!present) {
 				addVertex(v);
-			} else {
-				
+			}
+			
+		}
+		// this is OK to be done since "contains" checks for equality
+		for (Edge e : other.edgeSet()) {
+			boolean present = false;
+			for (Edge thisE : edgeSet()) {
+				// found a match
+				if (e.equals(thisE)) {
+					thisE.edgeTraits.addAll(e.edgeTraits);
+				}
+			}
+			if (!present) {
+				Vertex source = vertexSet().stream().filter(v -> v.equals(e.source)).findAny().get();
+				Vertex target = vertexSet().stream().filter(v -> v.equals(e.target)).findAny().get();
+				addEdge(source, target, e);
 			}
 		}
+		return mergeDefined;
 	}
 
 }

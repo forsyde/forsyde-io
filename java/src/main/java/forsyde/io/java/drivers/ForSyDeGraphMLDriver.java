@@ -3,9 +3,7 @@ package forsyde.io.java.drivers;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,10 +16,16 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import forsyde.io.java.core.ArrayVertexProperty;
+import forsyde.io.java.core.BooleanVertexProperty;
+import forsyde.io.java.core.DoubleVertexProperty;
 import forsyde.io.java.core.Edge;
+import forsyde.io.java.core.FloatVertexProperty;
 import forsyde.io.java.core.ForSyDeModel;
-import forsyde.io.java.core.Port;
+import forsyde.io.java.core.IntegerVertexProperty;
+import forsyde.io.java.core.MapVertexProperty;
 import forsyde.io.java.core.Vertex;
+import forsyde.io.java.core.VertexPropertyElement;
 
 public class ForSyDeGraphMLDriver extends ForSyDeModelDriver {
 
@@ -92,32 +96,32 @@ public class ForSyDeGraphMLDriver extends ForSyDeModelDriver {
 		transformer.transform(new DOMSource(doc), new StreamResult(out));
 	}
 
-	static protected List<Integer> writeData(List<String> names, List<String> types, String name, Object value) {
+	static protected List<Integer> writeData(List<String> names, List<String> types, String name, VertexPropertyElement value) {
 		if (!names.contains(name)) {
 			List<Integer> indexes = new ArrayList<>();
-			if (value instanceof HashMap) {
-				HashMap<String, Object> map = (HashMap<String, Object>) value;
+			if (value instanceof MapVertexProperty) {
+				MapVertexProperty map = (MapVertexProperty) value;
 				for (String key : map.keySet()) {
 					indexes.addAll(writeData(names, types, name + "." + key, map.get(key)));
 				}
-			} else if (value instanceof ArrayList) {
-				ArrayList<Object> list = (ArrayList<Object>) value;
+			} else if (value instanceof ArrayVertexProperty) {
+				ArrayVertexProperty list = (ArrayVertexProperty) value;
 				for (int i = 0; i < list.size(); i++) {
 					indexes.addAll(writeData(names, types, name + "." + String.valueOf(i), list.get(i)));
 				}
-			} else if (value instanceof Integer) {
+			} else if (value instanceof IntegerVertexProperty) {
 				names.add(name);
 				types.add("int");
 				indexes.add(names.size());
-			} else if (value instanceof Float) {
+			} else if (value instanceof FloatVertexProperty) {
 				names.add(name);
 				types.add("float");
 				indexes.add(names.size());
-			} else if (value instanceof Double) {
+			} else if (value instanceof DoubleVertexProperty) {
 				names.add(name);
 				types.add("double");
 				indexes.add(names.size());
-			} else if (value instanceof Boolean) {
+			} else if (value instanceof BooleanVertexProperty) {
 				names.add(name);
 				types.add("boolean");
 				indexes.add(names.size());

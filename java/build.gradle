@@ -19,7 +19,8 @@ apply from: 'generator.gradle'
 
 tasks.compileJava.dependsOn generateVertexTraits
 tasks.compileJava.dependsOn generateEdgeTraits
-tasks.compileJava.dependsOn generateVertexAcessor
+tasks.compileJava.dependsOn generateVertexInterfaces
+tasks.compileJava.dependsOn generateVertexConcreteClasses
 
 ext {
   artifactName = 'forsyde-io-java'
@@ -29,7 +30,7 @@ ext {
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = ext.artifactName
-version = '0.3.6'
+version = '0.3.7'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
