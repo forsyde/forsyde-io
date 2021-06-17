@@ -32,7 +32,6 @@ public class Edge implements EdgeInterface {
 	 * 
 	 * @param target Target Vertex for this edge.
 	 * @param source Source vertex for this edge.
-	 * @see #Edge(Vertex, Vertex, Optional, Optional)
 	 */
 	public Edge(VertexInterface target, VertexInterface source) {
 		this.target = target;
@@ -49,7 +48,6 @@ public class Edge implements EdgeInterface {
 	 * @param source     Source vertex for this edge.
 	 * @param targetPort target vertex port for this edge.
 	 * @param sourcePort source vertex port for this edge.
-	 * @see #Edge(Vertex, Vertex, Optional, Optional)
 	 */
 	public Edge(VertexInterface source, VertexInterface target, String sourcePort, String targetPort) {
 		this.target = target;
