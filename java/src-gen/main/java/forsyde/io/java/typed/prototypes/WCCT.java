@@ -18,31 +18,32 @@ public final class WCCT extends Vertex implements WCCTPrototype {
     return staticGetTime(this);
   }
 
-  public static HashSet<Vertex> staticGetSignalPort(ForSyDeModel model, Vertex vertex) {
-    HashSet<Vertex> outList = new HashSet<Vertex>();
+  public static HashSet<Process> staticGetSignalPort(ForSyDeModel model, Vertex vertex) {
+    HashSet<Process> outList = new HashSet<Process>();
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("signal")) {
-        outList.add(e.target);
+      if (e.sourcePort.orElse("").equals("signal") && Process.conforms(vertex)) {
+        outList.add((Process) e.target);
       }
     }
     return outList;
   }
 
-  public HashSet<Vertex> getSignalPort(ForSyDeModel model) {
+  public HashSet<Process> getSignalPort(ForSyDeModel model) {
     return staticGetSignalPort(model, this);
   }
 
-  public static HashSet<Vertex> staticGetPlatformElementPort(ForSyDeModel model, Vertex vertex) {
-    HashSet<Vertex> outList = new HashSet<Vertex>();
+  public static HashSet<AbstractCommunicationComponent> staticGetPlatformElementPort(
+      ForSyDeModel model, Vertex vertex) {
+    HashSet<AbstractCommunicationComponent> outList = new HashSet<AbstractCommunicationComponent>();
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("platform_element")) {
-        outList.add(e.target);
+      if (e.sourcePort.orElse("").equals("platform_element") && AbstractCommunicationComponent.conforms(vertex)) {
+        outList.add((AbstractCommunicationComponent) e.target);
       }
     }
     return outList;
   }
 
-  public HashSet<Vertex> getPlatformElementPort(ForSyDeModel model) {
+  public HashSet<AbstractCommunicationComponent> getPlatformElementPort(ForSyDeModel model) {
     return staticGetPlatformElementPort(model, this);
   }
 

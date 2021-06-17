@@ -28,21 +28,22 @@ public final class SDFComb extends Vertex implements SDFCombPrototype {
     return staticGetProduction(this);
   }
 
-  public static Optional<Vertex> staticGetCombinatorPort(ForSyDeModel model, Vertex vertex) {
+  public static Optional<ForSyDeFunction> staticGetCombinatorPort(ForSyDeModel model,
+      Vertex vertex) {
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("combinator")) {
-        return Optional.of(e.target);
+      if (e.sourcePort.orElse("").equals("combinator") && ForSyDeFunction.conforms(vertex)) {
+        return Optional.of((ForSyDeFunction) e.target);
       }
     }
     for (Edge e: model.incomingEdgesOf(vertex)) {
-      if (e.targetPort.orElse("").equals("combinator")) {
-        return Optional.of(e.source);
+      if (e.targetPort.orElse("").equals("combinator") && ForSyDeFunction.conforms(vertex)) {
+        return Optional.of((ForSyDeFunction) e.source);
       }
     }
     return Optional.empty();
   }
 
-  public Optional<Vertex> getCombinatorPort(ForSyDeModel model) {
+  public Optional<ForSyDeFunction> getCombinatorPort(ForSyDeModel model) {
     return staticGetCombinatorPort(model, this);
   }
 

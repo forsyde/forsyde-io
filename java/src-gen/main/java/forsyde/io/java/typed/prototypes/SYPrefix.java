@@ -9,21 +9,21 @@ import java.lang.Boolean;
 import java.util.Optional;
 
 public final class SYPrefix extends Vertex implements SYPrefixPrototype {
-  public static Optional<Vertex> staticGetPrefixerPort(ForSyDeModel model, Vertex vertex) {
+  public static Optional<ForSyDeFunction> staticGetPrefixerPort(ForSyDeModel model, Vertex vertex) {
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("prefixer")) {
-        return Optional.of(e.target);
+      if (e.sourcePort.orElse("").equals("prefixer") && ForSyDeFunction.conforms(vertex)) {
+        return Optional.of((ForSyDeFunction) e.target);
       }
     }
     for (Edge e: model.incomingEdgesOf(vertex)) {
-      if (e.targetPort.orElse("").equals("prefixer")) {
-        return Optional.of(e.source);
+      if (e.targetPort.orElse("").equals("prefixer") && ForSyDeFunction.conforms(vertex)) {
+        return Optional.of((ForSyDeFunction) e.source);
       }
     }
     return Optional.empty();
   }
 
-  public Optional<Vertex> getPrefixerPort(ForSyDeModel model) {
+  public Optional<ForSyDeFunction> getPrefixerPort(ForSyDeModel model) {
     return staticGetPrefixerPort(model, this);
   }
 

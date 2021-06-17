@@ -42,17 +42,17 @@ public final class ReactorTimer extends Vertex implements ReactorTimerPrototype 
     return staticGetOffsetDenominatorPerSec(this);
   }
 
-  public static HashSet<Vertex> staticGetOutputPort(ForSyDeModel model, Vertex vertex) {
-    HashSet<Vertex> outList = new HashSet<Vertex>();
+  public static HashSet<ReactorElement> staticGetOutputPort(ForSyDeModel model, Vertex vertex) {
+    HashSet<ReactorElement> outList = new HashSet<ReactorElement>();
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("output")) {
-        outList.add(e.target);
+      if (e.sourcePort.orElse("").equals("output") && ReactorElement.conforms(vertex)) {
+        outList.add((ReactorElement) e.target);
       }
     }
     return outList;
   }
 
-  public HashSet<Vertex> getOutputPort(ForSyDeModel model) {
+  public HashSet<ReactorElement> getOutputPort(ForSyDeModel model) {
     return staticGetOutputPort(model, this);
   }
 

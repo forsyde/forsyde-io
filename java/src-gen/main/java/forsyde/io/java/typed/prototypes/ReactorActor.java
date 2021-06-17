@@ -10,36 +10,36 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public final class ReactorActor extends Vertex implements ReactorActorPrototype {
-  public static ArrayList<Vertex> staticGetTriggersPort(ForSyDeModel model, Vertex vertex) {
-    ArrayList<Vertex> outList = new ArrayList<Vertex>();
+  public static ArrayList<ReactorElement> staticGetTriggersPort(ForSyDeModel model, Vertex vertex) {
+    ArrayList<ReactorElement> outList = new ArrayList<ReactorElement>();
     for (Edge e: model.incomingEdgesOf(vertex)) {
-      if (e.targetPort.orElse("").equals("triggers")) {
-        outList.add(e.source);
+      if (e.targetPort.orElse("").equals("triggers") && ReactorElement.conforms(vertex)) {
+        outList.add((ReactorElement) e.source);
       }
     }
     return outList;
   }
 
-  public ArrayList<Vertex> getTriggersPort(ForSyDeModel model) {
+  public ArrayList<ReactorElement> getTriggersPort(ForSyDeModel model) {
     return staticGetTriggersPort(model, this);
   }
 
-  public static Optional<Vertex> staticGetReactionImplementationPort(ForSyDeModel model,
+  public static Optional<ForSyDeFunction> staticGetReactionImplementationPort(ForSyDeModel model,
       Vertex vertex) {
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("reaction_implementation")) {
-        return Optional.of(e.target);
+      if (e.sourcePort.orElse("").equals("reaction_implementation") && ForSyDeFunction.conforms(vertex)) {
+        return Optional.of((ForSyDeFunction) e.target);
       }
     }
     for (Edge e: model.incomingEdgesOf(vertex)) {
-      if (e.targetPort.orElse("").equals("reaction_implementation")) {
-        return Optional.of(e.source);
+      if (e.targetPort.orElse("").equals("reaction_implementation") && ForSyDeFunction.conforms(vertex)) {
+        return Optional.of((ForSyDeFunction) e.source);
       }
     }
     return Optional.empty();
   }
 
-  public Optional<Vertex> getReactionImplementationPort(ForSyDeModel model) {
+  public Optional<ForSyDeFunction> getReactionImplementationPort(ForSyDeModel model) {
     return staticGetReactionImplementationPort(model, this);
   }
 

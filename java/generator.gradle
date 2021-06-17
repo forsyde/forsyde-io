@@ -292,7 +292,7 @@ task generateVertexConcreteClasses(dependsOn: [generateVertexInterfaces]) {
             // port acessors are generated depending in the multiplicity of their connections and possible directions
             for(vertexPort in currentTrait['required_ports']) {
                 // accessGenerated.add(vertexPort.key)
-                def vertexClass = ClassName.get('forsyde.io.java.core', 'Vertex')
+                def vertexClass = ClassName.get('forsyde.io.java.typed.prototypes', vertexPort.value["class"])
                 def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), vertexClass)
                 def listOut = ParameterizedTypeName.get(ClassName.get(List.class), vertexClass)
                 def setOut = ParameterizedTypeName.get(ClassName.get(Set.class), vertexClass)
@@ -302,7 +302,7 @@ task generateVertexConcreteClasses(dependsOn: [generateVertexInterfaces]) {
                 def getStaticPortMethod = MethodSpec.methodBuilder(getStaticPortName)
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .addParameter(ClassName.get('forsyde.io.java.core', 'ForSyDeModel'), "model")
-                    .addParameter(vertexClass, "vertex")
+                    .addParameter(ClassName.get('forsyde.io.java.core', 'Vertex'), "vertex")
                 if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "ordered")
                     getStaticPortMethod.returns(arrayType)
                 else if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "unordered")
@@ -317,27 +317,27 @@ task generateVertexConcreteClasses(dependsOn: [generateVertexInterfaces]) {
                 // generate the iteration to collect or find vertexes
                 if (vertexPort.value['direction'] == null || (vertexPort.value['direction'] != null && vertexPort.value['direction'] >= 0)) {
                         getStaticPortMethod.beginControlFlow('for ($T e: model.outgoingEdgesOf(vertex))', ClassName.get('forsyde.io.java.core', 'Edge'))
-                        getStaticPortMethod.beginControlFlow("if (e.sourcePort.orElse(\"\").equals(\"" + vertexPort.key + "\"))")
+                        getStaticPortMethod.beginControlFlow("if (e.sourcePort.orElse(\"\").equals(\"" + vertexPort.key + "\") && ${vertexPort.value["class"]}.conforms(vertex))")
                         // this decides for every iteration if first found is good or if a list is being built.
                         if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "ordered")
-                            getStaticPortMethod.addStatement('outList.add(e.target)')
+                            getStaticPortMethod.addStatement("outList.add((${vertexPort.value["class"]}) e.target)")
                         else if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "unordered")
-                            getStaticPortMethod.addStatement('outList.add(e.target)')
+                            getStaticPortMethod.addStatement("outList.add((${vertexPort.value["class"]}) e.target)")
                         else
-                            getStaticPortMethod.addStatement('return Optional.of(e.target)')
+                            getStaticPortMethod.addStatement("return Optional.of((${vertexPort.value["class"]}) e.target)")
                         getStaticPortMethod.endControlFlow()	
                         getStaticPortMethod.endControlFlow()	
                 }
                 if (vertexPort.value['direction'] == null || (vertexPort.value['direction'] != null && vertexPort.value['direction'] <= 0)) {
                         getStaticPortMethod.beginControlFlow('for ($T e: model.incomingEdgesOf(vertex))', ClassName.get('forsyde.io.java.core', 'Edge'))
-                        getStaticPortMethod.beginControlFlow("if (e.targetPort.orElse(\"\").equals(\"" + vertexPort.key + "\"))")
+                        getStaticPortMethod.beginControlFlow("if (e.targetPort.orElse(\"\").equals(\"" + vertexPort.key + "\") && ${vertexPort.value["class"]}.conforms(vertex))")
                         // this decides for every iteration if first found is good or if a list is being built.
                         if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "ordered")
-                            getStaticPortMethod.addStatement('outList.add(e.source)')
+                            getStaticPortMethod.addStatement("outList.add((${vertexPort.value["class"]}) e.source)")
                         else if (vertexPort.value["multiple"] != null && vertexPort.value["multiple"] == "unordered")
-                            getStaticPortMethod.addStatement('outList.add(e.source)')
+                            getStaticPortMethod.addStatement("outList.add((${vertexPort.value["class"]}) e.source)")
                         else
-                            getStaticPortMethod.addStatement('return Optional.of(e.source)')
+                            getStaticPortMethod.addStatement("return Optional.of((${vertexPort.value["class"]}) e.source)")
                         getStaticPortMethod.endControlFlow()	
                         getStaticPortMethod.endControlFlow()	
                 }

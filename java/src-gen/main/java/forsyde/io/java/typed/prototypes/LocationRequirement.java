@@ -9,31 +9,32 @@ import java.lang.Boolean;
 import java.util.HashSet;
 
 public final class LocationRequirement extends Vertex implements LocationRequirementPrototype {
-  public static HashSet<Vertex> staticGetProcessPort(ForSyDeModel model, Vertex vertex) {
-    HashSet<Vertex> outList = new HashSet<Vertex>();
+  public static HashSet<Process> staticGetProcessPort(ForSyDeModel model, Vertex vertex) {
+    HashSet<Process> outList = new HashSet<Process>();
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("process")) {
-        outList.add(e.target);
+      if (e.sourcePort.orElse("").equals("process") && Process.conforms(vertex)) {
+        outList.add((Process) e.target);
       }
     }
     return outList;
   }
 
-  public HashSet<Vertex> getProcessPort(ForSyDeModel model) {
+  public HashSet<Process> getProcessPort(ForSyDeModel model) {
     return staticGetProcessPort(model, this);
   }
 
-  public static HashSet<Vertex> staticGetProcessingUnitPort(ForSyDeModel model, Vertex vertex) {
-    HashSet<Vertex> outList = new HashSet<Vertex>();
+  public static HashSet<AbstractProcessingComponent> staticGetProcessingUnitPort(ForSyDeModel model,
+      Vertex vertex) {
+    HashSet<AbstractProcessingComponent> outList = new HashSet<AbstractProcessingComponent>();
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("processing_unit")) {
-        outList.add(e.target);
+      if (e.sourcePort.orElse("").equals("processing_unit") && AbstractProcessingComponent.conforms(vertex)) {
+        outList.add((AbstractProcessingComponent) e.target);
       }
     }
     return outList;
   }
 
-  public HashSet<Vertex> getProcessingUnitPort(ForSyDeModel model) {
+  public HashSet<AbstractProcessingComponent> getProcessingUnitPort(ForSyDeModel model) {
     return staticGetProcessingUnitPort(model, this);
   }
 

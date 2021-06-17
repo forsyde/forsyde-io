@@ -18,31 +18,32 @@ public final class WCET extends Vertex implements WCETPrototype {
     return staticGetTime(this);
   }
 
-  public static HashSet<Vertex> staticGetApplicationPort(ForSyDeModel model, Vertex vertex) {
-    HashSet<Vertex> outList = new HashSet<Vertex>();
+  public static HashSet<Process> staticGetApplicationPort(ForSyDeModel model, Vertex vertex) {
+    HashSet<Process> outList = new HashSet<Process>();
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("application")) {
-        outList.add(e.target);
+      if (e.sourcePort.orElse("").equals("application") && Process.conforms(vertex)) {
+        outList.add((Process) e.target);
       }
     }
     return outList;
   }
 
-  public HashSet<Vertex> getApplicationPort(ForSyDeModel model) {
+  public HashSet<Process> getApplicationPort(ForSyDeModel model) {
     return staticGetApplicationPort(model, this);
   }
 
-  public static HashSet<Vertex> staticGetPlatformPort(ForSyDeModel model, Vertex vertex) {
-    HashSet<Vertex> outList = new HashSet<Vertex>();
+  public static HashSet<AbstractProcessingComponent> staticGetPlatformPort(ForSyDeModel model,
+      Vertex vertex) {
+    HashSet<AbstractProcessingComponent> outList = new HashSet<AbstractProcessingComponent>();
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("platform")) {
-        outList.add(e.target);
+      if (e.sourcePort.orElse("").equals("platform") && AbstractProcessingComponent.conforms(vertex)) {
+        outList.add((AbstractProcessingComponent) e.target);
       }
     }
     return outList;
   }
 
-  public HashSet<Vertex> getPlatformPort(ForSyDeModel model) {
+  public HashSet<AbstractProcessingComponent> getPlatformPort(ForSyDeModel model) {
     return staticGetPlatformPort(model, this);
   }
 
