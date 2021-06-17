@@ -33,4 +33,12 @@ public class OpaqueTrait implements Trait, CharSequence {
         return opaqueTraitName;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof Trait) {
+            return this.getName().equals(((Trait) other).getName());
+        }
+        return false;
+    }
+
 }
