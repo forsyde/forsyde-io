@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,14 +34,17 @@ import forsyde.io.java.core.ArrayVertexProperty;
 import forsyde.io.java.core.BooleanVertexProperty;
 import forsyde.io.java.core.DoubleVertexProperty;
 import forsyde.io.java.core.Edge;
+import forsyde.io.java.core.EdgeInterface;
 import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.FloatVertexProperty;
 import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.core.IntegerVertexProperty;
 import forsyde.io.java.core.LongVertexProperty;
 import forsyde.io.java.core.MapVertexProperty;
+import forsyde.io.java.core.OpaqueTrait;
 import forsyde.io.java.core.StringVertexProperty;
 import forsyde.io.java.core.Vertex;
+import forsyde.io.java.core.VertexInterface;
 import forsyde.io.java.core.VertexPropertyElement;
 import forsyde.io.java.core.VertexTrait;
 
@@ -49,6 +53,11 @@ import forsyde.io.java.core.VertexTrait;
  *
  */
 public class ForSyDeMLDriver extends ForSyDeModelDriver {
+
+	private static Set<String> allowedVertexes = Stream.of(VertexTrait.values()).map(t -> t.getName())
+			.collect(Collectors.toSet());
+	private static Set<String> allowedEdges = Stream.of(EdgeTrait.values()).map(t -> t.getName())
+			.collect(Collectors.toSet());
 
 	/**
 	 * Parses ForSyDe's graphML varatiation schema.
@@ -77,10 +86,10 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 		NodeList vertexList = (NodeList) xPath.compile("/graphml//graph/node").evaluate(xmlDoc, XPathConstants.NODESET);
 		for (int i = 0; i < vertexList.getLength(); i++) {
 			Element vertexElem = (Element) vertexList.item(i);
-			// TODO: the type creation could be safer or signal some exception
 			Vertex vertex = new Vertex(vertexElem.getAttribute("id"));
 			vertex.vertexTraits = Stream.of(vertexElem.getAttribute("traits").split(";"))
-					.map(s -> VertexTrait.valueOf(s)).collect(Collectors.toSet());
+					.map(s -> allowedVertexes.contains(s) ? VertexTrait.valueOf(s) : new OpaqueTrait(s))
+					.collect(Collectors.toSet());
 			model.addVertex(vertex);
 			// iterate through ports and add them
 			NodeList portsList = (NodeList) xPath.compile("port").evaluate(vertexElem, XPathConstants.NODESET);
@@ -92,7 +101,6 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			NodeList propertyList = (NodeList) xPath.compile("data").evaluate(vertexElem, XPathConstants.NODESET);
 			for (int j = 0; j < propertyList.getLength(); j++) {
 				Element propertyElem = (Element) propertyList.item(j);
-				// TODO: assure safety of this call
 				VertexPropertyElement property = readData(propertyElem);
 				vertex.properties.put(propertyElem.getAttribute("attr.name"), property);
 			}
@@ -104,19 +112,22 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			String tid = edgeElem.getAttribute("target");
 			// TODO: later put more safety here, even though for consistency should never
 			// fail
-			Vertex source = model.vertexSet().stream().filter(v -> v.identifier.equals(sid)).findFirst().get();
-			Vertex target = model.vertexSet().stream().filter(v -> v.identifier.equals(tid)).findFirst().get();
+			VertexInterface source = model.vertexSet().stream().filter(v -> v.getIdentifier().equals(sid)).findFirst()
+					.get();
+			VertexInterface target = model.vertexSet().stream().filter(v -> v.getIdentifier().equals(tid)).findFirst()
+					.get();
 			Edge edge = new Edge(source, target);
-			edge.edgeTraits = Stream.of(edgeElem.getAttribute("traits").split(";")).map(s -> EdgeTrait.valueOf(s))
+			edge.edgeTraits = Stream.of(edgeElem.getAttribute("traits").split(";"))
+					.map(s -> allowedEdges.contains(s) ? EdgeTrait.valueOf(s) : new OpaqueTrait(s))
 					.collect(Collectors.toSet());
 			if (edgeElem.hasAttribute("sourceport")) {
-				String sourcePort = source.ports.stream().filter(p -> p.equals(edgeElem.getAttribute("sourceport")))
-						.findFirst().get();
+				String sourcePort = source.getPorts().stream()
+						.filter(p -> p.equals(edgeElem.getAttribute("sourceport"))).findFirst().get();
 				edge.sourcePort = Optional.of(sourcePort);
 			}
 			if (edgeElem.hasAttribute("targetport")) {
-				String targetPort = target.ports.stream().filter(p -> p.equals(edgeElem.getAttribute("targetport")))
-						.findFirst().get();
+				String targetPort = target.getPorts().stream()
+						.filter(p -> p.equals(edgeElem.getAttribute("targetport"))).findFirst().get();
 				edge.targetPort = Optional.of(targetPort);
 			}
 			model.addEdge(source, target, edge);
@@ -136,34 +147,34 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 		graph.setAttribute("edgedefault", "directed");
 		root.appendChild(graph);
 		doc.appendChild(root);
-		for (Vertex v : model.vertexSet()) {
+		for (VertexInterface v : model.vertexSet()) {
 			Element vElem = doc.createElement("node");
-			vElem.setAttribute("id", v.identifier);
+			vElem.setAttribute("id", v.getIdentifier());
 			vElem.setAttribute("traits",
-					v.vertexTraits.stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
+					v.getTraits().stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
 			graph.appendChild(vElem);
-			for (String p : v.ports) {
+			for (String p : v.getPorts()) {
 				Element pElem = doc.createElement("port");
 				pElem.setAttribute("name", p);
 				vElem.appendChild(pElem);
 			}
-			for (String key : v.properties.keySet()) {
-				Element propElem = writeData(doc, v.properties.get(key));
+			for (String key : v.getProperties().keySet()) {
+				Element propElem = writeData(doc, v.getProperties().get(key));
 				propElem.setAttribute("attr.name", key);
 				vElem.appendChild(propElem);
 			}
 		}
-		for (Edge e : model.edgeSet()) {
+		for (EdgeInterface e : model.edgeSet()) {
 			Element eElem = doc.createElement("edge");
-			eElem.setAttribute("source", e.source.identifier);
-			eElem.setAttribute("target", e.target.identifier);
+			eElem.setAttribute("source", e.getSource().getIdentifier());
+			eElem.setAttribute("target", e.getTarget().getIdentifier());
 			eElem.setAttribute("traits",
-					e.edgeTraits.stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
-			if (e.sourcePort.isPresent()) {
-				eElem.setAttribute("sourceport", e.sourcePort.get());
+					e.getTraits().stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
+			if (e.getSourcePort().isPresent()) {
+				eElem.setAttribute("sourceport", e.getSourcePort().get());
 			}
-			if (e.targetPort.isPresent()) {
-				eElem.setAttribute("targetport", e.targetPort.get());
+			if (e.getTargetPort().isPresent()) {
+				eElem.setAttribute("targetport", e.getTargetPort().get());
 			}
 			graph.appendChild(eElem);
 		}

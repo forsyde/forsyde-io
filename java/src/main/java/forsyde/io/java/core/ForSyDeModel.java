@@ -22,10 +22,10 @@ import forsyde.io.java.drivers.ForSyDeModelHandler;
  *         {@link ForSyDeModelHandler} directly.
  * 
  * @see DirectedPseudograph
- * @see Vertex
+ * @see VertexInterface
  * @see Edge
  */
-public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
+public class ForSyDeModel extends DirectedPseudograph<VertexInterface, EdgeInterface> {
 
 	/**
 	 * Default constructor, returning an empty (system) model graph.
@@ -38,13 +38,13 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 	public boolean mergeInPlace(ForSyDeModel other) {
 		boolean mergeDefined = true;
 		// do the double for since we would need to
-		// find the conflicting vertex anyhow. Indexing/hashing
+		// find the conflicting vertexInterface anyhow. Indexing/hashing
 		// approaches can speed this up in the future.
-		for (Vertex v: other.vertexSet()) {
+		for (VertexInterface v : other.vertexSet()) {
 			boolean present = false;
-			for (Vertex thisV : vertexSet()) {
+			for (VertexInterface thisV : vertexSet()) {
 				// found a match
-				if (v.identifier == thisV.identifier) {
+				if (v.getIdentifier() == thisV.getIdentifier()) {
 					mergeDefined = mergeDefined && thisV.mergeInPlace(v);
 					present = true;
 					break;
@@ -53,20 +53,20 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 			if (!present) {
 				addVertex(v);
 			}
-			
+
 		}
 		// this is OK to be done since "contains" checks for equality
-		for (Edge e : other.edgeSet()) {
+		for (EdgeInterface e : other.edgeSet()) {
 			boolean present = false;
-			for (Edge thisE : edgeSet()) {
+			for (EdgeInterface thisE : edgeSet()) {
 				// found a match
 				if (e.equals(thisE)) {
-					thisE.edgeTraits.addAll(e.edgeTraits);
+					thisE.getTraits().addAll(e.getTraits());
 				}
 			}
 			if (!present) {
-				Vertex source = vertexSet().stream().filter(v -> v.equals(e.source)).findAny().get();
-				Vertex target = vertexSet().stream().filter(v -> v.equals(e.target)).findAny().get();
+				VertexInterface source = vertexSet().stream().filter(v -> v.equals(e.getSource())).findAny().get();
+				VertexInterface target = vertexSet().stream().filter(v -> v.equals(e.getTarget())).findAny().get();
 				addEdge(source, target, e);
 			}
 		}

@@ -19,12 +19,12 @@ import org.w3c.dom.Element;
 import forsyde.io.java.core.ArrayVertexProperty;
 import forsyde.io.java.core.BooleanVertexProperty;
 import forsyde.io.java.core.DoubleVertexProperty;
-import forsyde.io.java.core.Edge;
+import forsyde.io.java.core.EdgeInterface;
 import forsyde.io.java.core.FloatVertexProperty;
 import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.core.IntegerVertexProperty;
 import forsyde.io.java.core.MapVertexProperty;
-import forsyde.io.java.core.Vertex;
+import forsyde.io.java.core.VertexInterface;
 import forsyde.io.java.core.VertexPropertyElement;
 
 public class ForSyDeGraphMLDriver extends ForSyDeModelDriver {
@@ -49,36 +49,36 @@ public class ForSyDeGraphMLDriver extends ForSyDeModelDriver {
 		graph.setAttribute("edgedefault", "directed");
 		root.appendChild(graph);
 		doc.appendChild(root);
-		for (Vertex v : model.vertexSet()) {
+		for (VertexInterface v : model.vertexSet()) {
 			Element vElem = doc.createElement("node");
-			vElem.setAttribute("id", v.identifier);
+			vElem.setAttribute("id", v.getIdentifier());
 			// vElem.setAttribute("traits", v.vertexTraits.stream().map(t ->
 			// t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
 			graph.appendChild(vElem);
-			for (String p : v.ports) {
+			for (String p : v.getPorts()) {
 				Element pElem = doc.createElement("port");
 				pElem.setAttribute("name", p);
 				vElem.appendChild(pElem);
 			}
-			for (String key : v.properties.keySet()) {
-				for (Integer i : writeData(vertexDataNames, vertexDataTypes, key, v.properties.get(key))) {
+			for (String key : v.getProperties().keySet()) {
+				for (Integer i : writeData(vertexDataNames, vertexDataTypes, key, v.getProperties().get(key))) {
 					Element propElem = doc.createElement("data");
 					propElem.setAttribute("key", "d" + String.valueOf(i));
 					vElem.appendChild(propElem);
 				}
 			}
 		}
-		for (Edge e : model.edgeSet()) {
+		for (EdgeInterface e : model.edgeSet()) {
 			Element eElem = doc.createElement("edge");
-			eElem.setAttribute("source", e.source.identifier);
-			eElem.setAttribute("target", e.target.identifier);
+			eElem.setAttribute("source", e.getSource().getIdentifier());
+			eElem.setAttribute("target", e.getTarget().getIdentifier());
 			// eElem.setAttribute("traits", e.edgeTraits.stream().map(t ->
 			// t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
-			if (e.sourcePort.isPresent()) {
-				eElem.setAttribute("sourceport", e.sourcePort.get());
+			if (e.getSourcePort().isPresent()) {
+				eElem.setAttribute("sourceport", e.getSourcePort().get());
 			}
-			if (e.targetPort.isPresent()) {
-				eElem.setAttribute("targetport", e.targetPort.get());
+			if (e.getTargetPort().isPresent()) {
+				eElem.setAttribute("targetport", e.getTargetPort().get());
 			}
 			graph.appendChild(eElem);
 		}
@@ -96,7 +96,8 @@ public class ForSyDeGraphMLDriver extends ForSyDeModelDriver {
 		transformer.transform(new DOMSource(doc), new StreamResult(out));
 	}
 
-	static protected List<Integer> writeData(List<String> names, List<String> types, String name, VertexPropertyElement value) {
+	static protected List<Integer> writeData(List<String> names, List<String> types, String name,
+			VertexPropertyElement value) {
 		if (!names.contains(name)) {
 			List<Integer> indexes = new ArrayList<>();
 			if (value instanceof MapVertexProperty) {

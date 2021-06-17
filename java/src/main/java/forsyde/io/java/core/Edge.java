@@ -18,13 +18,13 @@ import java.util.Set;
  *         ends, in case they exist. The edges also have types associated with
  *         them so that extra deductions can be made along the EDA flow.
  */
-public class Edge {
+public class Edge implements EdgeInterface {
 
-	public Vertex source;
-	public Vertex target;
+	public VertexInterface source;
+	public VertexInterface target;
 	public Optional<String> sourcePort;
 	public Optional<String> targetPort;
-	public Set<EdgeTrait> edgeTraits = new HashSet<EdgeTrait>();
+	public Set<Trait> edgeTraits = new HashSet<Trait>();
 
 	/**
 	 * Utility constructor wrapping the source and target ports into empty optionals
@@ -34,7 +34,7 @@ public class Edge {
 	 * @param source Source vertex for this edge.
 	 * @see #Edge(Vertex, Vertex, Optional, Optional)
 	 */
-	public Edge(Vertex target, Vertex source) {
+	public Edge(VertexInterface target, VertexInterface source) {
 		this.target = target;
 		this.source = source;
 		this.sourcePort = Optional.empty();
@@ -51,7 +51,7 @@ public class Edge {
 	 * @param sourcePort source vertex port for this edge.
 	 * @see #Edge(Vertex, Vertex, Optional, Optional)
 	 */
-	public Edge(Vertex source, Vertex target, String sourcePort, String targetPort) {
+	public Edge(VertexInterface source, VertexInterface target, String sourcePort, String targetPort) {
 		this.target = target;
 		this.source = source;
 		this.targetPort = Optional.of(targetPort);
@@ -68,14 +68,15 @@ public class Edge {
 	 * @param targetPort {@link Optional} target vertex port for this edge.
 	 * @param sourcePort {@link Optional} source vertex port for this edge.
 	 */
-	public Edge(Vertex source, Vertex target, Optional<String> sourcePort, Optional<String> targetPort) {
+	public Edge(VertexInterface source, VertexInterface target, Optional<String> sourcePort,
+			Optional<String> targetPort) {
 		this.target = target;
 		this.source = source;
 		this.targetPort = targetPort;
 		this.sourcePort = sourcePort;
 	}
 
-	public Set<EdgeTrait> getTraits() {
+	public Set<Trait> getTraits() {
 		return edgeTraits;
 	}
 
@@ -107,6 +108,31 @@ public class Edge {
 		builder.append("Edge [type=").append(", source=").append(source).append(", target=").append(target)
 				.append(", sourcePort=").append(sourcePort).append(", targetPort=").append(targetPort).append("]");
 		return builder.toString();
+	}
+
+	@Override
+	public VertexInterface getSource() {
+		return source;
+	}
+
+	@Override
+	public VertexInterface getTarget() {
+		return target;
+	}
+
+	@Override
+	public Optional<String> getSourcePort() {
+		return sourcePort;
+	}
+
+	@Override
+	public Optional<String> getTargetPort() {
+		return targetPort;
+	}
+
+	@Override
+	public void addTrait(Trait t) {
+		edgeTraits.add(t);
 	}
 
 }
