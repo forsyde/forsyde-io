@@ -14,11 +14,11 @@ public interface WCCT extends VertexInterface, ExtraFunctional {
     return (String) getProperties().get("time").unwrap();
   }
 
-  default HashSet<Process> getSignalPort(ForSyDeModel model) {
-    HashSet<Process> outList = new HashSet<Process>();
+  default HashSet<ForSyDeFunction> getSignalPort(ForSyDeModel model) {
+    HashSet<ForSyDeFunction> outList = new HashSet<ForSyDeFunction>();
     for (EdgeInterface e: model.outgoingEdgesOf(this)) {
-      if (e.getSourcePort().orElse("").equals("signal") && e.getTarget() instanceof Process) {
-        outList.add((Process)  e.getTarget());
+      if (e.getSourcePort().orElse("").equals("signal") && e.getTarget() instanceof ForSyDeFunction) {
+        outList.add((ForSyDeFunction)  e.getTarget());
       }
     }
     return outList;

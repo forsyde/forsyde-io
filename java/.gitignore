@@ -134,3 +134,4 @@ gradle-app.setting
 **/build/
 
 # End of https://www.toptal.com/developers/gitignore/api/java,groovy,eclipse,gradle
+src-gen

@@ -9,11 +9,11 @@ import java.util.HashSet;
 import java.util.Optional;
 
 public interface LocationRequirement extends VertexInterface, Requirement {
-  default HashSet<Process> getProcessPort(ForSyDeModel model) {
-    HashSet<Process> outList = new HashSet<Process>();
+  default HashSet<ForSyDeFunction> getForSyDeFunctionPort(ForSyDeModel model) {
+    HashSet<ForSyDeFunction> outList = new HashSet<ForSyDeFunction>();
     for (EdgeInterface e: model.outgoingEdgesOf(this)) {
-      if (e.getSourcePort().orElse("").equals("process") && e.getTarget() instanceof Process) {
-        outList.add((Process)  e.getTarget());
+      if (e.getSourcePort().orElse("").equals("ForSyDeFunction") && e.getTarget() instanceof ForSyDeFunction) {
+        outList.add((ForSyDeFunction)  e.getTarget());
       }
     }
     return outList;

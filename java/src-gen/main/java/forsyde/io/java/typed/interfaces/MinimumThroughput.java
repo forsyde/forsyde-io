@@ -14,11 +14,11 @@ public interface MinimumThroughput extends VertexInterface, Goal {
     return (String) getProperties().get("apriori_importance").unwrap();
   }
 
-  default HashSet<Process> getApplicationPort(ForSyDeModel model) {
-    HashSet<Process> outList = new HashSet<Process>();
+  default HashSet<ForSyDeFunction> getApplicationPort(ForSyDeModel model) {
+    HashSet<ForSyDeFunction> outList = new HashSet<ForSyDeFunction>();
     for (EdgeInterface e: model.outgoingEdgesOf(this)) {
-      if (e.getSourcePort().orElse("").equals("application") && e.getTarget() instanceof Process) {
-        outList.add((Process)  e.getTarget());
+      if (e.getSourcePort().orElse("").equals("application") && e.getTarget() instanceof ForSyDeFunction) {
+        outList.add((ForSyDeFunction)  e.getTarget());
       }
     }
     return outList;
