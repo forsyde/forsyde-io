@@ -8,15 +8,15 @@ import java.lang.Boolean;
 import java.util.Optional;
 
 public interface SYComb extends VertexInterface, ForSyDeFunction {
-  default Optional<VertexInterface> getCombinatorPort(ForSyDeModel model) {
+  default Optional<ForSyDeFunction> getCombinatorPort(ForSyDeModel model) {
     for (EdgeInterface e: model.outgoingEdgesOf(this)) {
-      if (e.getSourcePort().orElse("").equals("combinator")) {
-        return Optional.of(e.getTarget());
+      if (e.getSourcePort().orElse("").equals("combinator") && e.getTarget() instanceof ForSyDeFunction) {
+        return Optional.of((ForSyDeFunction)  e.getTarget());
       }
     }
     for (EdgeInterface e: model.incomingEdgesOf(this)) {
-      if (e.getTargetPort().orElse("").equals("combinator")) {
-        return Optional.of(e.getSource());
+      if (e.getTargetPort().orElse("").equals("combinator") && e.getSource() instanceof ForSyDeFunction) {
+        return Optional.of((ForSyDeFunction) e.getSource());
       }
     }
     return Optional.empty();
@@ -24,5 +24,9 @@ public interface SYComb extends VertexInterface, ForSyDeFunction {
 
   static Boolean conforms(VertexInterface vertex) {
     return vertex.getTraits().contains(VertexTrait.SYComb);
+  }
+
+  static Optional<SYComb> safeCast(VertexInterface vertex) {
+    return conforms(vertex) ? Optional.of((SYComb) vertex) : Optional.empty();
   }
 }

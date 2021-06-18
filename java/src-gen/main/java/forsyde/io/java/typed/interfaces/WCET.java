@@ -5,29 +5,30 @@ import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.core.VertexInterface;
 import forsyde.io.java.core.VertexTrait;
 import java.lang.Boolean;
-import java.lang.Integer;
+import java.lang.String;
 import java.util.HashSet;
+import java.util.Optional;
 
 public interface WCET extends VertexInterface, ExtraFunctional {
-  default Integer getTime() {
-    return (java.lang.Integer) getProperties().get("time").unwrap();
+  default String getTime() {
+    return (String) getProperties().get("time").unwrap();
   }
 
-  default HashSet<VertexInterface> getApplicationPort(ForSyDeModel model) {
-    HashSet<VertexInterface> outList = new HashSet<VertexInterface>();
+  default HashSet<Process> getApplicationPort(ForSyDeModel model) {
+    HashSet<Process> outList = new HashSet<Process>();
     for (EdgeInterface e: model.outgoingEdgesOf(this)) {
-      if (e.getSourcePort().orElse("").equals("application")) {
-        outList.add(e.getTarget());
+      if (e.getSourcePort().orElse("").equals("application") && e.getTarget() instanceof Process) {
+        outList.add((Process)  e.getTarget());
       }
     }
     return outList;
   }
 
-  default HashSet<VertexInterface> getPlatformPort(ForSyDeModel model) {
-    HashSet<VertexInterface> outList = new HashSet<VertexInterface>();
+  default HashSet<AbstractProcessingComponent> getPlatformPort(ForSyDeModel model) {
+    HashSet<AbstractProcessingComponent> outList = new HashSet<AbstractProcessingComponent>();
     for (EdgeInterface e: model.outgoingEdgesOf(this)) {
-      if (e.getSourcePort().orElse("").equals("platform")) {
-        outList.add(e.getTarget());
+      if (e.getSourcePort().orElse("").equals("platform") && e.getTarget() instanceof AbstractProcessingComponent) {
+        outList.add((AbstractProcessingComponent)  e.getTarget());
       }
     }
     return outList;
@@ -35,5 +36,9 @@ public interface WCET extends VertexInterface, ExtraFunctional {
 
   static Boolean conforms(VertexInterface vertex) {
     return vertex.getTraits().contains(VertexTrait.WCET);
+  }
+
+  static Optional<WCET> safeCast(VertexInterface vertex) {
+    return conforms(vertex) ? Optional.of((WCET) vertex) : Optional.empty();
   }
 }

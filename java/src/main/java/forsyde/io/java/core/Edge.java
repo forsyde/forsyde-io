@@ -28,7 +28,7 @@ public class Edge implements EdgeInterface {
 
 	/**
 	 * Utility constructor wrapping the source and target ports into empty optionals
-	 * for constructor {@link #Edge(Vertex, Vertex, Optional, Optional)}.
+	 * for constructor.
 	 * 
 	 * @param target Target Vertex for this edge.
 	 * @param source Source vertex for this edge.
@@ -42,7 +42,7 @@ public class Edge implements EdgeInterface {
 
 	/**
 	 * Utility constructor wrapping the source and target ports into optionals for
-	 * constructor {@link #Edge(Vertex, Vertex, Optional, Optional)}.
+	 * constructor.
 	 * 
 	 * @param target     Target Vertex for this edge.
 	 * @param source     Source vertex for this edge.

@@ -5,19 +5,20 @@ import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.core.VertexInterface;
 import forsyde.io.java.core.VertexTrait;
 import java.lang.Boolean;
-import java.lang.Integer;
+import java.lang.String;
 import java.util.HashSet;
+import java.util.Optional;
 
 public interface MinimumThroughput extends VertexInterface, Goal {
-  default Integer getAprioriImportance() {
-    return (java.lang.Integer) getProperties().get("apriori_importance").unwrap();
+  default String getAprioriImportance() {
+    return (String) getProperties().get("apriori_importance").unwrap();
   }
 
-  default HashSet<VertexInterface> getApplicationPort(ForSyDeModel model) {
-    HashSet<VertexInterface> outList = new HashSet<VertexInterface>();
+  default HashSet<Process> getApplicationPort(ForSyDeModel model) {
+    HashSet<Process> outList = new HashSet<Process>();
     for (EdgeInterface e: model.outgoingEdgesOf(this)) {
-      if (e.getSourcePort().orElse("").equals("application")) {
-        outList.add(e.getTarget());
+      if (e.getSourcePort().orElse("").equals("application") && e.getTarget() instanceof Process) {
+        outList.add((Process)  e.getTarget());
       }
     }
     return outList;
@@ -25,5 +26,9 @@ public interface MinimumThroughput extends VertexInterface, Goal {
 
   static Boolean conforms(VertexInterface vertex) {
     return vertex.getTraits().contains(VertexTrait.MinimumThroughput);
+  }
+
+  static Optional<MinimumThroughput> safeCast(VertexInterface vertex) {
+    return conforms(vertex) ? Optional.of((MinimumThroughput) vertex) : Optional.empty();
   }
 }

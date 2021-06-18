@@ -8,15 +8,15 @@ import java.lang.Boolean;
 import java.util.Optional;
 
 public interface SDFPrefix extends VertexInterface, ForSyDeFunction {
-  default Optional<VertexInterface> getPrefixerPort(ForSyDeModel model) {
+  default Optional<ForSyDeFunction> getPrefixerPort(ForSyDeModel model) {
     for (EdgeInterface e: model.outgoingEdgesOf(this)) {
-      if (e.getSourcePort().orElse("").equals("prefixer")) {
-        return Optional.of(e.getTarget());
+      if (e.getSourcePort().orElse("").equals("prefixer") && e.getTarget() instanceof ForSyDeFunction) {
+        return Optional.of((ForSyDeFunction)  e.getTarget());
       }
     }
     for (EdgeInterface e: model.incomingEdgesOf(this)) {
-      if (e.getTargetPort().orElse("").equals("prefixer")) {
-        return Optional.of(e.getSource());
+      if (e.getTargetPort().orElse("").equals("prefixer") && e.getSource() instanceof ForSyDeFunction) {
+        return Optional.of((ForSyDeFunction) e.getSource());
       }
     }
     return Optional.empty();
@@ -24,5 +24,9 @@ public interface SDFPrefix extends VertexInterface, ForSyDeFunction {
 
   static Boolean conforms(VertexInterface vertex) {
     return vertex.getTraits().contains(VertexTrait.SDFPrefix);
+  }
+
+  static Optional<SDFPrefix> safeCast(VertexInterface vertex) {
+    return conforms(vertex) ? Optional.of((SDFPrefix) vertex) : Optional.empty();
   }
 }
