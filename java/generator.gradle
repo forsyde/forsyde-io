@@ -69,7 +69,7 @@ def buildUpTraitGraph(model, labelName) {
 }
 
 def generatePropertyGetter(propName, propInfo) {
-    def typeOut = metaToJavaType(propInfo["class"])
+    def typeOut = metaToJavaType(propInfo)
     def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), typeOut)
     def getPropMethod = MethodSpec.methodBuilder('get' + toCamelCase(propName, true))
         .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
