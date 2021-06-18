@@ -214,7 +214,7 @@ task generateVertexInterfaces(dependsOn: [generateVertexTraits]) {
             // port acessors are generated depending in the multiplicity of their connections and possible directions
             for(vertexPort in currentTrait['required_ports']) {
                 // accessGenerated.add(vertexPort.key)
-                def vertexClass = ClassName.get('forsyde.io.java.core', 'Vertex')
+                def vertexClass = ClassName.get('forsyde.io.java.typed.interfaces', vertexPort.value['class'] + 'Prototype')
                 def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), vertexClass)
                 def listOut = ParameterizedTypeName.get(ClassName.get(List.class), vertexClass)
                 def setOut = ParameterizedTypeName.get(ClassName.get(Set.class), vertexClass)

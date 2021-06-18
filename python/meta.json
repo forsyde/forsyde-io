@@ -23,7 +23,7 @@
             ],
             "required_ports": {
                 "application": {
-                    "class": "Process",
+                    "class": "ForSyDeFunction",
                     "direction": 1,
                     "multiple": "unordered"
                 },
@@ -46,7 +46,7 @@
             ],
             "required_ports": {
                 "signal": {
-                    "class": "Process",
+                    "class": "ForSyDeFunction",
                     "direction": 1,
                     "multiple": "unordered"
                 },
@@ -74,8 +74,8 @@
                 "Requirement"
             ],
             "required_ports": {
-                "process": {
-                    "class": "Process",
+                "ForSyDeFunction": {
+                    "class": "ForSyDeFunction",
                     "direction": 1,
                     "multiple": "unordered"
                 },
@@ -93,7 +93,7 @@
             ],
             "required_ports": {
                 "application": {
-                    "class": "Process",
+                    "class": "ForSyDeFunction",
                     "direction": 1,
                     "multiple": "unordered"
                 }

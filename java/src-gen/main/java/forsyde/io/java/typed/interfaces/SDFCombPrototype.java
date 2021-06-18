@@ -1,7 +1,6 @@
 package forsyde.io.java.typed.interfaces;
 
 import forsyde.io.java.core.ForSyDeModel;
-import forsyde.io.java.core.Vertex;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Map;
@@ -12,5 +11,5 @@ public interface SDFCombPrototype extends ForSyDeFunctionPrototype {
 
   Map<String, Integer> getProduction();
 
-  Optional<Vertex> getCombinatorPort(ForSyDeModel model);
+  Optional<ForSyDeFunctionPrototype> getCombinatorPort(ForSyDeModel model);
 }

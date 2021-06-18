@@ -9,18 +9,19 @@ import java.lang.Boolean;
 import java.util.HashSet;
 
 public final class LocationRequirement extends Vertex implements LocationRequirementPrototype {
-  public static HashSet<Process> staticGetProcessPort(ForSyDeModel model, Vertex vertex) {
-    HashSet<Process> outList = new HashSet<Process>();
+  public static HashSet<ForSyDeFunction> staticGetForSyDeFunctionPort(ForSyDeModel model,
+      Vertex vertex) {
+    HashSet<ForSyDeFunction> outList = new HashSet<ForSyDeFunction>();
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("process") && Process.conforms(vertex)) {
-        outList.add((Process) e.target);
+      if (e.sourcePort.orElse("").equals("ForSyDeFunction") && ForSyDeFunction.conforms(vertex)) {
+        outList.add((ForSyDeFunction) e.target);
       }
     }
     return outList;
   }
 
-  public HashSet<Process> getProcessPort(ForSyDeModel model) {
-    return staticGetProcessPort(model, this);
+  public HashSet<ForSyDeFunction> getForSyDeFunctionPort(ForSyDeModel model) {
+    return staticGetForSyDeFunctionPort(model, this);
   }
 
   public static HashSet<AbstractProcessingComponent> staticGetProcessingUnitPort(ForSyDeModel model,

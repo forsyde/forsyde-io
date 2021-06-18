@@ -18,17 +18,17 @@ public final class WCCT extends Vertex implements WCCTPrototype {
     return staticGetTime(this);
   }
 
-  public static HashSet<Process> staticGetSignalPort(ForSyDeModel model, Vertex vertex) {
-    HashSet<Process> outList = new HashSet<Process>();
+  public static HashSet<ForSyDeFunction> staticGetSignalPort(ForSyDeModel model, Vertex vertex) {
+    HashSet<ForSyDeFunction> outList = new HashSet<ForSyDeFunction>();
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("signal") && Process.conforms(vertex)) {
-        outList.add((Process) e.target);
+      if (e.sourcePort.orElse("").equals("signal") && ForSyDeFunction.conforms(vertex)) {
+        outList.add((ForSyDeFunction) e.target);
       }
     }
     return outList;
   }
 
-  public HashSet<Process> getSignalPort(ForSyDeModel model) {
+  public HashSet<ForSyDeFunction> getSignalPort(ForSyDeModel model) {
     return staticGetSignalPort(model, this);
   }
 

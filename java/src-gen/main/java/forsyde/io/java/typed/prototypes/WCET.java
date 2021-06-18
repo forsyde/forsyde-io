@@ -18,17 +18,18 @@ public final class WCET extends Vertex implements WCETPrototype {
     return staticGetTime(this);
   }
 
-  public static HashSet<Process> staticGetApplicationPort(ForSyDeModel model, Vertex vertex) {
-    HashSet<Process> outList = new HashSet<Process>();
+  public static HashSet<ForSyDeFunction> staticGetApplicationPort(ForSyDeModel model,
+      Vertex vertex) {
+    HashSet<ForSyDeFunction> outList = new HashSet<ForSyDeFunction>();
     for (Edge e: model.outgoingEdgesOf(vertex)) {
-      if (e.sourcePort.orElse("").equals("application") && Process.conforms(vertex)) {
-        outList.add((Process) e.target);
+      if (e.sourcePort.orElse("").equals("application") && ForSyDeFunction.conforms(vertex)) {
+        outList.add((ForSyDeFunction) e.target);
       }
     }
     return outList;
   }
 
-  public HashSet<Process> getApplicationPort(ForSyDeModel model) {
+  public HashSet<ForSyDeFunction> getApplicationPort(ForSyDeModel model) {
     return staticGetApplicationPort(model, this);
   }
 
