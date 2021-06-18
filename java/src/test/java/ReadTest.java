@@ -4,7 +4,7 @@ import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.drivers.ForSyDeModelHandler;
 
 public class ReadTest {
-	
+
 	@Test
 	public void testReading() {
 		ForSyDeModel model;

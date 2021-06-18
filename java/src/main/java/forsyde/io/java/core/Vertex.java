@@ -25,17 +25,18 @@ import java.util.Set;
  * 
  * @author Rodolfo Jordao (jordao@kth.se)
  */
-public class Vertex {
+public class Vertex implements VertexInterface {
 
 	private volatile static long genSymSuffix = 0L;
 
 	public String identifier;
 	public Set<String> ports = new HashSet<String>();
 	public Map<String, VertexPropertyElement> properties = new HashMap<String, VertexPropertyElement>();
-	public Set<VertexTrait> vertexTraits = new HashSet<VertexTrait>();
+	public Set<Trait> vertexTraits = new HashSet<Trait>();
 
 	/**
-	 * Utility constructor initializing all associated data as empty and the vertex with a unique random identifier.
+	 * Utility constructor initializing all associated data as empty and the vertex
+	 * with a unique random identifier.
 	 * 
 	 */
 	public Vertex() {
@@ -80,7 +81,7 @@ public class Vertex {
 		return builder.toString();
 	}
 
-	public Set<VertexTrait> getTraits() {
+	public Set<Trait> getTraits() {
 		return vertexTraits;
 	}
 
@@ -118,24 +119,24 @@ public class Vertex {
 		return Objects.equals(identifier, other.identifier);
 	}
 
-	public boolean mergeInPlace(Vertex other) {
+	public boolean mergeInPlace(VertexInterface other) {
 		boolean mergeDefined = true;
-		if (identifier != other.identifier)
+		if (identifier != other.getIdentifier())
 			return false;
-		ports.addAll(other.ports);
-		vertexTraits.addAll(other.vertexTraits);
-		for (String key : other.properties.keySet()) {
+		ports.addAll(other.getPorts());
+		vertexTraits.addAll(other.getTraits());
+		for (String key : other.getProperties().keySet()) {
 			if (properties.containsKey(key)) {
-				mergeDefined = mergeDefined && properties.get(key).mergeInPlace(other.properties.get(key));
+				mergeDefined = mergeDefined && properties.get(key).mergeInPlace(other.getProperties().get(key));
 			} else {
-				properties.put(key, other.properties.get(key));
+				properties.put(key, other.getProperties().get(key));
 			}
 		}
 		return mergeDefined;
 	}
 
-	public Optional<Vertex> merge(Vertex other) {
-		if (identifier != other.identifier)
+	public Optional<Vertex> merge(VertexInterface other) {
+		if (identifier != other.getIdentifier())
 			return Optional.empty();
 		else {
 			Vertex merged = new Vertex(identifier);
@@ -145,6 +146,26 @@ public class Vertex {
 				return Optional.empty();
 			}
 		}
+	}
+
+	@Override
+	public Map<String, VertexPropertyElement> getProperties() {
+		return properties;
+	}
+
+	@Override
+	public Set<String> getPorts() {
+		return ports;
+	}
+
+	@Override
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	@Override
+	public void addTrait(Trait t) {
+		vertexTraits.add(t);
 	}
 
 }
