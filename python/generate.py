@@ -51,7 +51,7 @@ vertexTraitSuper: Dict[str, Set[str]] = {}
 for vname in model['vertexTraits']:
     vertexTraitSuper[vname] = set()
     for other in model['vertexTraits']:
-        if nx.has_path(vertexTraitGraph, vname, other):
+        if nx.has_path(vertexTraitGraph, vname, other) and vname != other:
             vertexTraitSuper[vname].add(other)
 
 # build the trait edge graph
@@ -67,11 +67,17 @@ edgeTraitSuper: Dict[str, Set[str]] = {}
 for vname in model['edgeTraits']:
     edgeTraitSuper[vname] = set()
     for other in model['edgeTraits']:
-        if nx.has_path(edgeTraitGraph, vname, other):
+        if nx.has_path(edgeTraitGraph, vname, other) and vname != other:
             edgeTraitSuper[vname].add(other)
 
 with open('forsyde/io/python/types.py', 'w') as out_file:
     out_file.write(template.render(
+        vertexTraits=model['vertexTraits'],
+        vertexTraitProps={
+            k: {name: meta_to_py(cl) for (name, cl) in v['required_properties'].items()} 
+               if v and 'required_properties' in v else {}
+            for (k, v) in model['vertexTraits'].items()
+        },
         vertexTraitSuper=vertexTraitSuper,
         edgeTraitSuper=edgeTraitSuper,
         property_map=property_map,
