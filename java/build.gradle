@@ -16,7 +16,7 @@ apply from: 'generator.gradle'
 tasks.compileJava.dependsOn generateVertexTraits
 tasks.compileJava.dependsOn generateEdgeTraits
 tasks.compileJava.dependsOn generateVertexInterfaces
-// tasks.compileJava.dependsOn generateVertexConcreteClasses
+tasks.compileJava.dependsOn generateVertexConcrete
 
 ext {
   artifactName = 'forsyde-io-java'

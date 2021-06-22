@@ -22,10 +22,10 @@ import forsyde.io.java.drivers.ForSyDeModelHandler;
  *         {@link ForSyDeModelHandler} directly.
  * 
  * @see DirectedPseudograph
- * @see VertexInterface
+ * @see Vertex
  * @see Edge
  */
-public class ForSyDeModel extends DirectedPseudograph<VertexInterface, EdgeInterface> {
+public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 
 	/**
 	 * Default constructor, returning an empty (system) model graph.
@@ -40,9 +40,9 @@ public class ForSyDeModel extends DirectedPseudograph<VertexInterface, EdgeInter
 		// do the double for since we would need to
 		// find the conflicting vertexInterface anyhow. Indexing/hashing
 		// approaches can speed this up in the future.
-		for (VertexInterface v : other.vertexSet()) {
+		for (Vertex v : other.vertexSet()) {
 			boolean present = false;
-			for (VertexInterface thisV : vertexSet()) {
+			for (Vertex thisV : vertexSet()) {
 				// found a match
 				if (v.getIdentifier() == thisV.getIdentifier()) {
 					mergeDefined = mergeDefined && thisV.mergeInPlace(v);
@@ -56,17 +56,17 @@ public class ForSyDeModel extends DirectedPseudograph<VertexInterface, EdgeInter
 
 		}
 		// this is OK to be done since "contains" checks for equality
-		for (EdgeInterface e : other.edgeSet()) {
+		for (Edge e : other.edgeSet()) {
 			boolean present = false;
-			for (EdgeInterface thisE : edgeSet()) {
+			for (Edge thisE : edgeSet()) {
 				// found a match
 				if (e.equals(thisE)) {
 					thisE.getTraits().addAll(e.getTraits());
 				}
 			}
 			if (!present) {
-				VertexInterface source = vertexSet().stream().filter(v -> v.equals(e.getSource())).findAny().get();
-				VertexInterface target = vertexSet().stream().filter(v -> v.equals(e.getTarget())).findAny().get();
+				Vertex source = vertexSet().stream().filter(v -> v.equals(e.getSource())).findAny().get();
+				Vertex target = vertexSet().stream().filter(v -> v.equals(e.getTarget())).findAny().get();
 				addEdge(source, target, e);
 			}
 		}

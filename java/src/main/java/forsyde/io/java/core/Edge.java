@@ -18,10 +18,10 @@ import java.util.Set;
  *         ends, in case they exist. The edges also have types associated with
  *         them so that extra deductions can be made along the EDA flow.
  */
-public class Edge implements EdgeInterface {
+final public class Edge {
 
-	public VertexInterface source;
-	public VertexInterface target;
+	public Vertex source;
+	public Vertex target;
 	public Optional<String> sourcePort;
 	public Optional<String> targetPort;
 	public Set<Trait> edgeTraits = new HashSet<Trait>();
@@ -33,7 +33,7 @@ public class Edge implements EdgeInterface {
 	 * @param target Target Vertex for this edge.
 	 * @param source Source vertex for this edge.
 	 */
-	public Edge(VertexInterface target, VertexInterface source) {
+	public Edge(Vertex source, Vertex target) {
 		this.target = target;
 		this.source = source;
 		this.sourcePort = Optional.empty();
@@ -49,7 +49,7 @@ public class Edge implements EdgeInterface {
 	 * @param targetPort target vertex port for this edge.
 	 * @param sourcePort source vertex port for this edge.
 	 */
-	public Edge(VertexInterface source, VertexInterface target, String sourcePort, String targetPort) {
+	public Edge(Vertex source, Vertex target, String sourcePort, String targetPort) {
 		this.target = target;
 		this.source = source;
 		this.targetPort = Optional.of(targetPort);
@@ -66,7 +66,7 @@ public class Edge implements EdgeInterface {
 	 * @param targetPort {@link Optional} target vertex port for this edge.
 	 * @param sourcePort {@link Optional} source vertex port for this edge.
 	 */
-	public Edge(VertexInterface source, VertexInterface target, Optional<String> sourcePort,
+	public Edge(Vertex source, Vertex target, Optional<String> sourcePort,
 			Optional<String> targetPort) {
 		this.target = target;
 		this.source = source;
@@ -103,32 +103,27 @@ public class Edge implements EdgeInterface {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Edge [type=").append(", source=").append(source).append(", target=").append(target)
+		builder.append("Edge [traits=").append(edgeTraits).append(", source=").append(source).append(", target=").append(target)
 				.append(", sourcePort=").append(sourcePort).append(", targetPort=").append(targetPort).append("]");
 		return builder.toString();
 	}
 
-	@Override
-	public VertexInterface getSource() {
+	public Vertex getSource() {
 		return source;
 	}
 
-	@Override
-	public VertexInterface getTarget() {
+	public Vertex getTarget() {
 		return target;
 	}
 
-	@Override
 	public Optional<String> getSourcePort() {
 		return sourcePort;
 	}
 
-	@Override
 	public Optional<String> getTargetPort() {
 		return targetPort;
 	}
 
-	@Override
 	public void addTrait(Trait t) {
 		edgeTraits.add(t);
 	}

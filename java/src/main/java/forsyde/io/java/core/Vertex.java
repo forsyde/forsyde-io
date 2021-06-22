@@ -25,7 +25,7 @@ import java.util.Set;
  * 
  * @author Rodolfo Jordao (jordao@kth.se)
  */
-public class Vertex implements VertexInterface {
+final public class Vertex {
 
 	private volatile static long genSymSuffix = 0L;
 
@@ -75,7 +75,7 @@ public class Vertex implements VertexInterface {
 	public String toString() {
 		final int maxLen = 5;
 		StringBuilder builder = new StringBuilder();
-		builder.append("Vertex [identifier=").append(identifier).append(", type=").append(", ports=")
+		builder.append("Vertex [identifier=").append(identifier).append(", traits=").append(vertexTraits).append(", ports=")
 				.append(ports != null ? toString(ports, maxLen) : null).append(", properties=")
 				.append(properties != null ? toString(properties.entrySet(), maxLen) : null).append("]");
 		return builder.toString();
@@ -119,7 +119,7 @@ public class Vertex implements VertexInterface {
 		return Objects.equals(identifier, other.identifier);
 	}
 
-	public boolean mergeInPlace(VertexInterface other) {
+	public boolean mergeInPlace(Vertex other) {
 		boolean mergeDefined = true;
 		if (identifier != other.getIdentifier())
 			return false;
@@ -135,7 +135,7 @@ public class Vertex implements VertexInterface {
 		return mergeDefined;
 	}
 
-	public Optional<Vertex> merge(VertexInterface other) {
+	public Optional<Vertex> merge(Vertex other) {
 		if (identifier != other.getIdentifier())
 			return Optional.empty();
 		else {
@@ -148,22 +148,18 @@ public class Vertex implements VertexInterface {
 		}
 	}
 
-	@Override
 	public Map<String, VertexPropertyElement> getProperties() {
 		return properties;
 	}
 
-	@Override
 	public Set<String> getPorts() {
 		return ports;
 	}
 
-	@Override
 	public String getIdentifier() {
 		return identifier;
 	}
 
-	@Override
 	public void addTrait(Trait t) {
 		vertexTraits.add(t);
 	}

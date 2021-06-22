@@ -19,12 +19,12 @@ import org.w3c.dom.Element;
 import forsyde.io.java.core.ArrayVertexProperty;
 import forsyde.io.java.core.BooleanVertexProperty;
 import forsyde.io.java.core.DoubleVertexProperty;
-import forsyde.io.java.core.EdgeInterface;
+import forsyde.io.java.core.Edge;
 import forsyde.io.java.core.FloatVertexProperty;
 import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.core.IntegerVertexProperty;
 import forsyde.io.java.core.MapVertexProperty;
-import forsyde.io.java.core.VertexInterface;
+import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexPropertyElement;
 
 public class ForSyDeGraphMLDriver extends ForSyDeModelDriver {
@@ -49,7 +49,7 @@ public class ForSyDeGraphMLDriver extends ForSyDeModelDriver {
 		graph.setAttribute("edgedefault", "directed");
 		root.appendChild(graph);
 		doc.appendChild(root);
-		for (VertexInterface v : model.vertexSet()) {
+		for (Vertex v : model.vertexSet()) {
 			Element vElem = doc.createElement("node");
 			vElem.setAttribute("id", v.getIdentifier());
 			// vElem.setAttribute("traits", v.vertexTraits.stream().map(t ->
@@ -68,7 +68,7 @@ public class ForSyDeGraphMLDriver extends ForSyDeModelDriver {
 				}
 			}
 		}
-		for (EdgeInterface e : model.edgeSet()) {
+		for (Edge e : model.edgeSet()) {
 			Element eElem = doc.createElement("edge");
 			eElem.setAttribute("source", e.getSource().getIdentifier());
 			eElem.setAttribute("target", e.getTarget().getIdentifier());
