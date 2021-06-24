@@ -41,27 +41,3 @@ jobs:
         poetry update
         poetry build
         poetry publish -u __token__ -p ${{ secrets.FORSYDE_IO_PYTHON_TOKEN }}
-
-  deploy-java:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - id: get_version
-      uses: battila7/get-version-action@v2
-    - name: Set up JDK 1.11
-      uses: actions/setup-java@v1.4.3
-      with:
-        java-version: 1.11
-        server-id: io.github.forsyde # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
-    - name: Build and publish with Gradle
-      run: |
-        cd ${{ github.workspace }}
-        make prepare-version-${{ steps.get_version.outputs.version }}
-        cd java
-        ./gradlew build publish closeAndReleaseSonatypeStagingRepository
-    # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
-    # the publishing section of your build.gradle
-    - name: Publish to GitHub Packages
-      run: |
-        

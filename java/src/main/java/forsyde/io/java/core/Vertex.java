@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -162,6 +163,26 @@ final public class Vertex {
 
 	public void addTrait(Trait t) {
 		vertexTraits.add(t);
+	}
+
+	public void putProperty(String name, Object value) {
+		if (value instanceof Integer) {
+			properties.put(name, new IntegerVertexProperty((Integer) value));
+		} else if (value instanceof Long) {
+			properties.put(name, new LongVertexProperty((Long) value));
+		} else if (value instanceof Float) {
+			properties.put(name, new FloatVertexProperty((Float) value));
+		} else if (value instanceof Double) {
+			properties.put(name, new DoubleVertexProperty((Double) value));
+		} else if (value instanceof Map) {
+			properties.put(name, MapVertexProperty.fromConformingMapObject((Map) value));
+		} else if (value instanceof List) {
+			properties.put(name, ArrayVertexProperty.fromConformingList((List) value));
+		} else if (value instanceof Boolean) {
+			properties.put(name, new BooleanVertexProperty((Boolean) value));
+		} else {
+			properties.put(name, new StringVertexProperty(value.toString()));
+		}
 	}
 
 }

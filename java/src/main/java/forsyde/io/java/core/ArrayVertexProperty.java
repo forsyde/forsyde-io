@@ -2,6 +2,8 @@ package forsyde.io.java.core;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 final public class ArrayVertexProperty extends ArrayList<VertexPropertyElement> implements VertexPropertyElement {
@@ -43,6 +45,30 @@ final public class ArrayVertexProperty extends ArrayList<VertexPropertyElement> 
         ArrayList<Object> unwrapped = new ArrayList<>(this.size());
         this.forEach(v -> v.unwrap());
         return unwrapped;
+    }
+
+    static public ArrayVertexProperty fromConformingList(List<Object> i) {
+        ArrayVertexProperty o = new ArrayVertexProperty(i.size());
+        for (Object value: i) {
+            if (value instanceof Integer) {
+                o.add(new IntegerVertexProperty((Integer) value));
+            } else if (value instanceof Long) {
+                o.add(new LongVertexProperty((Long) value));
+            } else if (value instanceof Float) {
+                o.add(new FloatVertexProperty((Float) value));
+            } else if (value instanceof Double) {
+                o.add(new DoubleVertexProperty((Double) value));
+            } else if (value instanceof Map) {
+                o.add(MapVertexProperty.fromConformingMapObject((Map) value));
+            } else if (value instanceof List) {
+                o.add(ArrayVertexProperty.fromConformingList((List) value));
+            } else if (value instanceof Boolean) {
+                o.add(new BooleanVertexProperty((Boolean) value));
+            } else {
+                o.add(new StringVertexProperty(value.toString()));
+            }
+        }
+        return o;
     }
 
 }
