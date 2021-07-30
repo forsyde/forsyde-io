@@ -52,7 +52,7 @@ public final class ForSyDeModelHandler {
 		} else if(file.getName().endsWith(".graphml")) {
 			driver = new ForSyDeGraphMLDriver();
 		} else {
-			throw new Exception("Supported write formats: ['forxml', 'graphml'].");
+			throw new Exception("Supported write formats: ['forxml', 'forsyde.xml', 'graphml'].");
 		}
 		driver.writeModel(model, file);
 	}
