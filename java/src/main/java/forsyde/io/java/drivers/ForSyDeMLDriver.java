@@ -34,7 +34,6 @@ import forsyde.io.java.core.ArrayVertexProperty;
 import forsyde.io.java.core.BooleanVertexProperty;
 import forsyde.io.java.core.DoubleVertexProperty;
 import forsyde.io.java.core.Edge;
-import forsyde.io.java.core.Edge;
 import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.FloatVertexProperty;
 import forsyde.io.java.core.ForSyDeModel;
@@ -43,7 +42,6 @@ import forsyde.io.java.core.LongVertexProperty;
 import forsyde.io.java.core.MapVertexProperty;
 import forsyde.io.java.core.OpaqueTrait;
 import forsyde.io.java.core.StringVertexProperty;
-import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexPropertyElement;
 import forsyde.io.java.core.VertexTrait;
@@ -150,8 +148,7 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 		for (Vertex v : model.vertexSet()) {
 			Element vElem = doc.createElement("node");
 			vElem.setAttribute("id", v.getIdentifier());
-			vElem.setAttribute("traits",
-					v.getTraits().stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
+			vElem.setAttribute("traits", v.getTraits().stream().map(t -> t.getName()).collect(Collectors.joining(";")));
 			graph.appendChild(vElem);
 			for (String p : v.getPorts()) {
 				Element pElem = doc.createElement("port");
@@ -168,8 +165,7 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			Element eElem = doc.createElement("edge");
 			eElem.setAttribute("source", e.getSource().getIdentifier());
 			eElem.setAttribute("target", e.getTarget().getIdentifier());
-			eElem.setAttribute("traits",
-					e.getTraits().stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
+			eElem.setAttribute("traits", e.getTraits().stream().map(t -> t.getName()).collect(Collectors.joining(";")));
 			if (e.getSourcePort().isPresent()) {
 				eElem.setAttribute("sourceport", e.getSourcePort().get());
 			}

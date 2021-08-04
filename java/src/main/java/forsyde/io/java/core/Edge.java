@@ -52,8 +52,8 @@ final public class Edge {
 	public Edge(Vertex source, Vertex target, String sourcePort, String targetPort) {
 		this.target = target;
 		this.source = source;
-		this.targetPort = Optional.of(targetPort);
-		this.sourcePort = Optional.of(sourcePort);
+		this.targetPort = targetPort == null ? Optional.empty() : Optional.of(targetPort);
+		this.sourcePort = sourcePort == null ? Optional.empty() : Optional.of(sourcePort);
 	}
 
 	/**

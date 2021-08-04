@@ -1,3 +1,56 @@
+vertex ModelOfComputation () {}
+
+vertex ModelOfArchitecture () {}
+
+vertex ModelOfExtraFunctional () {}
+
+edge ModelOfImplementation {}
+
+vertex TimeTriggeredScheduler () {}
+
+vertex RoundRobinScheduler () {}
+
+vertex FixedPriorityScheduler() {}
+
+edge AbstractScheduling refines ModelOfImplementation {}
+
+edge AbstractMapping refines ModelOfImplementation {}
+
+vertex ReactorElement refines ModelOfComputation () {}
+
+vertex ReactorTimer refines ReactorElement () {
+	property period_numerator_per_sec: int
+	property period_denominator_per_sec: int = 1				
+}
+
+vertex ReactorActor refines ReactorElement (
+	multiple port children: ReactorElement
+	multiple port timers: ReactorTimer
+) {}
+
+edge ReactorConnection {
+	constraint source ReactorElement
+	constraint target ReactorElement				
+}
+
+vertex LocationRequirement refines ModelOfExtraFunctional (
+	multiple port functions: ModelOfComputation
+	multiple port processors: ModelOfArchitecture
+) {
+
+}
+
+vertex WCET refines ModelOfExtraFunctional () {
+
+}
+
+vertex AbstractCommunicationComponent refines ModelOfArchitecture () {
+
+}
+
+vertex TimeDivisionMultiplexer refines AbstractCommunicationComponent () {}
+
+/*
 {
     "vertexTraits": {
         "Composite": {
@@ -497,3 +550,4 @@
         }
     }
 }
+*/
