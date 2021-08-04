@@ -26,25 +26,23 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-
-@Command(name = "forsyde-io-meta-gen", mixinStandardHelpOptions = true, version = "FIO generator 1.0",
-         description = "Generates typed helper for ForSyDe IO from a description file.")
+@Command(name = "forsyde-io-meta-gen", mixinStandardHelpOptions = true, version = "FIO generator 1.0", description = "Generates typed helper for ForSyDe IO from a description file.")
 public class MetaModelMain implements Callable<Integer> {
-	
-	@Option(names = {"-i"}, description = "Input file in the description language")
+
+	@Option(names = { "-i" }, description = "Input file in the description language")
 	private File inputFile = new File("model.forsydemeta");
-	
-	@Option(names = {"-o"}, description = "Output folder for generation")
+
+	@Option(names = { "-o" }, description = "Output folder for generation")
 	private Path outputFolder = Paths.get("..");
-	
-	@Option(names = {"-l"}, description = "Specific language to generate")
+
+	@Option(names = { "-l" }, description = "Specific language to generate")
 	private String targetLanguage = "";
 
 	public static void main(String[] args) {
 		int exitCode = new CommandLine(new MetaModelMain()).execute(args);
-        System.exit(exitCode);
+		System.exit(exitCode);
 	}
-	
+
 	@Inject
 	JavaMetaGenerator javaMetaGenerator;
 
@@ -54,9 +52,11 @@ public class MetaModelMain implements Callable<Integer> {
 		injector.injectMembers(this);
 		XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-		Resource resource = resourceSet.getResource(URI.createURI("file:" + inputFile.getCanonicalPath()), true);
-//		resource.load(new FileInputStream(inputFile), resourceSet.getLoadOptions());
-//		IParseResult result = parser.parse(Files.newReader(inputFile, StandardCharsets.UTF_8));
+		// this strange line is the only things that worked on windows. Go figure.
+		Resource resource = resourceSet.getResource(URI.createURI(inputFile.toURI().toString()), true);
+		// resource.load(new FileInputStream(inputFile), resourceSet.getLoadOptions());
+		// IParseResult result = parser.parse(Files.newReader(inputFile,
+		// StandardCharsets.UTF_8));
 		final Model root = (Model) resource.getContents().get(0);
 		if (targetLanguage.isEmpty() || targetLanguage.equals("all")) {
 			javaMetaGenerator.doGenerate(root, outputFolder.resolve("java"));

@@ -42,9 +42,9 @@ final public class MapVertexProperty extends HashMap<String, VertexPropertyEleme
         return unwrapped;
     }
 
-    static public MapVertexProperty fromConformingMapObject(Map<String, Object> i) {
+    static public MapVertexProperty fromConformingMapObject(Map<String, ? extends Object> i) {
         MapVertexProperty o = new MapVertexProperty();
-        for (String k: i.keySet()) {
+        for (String k : i.keySet()) {
             Object value = i.get(k);
             if (value instanceof Integer) {
                 o.put(k, new IntegerVertexProperty((Integer) value));

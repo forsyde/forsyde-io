@@ -47,9 +47,9 @@ final public class ArrayVertexProperty extends ArrayList<VertexPropertyElement> 
         return unwrapped;
     }
 
-    static public ArrayVertexProperty fromConformingList(List<Object> i) {
+    static public ArrayVertexProperty fromConformingList(List<? extends Object> i) {
         ArrayVertexProperty o = new ArrayVertexProperty(i.size());
-        for (Object value: i) {
+        for (Object value : i) {
             if (value instanceof Integer) {
                 o.add(new IntegerVertexProperty((Integer) value));
             } else if (value instanceof Long) {

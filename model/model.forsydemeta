@@ -71,6 +71,11 @@ vertex AbstractStorageComponent refines ModelOfArchitecture () {}
 
 vertex TimeDivisionMultiplexer refines AbstractCommunicationComponent () {}
 
+vertex CachedProcessor refines AbstractProcessingComponent () {
+    property instruction_cache_max_bytes: int
+    property data_cache_max_bytes: int 
+}
+
 /*
 {
     "vertexTraits": {

@@ -1,467 +1,471 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.squareup:javapoet:1.13.0'
-        classpath group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.0'
-    }
-}
+//buildscript {
+//    repositories {
+//        mavenCentral()
+//    }
+//    dependencies {
+//        classpath 'com.squareup:javapoet:1.13.0'
+//        classpath 'org.antlr:antlr4-runtime:4.9.2'
+//    }
+//}
 
-import groovy.json.JsonSlurper
-import javax.lang.model.element.Modifier
-import java.util.Optional
+//tasks.register('generate', GeneratorTask)
+//
+//tasks.compileJava.dependsOn generate
 
-import com.squareup.javapoet.TypeSpec
-import com.squareup.javapoet.MethodSpec
-import com.squareup.javapoet.CodeBlock
-import com.squareup.javapoet.ClassName
-import com.squareup.javapoet.TypeName
-import com.squareup.javapoet.ParameterizedTypeName
-import com.squareup.javapoet.JavaFile
-
-import org.jgrapht.*
-import org.jgrapht.graph.*
-import org.jgrapht.traverse.*
-
-
-// https://gist.github.com/two7sclash/c3835d83695b46ca2a6a4b6d71272538, with corrections
-def toCamelCase(String text, boolean capitalized=false ) {
-    text = text.replaceAll( '(_)([A-Za-z0-9])', { Object[] it -> it[2].toUpperCase() } )
-    return capitalized ? text.capitalize() : text
-}
-
-def metaToJavaType(md) {
-    if (md['class'] == 'object') {
-        return ParameterizedTypeName.get(ClassName.get(HashMap.class), metaToJavaType(md.key), metaToJavaType(md.value))
-    }
-    else if (md['class'] == 'array') {
-        return ParameterizedTypeName.get(ClassName.get(ArrayList.class), metaToJavaType(md.value))
-    }
-    else if (md['class'] == 'long') {
-        return ClassName.get(Long.class)
-    }
-    else if (md['class'] == 'int' || md['class'] == 'integer') {
-        return ClassName.get(Integer.class)
-    }
-    else if (md['class'] == 'double') {
-        return ClassName.get(Double.class)
-    }
-    else if (md['class'] == 'float') {
-        return ClassName.get(Float.class)
-    }
-    else if (md['class'] == 'boolean' || md['class'] == 'bool') {
-        return ClassName.get(Boolean.class)
-    }
-    else
-        return ClassName.get(String.class)
-}
-
-def buildUpTraitGraph(model, labelName) {
-    def traitGraph = new SimpleDirectedGraph<String, DefaultEdge>(DefaultEdge.class)
-    for (vertexTrait in model[labelName]) {
-        traitGraph.addVertex(vertexTrait.key)
-    }
-    for (vertexTrait in model[labelName]) {
-        if (vertexTrait.value) {
-            for (superTrait in vertexTrait.value['superTraits']) {
-                traitGraph.addEdge(vertexTrait.key, superTrait)
-            }
-        }
-    }
-    return traitGraph
-}
-
-def generatePropertyDefault(propInfo) {
-    def block = CodeBlock.builder()
-    if (propInfo["default"] instanceof Map) {
-        block.add("\$T.ofEntries(\n", ClassName.get(Map.class))
-        for (entry in propInfo["default"]) {
-            block.add(generatePropertyDefault(entry.key))
-            block.add(", ", entry.key)
-            block.add(generatePropertyDefault(entry.value))
-            block.add("\n")
-        }
-        block.add(")")
-    } else if (propInfo["default"] instanceof List) {
-        block.add("\$T.of(\n", ClassName.get(List.class))
-        for (entry in propInfo["default"]) {
-            block.add(generatePropertyDefault(entry.value))
-            block.add(", ", entry.key)
-            block.add("\n")
-        }
-        block.add(")")
-    } else if (propInfo["default"] != null) {
-        block.add("\$L", propInfo["default"])
-    }
-    return block
-}
-
-def generatePropertyDefault(propBuilder, propInfo, List propDefault) {
-
-}
-
-def generatePropertyGetter(propName, propInfo) {
-    def typeOut = metaToJavaType(propInfo)
-    def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), typeOut)
-    def getPropMethod = MethodSpec.methodBuilder('get' + toCamelCase(propName, true))
-        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
-        .returns(typeOut)
-    if (propInfo['default'] != null) {
-        getPropMethod.beginControlFlow("if (getViewedVertex().getProperties().containsKey(\"${propName}\"))")
-        getPropMethod.addStatement("return (\$T) getViewedVertex().getProperties().get(\"${propName}\").unwrap()", typeOut)
-        getPropMethod.nextControlFlow("else")
-        getPropMethod.addStatement("return new \$T(\$L)", typeOut, generatePropertyDefault(propInfo).build())
-        getPropMethod.endControlFlow()	
-    } else {
-        getPropMethod.addStatement("return (\$T) getViewedVertex().getProperties().get(\"${propName}\").unwrap()", typeOut)
-    }
-    return getPropMethod
-}
-
-def generatePortGetter(portName, portInfo) {
-    def vertexClass = ClassName.get('forsyde.io.java.typed.viewers', toCamelCase(portInfo["class"], true))
-    def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), vertexClass)
-    def listOut = ParameterizedTypeName.get(ClassName.get(List.class), vertexClass)
-    def setOut = ParameterizedTypeName.get(ClassName.get(Set.class), vertexClass)
-    def arrayType = ParameterizedTypeName.get(ClassName.get(ArrayList.class), vertexClass)
-    def setType = ParameterizedTypeName.get(ClassName.get(HashSet.class), vertexClass)
-    def getPortName = 'get' + toCamelCase(portName + 'Port', true)
-    def getPortMethod = MethodSpec.methodBuilder(getPortName)
-        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
-        .addParameter(ClassName.get('forsyde.io.java.core', 'ForSyDeModel'), "model")
-        // .addParameter(vertexClass, "vertex")
-    if (portInfo["multiple"] != null && portInfo["multiple"] == "ordered")
-        getPortMethod.returns(arrayType)
-    else if (portInfo["multiple"] != null && portInfo["multiple"] == "unordered")
-        getPortMethod.returns(setType)
-    else
-        getPortMethod.returns(optionalOut)
-    if (portInfo["multiple"] != null && portInfo["multiple"] == "ordered")
-        getPortMethod.returns(arrayType)
-    else if (portInfo["multiple"] != null && portInfo["multiple"] == "unordered")
-        getPortMethod.returns(setType)
-    else
-        getPortMethod.returns(optionalOut)
-    // decide if a collection needs to be generated
-    if (portInfo["multiple"] != null && portInfo["multiple"] == "ordered")
-        getPortMethod.addStatement('$T outList = new $T()', arrayType, arrayType)
-    else if (portInfo["multiple"] != null && portInfo["multiple"] == "unordered")
-        getPortMethod.addStatement('$T outList = new $T()', setType, setType)
-    // generate the iteration to collect or find vertexes
-    if (portInfo['direction'] == null || (portInfo['direction'] != null && portInfo['direction'] >= 0)) {
-            getPortMethod.beginControlFlow('for ($T e: model.outgoingEdgesOf(getViewedVertex()))', ClassName.get('forsyde.io.java.core', 'Edge'))
-            getPortMethod.beginControlFlow("if (e.getSourcePort().orElse(\"\").equals(\"" + portName + "\") && \$T.conforms(e.getTarget()))", vertexClass)
-            // this decides for every iteration if first found is good or if a list is being built.
-            if (portInfo["multiple"] != null && (portInfo["multiple"] == "ordered" || portInfo["multiple"] == "unordered"))
-                getPortMethod.addStatement('outList.add(\$T.safeCast(e.getTarget()).get())', vertexClass)
-            else
-                getPortMethod.addStatement('return \$T.safeCast(e.getTarget())', vertexClass)
-            getPortMethod.endControlFlow()	
-            getPortMethod.endControlFlow()	
-    }
-    if (portInfo['direction'] == null || (portInfo['direction'] != null && portInfo['direction'] <= 0)) {
-            getPortMethod.beginControlFlow('for ($T e: model.incomingEdgesOf(getViewedVertex()))', ClassName.get('forsyde.io.java.core', 'Edge'))
-            getPortMethod.beginControlFlow("if (e.getTargetPort().orElse(\"\").equals(\"" + portName + "\") && \$T.conforms(e.getSource()))", vertexClass)
-            // this decides for every iteration if first found is good or if a list is being built.
-            if (portInfo["multiple"] != null && (portInfo["multiple"] == "ordered" || portInfo["multiple"] == "unordered"))
-                getPortMethod.addStatement('outList.add(\$T.safeCast(e.getSource()).get())', vertexClass)
-            else
-                getPortMethod.addStatement('return \$T.safeCast(e.getSource())', vertexClass)
-            getPortMethod.endControlFlow()	
-            getPortMethod.endControlFlow()	
-    }
-    if (portInfo["multiple"] != null && (portInfo["multiple"] == "ordered" || portInfo["multiple"] == "unordered"))
-        getPortMethod.addStatement("return outList")
-    else
-        getPortMethod.addStatement("return Optional.empty()")
-    // getPortMethod.beginControlFlow("if (vertex.properties.containsKey(\"" + vertexPort.key + "\"))")
-    // getPortMethod.addStatement('return Optional.of((' + metaToJavaType(vertexPort.value).toString() + ") vertex.properties.get(\"" + vertexPort.key + "\"))")
-    // getPortMethod.nextControlFlow('else')
-    // getPortMethod.endControlFlow()
-    return getPortMethod
-}
-
-def generatePortGetterVertex(portName, portInfo) {
-    def vertexClass = ClassName.get('forsyde.io.java.core', 'Vertex')
-    def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), vertexClass)
-    def listOut = ParameterizedTypeName.get(ClassName.get(List.class), vertexClass)
-    def setOut = ParameterizedTypeName.get(ClassName.get(Set.class), vertexClass)
-    def arrayType = ParameterizedTypeName.get(ClassName.get(ArrayList.class), vertexClass)
-    def setType = ParameterizedTypeName.get(ClassName.get(HashSet.class), vertexClass)
-    def getPortName = 'get' + toCamelCase(portName + 'Port', true)
-    def getPortMethod = MethodSpec.methodBuilder(getPortName)
-        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
-        .addParameter(ClassName.get('forsyde.io.java.core', 'ForSyDeModel'), "model")
-        // .addParameter(vertexClass, "vertex")
-    if (portInfo["multiple"] != null && portInfo["multiple"] == "ordered")
-        getPortMethod.returns(arrayType)
-    else if (portInfo["multiple"] != null && portInfo["multiple"] == "unordered")
-        getPortMethod.returns(setType)
-    else
-        getPortMethod.returns(optionalOut)
-    if (portInfo["multiple"] != null && portInfo["multiple"] == "ordered")
-        getPortMethod.returns(arrayType)
-    else if (portInfo["multiple"] != null && portInfo["multiple"] == "unordered")
-        getPortMethod.returns(setType)
-    else
-        getPortMethod.returns(optionalOut)
-    // decide if a collection needs to be generated
-    if (portInfo["multiple"] != null && portInfo["multiple"] == "ordered")
-        getPortMethod.addStatement('$T outList = new $T()', arrayType, arrayType)
-    else if (portInfo["multiple"] != null && portInfo["multiple"] == "unordered")
-        getPortMethod.addStatement('$T outList = new $T()', setType, setType)
-    // generate the iteration to collect or find vertexes
-    if (portInfo['direction'] == null || (portInfo['direction'] != null && portInfo['direction'] >= 0)) {
-            getPortMethod.beginControlFlow('for ($T e: model.outgoingEdgesOf(getViewedVertex()))', ClassName.get('forsyde.io.java.core', 'Edge'))
-            getPortMethod.beginControlFlow("if (e.getSourcePort().orElse(\"\").equals(\"" + portName + "\"))")
-            // this decides for every iteration if first found is good or if a list is being built.
-            if (portInfo["multiple"] != null && (portInfo["multiple"] == "ordered" || portInfo["multiple"] == "unordered"))
-                getPortMethod.addStatement('outList.add(e.getTarget())')
-            else
-                getPortMethod.addStatement('return e.getTarget()')
-            getPortMethod.endControlFlow()	
-            getPortMethod.endControlFlow()	
-    }
-    if (portInfo['direction'] == null || (portInfo['direction'] != null && portInfo['direction'] <= 0)) {
-            getPortMethod.beginControlFlow('for ($T e: model.incomingEdgesOf(getViewedVertex()))', ClassName.get('forsyde.io.java.core', 'Edge'))
-            getPortMethod.beginControlFlow("if (e.getTargetPort().orElse(\"\").equals(\"" + portName + "\"))")
-            // this decides for every iteration if first found is good or if a list is being built.
-            if (portInfo["multiple"] != null && (portInfo["multiple"] == "ordered" || portInfo["multiple"] == "unordered"))
-                getPortMethod.addStatement('outList.add(e.getSource())')
-            else
-                getPortMethod.addStatement('return e.getSource()')
-            getPortMethod.endControlFlow()	
-            getPortMethod.endControlFlow()	
-    }
-    if (portInfo["multiple"] != null && (portInfo["multiple"] == "ordered" || portInfo["multiple"] == "unordered"))
-        getPortMethod.addStatement("return outList")
-    else
-        getPortMethod.addStatement("return Optional.empty()")
-    // getPortMethod.beginControlFlow("if (vertex.properties.containsKey(\"" + vertexPort.key + "\"))")
-    // getPortMethod.addStatement('return Optional.of((' + metaToJavaType(vertexPort.value).toString() + ") vertex.properties.get(\"" + vertexPort.key + "\"))")
-    // getPortMethod.nextControlFlow('else')
-    // getPortMethod.endControlFlow()
-    return getPortMethod
-}
-
-task generateVertexTraits {
-    def modelStr = file('meta.json').text
-    def traitClass = ClassName.get('forsyde.io.java.core', 'Trait')
-    def model = new JsonSlurper().parseText(modelStr)
-    // first build the trait graph
-    def traitGraph = buildUpTraitGraph(model, 'vertexTraits')
-    // now spit the LUTs for the enums
-    def vertexEnum = TypeSpec.enumBuilder('VertexTrait')
-        .addSuperinterface(traitClass)
-        .addModifiers(Modifier.PUBLIC)
-    // refinement method
-    def refinesMethod = MethodSpec.methodBuilder('refines')
-        .returns(TypeName.BOOLEAN)
-        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-        .addParameter(ClassName.get('forsyde.io.java.core', 'VertexTrait'), 'one')
-        .addParameter(ClassName.get('forsyde.io.java.core', 'VertexTrait'), 'other')
-        .beginControlFlow('switch (one)')
-    for (vertexTrait in model['vertexTraits']) {
-        vertexEnum.addEnumConstant(vertexTrait.key)
-        refinesMethod.addCode('case ' + vertexTrait.key + ':\n')
-        refinesMethod.beginControlFlow('switch (other)')
-        def superIterator = new DepthFirstIterator<String, DefaultEdge>(traitGraph, vertexTrait.key)
-        while (superIterator.hasNext()) {
-            def superTrait = superIterator.next()
-            refinesMethod.addCode('case ' + superTrait + ': ')
-            refinesMethod.addStatement('return true')
-        }
-        refinesMethod.addStatement('default: return false')
-        refinesMethod.endControlFlow()
-    }
-    refinesMethod.addStatement('default: return false')
-    refinesMethod.endControlFlow()
-    vertexEnum.addMethod(refinesMethod.build())
-    vertexEnum.addMethod(
-        MethodSpec.methodBuilder('refines')
-        .returns(TypeName.BOOLEAN)
-        .addModifiers(Modifier.PUBLIC)
-        .addParameter(ClassName.get('forsyde.io.java.core', 'Trait'), 'other')
-        .addStatement('return other instanceof VertexTrait ? VertexTrait.refines(this, (VertexTrait) other) : false')
-        .build()
-    )
-    vertexEnum.addMethod(
-        MethodSpec.methodBuilder('getName')
-        .returns(ClassName.bestGuess('java.lang.String'))
-        .addModifiers(Modifier.PUBLIC)
-        .addStatement('return this.toString()')
-        .build()
-    )
-    // write down these nice generated enums
-    def fileStr = JavaFile.builder('forsyde.io.java.core', vertexEnum.build())
-    file('src-gen/main/java/forsyde/io/java/core').mkdirs()
-    file('src-gen/main/java/forsyde/io/java/core/VertexTrait.java').text = fileStr.build()
-}
-
-task generateEdgeTraits {
-    def modelStr = file('meta.json').text
-    def traitClass = ClassName.get('forsyde.io.java.core', 'Trait')
-    def model = new JsonSlurper().parseText(modelStr)
-    // first build the trait graph
-    def traitGraph = buildUpTraitGraph(model, 'edgeTraits')
-    // now spit the LUTs for the enums
-    def edgeEnum = TypeSpec.enumBuilder('EdgeTrait')
-        .addSuperinterface(traitClass)
-        .addModifiers(Modifier.PUBLIC)
-    def refinesMethod = MethodSpec.methodBuilder('refines')
-        .returns(TypeName.BOOLEAN)
-        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-        .addParameter(ClassName.get('forsyde.io.java.core', 'EdgeTrait'), 'one')
-        .addParameter(ClassName.get('forsyde.io.java.core', 'EdgeTrait'), 'other')
-        .beginControlFlow('switch (one)')
-    for (edgeTrait in model['edgeTraits']) {
-        edgeEnum.addEnumConstant(edgeTrait.key)
-        refinesMethod.addCode('case ' + edgeTrait.key + ':\n')
-        refinesMethod.beginControlFlow('switch (other)')
-        def superIterator = new DepthFirstIterator<String, DefaultEdge>(traitGraph, edgeTrait.key)
-        while (superIterator.hasNext()) {
-            def superTrait = superIterator.next()
-            refinesMethod.addCode('case ' + superTrait + ': ')
-            refinesMethod.addStatement('return true')
-        }
-        refinesMethod.addStatement('default: return false')
-        refinesMethod.endControlFlow()
-    }
-    refinesMethod.addStatement('default: return false')
-    refinesMethod.endControlFlow()
-    edgeEnum.addMethod(refinesMethod.build())
-    edgeEnum.addMethod(
-        MethodSpec.methodBuilder('refines')
-        .returns(TypeName.BOOLEAN)
-        .addModifiers(Modifier.PUBLIC)
-        .addParameter(ClassName.get('forsyde.io.java.core', 'Trait'), 'other')
-        .addStatement('return other instanceof EdgeTrait ? EdgeTrait.refines(this, (EdgeTrait) other) : false')
-        .build()
-    )
-    edgeEnum.addMethod(
-        MethodSpec.methodBuilder('getName')
-        .returns(ClassName.bestGuess('java.lang.String'))
-        .addModifiers(Modifier.PUBLIC)
-        .addStatement('return this.toString()')
-        .build()
-    )
-    // write down these nice generated enums
-    def fileStr = JavaFile.builder('forsyde.io.java.core', edgeEnum.build())
-    file('src-gen/main/java/forsyde/io/java/core').mkdirs()
-    file('src-gen/main/java/forsyde/io/java/core/EdgeTrait.java').text = fileStr.build()
-}
-
-
-task generateVertexInterfaces(dependsOn: [generateVertexTraits]) {
-    def modelStr = file('meta.json').text
-    def model = new JsonSlurper().parseText(modelStr)
-    // first build the trait graph
-
-    for (vertexTrait in model['vertexTraits']) {
-		def className = vertexTrait.key
-        def traitInterface = TypeSpec.interfaceBuilder(className)
-            .addModifiers(Modifier.PUBLIC)
-        if (vertexTrait.value) {
-            if (vertexTrait.value['superTraits'] != null && vertexTrait.value['superTraits'].size() > 0) {
-                for (traitName in vertexTrait.value['superTraits']) {
-                    traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", traitName))
-                }
-            } else {
-                traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"))
-            }
-            for(vertexProp in vertexTrait.value['required_properties']) {
-                traitInterface.addMethod(generatePropertyGetter(vertexProp.key, vertexProp.value).build())
-            }
-            // port acessors are generated depending in the multiplicity of their connections and possible directions
-            for(vertexPort in vertexTrait.value['required_ports']) {
-                // accessGenerated.add(vertexPort.key)
-                if (vertexPort.value['class'] != null) {
-                    traitInterface.addMethod(generatePortGetter(vertexPort.key, vertexPort.value).build())
-                } else {
-                    traitInterface.addMethod(generatePortGetterVertex(vertexPort.key, vertexPort.value).build())
-                }
-            }
-        } else {
-            traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"))
-        }
-        def conformsMethod = MethodSpec
-			.methodBuilder('conforms')
-			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-			.addParameter(ClassName.get('forsyde.io.java.core', 'Vertex'), 'vertex')
-			.returns(ClassName.get(Boolean.class))
-        conformsMethod.beginControlFlow("for (\$T t : vertex.getTraits())", ClassName.get('forsyde.io.java.core', "Trait"))
-        conformsMethod.addStatement("if(t.refines(\$T.${className})) return true", ClassName.get('forsyde.io.java.core', "VertexTrait"))
-        conformsMethod.endControlFlow()
-        conformsMethod.addStatement('return false')
-        traitInterface.addMethod(conformsMethod.build())
-        def conformsMethodViewer = MethodSpec
-			.methodBuilder('conforms')
-			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-			.addParameter(ClassName.get('forsyde.io.java.core', 'VertexViewer'), 'viewer')
-			.returns(ClassName.get(Boolean.class))
-        conformsMethodViewer.beginControlFlow("for (\$T t : viewer.getViewedVertex().getTraits())", ClassName.get('forsyde.io.java.core', "Trait"))
-        conformsMethodViewer.addStatement("if(t.refines(\$T.${className})) return true", ClassName.get('forsyde.io.java.core', "VertexTrait"))
-        conformsMethodViewer.endControlFlow()
-        conformsMethodViewer.addStatement('return false')
-        traitInterface.addMethod(conformsMethodViewer.build())
-        def safeCast = MethodSpec
-			.methodBuilder('safeCast')
-			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-			.addParameter(ClassName.get('forsyde.io.java.core', 'Vertex'), 'vertex')
-			.returns(ParameterizedTypeName.get(ClassName.get(Optional.class), ClassName.get('forsyde.io.java.typed.viewers', className)))
-        safeCast.addStatement(
-            "return conforms(vertex) ? \$T.of(new \$T(vertex)) : Optional.empty()", 
-            ClassName.get(Optional.class), 
-            ClassName.get("forsyde.io.java.typed.viewers",className + 'Viewer')
-            )
-        traitInterface.addMethod(safeCast.build())
-        def safeCastViewer = MethodSpec
-			.methodBuilder('safeCast')
-			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-			.addParameter(ClassName.get('forsyde.io.java.core', 'VertexViewer'), 'viewer')
-			.returns(ParameterizedTypeName.get(ClassName.get(Optional.class), ClassName.get('forsyde.io.java.typed.viewers', className)))
-        safeCastViewer.addStatement(
-            "return conforms(viewer.getViewedVertex()) ? \$T.of(new \$T(viewer.getViewedVertex())) : Optional.empty()", 
-            ClassName.get(Optional.class), 
-            ClassName.get("forsyde.io.java.typed.viewers",className + 'Viewer')
-            )
-        traitInterface.addMethod(safeCastViewer.build())
-        def fileStr = JavaFile.builder('forsyde.io.java.typed.viewers', traitInterface.build())
-        file('src-gen/main/java/forsyde/io/java/typed/viewers').mkdirs()
-        file('src-gen/main/java/forsyde/io/java/typed/viewers/' + className + '.java').text = fileStr.build()
-    }
-}
-
-task generateVertexConcrete(dependsOn: [generateVertexTraits]) {
-    def modelStr = file('meta.json').text
-    def model = new JsonSlurper().parseText(modelStr)
-    // first build the trait graph
-    def traitGraph = buildUpTraitGraph(model, 'vertexTraits')
-
-    for (vertexTrait in model['vertexTraits']) {
-		def className = vertexTrait.key + 'Viewer'
-        def traitInterface = TypeSpec.classBuilder(className)
-            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-            .addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", vertexTrait.key))
-        def constructorMethod = MethodSpec.constructorBuilder()
-            .addParameter(ClassName.get('forsyde.io.java.core', 'Vertex'), 'vertex')
-            .addModifiers(Modifier.PUBLIC)
-        traitInterface.addField(ClassName.get('forsyde.io.java.core', 'Vertex'), "viewedVertex", Modifier.PUBLIC, Modifier.FINAL)
-        constructorMethod.addStatement("viewedVertex = vertex")
-        // constructorMethod.addStatement("identifier = vertex.getIdentifier()")
-        // constructorMethod.addStatement("properties = vertex.getProperties()")
-        // constructorMethod.addStatement("ports = vertex.getPorts()")
-        // constructorMethod.addStatement("vertexTraits = vertex.getTraits()")
-        traitInterface.addMethod(constructorMethod.build())
-        traitInterface.addMethod(MethodSpec
-			.methodBuilder('getViewedVertex')
-			.addModifiers(Modifier.PUBLIC)
-			.returns(ClassName.get('forsyde.io.java.core', 'Vertex'))
-            .addStatement("return viewedVertex")
-            .build())
-        def fileStr = JavaFile.builder('forsyde.io.java.typed.viewers', traitInterface.build())
-        file('src-gen/main/java/forsyde/io/java/typed/viewers').mkdirs()
-        file('src-gen/main/java/forsyde/io/java/typed/viewers/' + className + '.java').text = fileStr.build()
-    }
-}
+//import groovy.json.JsonSlurper
+//import javax.lang.model.element.Modifier
+//import java.util.Optional
+//
+//import com.squareup.javapoet.TypeSpec
+//import com.squareup.javapoet.MethodSpec
+//import com.squareup.javapoet.CodeBlock
+//import com.squareup.javapoet.ClassName
+//import com.squareup.javapoet.TypeName
+//import com.squareup.javapoet.ParameterizedTypeName
+//import com.squareup.javapoet.JavaFile
+//
+//import org.jgrapht.*
+//import org.jgrapht.graph.*
+//import org.jgrapht.traverse.*
+//
+//
+//// https://gist.github.com/two7sclash/c3835d83695b46ca2a6a4b6d71272538, with corrections
+//def toCamelCase(String text, boolean capitalized=false ) {
+//    text = text.replaceAll( '(_)([A-Za-z0-9])', { Object[] it -> it[2].toUpperCase() } )
+//    return capitalized ? text.capitalize() : text
+//}
+//
+//def metaToJavaType(md) {
+//    if (md['class'] == 'object') {
+//        return ParameterizedTypeName.get(ClassName.get(HashMap.class), metaToJavaType(md.key), metaToJavaType(md.value))
+//    }
+//    else if (md['class'] == 'array') {
+//        return ParameterizedTypeName.get(ClassName.get(ArrayList.class), metaToJavaType(md.value))
+//    }
+//    else if (md['class'] == 'long') {
+//        return ClassName.get(Long.class)
+//    }
+//    else if (md['class'] == 'int' || md['class'] == 'integer') {
+//        return ClassName.get(Integer.class)
+//    }
+//    else if (md['class'] == 'double') {
+//        return ClassName.get(Double.class)
+//    }
+//    else if (md['class'] == 'float') {
+//        return ClassName.get(Float.class)
+//    }
+//    else if (md['class'] == 'boolean' || md['class'] == 'bool') {
+//        return ClassName.get(Boolean.class)
+//    }
+//    else
+//        return ClassName.get(String.class)
+//}
+//
+//def buildUpTraitGraph(model, labelName) {
+//    def traitGraph = new SimpleDirectedGraph<String, DefaultEdge>(DefaultEdge.class)
+//    for (vertexTrait in model[labelName]) {
+//        traitGraph.addVertex(vertexTrait.key)
+//    }
+//    for (vertexTrait in model[labelName]) {
+//        if (vertexTrait.value) {
+//            for (superTrait in vertexTrait.value['superTraits']) {
+//                traitGraph.addEdge(vertexTrait.key, superTrait)
+//            }
+//        }
+//    }
+//    return traitGraph
+//}
+//
+//def generatePropertyDefault(propInfo) {
+//    def block = CodeBlock.builder()
+//    if (propInfo["default"] instanceof Map) {
+//        block.add("\$T.ofEntries(\n", ClassName.get(Map.class))
+//        for (entry in propInfo["default"]) {
+//            block.add(generatePropertyDefault(entry.key))
+//            block.add(", ", entry.key)
+//            block.add(generatePropertyDefault(entry.value))
+//            block.add("\n")
+//        }
+//        block.add(")")
+//    } else if (propInfo["default"] instanceof List) {
+//        block.add("\$T.of(\n", ClassName.get(List.class))
+//        for (entry in propInfo["default"]) {
+//            block.add(generatePropertyDefault(entry.value))
+//            block.add(", ", entry.key)
+//            block.add("\n")
+//        }
+//        block.add(")")
+//    } else if (propInfo["default"] != null) {
+//        block.add("\$L", propInfo["default"])
+//    }
+//    return block
+//}
+//
+//def generatePropertyDefault(propBuilder, propInfo, List propDefault) {
+//
+//}
+//
+//def generatePropertyGetter(propName, propInfo) {
+//    def typeOut = metaToJavaType(propInfo)
+//    def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), typeOut)
+//    def getPropMethod = MethodSpec.methodBuilder('get' + toCamelCase(propName, true))
+//        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+//        .returns(typeOut)
+//    if (propInfo['default'] != null) {
+//        getPropMethod.beginControlFlow("if (getViewedVertex().getProperties().containsKey(\"${propName}\"))")
+//        getPropMethod.addStatement("return (\$T) getViewedVertex().getProperties().get(\"${propName}\").unwrap()", typeOut)
+//        getPropMethod.nextControlFlow("else")
+//        getPropMethod.addStatement("return new \$T(\$L)", typeOut, generatePropertyDefault(propInfo).build())
+//        getPropMethod.endControlFlow()
+//    } else {
+//        getPropMethod.addStatement("return (\$T) getViewedVertex().getProperties().get(\"${propName}\").unwrap()", typeOut)
+//    }
+//    return getPropMethod
+//}
+//
+//def generatePortGetter(portName, portInfo) {
+//    def vertexClass = ClassName.get('forsyde.io.java.typed.viewers', toCamelCase(portInfo["class"], true))
+//    def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), vertexClass)
+//    def listOut = ParameterizedTypeName.get(ClassName.get(List.class), vertexClass)
+//    def setOut = ParameterizedTypeName.get(ClassName.get(Set.class), vertexClass)
+//    def arrayType = ParameterizedTypeName.get(ClassName.get(ArrayList.class), vertexClass)
+//    def setType = ParameterizedTypeName.get(ClassName.get(HashSet.class), vertexClass)
+//    def getPortName = 'get' + toCamelCase(portName + 'Port', true)
+//    def getPortMethod = MethodSpec.methodBuilder(getPortName)
+//        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+//        .addParameter(ClassName.get('forsyde.io.java.core', 'ForSyDeModel'), "model")
+//        // .addParameter(vertexClass, "vertex")
+//    if (portInfo["multiple"] != null && portInfo["multiple"] == "ordered")
+//        getPortMethod.returns(arrayType)
+//    else if (portInfo["multiple"] != null && portInfo["multiple"] == "unordered")
+//        getPortMethod.returns(setType)
+//    else
+//        getPortMethod.returns(optionalOut)
+//    if (portInfo["multiple"] != null && portInfo["multiple"] == "ordered")
+//        getPortMethod.returns(arrayType)
+//    else if (portInfo["multiple"] != null && portInfo["multiple"] == "unordered")
+//        getPortMethod.returns(setType)
+//    else
+//        getPortMethod.returns(optionalOut)
+//    // decide if a collection needs to be generated
+//    if (portInfo["multiple"] != null && portInfo["multiple"] == "ordered")
+//        getPortMethod.addStatement('$T outList = new $T()', arrayType, arrayType)
+//    else if (portInfo["multiple"] != null && portInfo["multiple"] == "unordered")
+//        getPortMethod.addStatement('$T outList = new $T()', setType, setType)
+//    // generate the iteration to collect or find vertexes
+//    if (portInfo['direction'] == null || (portInfo['direction'] != null && portInfo['direction'] >= 0)) {
+//            getPortMethod.beginControlFlow('for ($T e: model.outgoingEdgesOf(getViewedVertex()))', ClassName.get('forsyde.io.java.core', 'Edge'))
+//            getPortMethod.beginControlFlow("if (e.getSourcePort().orElse(\"\").equals(\"" + portName + "\") && \$T.conforms(e.getTarget()))", vertexClass)
+//            // this decides for every iteration if first found is good or if a list is being built.
+//            if (portInfo["multiple"] != null && (portInfo["multiple"] == "ordered" || portInfo["multiple"] == "unordered"))
+//                getPortMethod.addStatement('outList.add(\$T.safeCast(e.getTarget()).get())', vertexClass)
+//            else
+//                getPortMethod.addStatement('return \$T.safeCast(e.getTarget())', vertexClass)
+//            getPortMethod.endControlFlow()
+//            getPortMethod.endControlFlow()
+//    }
+//    if (portInfo['direction'] == null || (portInfo['direction'] != null && portInfo['direction'] <= 0)) {
+//            getPortMethod.beginControlFlow('for ($T e: model.incomingEdgesOf(getViewedVertex()))', ClassName.get('forsyde.io.java.core', 'Edge'))
+//            getPortMethod.beginControlFlow("if (e.getTargetPort().orElse(\"\").equals(\"" + portName + "\") && \$T.conforms(e.getSource()))", vertexClass)
+//            // this decides for every iteration if first found is good or if a list is being built.
+//            if (portInfo["multiple"] != null && (portInfo["multiple"] == "ordered" || portInfo["multiple"] == "unordered"))
+//                getPortMethod.addStatement('outList.add(\$T.safeCast(e.getSource()).get())', vertexClass)
+//            else
+//                getPortMethod.addStatement('return \$T.safeCast(e.getSource())', vertexClass)
+//            getPortMethod.endControlFlow()
+//            getPortMethod.endControlFlow()
+//    }
+//    if (portInfo["multiple"] != null && (portInfo["multiple"] == "ordered" || portInfo["multiple"] == "unordered"))
+//        getPortMethod.addStatement("return outList")
+//    else
+//        getPortMethod.addStatement("return Optional.empty()")
+//    // getPortMethod.beginControlFlow("if (vertex.properties.containsKey(\"" + vertexPort.key + "\"))")
+//    // getPortMethod.addStatement('return Optional.of((' + metaToJavaType(vertexPort.value).toString() + ") vertex.properties.get(\"" + vertexPort.key + "\"))")
+//    // getPortMethod.nextControlFlow('else')
+//    // getPortMethod.endControlFlow()
+//    return getPortMethod
+//}
+//
+//def generatePortGetterVertex(portName, portInfo) {
+//    def vertexClass = ClassName.get('forsyde.io.java.core', 'Vertex')
+//    def optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), vertexClass)
+//    def listOut = ParameterizedTypeName.get(ClassName.get(List.class), vertexClass)
+//    def setOut = ParameterizedTypeName.get(ClassName.get(Set.class), vertexClass)
+//    def arrayType = ParameterizedTypeName.get(ClassName.get(ArrayList.class), vertexClass)
+//    def setType = ParameterizedTypeName.get(ClassName.get(HashSet.class), vertexClass)
+//    def getPortName = 'get' + toCamelCase(portName + 'Port', true)
+//    def getPortMethod = MethodSpec.methodBuilder(getPortName)
+//        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+//        .addParameter(ClassName.get('forsyde.io.java.core', 'ForSyDeModel'), "model")
+//        // .addParameter(vertexClass, "vertex")
+//    if (portInfo["multiple"] != null && portInfo["multiple"] == "ordered")
+//        getPortMethod.returns(arrayType)
+//    else if (portInfo["multiple"] != null && portInfo["multiple"] == "unordered")
+//        getPortMethod.returns(setType)
+//    else
+//        getPortMethod.returns(optionalOut)
+//    if (portInfo["multiple"] != null && portInfo["multiple"] == "ordered")
+//        getPortMethod.returns(arrayType)
+//    else if (portInfo["multiple"] != null && portInfo["multiple"] == "unordered")
+//        getPortMethod.returns(setType)
+//    else
+//        getPortMethod.returns(optionalOut)
+//    // decide if a collection needs to be generated
+//    if (portInfo["multiple"] != null && portInfo["multiple"] == "ordered")
+//        getPortMethod.addStatement('$T outList = new $T()', arrayType, arrayType)
+//    else if (portInfo["multiple"] != null && portInfo["multiple"] == "unordered")
+//        getPortMethod.addStatement('$T outList = new $T()', setType, setType)
+//    // generate the iteration to collect or find vertexes
+//    if (portInfo['direction'] == null || (portInfo['direction'] != null && portInfo['direction'] >= 0)) {
+//            getPortMethod.beginControlFlow('for ($T e: model.outgoingEdgesOf(getViewedVertex()))', ClassName.get('forsyde.io.java.core', 'Edge'))
+//            getPortMethod.beginControlFlow("if (e.getSourcePort().orElse(\"\").equals(\"" + portName + "\"))")
+//            // this decides for every iteration if first found is good or if a list is being built.
+//            if (portInfo["multiple"] != null && (portInfo["multiple"] == "ordered" || portInfo["multiple"] == "unordered"))
+//                getPortMethod.addStatement('outList.add(e.getTarget())')
+//            else
+//                getPortMethod.addStatement('return e.getTarget()')
+//            getPortMethod.endControlFlow()
+//            getPortMethod.endControlFlow()
+//    }
+//    if (portInfo['direction'] == null || (portInfo['direction'] != null && portInfo['direction'] <= 0)) {
+//            getPortMethod.beginControlFlow('for ($T e: model.incomingEdgesOf(getViewedVertex()))', ClassName.get('forsyde.io.java.core', 'Edge'))
+//            getPortMethod.beginControlFlow("if (e.getTargetPort().orElse(\"\").equals(\"" + portName + "\"))")
+//            // this decides for every iteration if first found is good or if a list is being built.
+//            if (portInfo["multiple"] != null && (portInfo["multiple"] == "ordered" || portInfo["multiple"] == "unordered"))
+//                getPortMethod.addStatement('outList.add(e.getSource())')
+//            else
+//                getPortMethod.addStatement('return e.getSource()')
+//            getPortMethod.endControlFlow()
+//            getPortMethod.endControlFlow()
+//    }
+//    if (portInfo["multiple"] != null && (portInfo["multiple"] == "ordered" || portInfo["multiple"] == "unordered"))
+//        getPortMethod.addStatement("return outList")
+//    else
+//        getPortMethod.addStatement("return Optional.empty()")
+//    // getPortMethod.beginControlFlow("if (vertex.properties.containsKey(\"" + vertexPort.key + "\"))")
+//    // getPortMethod.addStatement('return Optional.of((' + metaToJavaType(vertexPort.value).toString() + ") vertex.properties.get(\"" + vertexPort.key + "\"))")
+//    // getPortMethod.nextControlFlow('else')
+//    // getPortMethod.endControlFlow()
+//    return getPortMethod
+//}
+//
+//task generateVertexTraits {
+//    def modelStr = file('meta.json').text
+//    def traitClass = ClassName.get('forsyde.io.java.core', 'Trait')
+//    def model = new JsonSlurper().parseText(modelStr)
+//    // first build the trait graph
+//    def traitGraph = buildUpTraitGraph(model, 'vertexTraits')
+//    // now spit the LUTs for the enums
+//    def vertexEnum = TypeSpec.enumBuilder('VertexTrait')
+//        .addSuperinterface(traitClass)
+//        .addModifiers(Modifier.PUBLIC)
+//    // refinement method
+//    def refinesMethod = MethodSpec.methodBuilder('refines')
+//        .returns(TypeName.BOOLEAN)
+//        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+//        .addParameter(ClassName.get('forsyde.io.java.core', 'VertexTrait'), 'one')
+//        .addParameter(ClassName.get('forsyde.io.java.core', 'VertexTrait'), 'other')
+//        .beginControlFlow('switch (one)')
+//    for (vertexTrait in model['vertexTraits']) {
+//        vertexEnum.addEnumConstant(vertexTrait.key)
+//        refinesMethod.addCode('case ' + vertexTrait.key + ':\n')
+//        refinesMethod.beginControlFlow('switch (other)')
+//        def superIterator = new DepthFirstIterator<String, DefaultEdge>(traitGraph, vertexTrait.key)
+//        while (superIterator.hasNext()) {
+//            def superTrait = superIterator.next()
+//            refinesMethod.addCode('case ' + superTrait + ': ')
+//            refinesMethod.addStatement('return true')
+//        }
+//        refinesMethod.addStatement('default: return false')
+//        refinesMethod.endControlFlow()
+//    }
+//    refinesMethod.addStatement('default: return false')
+//    refinesMethod.endControlFlow()
+//    vertexEnum.addMethod(refinesMethod.build())
+//    vertexEnum.addMethod(
+//        MethodSpec.methodBuilder('refines')
+//        .returns(TypeName.BOOLEAN)
+//        .addModifiers(Modifier.PUBLIC)
+//        .addParameter(ClassName.get('forsyde.io.java.core', 'Trait'), 'other')
+//        .addStatement('return other instanceof VertexTrait ? VertexTrait.refines(this, (VertexTrait) other) : false')
+//        .build()
+//    )
+//    vertexEnum.addMethod(
+//        MethodSpec.methodBuilder('getName')
+//        .returns(ClassName.bestGuess('java.lang.String'))
+//        .addModifiers(Modifier.PUBLIC)
+//        .addStatement('return this.toString()')
+//        .build()
+//    )
+//    // write down these nice generated enums
+//    def fileStr = JavaFile.builder('forsyde.io.java.core', vertexEnum.build())
+//    file('src-gen/main/java/forsyde/io/java/core').mkdirs()
+//    file('src-gen/main/java/forsyde/io/java/core/VertexTrait.java').text = fileStr.build()
+//}
+//
+//task generateEdgeTraits {
+//    def modelStr = file('meta.json').text
+//    def traitClass = ClassName.get('forsyde.io.java.core', 'Trait')
+//    def model = new JsonSlurper().parseText(modelStr)
+//    // first build the trait graph
+//    def traitGraph = buildUpTraitGraph(model, 'edgeTraits')
+//    // now spit the LUTs for the enums
+//    def edgeEnum = TypeSpec.enumBuilder('EdgeTrait')
+//        .addSuperinterface(traitClass)
+//        .addModifiers(Modifier.PUBLIC)
+//    def refinesMethod = MethodSpec.methodBuilder('refines')
+//        .returns(TypeName.BOOLEAN)
+//        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+//        .addParameter(ClassName.get('forsyde.io.java.core', 'EdgeTrait'), 'one')
+//        .addParameter(ClassName.get('forsyde.io.java.core', 'EdgeTrait'), 'other')
+//        .beginControlFlow('switch (one)')
+//    for (edgeTrait in model['edgeTraits']) {
+//        edgeEnum.addEnumConstant(edgeTrait.key)
+//        refinesMethod.addCode('case ' + edgeTrait.key + ':\n')
+//        refinesMethod.beginControlFlow('switch (other)')
+//        def superIterator = new DepthFirstIterator<String, DefaultEdge>(traitGraph, edgeTrait.key)
+//        while (superIterator.hasNext()) {
+//            def superTrait = superIterator.next()
+//            refinesMethod.addCode('case ' + superTrait + ': ')
+//            refinesMethod.addStatement('return true')
+//        }
+//        refinesMethod.addStatement('default: return false')
+//        refinesMethod.endControlFlow()
+//    }
+//    refinesMethod.addStatement('default: return false')
+//    refinesMethod.endControlFlow()
+//    edgeEnum.addMethod(refinesMethod.build())
+//    edgeEnum.addMethod(
+//        MethodSpec.methodBuilder('refines')
+//        .returns(TypeName.BOOLEAN)
+//        .addModifiers(Modifier.PUBLIC)
+//        .addParameter(ClassName.get('forsyde.io.java.core', 'Trait'), 'other')
+//        .addStatement('return other instanceof EdgeTrait ? EdgeTrait.refines(this, (EdgeTrait) other) : false')
+//        .build()
+//    )
+//    edgeEnum.addMethod(
+//        MethodSpec.methodBuilder('getName')
+//        .returns(ClassName.bestGuess('java.lang.String'))
+//        .addModifiers(Modifier.PUBLIC)
+//        .addStatement('return this.toString()')
+//        .build()
+//    )
+//    // write down these nice generated enums
+//    def fileStr = JavaFile.builder('forsyde.io.java.core', edgeEnum.build())
+//    file('src-gen/main/java/forsyde/io/java/core').mkdirs()
+//    file('src-gen/main/java/forsyde/io/java/core/EdgeTrait.java').text = fileStr.build()
+//}
+//
+//
+//task generateVertexInterfaces(dependsOn: [generateVertexTraits]) {
+//    def modelStr = file('meta.json').text
+//    def model = new JsonSlurper().parseText(modelStr)
+//    // first build the trait graph
+//
+//    for (vertexTrait in model['vertexTraits']) {
+//		def className = vertexTrait.key
+//        def traitInterface = TypeSpec.interfaceBuilder(className)
+//            .addModifiers(Modifier.PUBLIC)
+//        if (vertexTrait.value) {
+//            if (vertexTrait.value['superTraits'] != null && vertexTrait.value['superTraits'].size() > 0) {
+//                for (traitName in vertexTrait.value['superTraits']) {
+//                    traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", traitName))
+//                }
+//            } else {
+//                traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"))
+//            }
+//            for(vertexProp in vertexTrait.value['required_properties']) {
+//                traitInterface.addMethod(generatePropertyGetter(vertexProp.key, vertexProp.value).build())
+//            }
+//            // port acessors are generated depending in the multiplicity of their connections and possible directions
+//            for(vertexPort in vertexTrait.value['required_ports']) {
+//                // accessGenerated.add(vertexPort.key)
+//                if (vertexPort.value['class'] != null) {
+//                    traitInterface.addMethod(generatePortGetter(vertexPort.key, vertexPort.value).build())
+//                } else {
+//                    traitInterface.addMethod(generatePortGetterVertex(vertexPort.key, vertexPort.value).build())
+//                }
+//            }
+//        } else {
+//            traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"))
+//        }
+//        def conformsMethod = MethodSpec
+//			.methodBuilder('conforms')
+//			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+//			.addParameter(ClassName.get('forsyde.io.java.core', 'Vertex'), 'vertex')
+//			.returns(ClassName.get(Boolean.class))
+//        conformsMethod.beginControlFlow("for (\$T t : vertex.getTraits())", ClassName.get('forsyde.io.java.core', "Trait"))
+//        conformsMethod.addStatement("if(t.refines(\$T.${className})) return true", ClassName.get('forsyde.io.java.core', "VertexTrait"))
+//        conformsMethod.endControlFlow()
+//        conformsMethod.addStatement('return false')
+//        traitInterface.addMethod(conformsMethod.build())
+//        def conformsMethodViewer = MethodSpec
+//			.methodBuilder('conforms')
+//			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+//			.addParameter(ClassName.get('forsyde.io.java.core', 'VertexViewer'), 'viewer')
+//			.returns(ClassName.get(Boolean.class))
+//        conformsMethodViewer.beginControlFlow("for (\$T t : viewer.getViewedVertex().getTraits())", ClassName.get('forsyde.io.java.core', "Trait"))
+//        conformsMethodViewer.addStatement("if(t.refines(\$T.${className})) return true", ClassName.get('forsyde.io.java.core', "VertexTrait"))
+//        conformsMethodViewer.endControlFlow()
+//        conformsMethodViewer.addStatement('return false')
+//        traitInterface.addMethod(conformsMethodViewer.build())
+//        def safeCast = MethodSpec
+//			.methodBuilder('safeCast')
+//			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+//			.addParameter(ClassName.get('forsyde.io.java.core', 'Vertex'), 'vertex')
+//			.returns(ParameterizedTypeName.get(ClassName.get(Optional.class), ClassName.get('forsyde.io.java.typed.viewers', className)))
+//        safeCast.addStatement(
+//            "return conforms(vertex) ? \$T.of(new \$T(vertex)) : Optional.empty()",
+//            ClassName.get(Optional.class),
+//            ClassName.get("forsyde.io.java.typed.viewers",className + 'Viewer')
+//            )
+//        traitInterface.addMethod(safeCast.build())
+//        def safeCastViewer = MethodSpec
+//			.methodBuilder('safeCast')
+//			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+//			.addParameter(ClassName.get('forsyde.io.java.core', 'VertexViewer'), 'viewer')
+//			.returns(ParameterizedTypeName.get(ClassName.get(Optional.class), ClassName.get('forsyde.io.java.typed.viewers', className)))
+//        safeCastViewer.addStatement(
+//            "return conforms(viewer.getViewedVertex()) ? \$T.of(new \$T(viewer.getViewedVertex())) : Optional.empty()",
+//            ClassName.get(Optional.class),
+//            ClassName.get("forsyde.io.java.typed.viewers",className + 'Viewer')
+//            )
+//        traitInterface.addMethod(safeCastViewer.build())
+//        def fileStr = JavaFile.builder('forsyde.io.java.typed.viewers', traitInterface.build())
+//        file('src-gen/main/java/forsyde/io/java/typed/viewers').mkdirs()
+//        file('src-gen/main/java/forsyde/io/java/typed/viewers/' + className + '.java').text = fileStr.build()
+//    }
+//}
+//
+//task generateVertexConcrete(dependsOn: [generateVertexTraits]) {
+//    def modelStr = file('meta.json').text
+//    def model = new JsonSlurper().parseText(modelStr)
+//    // first build the trait graph
+//    def traitGraph = buildUpTraitGraph(model, 'vertexTraits')
+//
+//    for (vertexTrait in model['vertexTraits']) {
+//		def className = vertexTrait.key + 'Viewer'
+//        def traitInterface = TypeSpec.classBuilder(className)
+//            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+//            .addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", vertexTrait.key))
+//        def constructorMethod = MethodSpec.constructorBuilder()
+//            .addParameter(ClassName.get('forsyde.io.java.core', 'Vertex'), 'vertex')
+//            .addModifiers(Modifier.PUBLIC)
+//        traitInterface.addField(ClassName.get('forsyde.io.java.core', 'Vertex'), "viewedVertex", Modifier.PUBLIC, Modifier.FINAL)
+//        constructorMethod.addStatement("viewedVertex = vertex")
+//        // constructorMethod.addStatement("identifier = vertex.getIdentifier()")
+//        // constructorMethod.addStatement("properties = vertex.getProperties()")
+//        // constructorMethod.addStatement("ports = vertex.getPorts()")
+//        // constructorMethod.addStatement("vertexTraits = vertex.getTraits()")
+//        traitInterface.addMethod(constructorMethod.build())
+//        traitInterface.addMethod(MethodSpec
+//			.methodBuilder('getViewedVertex')
+//			.addModifiers(Modifier.PUBLIC)
+//			.returns(ClassName.get('forsyde.io.java.core', 'Vertex'))
+//            .addStatement("return viewedVertex")
+//            .build())
+//        def fileStr = JavaFile.builder('forsyde.io.java.typed.viewers', traitInterface.build())
+//        file('src-gen/main/java/forsyde/io/java/typed/viewers').mkdirs()
+//        file('src-gen/main/java/forsyde/io/java/typed/viewers/' + className + '.java').text = fileStr.build()
+//    }
+//}
