@@ -11,12 +11,14 @@ plugins {
   id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
 }
 
+/*
 apply from: 'generator.gradle'
 
 tasks.compileJava.dependsOn generateVertexTraits
 tasks.compileJava.dependsOn generateEdgeTraits
 tasks.compileJava.dependsOn generateVertexInterfaces
 tasks.compileJava.dependsOn generateVertexConcrete
+*/
 
 ext {
   artifactName = 'forsyde-io-java'
@@ -139,16 +141,16 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
-// signing {
-//   // small hack to work offline or online
-//   if (project.hasProperty('signing.keyId')) {
-//     useGpgCmd()
-//   } else {
-//     useInMemoryPgpKeys(
-//       System.getenv('GPG_SIGNING_KEY') ?: findProperty('signing.key'),
-//       System.getenv('GPG_SIGNING_PASSWORD') ?: findProperty('signing.password') ?: '' //default to an empty password
-//     )
-//   }
-//   sign publishing.publications.mavenJava
-//   sign configurations.archives
-// }
+signing {
+  // small hack to work offline or online
+  if (project.hasProperty('signing.keyId')) {
+    useGpgCmd()
+  } else {
+    useInMemoryPgpKeys(
+      System.getenv('GPG_SIGNING_KEY') ?: findProperty('signing.key'),
+      System.getenv('GPG_SIGNING_PASSWORD') ?: findProperty('signing.password') ?: '' //default to an empty password
+    )
+  }
+  sign publishing.publications.mavenJava
+  sign configurations.archives
+}

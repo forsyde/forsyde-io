@@ -12,6 +12,7 @@ plugins {
 	id 'java'
 	id 'eclipse'
 	id 'application'
+	id 'publishing'
 }
 
 group = 'io.github.forsyde.io.meta'
