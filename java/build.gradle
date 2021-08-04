@@ -11,9 +11,9 @@ plugins {
   id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
 }
 
-//tasks.register('generate', GeneratorTask)
+tasks.register('generate', MetaGenerator)
 
-//tasks.compileJava.dependsOn generate
+tasks.compileJava.dependsOn generate
 /*
 tasks.compileJava.dependsOn generateEdgeTraits
 tasks.compileJava.dependsOn generateVertexInterfaces

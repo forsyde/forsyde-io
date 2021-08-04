@@ -1,106 +1,246 @@
 {
-    "vertexTraits": {
-        "Composite": {
-            "required_ports": {
-                
-            }
+    "vertexTraits": [
+        {
+            "name": "ModelOfComputation"
         },
-        "AbstractGrouping": null,
-        "AbstractOrdering": {
-            "superTraits": [
+        {
+            "name": "ModelOfArchitecture"
+        },
+        {
+            "name": "AbstractProcessingComponent",
+            "refinedTraits": [
+                "ModelOfArchitecture"
+            ],
+            "required_properties": [
+                {
+                    "name": "can_be_explored",
+                    "type": "bool",
+                    "default": true
+                }
+            ]
+        },
+        {
+            "name": "AbstractCommunicationComponent",
+            "refinedTraits": [
+                "ModelOfArchitecture"
+            ]
+        },
+        {
+            "name": "Composite",
+            "required_ports": []
+        },
+        {
+            "name": "AbstractGrouping"
+        },
+        {
+            "name": "AbstractOrdering",
+            "refinedTraits": [
                 "AbstractGrouping"
             ]
         },
-        "TriggeredTask": {
-            "superTraits": [
+        {
+            "name": "TriggeredTask",
+            "refinedTraits": [
                 "AbstractOrdering"
             ]
         },
-        "SporadicTask": {
-            "superTraits": [
+        {
+            "name": "SporadicTask",
+            "refinedTraits": [
                 "AbstractOrdering"
             ]
         },
-        "ExtraFunctional": null,
-        "WCET": {
-            "superTraits": [
+        {
+            "name": "ExtraFunctional"
+        },
+        {
+            "name": "WCET",
+            "refinedTraits": [
                 "ExtraFunctional"
             ],
-            "required_ports": {
-                "application": {
-                    "class": "ForSyDeFunction",
+            "required_ports": [
+                {
+                    "name": "application",
+                    "vertexTrait": "ModelOfComputation",
                     "direction": 1,
-                    "multiple": "unordered"
+                    "multiple": true
                 },
-                "platform": {
-                    "class": "AbstractProcessingComponent",
+                {
+                    "name": "platform",
+                    "vertexTrait": "AbstractProcessingComponent",
                     "direction": 1,
-                    "multiple": "unordered"
+                    "multiple": true
                 }
-            },
-            "required_properties": {
-                "time": {
-                    "class": "integer",
+            ],
+            "required_properties": [
+                {
+                    "name": "time",
+                    "type": "integer",
                     "default": 0
                 }
-            }
+            ]
         },
-        "WCCT": {
-            "superTraits": [
+        {
+            "name": "WCCT",
+            "refinedTraits": [
                 "ExtraFunctional"
             ],
-            "required_ports": {
-                "signal": {
-                    "class": "ForSyDeFunction",
+            "required_ports": [
+                {
+                    "name": "signal",
+                    "vertexTrait": "ModelOfComputation",
                     "direction": 1,
-                    "multiple": "unordered"
+                    "multiple": true
                 },
-                "platform_element": {
-                    "class": "AbstractCommunicationComponent",
+                {
+                    "name": "platform_element",
+                    "vertexTrait": "AbstractCommunicationComponent",
                     "direction": 1,
-                    "multiple": "unordered"
+                    "multiple": true
                 }
-            },
-            "required_properties": {
-                "time": {
-                    "class": "integer",
+            ],
+            "required_properties": [
+                {
+                    "name": "time",
+                    "type": "integer",
                     "default": 0
                 }
-            }
+            ]
         },
-        "Requirement": null,
-        "HardRequirement": {
-            "superTraits": [
+        {
+            "name": "Requirement"
+        },
+        {
+            "name": "HardRequirement",
+            "refinedTraits": [
                 "Requirement"
             ]
         },
-        "LocationRequirement": {
-            "superTraits": [
+        {
+            "name": "LocationRequirement",
+            "refinedTraits": [
                 "Requirement"
             ],
-            "required_ports": {
-                "ForSyDeFunction": {
-                    "class": "ForSyDeFunction",
+            "required_ports": [
+                {
+                    "name": "ModelOfComputation",
+                    "vertexTrait": "ModelOfComputation",
                     "direction": 1,
-                    "multiple": "unordered"
+                    "multiple": true,
+                    "ordered": false
                 },
-                "processing_unit": {
-                    "class": "AbstractProcessingComponent",
+                {
+                    "name": "processing_unit",
+                    "vertexTrait": "AbstractProcessingComponent",
                     "direction": 1,
-                    "multiple": "unordered"
+                    "multiple": true,
+                    "ordered": false
+                }
+            ]
+        }
+    ],
+    "edgeTraits": [
+        {
+            "name": "Input"
+        },
+        {
+            "name": "Output"
+        },
+        {
+            "name": "Annotation"
+        },
+        {
+            "name": "Composition",
+            "refinedTraits": []
+        },
+        {
+            "name": "AbstractPhysicalConnection"
+        },
+        {
+            "name": "AbstractDecision"
+        },
+        {
+            "name": "AbstractScheduling",
+            "refinedTraits": [
+                "AbstractDecision"
+            ]
+        },
+        {
+            "name": "AbstractMapping",
+            "refinedTraits": [
+                "AbstractDecision"
+            ]
+        },
+        {
+            "name": "AbstractAllocation",
+            "refinedTraits": [
+                "AbstractDecision"
+            ]
+        }
+    ],
+    "portTraits": {},
+    "__commented__": {
+        "vertexTraits": {
+            "TypeRepresentation": null,
+            "integer": {
+                "refinedTraits": [
+                    "TypeRepresentation"
+                ],
+                "required_properties": [
+                    {
+                        "name": "bits",
+                        "type": "integer",
+                        "default": 0
+                    }
+                ]
+            },
+            "Floating": {
+                "refinedTraits": [
+                    "TypeRepresentation"
+                ],
+                "required_properties": [
+                    {
+                        "name": "bits",
+                        "type": "integer",
+                        "default": 0
+                    }
+                ]
+            },
+            "Record": {
+                "refinedTraits": [
+                    "TypeRepresentation"
+                ],
+                "required_properties": [
+                    {
+                        "name": "name",
+                        "class": "String"
+                    }
+                ]
+            },
+            "Array": {
+                "refinedTraits": [
+                    "TypeRepresentation"
+                ],
+                "required_properties": {
+                    "size": {
+                        "class": "integer",
+                        "default": 0
+                    }
                 }
             }
-        },
+        }
+    },
+    "extra": {
         "Goal": null,
         "MinimumThroughput": {
-            "superTraits": [
+            "refinedTraits": [
                 "Goal"
             ],
             "required_ports": {
                 "application": {
-                    "class": "ForSyDeFunction",
+                    "class": "ModelOfComputation",
                     "direction": 1,
-                    "multiple": "unordered"
+                    "multiple": true
                 }
             },
             "required_properties": {
@@ -111,7 +251,7 @@
             }
         },
         "TimeTriggeredScheduler": {
-            "superTraits": [
+            "refinedTraits": [
                 "AbstractGrouping"
             ],
             "required_properties": {
@@ -130,10 +270,10 @@
         "FixedPriorityScheduler": null,
         "CustomScheduler": null,
         "RoundRobinScheduler": null,
-        "ForSyDeFunction": null,
+        "ModelOfComputation": null,
         "InstrumentedFunction": {
-            "superTraits": [
-                "ForSyDeFunction"
+            "refinedTraits": [
+                "ModelOfComputation"
             ],
             "required_properties": {
                 "max_operations": {
@@ -154,17 +294,17 @@
         },
         "Signal": null,
         "BufferSignal": {
-            "superTraits": [
+            "refinedTraits": [
                 "Signal"
             ]
         },
         "LabelSignal": {
-            "superTraits": [
+            "refinedTraits": [
                 "Signal"
             ]
         },
         "Instrumented": {
-            "superTraits": [],
+            "refinedTraits": [],
             "required_properties": {
                 "requires": {
                     "class": "object",
@@ -205,7 +345,7 @@
             }
         },
         "InstrumentedSignal": {
-            "superTraits": [
+            "refinedTraits": [
                 "Signal",
                 "Instrumented"
             ],
@@ -220,34 +360,34 @@
             }
         },
         "SYComb": {
-            "superTraits": [
-                "ForSyDeFunction"
+            "refinedTraits": [
+                "ModelOfComputation"
             ],
             "required_ports": {
                 "combinator": {
-                    "class": "ForSyDeFunction",
+                    "class": "ModelOfComputation",
                     "direction": 0
                 }
             }
         },
         "SYPrefix": {
-            "superTraits": [
-                "ForSyDeFunction"
+            "refinedTraits": [
+                "ModelOfComputation"
             ],
             "required_ports": {
                 "prefixer": {
-                    "class": "ForSyDeFunction",
+                    "class": "ModelOfComputation",
                     "direction": 0
                 }
             }
         },
         "SDFComb": {
-            "superTraits": [
-                "ForSyDeFunction"
+            "refinedTraits": [
+                "ModelOfComputation"
             ],
             "required_ports": {
                 "combinator": {
-                    "class": "ForSyDeFunction",
+                    "class": "ModelOfComputation",
                     "direction": 0
                 }
             },
@@ -273,19 +413,19 @@
             }
         },
         "SDFPrefix": {
-            "superTraits": [
-                "ForSyDeFunction"
+            "refinedTraits": [
+                "ModelOfComputation"
             ],
             "required_ports": {
                 "prefixer": {
-                    "class": "ForSyDeFunction",
+                    "class": "ModelOfComputation",
                     "direction": 0
                 }
             }
         },
         "ReactorElement": null,
         "ReactorTimer": {
-            "superTraits": [
+            "refinedTraits": [
                 "ReactorElement"
             ],
             "required_properties": {
@@ -308,15 +448,15 @@
             "required_ports": {
                 "output": {
                     "class": "ReactorElement",
-                    "multiple": "unordered",
+                    "multiple": true,
                     "direction": 1
                 }
             }
         },
         "ReactorReaction": {
-            "superTraits": [
+            "refinedTraits": [
                 "ReactorElement",
-                "ForSyDeFunction"
+                "ModelOfComputation"
             ],
             "required_ports": {
                 "triggers": {
@@ -330,37 +470,25 @@
                     "direction": 1
                 },
                 "reaction_implementation": {
-                    "class": "ForSyDeFunction",
+                    "class": "ModelOfComputation",
                     "direction": 0
                 }
             }
         },
         "ReactorActor": {
-            "superTraits": [
+            "refinedTraits": [
                 "ReactorElement",
                 "Composite"
             ],
             "required_ports": {
-				"children": {
+                "children": {
                     "direction": 1,
-                    "multiple": "unordered"
-                }
-            }
-        },
-        "AbstractPhysicalComponent": null,
-        "AbstractProcessingComponent": {
-            "superTraits": [
-                "AbstractPhysicalComponent"
-            ],
-            "required_properties": {
-                "can_be_explored": {
-                    "class": "bool",
-                    "default": true
+                    "multiple": true
                 }
             }
         },
         "InstrumentedProcessorTile": {
-            "superTraits": [
+            "refinedTraits": [
                 "AbstractProcessingComponent",
                 "Instrumented"
             ],
@@ -386,22 +514,17 @@
             }
         },
         "AbstractStorageComponent": {
-            "superTraits": [
-                "AbstractPhysicalComponent"
+            "refinedTraits": [
+                "ModelOfArchitecture"
             ]
         },
         "AbsractInterfaceComponent": {
-            "superTraits": [
-                "AbstractPhysicalComponent"
-            ]
-        },
-        "AbstractCommunicationComponent": {
-            "superTraits": [
-                "AbstractPhysicalComponent"
+            "refinedTraits": [
+                "ModelOfArchitecture"
             ]
         },
         "InstrumentedCommunicationInterconnect": {
-            "superTraits": [
+            "refinedTraits": [
                 "AbstractCommunicationComponent"
             ],
             "required_properties": {
@@ -411,87 +534,13 @@
             }
         },
         "TimeDivisionMultiplexer": {
-            "superTraits": [
+            "refinedTraits": [
                 "AbstractCommunicationComponent"
             ],
             "required_properties": {
                 "slots": {
                     "class": "integer",
                     "default": 1
-                }
-            }
-        }
-    },
-    "edgeTraits": {
-        "Input": null,
-        "Output": null,
-        "Annotation": null,
-        "Composition": {
-            "superTraits": []
-        },
-        "AbstractPhysicalConnection": null,
-        "AbstractDecision": null,
-        "AbstractScheduling": {
-            "superTraits": [
-                "AbstractDecision"
-            ]
-        },
-        "AbstractMapping": {
-            "superTraits": [
-                "AbstractDecision"
-            ]
-        },
-        "AbstractAllocation": {
-            "superTraits": [
-                "AbstractDecision"
-            ]
-        }
-    },
-    "portTraits": {},
-    "__commented__": {
-        "vertexTraits": {
-            "TypeRepresentation": null,
-            "integer": {
-                "superTraits": [
-                    "TypeRepresentation"
-                ],
-                "required_properties": {
-                    "bits": {
-                        "class": "integer",
-                        "default": 0
-                    }
-                }
-            },
-            "Floating": {
-                "superTraits": [
-                    "TypeRepresentation"
-                ],
-                "required_properties": {
-                    "bits": {
-                        "class": "integer",
-                        "default": 0
-                    }
-                }
-            },
-            "Record": {
-                "superTraits": [
-                    "TypeRepresentation"
-                ],
-                "required_properties": {
-                    "name": {
-                        "class": "String"
-                    }
-                }
-            },
-            "Array": {
-                "superTraits": [
-                    "TypeRepresentation"
-                ],
-                "required_properties": {
-                    "size": {
-                        "class": "integer",
-                        "default": 0
-                    }
                 }
             }
         }
