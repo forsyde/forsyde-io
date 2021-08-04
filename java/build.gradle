@@ -11,12 +11,14 @@ plugins {
   id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
 }
 
+/*
 apply from: 'generator.gradle'
 
 tasks.compileJava.dependsOn generateVertexTraits
 tasks.compileJava.dependsOn generateEdgeTraits
 tasks.compileJava.dependsOn generateVertexInterfaces
 tasks.compileJava.dependsOn generateVertexConcrete
+*/
 
 ext {
   artifactName = 'forsyde-io-java'

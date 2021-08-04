@@ -18,15 +18,34 @@ edge AbstractMapping refines ModelOfImplementation {}
 
 vertex ReactorElement refines ModelOfComputation () {}
 
+vertex ReactorSignal refines ReactorElement (
+	in port sourceReaction: ReactorElement
+	out port targetReaction: ReactorElement
+) {}
+
 vertex ReactorTimer refines ReactorElement () {
 	property period_numerator_per_sec: int
 	property period_denominator_per_sec: int = 1				
 }
 
 vertex ReactorActor refines ReactorElement (
-	multiple port children: ReactorElement
+	multiple ordered port children: ReactorElement
+	multiple ordered port reactions: ReactorReaction
 	multiple port timers: ReactorTimer
-) {}
+) {
+	property state_names: array<string>
+	property state_sizes_in_bytes: array<int>
+	property state_types: array<string>
+}
+
+vertex ReactorReaction refines ReactorElement (
+   multiple in port triggers: ReactorElement
+   multiple out port effects: ReactorElement
+   port implementation: ModelOfComputation 
+) {
+	property deadline: int = -1
+	
+}
 
 edge ReactorConnection {
 	constraint source ReactorElement
@@ -44,9 +63,11 @@ vertex WCET refines ModelOfExtraFunctional () {
 
 }
 
-vertex AbstractCommunicationComponent refines ModelOfArchitecture () {
+vertex AbstractCommunicationComponent refines ModelOfArchitecture () {}
 
-}
+vertex AbstractProcessingComponent refines ModelOfArchitecture () {}
+
+vertex AbstractStorageComponent refines ModelOfArchitecture () {}
 
 vertex TimeDivisionMultiplexer refines AbstractCommunicationComponent () {}
 
