@@ -262,6 +262,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 		return newElem;
 	}
 
+	@Deprecated
 	static protected Element writeData(Document doc, MapVertexProperty map) {
 		Element newElem = doc.createElement("data");
 		newElem.setAttribute("attr.type", "object");
@@ -273,6 +274,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 		return newElem;
 	}
 
+	@Deprecated
 	static protected Element writeData(Document doc, ArrayVertexProperty array) {
 		Element newElem = doc.createElement("data");
 		newElem.setAttribute("attr.type", "array");
@@ -284,6 +286,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 		return newElem;
 	}
 
+	@Deprecated
 	static protected Element writeData(Document doc, IntegerVertexProperty num) {
 		Element newElem = doc.createElement("data");
 		newElem.setAttribute("attr.type", "int");
@@ -291,6 +294,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 		return newElem;
 	}
 
+	@Deprecated
 	static protected Element writeData(Document doc, LongVertexProperty num) {
 		Element newElem = doc.createElement("data");
 		newElem.setAttribute("attr.type", "long");
@@ -298,6 +302,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 		return newElem;
 	}
 
+	@Deprecated
 	static protected Element writeData(Document doc, FloatVertexProperty num) {
 		Element newElem = doc.createElement("data");
 		newElem.setAttribute("attr.type", "float");
@@ -305,6 +310,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 		return newElem;
 	}
 
+	@Deprecated
 	static protected Element writeData(Document doc, DoubleVertexProperty num) {
 		Element newElem = doc.createElement("data");
 		newElem.setAttribute("attr.type", "double");
@@ -312,6 +318,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 		return newElem;
 	}
 
+	@Deprecated
 	static protected Element writeData(Document doc, BooleanVertexProperty b) {
 		Element newElem = doc.createElement("data");
 		newElem.setAttribute("attr.type", "boolean");
@@ -319,6 +326,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 		return newElem;
 	}
 
+	@Deprecated
 	static protected Element writeData(Document doc, StringVertexProperty str) {
 		Element newElem = doc.createElement("data");
 		newElem.setAttribute("attr.type", "string");

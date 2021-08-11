@@ -1,3 +1,5 @@
+import generator.JavaMetaGenerator
+
 plugins {
   id 'java-library'
   id 'maven-publish'
@@ -5,32 +7,22 @@ plugins {
   id 'java'
   id 'idea'
   id 'eclipse'
-  //id "io.freefair.lombok" version "5.3.0"
-  //id "com.jfrog.bintray" version "1.8.5"
   id 'maven'
   id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
+  id "org.xtext.builder" version "2.0.8"
 }
 
-tasks.register('generate', generator.JavaMetaGenerator) {
+tasks.register('generateForSyDeModel', JavaMetaGenerator) {
 //  inputs.property('inputModelJson',file('./meta.json'))
 //  inputs.property('rootOutDir', file('.'))
 }
 
-tasks.compileJava.dependsOn generate
-/*
-tasks.compileJava.dependsOn generateEdgeTraits
-tasks.compileJava.dependsOn generateVertexInterfaces
-tasks.compileJava.dependsOn generateVertexConcrete
-*/
-
-ext {
-  artifactName = 'forsyde-io-java'
-}
+tasks.compileJava.dependsOn generateForSyDeModel
 
 // due to how maven central works, the groupId must be the same as the
 // website which we host
 group = 'io.github.forsyde'
-archivesBaseName = ext.artifactName
+archivesBaseName = project.name
 version = '0.3.7'
 
 // In this section you declare where to find the dependencies of your project
@@ -41,12 +33,24 @@ repositories {
   jcenter()
 }
 
+// get sources until the developers decide to properly release stuff.
+//git {
+//  implementation "https://github.com/icyphy/lingua-franca.git", {
+//    commit '7473ae1549c2b2aeed8f5469675f328d3984cb2c'
+//    projectPath 'org.lflang'
+//  }
+//}
+
+apply from: "lflang-build.gradle"
+
 // In this section you declare the dependencies for your production and test code
 dependencies {
   // The production code uses the SLF4J logging API at compile time
   implementation 'org.slf4j:slf4j-api:1.7.25'
   implementation group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.1'
   implementation group: 'org.jgrapht', name: 'jgrapht-io', version: '1.5.1'
+
+  // implementation('org.lflang:org.lflang')
 
   testImplementation 'junit:junit:4.12'
 }
@@ -67,13 +71,13 @@ java {
 }
 
 jar {
-    archiveFileName = "${artifactName}" + '-' + "${version}" + '.jar'
+    archiveFileName = "${project.name}" + '-' + "${version}" + '.jar'
 }
 
 publishing {
   publications {
     mavenJava(MavenPublication) {
-      artifactId = artifactName
+      artifactId = project.name
       from components.java
       pom {
         name = 'ForSyDe IO Java'
@@ -133,12 +137,6 @@ nexusPublishing {
 test {
     useJUnit()
     maxHeapSize = '1G'
-}
-
-eclipse {
-  project {
-    name = artifactName
-  }
 }
 
 artifacts {

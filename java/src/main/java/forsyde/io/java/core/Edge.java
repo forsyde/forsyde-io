@@ -3,10 +3,7 @@
  */
 package forsyde.io.java.core;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -137,8 +134,8 @@ final public class Edge {
 		return targetPort;
 	}
 
-	public void addTrait(Trait t) {
-		edgeTraits.add(t);
+	public void addTraits(Trait... traits) {
+		edgeTraits.addAll(Arrays.asList(traits.clone()));
 	}
 
 }

@@ -15,4 +15,11 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'java'
+//sourceControl {
+//    gitRepository(URI.create("https://github.com/icyphy/lingua-franca.git")) {
+//        producesModule("org.lflang:org.lflang")
+//    }
+//}
+
+
+rootProject.name = 'forsyde-io-java'

@@ -10,26 +10,26 @@
             "name": "ModelOfBinding"
         },
         {
-            "name": "ReactorElement",
+            "name": "LinguaFrancaElement",
             "refinedTraits": ["ModelOfComputation"]
         },
         {
-            "name": "ReactorActor",
-            "refinedTraits": ["ReactorElement"],
+            "name": "LinguaFrancaReactor",
+            "refinedTraits": ["LinguaFrancaElement"],
             "required_ports": [
                 {
                     "name": "children_actors",
-                    "vertexTrait": "ReactorActor",
+                    "vertexTrait": "LinguaFrancaReactor",
                     "ordered": true
                 },
                 {
                     "name": "reactions",
-                    "vertexTrait": "ReactorReaction",
+                    "vertexTrait": "LinguaFrancaReaction",
                     "ordered": true
                 },
                 {
                     "name": "timers",
-                    "vertexTrait": "ReactorTimer"
+                    "vertexTrait": "LinguaFrancaTimer"
                 }
             ],
             "required_properties": [
@@ -38,17 +38,17 @@
             ]
         },
         {
-            "name": "ReactorReaction",
-            "refinedTraits": ["ReactorElement"],
+            "name": "LinguaFrancaReaction",
+            "refinedTraits": ["LinguaFrancaElement"],
             "required_ports": [
-                {"name": "triggers", "vertexTrait": "ReactorElement"},
-                {"name": "effects", "vertexTrait": "ReactorElement"},
+                {"name": "triggers", "vertexTrait": "LinguaFrancaElement"},
+                {"name": "effects", "vertexTrait": "LinguaFrancaElement"},
                 {"name": "implementation", "vertexTrait": "ModelOfComputation", "multiple": false}
             ]
         },
         {
-            "name": "ReactorTimer",
-            "refinedTraits": ["ReactorElement"],
+            "name": "LinguaFrancaTimer",
+            "refinedTraits": ["LinguaFrancaElement"],
             "required_properties": [
                 {"name": "period_numerator_per_sec", "type": {"name": "int"}},
                 {"name": "period_denominator_per_sec", "type": {"name": "int"}, "default": 1},
@@ -57,11 +57,11 @@
             ]
         },
         {
-            "name": "ReactorSignal",
-            "refinedTraits": ["ReactorElement"],
+            "name": "LinguaFrancaSignal",
+            "refinedTraits": ["LinguaFrancaElement"],
             "required_ports": [
-                {"name": "source_reaction", "vertexTrait": "ReactorReaction", "multiple": false},
-                {"name": "target_reaction", "vertexTrait": "ReactorReaction", "multiple": false}
+                {"name": "source_reaction", "vertexTrait": "LinguaFrancaReaction", "multiple": false},
+                {"name": "target_reaction", "vertexTrait": "LinguaFrancaReaction", "multiple": false}
             ]
         },
         {
@@ -275,7 +275,7 @@
             ]
         },
         {
-            "name": "ReactorConnection",
+            "name": "LinguaFrancaConnection",
             "refinedTraits": [
 
             ]
@@ -509,10 +509,10 @@
                 }
             }
         },
-        "ReactorElement": null,
-        "ReactorTimer": {
+        "LinguaFrancaElement": null,
+        "LinguaFrancaTimer": {
             "refinedTraits": [
-                "ReactorElement"
+                "LinguaFrancaElement"
             ],
             "required_properties": {
                 "period_numerator_per_sec": {
@@ -533,25 +533,25 @@
             },
             "required_ports": {
                 "output": {
-                    "class": "ReactorElement",
+                    "class": "LinguaFrancaElement",
                     "multiple": true,
                     "direction": 1
                 }
             }
         },
-        "ReactorReaction": {
+        "LinguaFrancaReaction": {
             "refinedTraits": [
-                "ReactorElement",
+                "LinguaFrancaElement",
                 "ModelOfComputation"
             ],
             "required_ports": {
                 "triggers": {
-                    "class": "ReactorElement",
+                    "class": "LinguaFrancaElement",
                     "multiple": "ordered",
                     "direction": -1
                 },
                 "effects": {
-                    "class": "ReactorElement",
+                    "class": "LinguaFrancaElement",
                     "multiple": "ordered",
                     "direction": 1
                 },
@@ -561,9 +561,9 @@
                 }
             }
         },
-        "ReactorActor": {
+        "LinguaFrancaReactor": {
             "refinedTraits": [
-                "ReactorElement",
+                "LinguaFrancaElement",
                 "Composite"
             ],
             "required_ports": {
