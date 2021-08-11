@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Deprecated
 final public class ArrayVertexProperty extends ArrayList<VertexPropertyElement> implements VertexPropertyElement {
 
     public ArrayVertexProperty(int initLenth) {

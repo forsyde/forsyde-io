@@ -1,3 +1,5 @@
+package specs;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;

@@ -8,6 +8,9 @@ import org.jgrapht.graph.DirectedPseudograph;
 import forsyde.io.java.drivers.ForSyDeModelDriver;
 import forsyde.io.java.drivers.ForSyDeModelHandler;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 /**
  * @author rjordao
  *
@@ -71,6 +74,61 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 			}
 		}
 		return mergeDefined;
+	}
+
+	/**
+	 * Convenience method to connect two vertexes directly without having to manually
+	 * create the edge and add it to the model.
+	 *
+	 * @param src Source vertex of the Edge
+	 * @param dst Destination vertex of the Edge
+	 * @param traits A list of traits that the new edge conforms to.
+	 * @return True if the addition succeeded. False otherwise.
+	 */
+	public boolean connect(Vertex src, Vertex dst, EdgeTrait... traits) {
+		Edge e = new Edge(src, dst);
+		e.edgeTraits.addAll(Arrays.asList(traits.clone()));
+		return addEdge(src, dst, e);
+	}
+
+	/**
+	 * Convenience method to connect two vertexes directly without having to manually
+	 * create the edge and add it to the model. Also takes care of the ports in
+	 * the source vertex.
+	 *
+	 * @param portSrc Non empty string naming the ports at the source vertex to connect.
+	 *
+	 * @see #connect(Vertex, Vertex, EdgeTrait...) 
+	 */
+	public boolean connect(Vertex src, Vertex dst, String portSrc, EdgeTrait... traits) {
+		if (src.ports.contains(portSrc)) {
+			Edge e = new Edge(src, dst, Optional.of(portSrc), Optional.empty());
+			e.edgeTraits.addAll(Arrays.asList(traits.clone()));
+			return addEdge(src, dst, e);
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Convenience method to connect two vertexes directly without having to manually
+	 * create the edge and add it to the model. Also takes care of the ports in
+	 * the source and destination vertex. The source port string may be null in case
+	 * only the destination port is to be used.
+	 *
+	 * @param portDst Non empty string naming the ports at the destination vertex to connect.
+	 *
+	 * @see #connect(Vertex, Vertex, String, EdgeTrait...)
+	 */
+	public boolean connect(Vertex src, Vertex dst, String portSrc, String portDst, EdgeTrait... traits) {
+		// portDst must not be null and 'if' portSrc is not null, it must be in src's ports
+		if (dst.ports.contains(portDst) && (src == null || src.ports.contains(portSrc))) {
+			Edge e = new Edge(src, dst, portSrc != null ? Optional.of(portSrc) : Optional.empty(), Optional.of(portDst));
+			e.edgeTraits.addAll(Arrays.asList(traits.clone()));
+			return addEdge(src, dst, e);
+		} else {
+			return false;
+		}
 	}
 
 }

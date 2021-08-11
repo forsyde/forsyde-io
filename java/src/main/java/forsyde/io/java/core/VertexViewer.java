@@ -17,7 +17,7 @@ public interface VertexViewer {
         return getViewedVertex().getTraits();
     };
 
-    default Map<String, VertexPropertyElement> getProperties() {
+    default Map<String, VertexProperty> getProperties() {
         return getViewedVertex().getProperties();
     }
     

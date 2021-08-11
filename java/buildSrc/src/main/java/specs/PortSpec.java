@@ -1,7 +1,7 @@
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+package specs;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.*;
+
 import java.util.Optional;
 
 

@@ -14,4 +14,6 @@ dependencies {
   // The production code uses the SLF4J logging API at compile time
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0-rc1'
   implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.0-rc1'
+  implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
+  implementation 'com.squareup:javapoet:1.13.0'
 }

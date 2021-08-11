@@ -11,7 +11,10 @@ plugins {
   id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
 }
 
-tasks.register('generate', MetaGenerator)
+tasks.register('generate', generator.JavaMetaGenerator) {
+//  inputs.property('inputModelJson',file('./meta.json'))
+//  inputs.property('rootOutDir', file('.'))
+}
 
 tasks.compileJava.dependsOn generate
 /*
@@ -42,7 +45,8 @@ repositories {
 dependencies {
   // The production code uses the SLF4J logging API at compile time
   implementation 'org.slf4j:slf4j-api:1.7.25'
-  implementation group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.0'
+  implementation group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.1'
+  implementation group: 'org.jgrapht', name: 'jgrapht-io', version: '1.5.1'
 
   testImplementation 'junit:junit:4.12'
 }

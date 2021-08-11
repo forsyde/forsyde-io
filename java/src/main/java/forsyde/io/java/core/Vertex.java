@@ -3,15 +3,8 @@
  */
 package forsyde.io.java.core;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -32,7 +25,7 @@ final public class Vertex {
 
 	public String identifier;
 	public Set<String> ports = new HashSet<String>();
-	public Map<String, VertexPropertyElement> properties = new HashMap<String, VertexPropertyElement>();
+	public Map<String, VertexProperty> properties = new HashMap<String, VertexProperty>();
 	public Set<Trait> vertexTraits = new HashSet<Trait>();
 
 	/**
@@ -48,10 +41,21 @@ final public class Vertex {
 	/**
 	 * Utility constructor initializing all associated data as empty.
 	 * 
-	 * @param identifier the obligatory unique ID for this vertex.q
+	 * @param identifier the obligatory unique ID for this vertex.
 	 */
 	public Vertex(String identifier) {
 		this.identifier = identifier;
+	}
+
+	/**
+	 * Utility constructor initializing all associated data as empty.
+	 *
+	 * @param identifier the obligatory unique ID for this vertex.
+	 * @param traits all initial traits for this vertex
+	 */
+	public Vertex(String identifier, Trait... traits) {
+		this.identifier = identifier;
+		addTraits(traits);
 	}
 
 	/**
@@ -66,7 +70,7 @@ final public class Vertex {
 	 *                   vertex. Remember that it should be a tree of primitive
 	 *                   types such as Integers, Floats, Strings etc.
 	 */
-	public Vertex(String identifier, Set<String> ports, Map<String, VertexPropertyElement> properties) {
+	public Vertex(String identifier, Set<String> ports, Map<String, VertexProperty> properties) {
 		this.identifier = identifier;
 		this.ports = ports;
 		this.properties = properties;
@@ -74,12 +78,19 @@ final public class Vertex {
 
 	@Override
 	public String toString() {
-		final int maxLen = 5;
-		StringBuilder builder = new StringBuilder();
-		builder.append("Vertex [identifier=").append(identifier).append(", traits=").append(vertexTraits).append(", ports=")
-				.append(ports != null ? toString(ports, maxLen) : null).append(", properties=")
-				.append(properties != null ? toString(properties.entrySet(), maxLen) : null).append("]");
-		return builder.toString();
+		final StringBuilder sb = new StringBuilder("");
+		sb.append(identifier);
+		sb.append("[").append(
+				vertexTraits.stream().map(Trait::getName).collect(Collectors.joining("; "))
+		).append("]");
+		sb.append("(").append(
+				String.join(", ", ports)
+		).append(")");
+		sb.append("{").append(
+				properties.entrySet().stream().map(e -> e.getKey() + ": " + e.getValue().toString())
+						.collect(Collectors.joining(", "))
+		).append("}");
+		return sb.toString();
 	}
 
 	public Set<Trait> getTraits() {
@@ -90,17 +101,8 @@ final public class Vertex {
 		return vertexTraits.stream().anyMatch(t -> t.refines(trait));
 	}
 
-	private String toString(Collection<?> collection, int maxLen) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[");
-		int i = 0;
-		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
-			if (i > 0)
-				builder.append(", ");
-			builder.append(iterator.next());
-		}
-		builder.append("]");
-		return builder.toString();
+	public boolean putProperty(String propertyName, Object propertyValue) {
+		return properties.put(propertyName, VertexProperty.create(propertyValue)) == null;
 	}
 
 	@Override
@@ -149,7 +151,7 @@ final public class Vertex {
 		}
 	}
 
-	public Map<String, VertexPropertyElement> getProperties() {
+	public Map<String, VertexProperty> getProperties() {
 		return properties;
 	}
 
@@ -161,28 +163,8 @@ final public class Vertex {
 		return identifier;
 	}
 
-	public void addTrait(Trait t) {
-		vertexTraits.add(t);
-	}
-
-	public void putProperty(String name, Object value) {
-		if (value instanceof Integer) {
-			properties.put(name, new IntegerVertexProperty((Integer) value));
-		} else if (value instanceof Long) {
-			properties.put(name, new LongVertexProperty((Long) value));
-		} else if (value instanceof Float) {
-			properties.put(name, new FloatVertexProperty((Float) value));
-		} else if (value instanceof Double) {
-			properties.put(name, new DoubleVertexProperty((Double) value));
-		} else if (value instanceof Map) {
-			properties.put(name, MapVertexProperty.fromConformingMapObject((Map) value));
-		} else if (value instanceof List) {
-			properties.put(name, ArrayVertexProperty.fromConformingList((List) value));
-		} else if (value instanceof Boolean) {
-			properties.put(name, new BooleanVertexProperty((Boolean) value));
-		} else {
-			properties.put(name, new StringVertexProperty(value.toString()));
-		}
+	public void addTraits(Trait... traits) {
+		vertexTraits.addAll(Arrays.asList(traits.clone()));
 	}
 
 }

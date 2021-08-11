@@ -2,6 +2,7 @@ package forsyde.io.java.core;
 
 import java.util.Optional;
 
+@Deprecated
 final public class IntegerVertexProperty extends Number implements VertexPropertyElement {
 
     private int intNum;

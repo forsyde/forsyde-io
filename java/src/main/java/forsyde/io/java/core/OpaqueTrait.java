@@ -2,7 +2,7 @@ package forsyde.io.java.core;
 
 public class OpaqueTrait implements Trait, CharSequence {
 
-    private String opaqueTraitName;
+    private final String opaqueTraitName;
 
     public OpaqueTrait(String s) {
         opaqueTraitName = s;

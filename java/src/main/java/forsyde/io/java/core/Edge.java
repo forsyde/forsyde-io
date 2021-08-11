@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author rjordao
@@ -105,6 +106,18 @@ final public class Edge {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Edge [traits=").append(edgeTraits).append(", source=").append(source).append(", target=").append(target)
 				.append(", sourcePort=").append(sourcePort).append(", targetPort=").append(targetPort).append("]");
+		return builder.toString();
+	}
+
+	public String toIDString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(source.getIdentifier());
+		sourcePort.ifPresent(s -> builder.append(".").append(s));
+		builder.append("[").append(
+				edgeTraits.stream().map(Trait::getName).collect(Collectors.joining(";"))
+		).append("]");
+		targetPort.ifPresent(s -> builder.append(".").append(s));
+		builder.append(target.getIdentifier());
 		return builder.toString();
 	}
 

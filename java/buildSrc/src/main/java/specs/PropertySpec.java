@@ -1,11 +1,14 @@
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+package specs;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import java.util.Optional;
 
 public class PropertySpec {
 
     public String name;
     @JsonProperty("default")
     public Object defaultValue;
-    public Object type;
+    public PropertyTypeSpec type;
+    public Optional<String> comment = Optional.empty();
 }

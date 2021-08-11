@@ -3,6 +3,7 @@ package forsyde.io.java.core;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
+@Deprecated
 final public class BooleanVertexProperty implements VertexPropertyElement, BooleanSupplier {
 
     private boolean innerBoolean;

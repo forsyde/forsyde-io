@@ -7,6 +7,64 @@
             "name": "ModelOfArchitecture"
         },
         {
+            "name": "ModelOfBinding"
+        },
+        {
+            "name": "ReactorElement",
+            "refinedTraits": ["ModelOfComputation"]
+        },
+        {
+            "name": "ReactorActor",
+            "refinedTraits": ["ReactorElement"],
+            "required_ports": [
+                {
+                    "name": "children_actors",
+                    "vertexTrait": "ReactorActor",
+                    "ordered": true
+                },
+                {
+                    "name": "reactions",
+                    "vertexTrait": "ReactorReaction",
+                    "ordered": true
+                },
+                {
+                    "name": "timers",
+                    "vertexTrait": "ReactorTimer"
+                }
+            ],
+            "required_properties": [
+                {"name": "state_names", "type": {"name": "array", "valueType": {"name":  "str"}}},
+                {"name": "state_sizes_in_bytes", "type": {"name": "array", "valueType": {"name":  "int"}}}
+            ]
+        },
+        {
+            "name": "ReactorReaction",
+            "refinedTraits": ["ReactorElement"],
+            "required_ports": [
+                {"name": "triggers", "vertexTrait": "ReactorElement"},
+                {"name": "effects", "vertexTrait": "ReactorElement"},
+                {"name": "implementation", "vertexTrait": "ModelOfComputation", "multiple": false}
+            ]
+        },
+        {
+            "name": "ReactorTimer",
+            "refinedTraits": ["ReactorElement"],
+            "required_properties": [
+                {"name": "period_numerator_per_sec", "type": {"name": "int"}},
+                {"name": "period_denominator_per_sec", "type": {"name": "int"}, "default": 1},
+                {"name": "offset_numerator_per_sec", "type": {"name": "int"}, "default": 0},
+                {"name": "offset_denominator_per_sec", "type": {"name": "int"}, "default": 1}
+            ]
+        },
+        {
+            "name": "ReactorSignal",
+            "refinedTraits": ["ReactorElement"],
+            "required_ports": [
+                {"name": "source_reaction", "vertexTrait": "ReactorReaction", "multiple": false},
+                {"name": "target_reaction", "vertexTrait": "ReactorReaction", "multiple": false}
+            ]
+        },
+        {
             "name": "AbstractProcessingComponent",
             "refinedTraits": [
                 "ModelOfArchitecture"
@@ -14,7 +72,7 @@
             "required_properties": [
                 {
                     "name": "can_be_explored",
-                    "type": "bool",
+                    "type": {"name": "bool"},
                     "default": true
                 }
             ]
@@ -30,12 +88,9 @@
             "required_ports": []
         },
         {
-            "name": "AbstractGrouping"
-        },
-        {
             "name": "AbstractOrdering",
             "refinedTraits": [
-                "AbstractGrouping"
+                "ModelOfBinding"
             ]
         },
         {
@@ -75,7 +130,7 @@
             "required_properties": [
                 {
                     "name": "time",
-                    "type": "integer",
+                    "type": {"name": "integer"},
                     "default": 0
                 }
             ]
@@ -102,7 +157,7 @@
             "required_properties": [
                 {
                     "name": "time",
-                    "type": "integer",
+                    "type": {"name": "integer"},
                     "default": 0
                 }
             ]
@@ -135,6 +190,48 @@
                     "direction": 1,
                     "multiple": true,
                     "ordered": false
+                }
+            ]
+        },
+        {
+            "name": "TimeTriggeredScheduler",
+            "refinedTraits": [
+                "ModelOfBinding"
+            ],
+            "required_properties": [
+                {
+                    "name": "trigger_time",
+                    "type": {"name": "integerMap", "valueType": {"name": "string"}},
+                    "default": {}
+                }
+            ]
+        },
+        {
+            "name": "RoundRobinScheduler",
+            "refinedTraits": [
+                "ModelOfBinding"
+            ],
+            "required_properties": [
+                {
+                    "name": "minimum_time_slice_in_sec_numerator",
+                    "type": {"name": "int"},
+                    "default": 0
+                },
+                {
+                    "name": "minimum_time_slice_in_sec_denominator",
+                    "type": {"name": "int"},
+                    "default": 1
+                },
+                {
+                    "comment": "Negative in case the scheduler has no maximum time slice. Positive Otherwise",
+                    "name": "maximum_time_slice_in_sec_numerator",
+                    "type": {"name": "int"},
+                    "default": -1
+                },
+                {
+                    "name": "maximum_time_slice_in_sec_denominator",
+                    "type": {"name": "int"},
+                    "default": 1
                 }
             ]
         }
@@ -175,6 +272,12 @@
             "name": "AbstractAllocation",
             "refinedTraits": [
                 "AbstractDecision"
+            ]
+        },
+        {
+            "name": "ReactorConnection",
+            "refinedTraits": [
+
             ]
         }
     ],
@@ -250,23 +353,6 @@
                 }
             }
         },
-        "TimeTriggeredScheduler": {
-            "refinedTraits": [
-                "AbstractGrouping"
-            ],
-            "required_properties": {
-                "trigger_time": {
-                    "class": "object",
-                    "key": {
-                        "class": "integer"
-                    },
-                    "value": {
-                        "class": "string"
-                    },
-                    "default": {}
-                }
-            }
-        },
         "FixedPriorityScheduler": null,
         "CustomScheduler": null,
         "RoundRobinScheduler": null,
@@ -277,7 +363,7 @@
             ],
             "required_properties": {
                 "max_operations": {
-                    "class": "object",
+                    "class": "stringMap",
                     "key": {
                         "class": "string"
                     },
@@ -307,12 +393,12 @@
             "refinedTraits": [],
             "required_properties": {
                 "requires": {
-                    "class": "object",
+                    "class": "stringMap",
                     "key": {
                         "class": "string"
                     },
                     "value": {
-                        "class": "object",
+                        "class": "stringMap",
                         "key": {
                             "class": "string"
                         },
@@ -322,12 +408,12 @@
                     }
                 },
                 "provides": {
-                    "class": "object",
+                    "class": "stringMap",
                     "key": {
                         "class": "string"
                     },
                     "value": {
-                        "class": "object",
+                        "class": "stringMap",
                         "key": {
                             "class": "string"
                         },
@@ -393,7 +479,7 @@
             },
             "required_properties": {
                 "consumption": {
-                    "class": "object",
+                    "class": "stringMap",
                     "key": {
                         "class": "string"
                     },
@@ -402,7 +488,7 @@
                     }
                 },
                 "production": {
-                    "class": "object",
+                    "class": "stringMap",
                     "key": {
                         "class": "string"
                     },
@@ -500,7 +586,7 @@
                     "class": "long"
                 },
                 "max_clock_cycles_per_op": {
-                    "class": "object",
+                    "class": "stringMap",
                     "key": {
                         "class": "string"
                     },

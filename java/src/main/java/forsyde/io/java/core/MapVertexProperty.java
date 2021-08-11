@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Deprecated
 final public class MapVertexProperty extends HashMap<String, VertexPropertyElement> implements VertexPropertyElement {
 
     @Override

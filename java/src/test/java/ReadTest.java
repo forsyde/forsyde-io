@@ -8,10 +8,11 @@ public class ReadTest {
 	@Test
 	public void testReading() {
 		ForSyDeModel model;
+		ForSyDeModelHandler forSyDeModelHandler = new ForSyDeModelHandler();
 		try {
-			model = ForSyDeModelHandler.loadModel("../examples/sobel2mpsoc.forxml");
-			ForSyDeModelHandler.writeModel(model, "sobel2mpsoc_out.forxml");
-			ForSyDeModelHandler.writeModel(model, "sobel2mpsoc_gm.graphml");
+			model = forSyDeModelHandler.loadModel("../examples/sobel2mpsoc.forxml");
+			forSyDeModelHandler.writeModel(model, "sobel2mpsoc_out.forxml");
+			forSyDeModelHandler.writeModel(model, "sobel2mpsoc_gm.graphml");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
