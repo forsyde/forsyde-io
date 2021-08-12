@@ -10,7 +10,9 @@ plugins {
   id 'maven'
   id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
   id "org.xtext.builder" version "2.0.8"
+  id "org.xtext.xtend" version "2.0.8"
 }
+
 
 tasks.register('generateForSyDeModel', JavaMetaGenerator) {
 //  inputs.property('inputModelJson',file('./meta.json'))
@@ -24,6 +26,7 @@ tasks.compileJava.dependsOn generateForSyDeModel
 group = 'io.github.forsyde'
 archivesBaseName = project.name
 version = '0.3.7'
+
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -49,6 +52,11 @@ dependencies {
   implementation 'org.slf4j:slf4j-api:1.7.25'
   implementation group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.1'
   implementation group: 'org.jgrapht', name: 'jgrapht-io', version: '1.5.1'
+  // these two are intrusive results of lingua franca
+  implementation 'org.eclipse.xtend:org.eclipse.xtend.lib:2.25.0'
+  implementation 'commons-cli:commons-cli:1.4'
+
+  // implementation project(':org.lflang')
 
   // implementation('org.lflang:org.lflang')
 

@@ -101,7 +101,7 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 	 * @see #connect(Vertex, Vertex, EdgeTrait...) 
 	 */
 	public boolean connect(Vertex src, Vertex dst, String portSrc, EdgeTrait... traits) {
-		if (src.ports.contains(portSrc)) {
+		if (portSrc != null && !portSrc.isEmpty() && src.ports.contains(portSrc)) {
 			Edge e = new Edge(src, dst, Optional.of(portSrc), Optional.empty());
 			e.edgeTraits.addAll(Arrays.asList(traits.clone()));
 			return addEdge(src, dst, e);
@@ -122,13 +122,17 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 	 */
 	public boolean connect(Vertex src, Vertex dst, String portSrc, String portDst, EdgeTrait... traits) {
 		// portDst must not be null and 'if' portSrc is not null, it must be in src's ports
-		if (dst.ports.contains(portDst) && (src == null || src.ports.contains(portSrc))) {
-			Edge e = new Edge(src, dst, portSrc != null ? Optional.of(portSrc) : Optional.empty(), Optional.of(portDst));
+		if (portDst != null && !portDst.isEmpty() && dst.ports.contains(portDst) && (portSrc == null || portSrc.isEmpty() || src.ports.contains(portSrc))) {
+			Edge e = new Edge(src, dst, portSrc != null && !portSrc.isEmpty() ? Optional.of(portSrc) : Optional.empty(), Optional.of(portDst));
 			e.edgeTraits.addAll(Arrays.asList(traits.clone()));
 			return addEdge(src, dst, e);
 		} else {
 			return false;
 		}
+	}
+
+	public Optional<Vertex> queryVertex(String vertexId) {
+		return vertexSet().stream().filter(v -> v.identifier.equals(vertexId)).findAny();
 	}
 
 }

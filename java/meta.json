@@ -41,8 +41,6 @@
             "name": "LinguaFrancaReaction",
             "refinedTraits": ["LinguaFrancaElement"],
             "required_ports": [
-                {"name": "triggers", "vertexTrait": "LinguaFrancaElement"},
-                {"name": "effects", "vertexTrait": "LinguaFrancaElement"},
                 {"name": "implementation", "vertexTrait": "ModelOfComputation", "multiple": false}
             ]
         },
@@ -62,6 +60,9 @@
             "required_ports": [
                 {"name": "source_reaction", "vertexTrait": "LinguaFrancaReaction", "multiple": false},
                 {"name": "target_reaction", "vertexTrait": "LinguaFrancaReaction", "multiple": false}
+            ],
+            "required_properties": [
+                {"name": "size_in_bytes", "type": {"name": "long"}, "default": 0}
             ]
         },
         {
@@ -278,6 +279,18 @@
             "name": "LinguaFrancaConnection",
             "refinedTraits": [
 
+            ]
+        },
+        {
+            "name": "LinguaFrancaTrigger",
+            "refinedTraits": [
+                "LinguaFrancaConnection"
+            ]
+        },
+        {
+            "name": "LinguaFrancaContainment",
+            "refinedTraits": [
+                "LinguaFrancaConnection"
             ]
         }
     ],
