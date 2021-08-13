@@ -227,6 +227,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 					child.setAttribute("attr.name", key.toString());
 					newElem.appendChild(child);
 				}
+				break;
 			case STRINGMAP:
 				newElem.setAttribute("attr.type", "stringMap");
 				for (String key : prop.stringMap.keySet()) {
@@ -234,6 +235,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 					child.setAttribute("attr.name", key);
 					newElem.appendChild(child);
 				}
+				break;
 			case INTEGER:
 				newElem.setAttribute("attr.type", "integer");
 				newElem.setTextContent(String.valueOf(prop.i));

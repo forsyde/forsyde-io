@@ -34,7 +34,7 @@
             ],
             "required_properties": [
                 {"name": "state_names", "type": {"name": "array", "valueType": {"name":  "str"}}},
-                {"name": "state_sizes_in_bytes", "type": {"name": "array", "valueType": {"name":  "int"}}}
+                {"name": "state_sizes_in_bits", "type": {"name": "array", "valueType": {"name":  "int"}}}
             ]
         },
         {
@@ -62,13 +62,22 @@
                 {"name": "target_reaction", "vertexTrait": "LinguaFrancaReaction", "multiple": false}
             ],
             "required_properties": [
-                {"name": "size_in_bytes", "type": {"name": "long"}, "default": 0}
+                {"name": "size_in_bits", "type": {"name": "long"}, "default": 0}
             ]
         },
         {
-            "name": "AbstractProcessingComponent",
+            "name": "AbstractDigitalModule",
             "refinedTraits": [
                 "ModelOfArchitecture"
+            ],
+            "required_properties": [
+                {"name": "nominal_frequency_in_hertz", "type": {"name": "long"}}
+            ]
+        },
+        {
+            "name": "GenericProcessingModule",
+            "refinedTraits": [
+                "AbstractDigitalModule"
             ],
             "required_properties": [
                 {
@@ -79,14 +88,54 @@
             ]
         },
         {
-            "name": "AbstractCommunicationComponent",
+            "name": "GenericDigitalInterconnect",
             "refinedTraits": [
-                "ModelOfArchitecture"
+                "AbstractDigitalModule"
+            ],
+            "required_properties": [
+                {"name": "max_flit_size_in_bits", "type": {"name": "int"}, "default": 8},
+                {"name": "max_concurrent_flits", "type": {"name": "int"}, "default": 1}
             ]
         },
         {
-            "name": "Composite",
-            "required_ports": []
+            "name": "RoundRobinInterconnect",
+            "refinedTraits": [
+                "GenericDigitalInterconnect"
+            ],
+            "required_properties": [
+                {"name": "allocated_weights", "type": {"name": "stringmap", "valueType": {"name": "int"}}, "default": []},
+                {"name": "total_weights", "type": {"name": "int"}, "default": 0}
+            ]
+        },
+        {
+            "name": "AbstractStructure",
+            "refinedTraits": [
+                "ModelOfArchitecture"
+            ],
+            "required_ports": [
+                {"name": "submodules", "vertexTrait": "ModelOfArchitecture"}
+            ]
+        },
+        {
+            "name": "GenericDigitalStorage",
+            "refinedTraits": [
+                "AbstractDigitalModule"
+            ]
+        },
+        {
+            "name": "GenericCacheModule",
+            "refinedTraits": [
+                "GenericDigitalStorage"
+            ]
+        },
+        {
+            "name": "GenericMemoryModule",
+            "refinedTraits": [
+                "GenericDigitalStorage"
+            ],
+            "required_properties": [
+                {"name": "max_memory_in_bits", "type": {"name": "long"}, "default": 0}
+            ]
         },
         {
             "name": "AbstractOrdering",
@@ -116,14 +165,14 @@
             ],
             "required_ports": [
                 {
-                    "name": "application",
+                    "name": "functionality",
                     "vertexTrait": "ModelOfComputation",
                     "direction": 1,
                     "multiple": true
                 },
                 {
-                    "name": "platform",
-                    "vertexTrait": "AbstractProcessingComponent",
+                    "name": "module",
+                    "vertexTrait": "ModelOfArchitecture",
                     "direction": 1,
                     "multiple": true
                 }
@@ -149,8 +198,8 @@
                     "multiple": true
                 },
                 {
-                    "name": "platform_element",
-                    "vertexTrait": "AbstractCommunicationComponent",
+                    "name": "module",
+                    "vertexTrait": "ModelOfArchitecture",
                     "direction": 1,
                     "multiple": true
                 }
@@ -179,15 +228,15 @@
             ],
             "required_ports": [
                 {
-                    "name": "ModelOfComputation",
+                    "name": "functionality",
                     "vertexTrait": "ModelOfComputation",
                     "direction": 1,
                     "multiple": true,
                     "ordered": false
                 },
                 {
-                    "name": "processing_unit",
-                    "vertexTrait": "AbstractProcessingComponent",
+                    "name": "module",
+                    "vertexTrait": "ModelOfArchitecture",
                     "direction": 1,
                     "multiple": true,
                     "ordered": false
@@ -239,6 +288,15 @@
     ],
     "edgeTraits": [
         {
+            "name": "ModelOfComputationEdge"
+        },
+        {
+            "name": "ModelOfArchitectureEdge"
+        },
+        {
+            "name": "ModelOfImplementationEdge"
+        },
+        {
             "name": "Input"
         },
         {
@@ -248,11 +306,16 @@
             "name": "Annotation"
         },
         {
-            "name": "Composition",
-            "refinedTraits": []
+            "name": "AbstractPhysicalConnection",
+            "refinedTraits": [
+                "ModelOfArchitectureEdge"
+            ]
         },
         {
-            "name": "AbstractPhysicalConnection"
+            "name": "AbstractStructuralConnection",
+            "refinedTraits": [
+                "ModelOfArchitectureEdge"
+            ]
         },
         {
             "name": "AbstractDecision"
@@ -278,7 +341,7 @@
         {
             "name": "LinguaFrancaConnection",
             "refinedTraits": [
-
+                "ModelOfComputationEdge"
             ]
         },
         {
@@ -576,8 +639,7 @@
         },
         "LinguaFrancaReactor": {
             "refinedTraits": [
-                "LinguaFrancaElement",
-                "Composite"
+                "LinguaFrancaElement"
             ],
             "required_ports": {
                 "children": {

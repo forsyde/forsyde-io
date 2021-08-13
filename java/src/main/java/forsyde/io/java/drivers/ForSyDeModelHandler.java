@@ -21,12 +21,14 @@ public final class ForSyDeModelHandler {
 	PathMatcher graphMLMatcher;
 	PathMatcher dotMatcher;
 	PathMatcher linguaFrancaMatcher;
+	PathMatcher amaltheaMatcher;
 
 	public ForSyDeModelHandler() {
 		forsydeMLMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{forxml,forsyde.xml,xml}");
 		graphMLMatcher = FileSystems.getDefault().getPathMatcher("glob:*.graphml");
 		dotMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{dot,gv,graphviz}");
 		linguaFrancaMatcher = FileSystems.getDefault().getPathMatcher("glob:*.lf");
+		amaltheaMatcher = FileSystems.getDefault().getPathMatcher("glob:*.amxmi");
 	}
 
 	public ForSyDeModel loadModel(String filePath) throws Exception {
@@ -43,6 +45,8 @@ public final class ForSyDeModelHandler {
 			driver = new ForSyDeMLDriver();
 		} else if(linguaFrancaMatcher.matches(inPath)) {
 			driver = new ForSyDeLFDriver();
+		} else if(amaltheaMatcher.matches(inPath)) {
+			driver = new ForSyDeAmaltheaDriver();
 		} else {
 			throw new Exception("Supported read formats: ['forxml', 'forsyde.xml', 'lf'].");
 		}

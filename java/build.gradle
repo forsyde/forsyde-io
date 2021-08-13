@@ -59,6 +59,8 @@ dependencies {
   // implementation project(':org.lflang')
 
   // implementation('org.lflang:org.lflang')
+  // AMALTHEA connection
+  implementation 'org.eclipse.app4mc:org.eclipse.app4mc.amalthea.model:1.1.0'
 
   testImplementation 'junit:junit:4.12'
 }

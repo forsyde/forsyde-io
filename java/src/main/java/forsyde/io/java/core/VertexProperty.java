@@ -123,7 +123,7 @@ public class VertexProperty {
             case ARRAY:
                 return array.stream().map(VertexProperty::unwrap).collect(Collectors.toList());
             case INTMAP:
-                return intMap.entrySet().stream().collect(Collectors.toMap(k -> k.getKey(), v -> v.getValue().unwrap()));
+                return intMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().unwrap()));
             case STRINGMAP:
                 return stringMap.entrySet().stream().collect(Collectors.toMap(k -> k.getKey().toString(), v -> v.getValue().unwrap()));
             default:
