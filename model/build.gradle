@@ -53,6 +53,7 @@ dependencies {
 	implementation 'info.picocli:picocli:4.6.1'
     annotationProcessor 'info.picocli:picocli-codegen:4.6.1'
 	implementation project("io.github.forsyde.io.meta")
+	implementation 'io.github.classgraph:classgraph:4.8.114'
 }
 
-mainClassName = "io.github.forsyde.io.MetaModelMain"
+mainClassName = "meta.ExtractorAndGenerator"
