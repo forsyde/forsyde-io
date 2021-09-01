@@ -1,6 +1,7 @@
 package meta;
 
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 
 public class ExtractorAndGenerator {
@@ -10,7 +11,7 @@ public class ExtractorAndGenerator {
         String pkg = "meta";
         try (ScanResult scanResult = new ClassGraph().verbose() // Log to stderr
                 .enableAllInfo() // Scan classes, methods, fields, annotations
-                .acceptPackages(pkg) // Scan com.xyz and subpackages (omit to scan all packages)
+                .acceptClasses(pkg) // Scan com.xyz and subpackages (omit to scan all packages)
                 .scan()) { // Start the scan
             // for (ClassInfo routeClassInfo :
             // scanResult.getClassesWithAnnotation(routeAnnotation)) {
@@ -23,7 +24,9 @@ public class ExtractorAndGenerator {
             // System.out.println(routeClassInfo.getName() + " is annotated with route " +
             // route);
             // }
-            System.out.println(scanResult.getClassesImplementing("meta.VertexTraitSpec"));
+        	ClassInfoList classInfoList = scanResult.getClassesImplementing("meta.VertexTraitSpec");
+            System.out.println(classInfoList);
+            System.out.println(classInfoList.size());
         }
     }
 }

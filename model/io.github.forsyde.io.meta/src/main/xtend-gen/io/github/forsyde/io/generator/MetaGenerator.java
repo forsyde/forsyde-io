@@ -25,11 +25,12 @@ public class MetaGenerator extends AbstractGenerator {
   @Inject
   private JavaMetaGenerator javaMetaGenerator;
   
-  @Override
   public void doGenerate(final Resource resource, final IFileSystemAccess2 fsa, final IGeneratorContext context) {
     try {
-      final Predicate<EObject> _function = (EObject e) -> {
-        return (!(e instanceof Model));
+      final Predicate<EObject> _function = new Predicate<EObject>() {
+        public boolean test(final EObject e) {
+          return (!(e instanceof Model));
+        }
       };
       resource.getContents().removeIf(_function);
       EObject _head = IterableExtensions.<EObject>head(resource.getContents());
