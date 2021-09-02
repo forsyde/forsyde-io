@@ -83,3 +83,8 @@ sourceSets {
         }
     }
 }
+
+
+javadoc {
+  exclude "org/lflang/**"
+}

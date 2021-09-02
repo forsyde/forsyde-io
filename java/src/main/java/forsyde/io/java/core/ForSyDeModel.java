@@ -96,7 +96,11 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 	 * create the edge and add it to the model. Also takes care of the ports in
 	 * the source vertex.
 	 *
+	 * @param src Source vertex of the Edge
+	 * @param dst Destination vertex of the Edge
+	 * @param traits A list of traits that the new edge conforms to.
 	 * @param portSrc Non empty string naming the ports at the source vertex to connect.
+	 * @return True if the addition succeeded. False otherwise.
 	 *
 	 * @see #connect(Vertex, Vertex, EdgeTrait...) 
 	 */
@@ -115,8 +119,13 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 	 * create the edge and add it to the model. Also takes care of the ports in
 	 * the source and destination vertex. The source port string may be null in case
 	 * only the destination port is to be used.
-	 *
+	 * 
+	 * @param src Source vertex of the Edge
+	 * @param dst Destination vertex of the Edge
+	 * @param traits A list of traits that the new edge conforms to.
+	 * @param portSrc possibly empty or null string naming the ports at the source vertex to connect.
 	 * @param portDst Non empty string naming the ports at the destination vertex to connect.
+	 * @return True if the addition succeeded. False otherwise.
 	 *
 	 * @see #connect(Vertex, Vertex, String, EdgeTrait...)
 	 */

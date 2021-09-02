@@ -99,6 +99,8 @@ public class JavaMetaGenerator extends DefaultTask {
 			case STRINGMAP:
 				return ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(String.class),
 						metaToJavaType(prop.valueType.get()));
+			case ARRAY:
+				return ParameterizedTypeName.get(ClassName.get(ArrayList.class), metaToJavaType(prop.valueType.get()));
 			case BOOLEAN:
 				return ClassName.get(Boolean.class);
 			case INTEGER:
@@ -106,7 +108,7 @@ public class JavaMetaGenerator extends DefaultTask {
 			case FLOAT:
 				return ClassName.get(Float.class);
 			case DOUBLE:
-				return ClassName.get(Double.class);
+				return ClassName.get(Double.class); 
 			default:
 				return ClassName.get(String.class);
 		}
@@ -119,6 +121,7 @@ public class JavaMetaGenerator extends DefaultTask {
 				.addAnnotation(
 						AnnotationSpec.builder(SuppressWarnings.class).addMember("value", "$S", "unchecked").build())
 				.addJavadoc("getter for required property \"$L\".\n", prop.name)
+				.addJavadoc("@return \"$L\".\n\" property", prop.name)
 				.addModifiers(Modifier.PUBLIC, Modifier.DEFAULT).returns(typeOut);
 		prop.comment.ifPresent(comment -> getPropMethod.addJavadoc("$L", comment));
 		// if (propInfo['default'] != null) {
@@ -145,6 +148,7 @@ public class JavaMetaGenerator extends DefaultTask {
 		MethodSpec.Builder getPropMethod = MethodSpec.methodBuilder("set" + toCamelCase(prop.name))
 				.addParameter(typeIn, WordUtils.uncapitalize(toCamelCase(prop.name)))
 				.addJavadoc("setter for required property \"$L\".\n", prop.name)
+				.addJavadoc("@param $L value for required property \"$L\".\n", WordUtils.uncapitalize(toCamelCase(prop.name)), prop.name)
 				.addModifiers(Modifier.PUBLIC, Modifier.DEFAULT);
 		// if (propInfo['default'] != null) {
 		// getPropMethod.beginControlFlow("if

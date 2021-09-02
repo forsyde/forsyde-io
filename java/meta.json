@@ -49,7 +49,9 @@
             "name": "LinguaFrancaReaction",
             "refinedTraits": ["LinguaFrancaElement"],
             "required_ports": [
-                {"name": "implementation", "vertexTrait": "ModelOfComputation", "multiple": false}
+                {"name": "implementation", "vertexTrait": "ModelOfComputation", "multiple": false},
+                {"name": "triggers", "vertexTrait": "LinguaFrancaElement", "multiple": true},
+                {"name": "effects", "vertexTrait": "LinguaFrancaElement", "multiple": true}
             ]
         },
         {

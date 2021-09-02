@@ -58,6 +58,7 @@ public class FedCLauncher extends FedLauncher {
      * Return the compile command for a federate.
      * 
      * @param federate The federate to compile.
+     * @return the compile command
      */
     @Override
     protected
@@ -76,6 +77,7 @@ public class FedCLauncher extends FedLauncher {
      * for federates.
      * 
      * @param federate The federate to execute.
+     * @return the command to execute
      */
     @Override
     protected

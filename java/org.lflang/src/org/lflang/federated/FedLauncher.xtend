@@ -66,6 +66,7 @@ package class FedLauncher {
      * Return the compile command for a federate.
      * 
      * @param federate The federate to compile.
+     * @return the compile command
      */
     protected def String compileCommandForFederate(FederateInstance federate) {
         throw new UnsupportedOperationException("Don't know how to compile the federates.");
@@ -77,6 +78,7 @@ package class FedLauncher {
      * for federates.
      * 
      * @param federate The federate to execute.
+     * @return the execute command
      */
     protected def String executeCommandForFederate(FederateInstance federate) {
         throw new UnsupportedOperationException("Don't know how to execute the federates.");
@@ -122,7 +124,7 @@ package class FedLauncher {
      * @param federates A list of federate instances in the federation
      * @param federationRTIProperties Contains relevant properties of the RTI.
      *  Can have values for 'host', 'dir', and 'user' 
-     * 
+     * @return the launcher.
      */
     def createLauncher(
         ArrayList<String> coreFiles,

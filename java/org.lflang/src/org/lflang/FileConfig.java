@@ -180,7 +180,7 @@ public class FileConfig {
      * use this constructor to obtain a copy of a parent object.
      *
      * @param fileConfig An object of FileConfig
-     * @throws IOException
+     * @throws IOException some io exception
      */
     protected FileConfig(FileConfig fileConfig) throws IOException {
         this.resource = fileConfig.resource;
@@ -212,7 +212,9 @@ public class FileConfig {
     /**
      * Get the iResource corresponding to the provided resource if it can be
      * found.
-     * @throws IOException
+     * @param r Resource to get
+     * @throws IOException some io exception
+     * @return the resource
      */
     public IResource getIResource(Resource r) throws IOException {
         IResource iResource = null;
@@ -234,7 +236,9 @@ public class FileConfig {
     /**
      * Get the specified path as an Eclipse IResource or, if it is not found, then
      * return the iResource for the main file.
-     * 
+     *
+     * @param path the path
+     * @return the main file resource
      */
     public IResource getIResource(Path path) {
         return getIResource(path.toUri());
@@ -243,6 +247,8 @@ public class FileConfig {
     /**
      * Get the specified path as an Eclipse IResource or, if it is not found, then
      * return the iResource for the main file.
+     * 
+     * @param file the file
      * 
      */
     public IResource getIResource(File file) {
@@ -276,6 +282,8 @@ public class FileConfig {
 
     /** 
      * Get the file name of a resource without file extension
+     * 
+     * @param r the file name of a resource 
      */
     public static String getName(Resource r) throws IOException {
         return nameWithoutExtension(toPath(r));
@@ -283,6 +291,8 @@ public class FileConfig {
     
     /**
      * Get the directory a resource is located in relative to the root package
+     * 
+     * @param r the file name of a resource 
      */
     public Path getDirectory(Resource r) throws IOException {
         return getSubPkgPath(this.srcPkgPath, toPath(r).getParent());
@@ -295,6 +305,8 @@ public class FileConfig {
      *
      * The generated source directory is specified in the IDE (Project Properties->LF->Compiler->Output Folder). When
      * invoking the standalone compiler, the output path is specified directly using the `-o` or `--output-path` option.
+     * 
+     * @return The parent of the directory
      */
     public Path getOutPath() {
         return outPath;
@@ -306,6 +318,8 @@ public class FileConfig {
      * package root. Specifically, if the source file is x/y/Z.lf relative
      * to the package root, then the generated sources will be put in x/y/Z
      * relative to srcGenBasePath.
+     * 
+     * @return The directory in which to put the generated sources.
      */
     public Path getSrcGenPath() {
         return srcGenPath;
@@ -317,6 +331,8 @@ public class FileConfig {
      * sources. This is the root, meaning that if the source file is x/y/Z.lf
      * relative to the package root, then the generated sources will be put in x/y/Z
      * relative to this URI.
+     * 
+     * @return Path representation of srcGenRoot
      */
     public Path getSrcGenBasePath() {
         return srcGenBasePath;
@@ -327,6 +343,8 @@ public class FileConfig {
      * generated sources belong. Even if the target language does not have a
      * notion of packages, this directory groups all files associated with a
      * single main reactor.
+     * 
+     * @return The directory that denotes the root of the package
      */
     public Path getSrcGenPkgPath() {
         return srcGenPkgPath;

@@ -223,9 +223,9 @@ public class CGeneratorExtension {
      * can be zero) either as a time value (e.g., 200 msec) or as a literal 
      * (e.g., a parameter), that delay in nsec will be returned.
      * 
-     * @param delay
-     * @param generator
-     * @return
+     * @param delay the delay
+     * @param generator the generator
+     * @return additional delay
      */
     public static String getNetworkDelayLiteral(Delay delay,
             CGenerator generator) {
