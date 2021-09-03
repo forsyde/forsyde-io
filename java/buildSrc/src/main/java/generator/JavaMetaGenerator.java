@@ -37,7 +37,7 @@ public class JavaMetaGenerator extends DefaultTask {
 
 	@Incremental
 	@InputFile
-	File inputModelJson = new File("meta.json");
+	File inputModelJson = getProject().file("meta.json");
 
 	@InputDirectory
 	File rootOutDir = getProject().getProjectDir();
@@ -109,6 +109,8 @@ public class JavaMetaGenerator extends DefaultTask {
 				return ClassName.get(Float.class);
 			case DOUBLE:
 				return ClassName.get(Double.class); 
+			case LONG:
+				return ClassName.get(Long.class);
 			default:
 				return ClassName.get(String.class);
 		}

@@ -42,7 +42,7 @@
             ],
             "required_properties": [
                 {"name": "state_names", "type": {"name": "array", "valueType": {"name":  "str"}}},
-                {"name": "state_sizes_in_bits", "type": {"name": "array", "valueType": {"name":  "int"}}}
+                {"name": "state_sizes_in_bits", "type": {"name": "array", "valueType": {"name":  "long"}}}
             ]
         },
         {
@@ -52,6 +52,9 @@
                 {"name": "implementation", "vertexTrait": "ModelOfComputation", "multiple": false},
                 {"name": "triggers", "vertexTrait": "LinguaFrancaElement", "multiple": true},
                 {"name": "effects", "vertexTrait": "LinguaFrancaElement", "multiple": true}
+            ],
+            "required_properties": [
+                {"name": "size_in_bits", "type": {"name": "long"}, "default": 0}
             ]
         },
         {
@@ -73,6 +76,41 @@
             ],
             "required_properties": [
                 {"name": "size_in_bits", "type": {"name": "long"}, "default": 0}
+            ]
+        },
+        {
+        	"name": "SDFElement",
+        	"refinedTraits": [
+                "ModelOfComputation"
+            ]
+    	},
+        {
+        	"name": "SDFComb",
+            "refinedTraits": ["SDFElement"],
+            "required_ports": [
+                {"name": "combinator", "vertexTrait": "ModelOfComputation", "direction": 1, "multiple": false}
+            ],
+            "required_properties": [
+            	{"name": "consumption", "type": {"name": "stringMap", "valueType": {"name": "integer"}}},
+                {"name": "production", "type": {"name": "stringMap", "valueType": {"name": "integer"}}}
+            ]
+        },
+        {
+        	"name": "SDFPrefix",
+            "refinedTraits": [
+                "SDFElement"
+            ],
+            "required_ports": [
+            	{"name": "prefixer", "vertexTrait": "ModelOfComputation", "direction": 1, "multiple": false}
+            ]
+        },
+        {
+        	"name": "SDFSignal",
+            "refinedTraits": [
+                "SDFElement"
+            ],
+            "required_properties": [
+            	{"name": "token_size_in_bits", "type": {"name": "long"}}
             ]
         },
         {
@@ -103,7 +141,7 @@
                 "AbstractDigitalModule"
             ],
             "required_properties": [
-                {"name": "max_flit_size_in_bits", "type": {"name": "int"}, "default": 8},
+                {"name": "max_flit_size_in_bits", "type": {"name": "long"}, "default": 8},
                 {"name": "max_concurrent_flits", "type": {"name": "int"}, "default": 1}
             ]
         },
