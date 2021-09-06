@@ -149,7 +149,7 @@ public class JavaMetaGenerator extends DefaultTask {
 		;
 		MethodSpec.Builder getPropMethod = MethodSpec.methodBuilder("set" + toCamelCase(prop.name))
 				.addParameter(typeIn, WordUtils.uncapitalize(toCamelCase(prop.name)))
-				.addJavadoc("setter for required property \"$L\".\n", prop.name)
+				.addJavadoc("setter for named required property \"$L\".\n", prop.name)
 				.addJavadoc("@param $L value for required property \"$L\".\n", WordUtils.uncapitalize(toCamelCase(prop.name)), prop.name)
 				.addModifiers(Modifier.PUBLIC, Modifier.DEFAULT);
 		// if (propInfo['default'] != null) {
@@ -187,6 +187,7 @@ public class JavaMetaGenerator extends DefaultTask {
 	}
 
 	public MethodSpec generatePortGetter(PortSpec port) {
+		TypeName vertexEnumClass = ClassName.get("forsyde.io.java.core", "VertexTrait");
 		TypeName vertexClass = ClassName.get("forsyde.io.java.typed.viewers", port.vertexTrait.name);
 		ParameterizedTypeName optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), vertexClass);
 		ParameterizedTypeName listOut = ParameterizedTypeName.get(ClassName.get(List.class), vertexClass);
@@ -199,51 +200,70 @@ public class JavaMetaGenerator extends DefaultTask {
 		// .addParameter(vertexClass, "vertex");
 		if (port.multiple.orElse(true)) {
 			if (port.ordered.orElse(false)) {
-				getPortMethod.returns(arrayType);
-				getPortMethod.addStatement("$T outList = new $T()", arrayType, arrayType);
+				getPortMethod.returns(listOut);
+				String statement = "return getMultipleNamedPort(model, \"$L\", \"$L\", $L).stream().map(v -> $T.safeCast(v).get()).collect($T.toList())";
+				getPortMethod.addStatement(statement, 
+						port.name, 
+						port.vertexTrait.name, 
+						directionToInt(port.direction),
+						vertexClass,
+						Collectors.class);
+//				getPortMethod.addStatement("$T outList = new $T()", arrayType, arrayType);
 			} else {
-				getPortMethod.returns(setType);
-				getPortMethod.addStatement("$T outList = new $T()", setType, setType);
+				getPortMethod.returns(setOut);
+				String statement = "return getMultipleNamedPort(model, \"$L\", \"$L\", $L).stream().map(v -> $T.safeCast(v).get()).collect($T.toSet())";
+				getPortMethod.addStatement(statement, 
+						port.name, 
+						port.vertexTrait.name, 
+						directionToInt(port.direction),
+						vertexClass,
+						Collectors.class);
+//				getPortMethod.addStatement("$T outList = new $T()", setType, setType);
 			}
 		} else {
 			getPortMethod.returns(optionalOut);
+			getPortMethod.addStatement("return getNamedPort(model, \"$L\", \"$L\", $L).map(v -> $T.safeCast(v).get())", 
+					port.name, 
+					port.vertexTrait.name, 
+					directionToInt(port.direction),
+					vertexClass);
 		}
 		// // decide if a collection needs to be generated
 		// // generate the iteration to collect or find vertexes
-		if (port.direction == PortDirection.OUTGOING
-				|| port.direction == PortDirection.BIDIRECTIONAL) {
-			getPortMethod.beginControlFlow("for ($T e: model.outgoingEdgesOf(getViewedVertex()))",
-					ClassName.get("forsyde.io.java.core", "Edge"));
-			getPortMethod.beginControlFlow("if (e.getSourcePort().orElse(\"\").equals(\"" + port.name
-					+ "\") && $T.conforms(e.getTarget()))", vertexClass);
-			// this decides for every iteration if first found is good or if a list is being
-			// built.
-			if (port.multiple.orElse(true))
-				getPortMethod.addStatement("outList.add($T.safeCast(e.getTarget()).get())", vertexClass);
-			else
-				getPortMethod.addStatement("return $T.safeCast(e.getTarget())", vertexClass);
-			getPortMethod.endControlFlow();
-			getPortMethod.endControlFlow();
-		}
-		if (port.direction == PortDirection.INCOMING
-				|| port.direction == PortDirection.BIDIRECTIONAL) {
-			getPortMethod.beginControlFlow("for ($T e: model.incomingEdgesOf(getViewedVertex()))",
-					ClassName.get("forsyde.io.java.core", "Edge"));
-			getPortMethod.beginControlFlow("if (e.getTargetPort().orElse(\"\").equals(\"" + port.name
-					+ "\") && $T.conforms(e.getSource()))", vertexClass);
-			// this decides for every iteration if first found is good or if a list is being
-			// built.
-			if (port.multiple.orElse(true))
-				getPortMethod.addStatement("outList.add($T.safeCast(e.getSource()).get())", vertexClass);
-			else
-				getPortMethod.addStatement("return $T.safeCast(e.getSource())", vertexClass);
-			getPortMethod.endControlFlow();
-			getPortMethod.endControlFlow();
-		}
-		if (port.multiple.orElse(true))
-			getPortMethod.addStatement("return outList");
-		else
-			getPortMethod.addStatement("return Optional.empty()");
+//		if (port.direction == PortDirection.OUTGOING
+//				|| port.direction == PortDirection.BIDIRECTIONAL) {
+//			getPortMethod.beginControlFlow("for ($T e: model.outgoingEdgesOf(getViewedVertex()))",
+//					ClassName.get("forsyde.io.java.core", "Edge"));
+//			getPortMethod.beginControlFlow("if (e.getSourcePort().orElse(\"\").equals(\"" + port.name
+//					+ "\") && $T.conforms(e.getTarget()))", vertexClass);
+//			// this decides for every iteration if first found is good or if a list is being
+//			// built.
+//			if (port.multiple.orElse(true))
+//				getPortMethod.addStatement("outList.add($T.safeCast(e.getTarget()).get())", vertexClass);
+//			else
+//				getPortMethod.addStatement("return $T.safeCast(e.getTarget())", vertexClass);
+//			getPortMethod.endControlFlow();
+//			getPortMethod.endControlFlow();
+//		}
+//		if (port.direction == PortDirection.INCOMING
+//				|| port.direction == PortDirection.BIDIRECTIONAL) {
+//			getPortMethod.beginControlFlow("for ($T e: model.incomingEdgesOf(getViewedVertex()))",
+//					ClassName.get("forsyde.io.java.core", "Edge"));
+//			getPortMethod.beginControlFlow("if (e.getTargetPort().orElse(\"\").equals(\"" + port.name
+//					+ "\") && $T.conforms(e.getSource()))", vertexClass);
+//			// this decides for every iteration if first found is good or if a list is being
+//			// built.
+//			if (port.multiple.orElse(true))
+//				getPortMethod.addStatement("outList.add($T.safeCast(e.getSource()).get())", vertexClass);
+//			else
+//				getPortMethod.addStatement("return $T.safeCast(e.getSource())", vertexClass);
+//			getPortMethod.endControlFlow();
+//			getPortMethod.endControlFlow();
+//		}
+//		if (port.multiple.orElse(true))
+//			getPortMethod.addStatement("return outList");
+//		else
+//			getPortMethod.addStatement("return Optional.empty()");
 		return getPortMethod.build();
 	}
 
@@ -414,6 +434,17 @@ public class JavaMetaGenerator extends DefaultTask {
 			traitList.add(traitInterface.build());
 		}
 		return traitList;
+	}
+	
+	private Integer directionToInt(PortDirection dir) {
+		switch (dir) {
+			case INCOMING:
+				return -1;
+			case OUTGOING:
+				return 1;
+			default:
+				return 0;
+		}
 	}
 
 

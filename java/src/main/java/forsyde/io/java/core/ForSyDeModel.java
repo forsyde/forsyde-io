@@ -78,6 +78,13 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 		}
 		return mergeDefined;
 	}
+	
+	public ForSyDeModel merge(ForSyDeModel other) {
+		ForSyDeModel merged = new ForSyDeModel();
+		merged.mergeInPlace(this);
+		merged.mergeInPlace(other);
+		return merged;
+	}
 
 	/**
 	 * Convenience method to connect two vertexes directly without having to manually

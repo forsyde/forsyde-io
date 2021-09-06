@@ -105,16 +105,21 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
         final Vertex instantiationVertex = new Vertex(instantiationName, VertexTrait.LinguaFrancaReactor);
         instantiationVertex.ports.add("timers");
         instantiationVertex.ports.add("reactions");
-        instantiationVertex.ports.add("children");
+        instantiationVertex.ports.add("children_reactors");
         model.addVertex(instantiationVertex);
         if (instantiation.getReactorClass() instanceof Reactor) {
             Reactor reactor = (Reactor) instantiation.getReactorClass();
-            // first recurse through all children
+            // first recurse through all children and add the ordering
+            // explicitly save the ordering of the children reactors
+            Map<String, Integer> childrenReactorsOrdering = new HashMap<>();
+            int childIdx = 0;
             for (final Instantiation childInstantiation : reactor.getInstantiations()) {
                 Vertex childInstanceVertex = processLFInstanceToForSyDeReactor(model, childInstantiation, instantiationName + ".");
                 model.addVertex(childInstanceVertex);
-                model.connect(instantiationVertex, childInstanceVertex, "children", EdgeTrait.LinguaFrancaContainment);
+                model.connect(instantiationVertex, childInstanceVertex, "children_reactors", EdgeTrait.LinguaFrancaContainment);
+                childrenReactorsOrdering.put(childInstanceVertex.identifier, childIdx);
                 childInstancesToVertex.put(childInstantiation, childInstanceVertex);
+                childIdx += 1;
             }
             for (final Port port : reactor.getInputs()) {
                 instantiationVertex.ports.add(port.getName());
@@ -127,10 +132,12 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                 model.connect(instantiationVertex, timerVertex, "timers", EdgeTrait.LinguaFrancaConnection);
                 timerToVertex.put(timer, timerVertex);
             }
+            Map<String, Integer> reactionsOrdering = new HashMap<>();
             for (int i = 0; i < reactor.getReactions().size(); i++) {
                 final Reaction reaction = reactor.getReactions().get(i);
                 final Vertex reactionVertex = processLFReactionToForSyDeReaction(model, reaction, instantiationName + ".", String.valueOf(i));
                 model.connect(instantiationVertex, reactionVertex, "reactions", EdgeTrait.LinguaFrancaConnection);
+                reactionsOrdering.put(reactionVertex.identifier, i);
                 for (final TriggerRef triggerRef : reaction.getTriggers()) {
                     if (triggerRef instanceof VarRef) {
                         VarRef varRef = (VarRef) triggerRef;
@@ -157,6 +164,8 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                     }
                 }
             }
+            instantiationVertex.putProperty("__children_reactors_ordering__", childrenReactorsOrdering);
+            instantiationVertex.putProperty("__reactions_ordering__", reactionsOrdering);
             instantiationVertex.putProperty("state_names", reactor.getStateVars().stream().map(StateVar::getName).collect(Collectors.toList()));
             instantiationVertex.putProperty("state_sizes_in_bits", reactor.getStateVars().stream().map(StateVar::getType)
                     .map(this::varTypeToSize).collect(Collectors.toList()));

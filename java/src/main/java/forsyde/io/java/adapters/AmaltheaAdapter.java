@@ -67,7 +67,7 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
                 final GenericDigitalInterconnectViewer interconnectVertex = new GenericDigitalInterconnectViewer(moduleVertex);
                 interconnectVertex.setMaxConcurrentFlits(connectionHandler.getDefinition().getMaxConcurrentTransfers());
                 // burst size is always in B, it seems
-                interconnectVertex.setMaxFlitSizeInBits(connectionHandler.getDefinition().getMaxBurstSize() * 8);
+                interconnectVertex.setMaxFlitSizeInBits(Long.valueOf(connectionHandler.getDefinition().getMaxBurstSize() * 8));
                 switch (connectionHandler.getDefinition().getPolicy()) {
                     case ROUND_ROBIN:
                         moduleVertex.addTraits(VertexTrait.RoundRobinInterconnect);

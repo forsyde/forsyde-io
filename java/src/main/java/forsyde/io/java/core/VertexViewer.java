@@ -1,9 +1,16 @@
 package forsyde.io.java.core;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public interface VertexViewer {
+	
+    Vertex getViewedVertex();
 
     default String getIdentifier() {
         return getViewedVertex().getIdentifier();
@@ -21,5 +28,112 @@ public interface VertexViewer {
         return getViewedVertex().getProperties();
     }
     
-    Vertex getViewedVertex();
+    private Optional<Vertex> getNamedPort(ForSyDeModel model, String portName, String traitName) {
+    	return getNamedPort(model, portName, traitName, 0);
+    }
+    
+    default Optional<Vertex> getNamedPort(ForSyDeModel model, String portName, String traitName, int direction) {
+    	Vertex v = getViewedVertex();
+    	Trait t = traitFromString(traitName);
+    	if (direction >= 0) {
+    		Set<Edge> outEdges = model.outgoingEdgesOf(v);
+    		Optional<Vertex> dst = outEdges.stream()
+    				.filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+    				.map(e -> e.target)
+    				.filter(vv -> vv.hasTrait(t))
+    				.findAny();
+    		if (dst.isPresent())
+    			return dst;
+    	}
+    	if (direction <= 0) {
+    		Set<Edge> inEdges = model.incomingEdgesOf(v);
+    		Optional<Vertex> src = inEdges.stream()
+    				.filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+    				.map(e -> e.source)
+    				.filter(vv -> vv.hasTrait(t))
+    				.findAny();
+    		if (src.isPresent())
+    			return src;
+    	}
+		return Optional.empty();
+    }
+    
+    default Set<Vertex> getMultipleNamedPort(ForSyDeModel model, String portName, String traitName) {
+    	return getMultipleNamedPort(model, portName, traitName, 0);
+    }
+    
+    default Set<Vertex> getMultipleNamedPort(ForSyDeModel model, String portName, String traitName, int direction) {
+    	Vertex v = getViewedVertex();
+    	Set<Vertex> vs = new HashSet<>();
+    	Trait t = traitFromString(traitName);
+    	if (direction >= 0) {
+    		Set<Edge> outEdges = model.outgoingEdgesOf(v);
+    		vs.addAll(outEdges.stream()
+    				.filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+    				.map(e -> e.target)
+    				.filter(vv -> vv.hasTrait(t))
+    				.collect(Collectors.toSet()));
+    	}
+    	if (direction <= 0) {
+    		Set<Edge> inEdges = model.incomingEdgesOf(v);
+    		vs.addAll(inEdges.stream()
+    				.filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+    				.map(e -> e.source)
+    				.filter(vv -> vv.hasTrait(t))
+    				.collect(Collectors.toSet()));
+    	}
+		return vs;
+    }
+    
+    default List<Vertex> getOrderedMultipleNamedPort(ForSyDeModel model, String portName, String traitName) {
+    	return getOrderedMultipleNamedPort(model, portName, traitName, 0);
+    }
+    
+    default List<Vertex> getOrderedMultipleNamedPort(ForSyDeModel model, String portName, String traitName, int direction) {
+    	Vertex v = getViewedVertex();
+    	Trait t = traitFromString(traitName);
+    	@SuppressWarnings("unchecked")
+		Map<String, Integer> order = (Map<String, Integer>) v.getProperties()
+			.get("__" + portName + "_ordering__")
+			.unwrap();
+    	List<Vertex> vs = new ArrayList<>(order.size());
+    	if (direction >= 0) {
+    		Set<Edge> outEdges = model.outgoingEdgesOf(v);
+    		outEdges.stream()
+    				.filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+    				.map(e -> e.target)
+    				.filter(vv -> vv.hasTrait(t))
+    				.forEach(dst -> {
+    					vs.set(order.get(dst.identifier), dst);
+    				});
+    	}
+    	if (direction <= 0) {
+    		Set<Edge> inEdges = model.incomingEdgesOf(v);
+    		inEdges.stream()
+				.filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+				.map(e -> e.source)
+				.filter(vv -> vv.hasTrait(t))
+				.forEach(dst -> {
+					vs.set(order.get(dst.identifier), dst);
+				});
+    	}
+		return vs;
+    }
+    
+    private Trait traitFromString(String traitName) {
+    	try {
+    		return VertexTrait.valueOf(traitName);
+    	} catch (IllegalArgumentException e) {
+			return new OpaqueTrait(traitName);
+		}
+    }
+    
+//	default<T> T getNamedProperty(String propName, Class<T> propType) {
+//    	return propType.cast(getViewedVertex().getProperties().get(propName).unwrap()); 
+//    }
+//    
+//    default boolean setNamedProperty(String propName, Object propValue) {
+//    	return getViewedVertex().putProperty(propName, propValue);
+//    }
+
 }

@@ -26,7 +26,7 @@
             "refinedTraits": ["LinguaFrancaElement"],
             "required_ports": [
                 {
-                    "name": "children_actors",
+                    "name": "children_reactors",
                     "vertexTrait": "LinguaFrancaReactor",
                     "ordered": true
                 },
