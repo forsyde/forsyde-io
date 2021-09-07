@@ -109,6 +109,12 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
         model.addVertex(instantiationVertex);
         if (instantiation.getReactorClass() instanceof Reactor) {
             Reactor reactor = (Reactor) instantiation.getReactorClass();
+            for (final Port port : reactor.getInputs()) {
+                instantiationVertex.ports.add(port.getName());
+            }
+            for (final Port port : reactor.getOutputs()) {
+                instantiationVertex.ports.add(port.getName());
+            }
             // first recurse through all children and add the ordering
             // explicitly save the ordering of the children reactors
             Map<String, Integer> childrenReactorsOrdering = new HashMap<>();
@@ -121,12 +127,6 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                 childInstancesToVertex.put(childInstantiation, childInstanceVertex);
                 childIdx += 1;
             }
-            for (final Port port : reactor.getInputs()) {
-                instantiationVertex.ports.add(port.getName());
-            }
-            for (final Port port : reactor.getOutputs()) {
-                instantiationVertex.ports.add(port.getName());
-            }
             for (final Timer timer : reactor.getTimers()) {
                 final Vertex timerVertex = fromLFTimerToForsyDeTimer(model, timer, instantiationName + ".");
                 model.connect(instantiationVertex, timerVertex, "timers", EdgeTrait.LinguaFrancaConnection);
@@ -138,16 +138,19 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                 final Vertex reactionVertex = processLFReactionToForSyDeReaction(model, reaction, instantiationName + ".", String.valueOf(i));
                 model.connect(instantiationVertex, reactionVertex, "reactions", EdgeTrait.LinguaFrancaConnection);
                 reactionsOrdering.put(reactionVertex.identifier, i);
+                reactionVertex.putProperty("size_in_bits", 0L);
                 for (final TriggerRef triggerRef : reaction.getTriggers()) {
                     if (triggerRef instanceof VarRef) {
                         VarRef varRef = (VarRef) triggerRef;
                         if(varRef.getVariable() instanceof Port) {
                             final Port triggerPort = (Port) varRef.getVariable();
                             String triggerName = triggerPort.getName();
+                            reactionVertex.ports.add(triggerName);
                             model.connect(instantiationVertex, reactionVertex, triggerName, triggerName, EdgeTrait.LinguaFrancaTrigger);
                         } else if (varRef.getVariable() instanceof Timer) {
                             final Timer triggerTimer = (Timer) varRef.getVariable();
                             Vertex timerVertex = timerToVertex.get(triggerTimer);
+                            reactionVertex.ports.add(triggerTimer.getName());
                             model.connect(timerVertex, reactionVertex, null, triggerTimer.getName(), EdgeTrait.LinguaFrancaTrigger);
                         }
                     }
@@ -156,10 +159,12 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                     if(varRef.getVariable() instanceof Port) {
                         final Port triggerPort = (Port) varRef.getVariable();
                         String triggerName = triggerPort.getName();
+                        reactionVertex.ports.add(triggerName);
                         model.connect(reactionVertex, instantiationVertex, triggerName, triggerName, EdgeTrait.LinguaFrancaTrigger);
                     } else if (varRef.getVariable() instanceof Timer) {
                         final Timer triggerTimer = (Timer) varRef.getVariable();
                         Vertex timerVertex = timerToVertex.get(triggerTimer);
+                        reactionVertex.ports.add(triggerTimer.getName());
                         model.connect(reactionVertex, timerVertex, null, triggerTimer.getName(), EdgeTrait.LinguaFrancaTrigger);
                     }
                 }

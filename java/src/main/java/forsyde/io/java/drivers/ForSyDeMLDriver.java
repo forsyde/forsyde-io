@@ -176,6 +176,8 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 			return VertexProperty.create(Integer.valueOf(elem.getTextContent()));
 		} else if (elem.getAttribute("attr.type").equals("float")) {
 			return VertexProperty.create(Float.valueOf(elem.getTextContent()));
+		} else if (elem.getAttribute("attr.type").equals("long")) {
+			return VertexProperty.create(Long.valueOf(elem.getTextContent()));
 		} else if (elem.getAttribute("attr.type").equals("double")) {
 			return VertexProperty.create(Double.valueOf(elem.getTextContent()));
 		} else if (elem.getAttribute("attr.type").equals("boolean") || elem.getAttribute("attr.type").equals("bool")) {

@@ -69,6 +69,10 @@ public class VertexProperty {
                 p.type = VertexPropertyType.INTEGER;
                 p.i = (Integer) obj;
                 return p;
+            } else if (obj instanceof Long) {
+                p.type = VertexPropertyType.LONG;
+                p.l = (Long) obj;
+                return p;
             } else if (obj instanceof Float) {
                 p.type = VertexPropertyType.FLOAT;
                 p.f = (Float) obj;

@@ -416,20 +416,32 @@ public class JavaMetaGenerator extends DefaultTask {
 		for (VertexTraitSpec trait : traits) {
 			TypeSpec.Builder traitInterface = TypeSpec.classBuilder(trait.name + "Viewer")
 					.addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-					.addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", trait.name));
+					.addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", trait.name))
+					.addField(ClassName.get("forsyde.io.java.core", "Vertex"), "viewedVertex", Modifier.PUBLIC,
+							Modifier.FINAL);
 			MethodSpec.Builder constructorMethod = MethodSpec.constructorBuilder()
 					.addParameter(ClassName.get("forsyde.io.java.core", "Vertex"), "vertex")
 					.addModifiers(Modifier.PUBLIC);
-			traitInterface.addField(ClassName.get("forsyde.io.java.core", "Vertex"), "viewedVertex", Modifier.PUBLIC,
-					Modifier.FINAL);
 			constructorMethod.addStatement("viewedVertex = vertex");
-			// constructorMethod.addStatement("identifier = vertex.getIdentifier()")
-			// constructorMethod.addStatement("properties = vertex.getProperties()")
-			// constructorMethod.addStatement("ports = vertex.getPorts()")
-			// constructorMethod.addStatement("vertexTraits = vertex.getTraits()")
 			traitInterface.addMethod(constructorMethod.build());
 			traitInterface.addMethod(MethodSpec.methodBuilder("getViewedVertex").addModifiers(Modifier.PUBLIC)
 					.returns(ClassName.get("forsyde.io.java.core", "Vertex")).addStatement("return viewedVertex")
+					.build());
+			traitInterface.addMethod(
+					MethodSpec.methodBuilder("hashCode")
+					.addAnnotation(Override.class)
+					.addModifiers(Modifier.PUBLIC)
+					.addStatement("return (getIdentifier() + \"$L\").hashCode()", trait.name)
+					.returns(int.class)
+					.build());
+			traitInterface.addMethod(
+					MethodSpec.methodBuilder("equals")
+					.addAnnotation(Override.class)
+					.addModifiers(Modifier.PUBLIC)
+					.addParameter(Object.class, "other")
+					.addStatement("return other instanceof $L ? (($L) other).getIdentifier().equals(getIdentifier()) : false", 
+							trait.name + "Viewer", trait.name + "Viewer")
+					.returns(boolean.class)
 					.build());
 			traitList.add(traitInterface.build());
 		}
