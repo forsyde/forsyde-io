@@ -284,7 +284,7 @@ public class JavaMetaGenerator extends DefaultTask {
 			refinesMethod.beginControlFlow("switch (other)");
 			// def superIterator = new DepthFirstIterator<String, DefaultEdge>(traitGraph,
 			// vertexTrait.key)
-			Queue<VertexTraitSpec> refinedTraits = new LinkedList<>(trait.refinedTraits);
+			Queue<VertexTraitSpec> refinedTraits = new LinkedList<>(List.of(trait));
 			while (!refinedTraits.isEmpty()) {
 				VertexTraitSpec refinedTrait = refinedTraits.poll();
 				refinesMethod.addCode("case " + refinedTrait.name + ": ");
@@ -322,7 +322,7 @@ public class JavaMetaGenerator extends DefaultTask {
 			edgeEnumBuilder.addEnumConstant(trait.name);
 			refinesMethod.addCode("case " + trait.name + ":\n");
 			refinesMethod.beginControlFlow("switch (other)");
-			Queue<EdgeTraitSpec> refinedTraits = new LinkedList<>(trait.refinedTraits);
+			Queue<EdgeTraitSpec> refinedTraits = new LinkedList<>(List.of(trait));
 			while (!refinedTraits.isEmpty()) {
 				EdgeTraitSpec refinedTrait = refinedTraits.poll();
 				refinesMethod.addCode("case " + refinedTrait.name + ": ");
