@@ -312,28 +312,28 @@
             "required_properties": [
                 {
                     "name": "minimum_time_slice_in_cycles",
-                    "type": {"name": "int"},
+                    "type": {"name": "long"},
                     "default": 0
                 },
                 {
                     "comment": "Negative in case the scheduler has no maximum time slice. Positive Otherwise",
                     "name": "maximum_time_slice_in_cycles",
-                    "type": {"name": "int"},
+                    "type": {"name": "long"},
                     "default": -1
                 },
                 {
                     "name": "maximum_overhead_in_cycles",
-                    "type": {"name": "int"},
+                    "type": {"name": "long"},
                     "default": 0
                 },
                 {
                     "name": "allocated_cycles",
-                    "type": {"name": "integerMap", "valueType": {"name": "string"}},
+                    "type": {"name": "stringMap", "valueType": {"name": "long"}},
                     "default": {}
                 },
                 {
                     "name": "hyper_round_cycles",
-                    "type": {"name": "int"},
+                    "type": {"name": "long"},
                     "default": 0
                 }
             ]

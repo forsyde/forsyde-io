@@ -431,7 +431,7 @@ public class JavaMetaGenerator extends DefaultTask {
 					MethodSpec.methodBuilder("hashCode")
 					.addAnnotation(Override.class)
 					.addModifiers(Modifier.PUBLIC)
-					.addStatement("return (getIdentifier() + \"$L\").hashCode()", trait.name)
+					.addStatement("return getIdentifier().hashCode() + \"$L\".hashCode()", trait.name)
 					.returns(int.class)
 					.build());
 			traitInterface.addMethod(
@@ -442,6 +442,13 @@ public class JavaMetaGenerator extends DefaultTask {
 					.addStatement("return other instanceof $L ? (($L) other).getIdentifier().equals(getIdentifier()) : false", 
 							trait.name + "Viewer", trait.name + "Viewer")
 					.returns(boolean.class)
+					.build());
+			traitInterface.addMethod(
+					MethodSpec.methodBuilder("toString")
+					.addAnnotation(Override.class)
+					.addModifiers(Modifier.PUBLIC)
+					.addStatement("return \"$L{\" + getViewedVertex().toString() + \"}\"", trait.name + "Viewer")
+					.returns(String.class)
 					.build());
 			traitList.add(traitInterface.build());
 		}
