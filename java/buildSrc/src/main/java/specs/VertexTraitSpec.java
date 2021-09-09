@@ -10,11 +10,12 @@ import java.util.List;
 public class VertexTraitSpec {
 
     public String name;
+    public String comment = "";
     @JsonIdentityReference(alwaysAsId = true)
     @JsonSerialize(contentAs = VertexTraitSpec.class)
     public List<VertexTraitSpec> refinedTraits = new ArrayList<>();
-    @JsonProperty("required_ports")
+    @JsonAlias("required_ports")
     public List<PortSpec> requiredPorts = new ArrayList<>();
-    @JsonProperty("required_properties")
+    @JsonAlias("required_properties")
     public List<PropertySpec> requiredProperties = new ArrayList<>();
 }

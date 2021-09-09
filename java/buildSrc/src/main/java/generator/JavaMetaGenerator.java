@@ -348,7 +348,8 @@ public class JavaMetaGenerator extends DefaultTask {
 		List<VertexTraitSpec> traits = model.vertexTraits.stream().collect(Collectors.toList());
 		List<TypeSpec> traitList = new ArrayList<>(traits.size());
 		for (VertexTraitSpec trait : traits) {
-			TypeSpec.Builder traitInterface = TypeSpec.interfaceBuilder(trait.name).addModifiers(Modifier.PUBLIC);
+			TypeSpec.Builder traitInterface = TypeSpec.interfaceBuilder(trait.name).addModifiers(Modifier.PUBLIC)
+					.addJavadoc(trait.comment);
 			if (trait.refinedTraits.isEmpty()) {
 				traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"));
 			} else {
@@ -417,6 +418,7 @@ public class JavaMetaGenerator extends DefaultTask {
 			TypeSpec.Builder traitInterface = TypeSpec.classBuilder(trait.name + "Viewer")
 					.addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 					.addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", trait.name))
+					.addJavadoc(trait.comment)
 					.addField(ClassName.get("forsyde.io.java.core", "Vertex"), "viewedVertex", Modifier.PUBLIC,
 							Modifier.FINAL);
 			MethodSpec.Builder constructorMethod = MethodSpec.constructorBuilder()

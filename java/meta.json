@@ -8,14 +8,34 @@
             "refinedTraits": ["SpecificationLayer"]
         },
         {
+            "name": "FunctionLayer",
+            "refinedTraits": ["SpecificationLayer"],
+            "comment": "The layer of all simple, scalar, atomic functions. Examples: add, subtract, if-else etc."
+        },
+        {
             "name": "ModelOfComputation",
             "refinedTraits": ["SpecificationLayer"]
         },
         {
-            "name": "ModelOfArchitecture"
+            "name": "PlatformLayer"
         },
         {
-            "name": "ModelOfBinding"
+            "name": "PlatformAbstraction",
+            "refinedTraits": ["PlatformLayer"]
+        },
+        {
+        	"name": "InstrumentedFunction",
+        	"refinedTraits": ["FunctionLayer"],
+        	"required_properties": [
+        		{"name": "requirements", "type": {"name": "stringmap", "valueType": {"name":  "long"}}}
+        	]
+        },
+        {
+        	"name": "InlineFunction",
+        	"refinedTraits": ["FunctionLayer"],
+        	"required_properties": [
+        		{"name": "source_code", "type": {"name": "string"}}
+        	]
         },
         {
             "name": "LinguaFrancaElement",
@@ -116,7 +136,7 @@
         {
             "name": "AbstractDigitalModule",
             "refinedTraits": [
-                "ModelOfArchitecture"
+                "PlatformLayer"
             ],
             "required_properties": [
                 {"name": "nominal_frequency_in_hertz", "type": {"name": "long"}}
@@ -158,10 +178,10 @@
         {
             "name": "AbstractStructure",
             "refinedTraits": [
-                "ModelOfArchitecture"
+                "PlatformLayer"
             ],
             "required_ports": [
-                {"name": "submodules", "vertexTrait": "ModelOfArchitecture"}
+                {"name": "submodules", "vertexTrait": "PlatformLayer"}
             ]
         },
         {
@@ -188,7 +208,7 @@
         {
             "name": "AbstractOrdering",
             "refinedTraits": [
-                "ModelOfBinding"
+                "PlatformAbstraction"
             ]
         },
         {
@@ -220,7 +240,7 @@
                 },
                 {
                     "name": "module",
-                    "vertexTrait": "ModelOfArchitecture",
+                    "vertexTrait": "PlatformLayer",
                     "direction": 1,
                     "multiple": true
                 }
@@ -247,7 +267,7 @@
                 },
                 {
                     "name": "module",
-                    "vertexTrait": "ModelOfArchitecture",
+                    "vertexTrait": "PlatformLayer",
                     "direction": 1,
                     "multiple": true
                 }
@@ -284,7 +304,7 @@
                 },
                 {
                     "name": "module",
-                    "vertexTrait": "ModelOfArchitecture",
+                    "vertexTrait": "PlatformLayer",
                     "direction": 1,
                     "multiple": true,
                     "ordered": false
@@ -294,7 +314,7 @@
         {
             "name": "TimeTriggeredScheduler",
             "refinedTraits": [
-                "ModelOfBinding"
+                "PlatformAbstraction"
             ],
             "required_properties": [
                 {
@@ -307,33 +327,33 @@
         {
             "name": "RoundRobinScheduler",
             "refinedTraits": [
-                "ModelOfBinding"
+                "PlatformAbstraction"
             ],
             "required_properties": [
                 {
                     "name": "minimum_time_slice_in_cycles",
-                    "type": {"name": "int"},
+                    "type": {"name": "long"},
                     "default": 0
                 },
                 {
                     "comment": "Negative in case the scheduler has no maximum time slice. Positive Otherwise",
                     "name": "maximum_time_slice_in_cycles",
-                    "type": {"name": "int"},
+                    "type": {"name": "long"},
                     "default": -1
                 },
                 {
                     "name": "maximum_overhead_in_cycles",
-                    "type": {"name": "int"},
+                    "type": {"name": "long"},
                     "default": 0
                 },
                 {
                     "name": "allocated_cycles",
-                    "type": {"name": "integerMap", "valueType": {"name": "string"}},
+                    "type": {"name": "stringMap", "valueType": {"name": "long"}},
                     "default": {}
                 },
                 {
                     "name": "hyper_round_cycles",
-                    "type": {"name": "int"},
+                    "type": {"name": "long"},
                     "default": 0
                 }
             ]
@@ -378,7 +398,7 @@
             "name": "ModelOfComputationEdge"
         },
         {
-            "name": "ModelOfArchitectureEdge"
+            "name": "PlatformLayerEdge"
         },
         {
             "name": "ModelOfImplementationEdge"
@@ -395,13 +415,13 @@
         {
             "name": "AbstractPhysicalConnection",
             "refinedTraits": [
-                "ModelOfArchitectureEdge"
+                "PlatformLayerEdge"
             ]
         },
         {
             "name": "AbstractStructuralConnection",
             "refinedTraits": [
-                "ModelOfArchitectureEdge"
+                "PlatformLayerEdge"
             ]
         },
         {
@@ -763,12 +783,12 @@
         },
         "AbstractStorageComponent": {
             "refinedTraits": [
-                "ModelOfArchitecture"
+                "PlatformLayer"
             ]
         },
         "AbsractInterfaceComponent": {
             "refinedTraits": [
-                "ModelOfArchitecture"
+                "PlatformLayer"
             ]
         },
         "InstrumentedCommunicationInterconnect": {

@@ -129,7 +129,7 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
             }
             for (final Timer timer : reactor.getTimers()) {
                 final Vertex timerVertex = fromLFTimerToForsyDeTimer(model, timer, instantiationName + ".");
-                model.connect(instantiationVertex, timerVertex, "timers", EdgeTrait.LinguaFrancaConnection);
+                model.connect(instantiationVertex, timerVertex, "timers", EdgeTrait.LinguaFrancaContainment);
                 timerToVertex.put(timer, timerVertex);
             }
             Map<String, Integer> reactionsOrdering = new HashMap<>();
@@ -139,6 +139,10 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                 model.connect(instantiationVertex, reactionVertex, "reactions", EdgeTrait.LinguaFrancaConnection);
                 reactionsOrdering.put(reactionVertex.identifier, i);
                 reactionVertex.putProperty("size_in_bits", 0L);
+                final Vertex functionVertex = new Vertex(reactionVertex.identifier + ".body", VertexTrait.InlineFunction);
+                model.addVertex(functionVertex);
+                model.connect(reactionVertex, functionVertex, "implementation", EdgeTrait.LinguaFrancaContainment);
+                functionVertex.putProperty("source_code", reaction.getCode().getBody() == null ? "" : reaction.getCode().getBody());
                 for (final TriggerRef triggerRef : reaction.getTriggers()) {
                     if (triggerRef instanceof VarRef) {
                         VarRef varRef = (VarRef) triggerRef;

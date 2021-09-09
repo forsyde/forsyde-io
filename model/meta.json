@@ -8,14 +8,34 @@
             "refinedTraits": ["SpecificationLayer"]
         },
         {
+            "name": "FunctionLayer",
+            "refinedTraits": ["SpecificationLayer"],
+            "comment": "The layer of all simple, scalar, atomic functions. Examples: add, subtract, if-else etc."
+        },
+        {
             "name": "ModelOfComputation",
             "refinedTraits": ["SpecificationLayer"]
         },
         {
-            "name": "ModelOfArchitecture"
+            "name": "PlatformLayer"
         },
         {
-            "name": "ModelOfBinding"
+            "name": "PlatformAbstraction",
+            "refinedTraits": ["PlatformLayer"]
+        },
+        {
+        	"name": "InstrumentedFunction",
+        	"refinedTraits": ["FunctionLayer"],
+        	"required_properties": [
+        		{"name": "requirements", "type": {"name": "stringmap", "valueType": {"name":  "long"}}}
+        	]
+        },
+        {
+        	"name": "InlineFunction",
+        	"refinedTraits": ["FunctionLayer"],
+        	"required_properties": [
+        		{"name": "source_code", "type": {"name": "string"}}
+        	]
         },
         {
             "name": "LinguaFrancaElement",
@@ -49,7 +69,7 @@
             "name": "LinguaFrancaReaction",
             "refinedTraits": ["LinguaFrancaElement"],
             "required_ports": [
-                {"name": "implementation", "vertexTrait": "ModelOfComputation", "multiple": false},
+                {"name": "implementation", "vertexTrait": "FunctionLayer", "multiple": false},
                 {"name": "triggers", "vertexTrait": "LinguaFrancaElement", "multiple": true},
                 {"name": "effects", "vertexTrait": "LinguaFrancaElement", "multiple": true}
             ],
@@ -116,7 +136,7 @@
         {
             "name": "AbstractDigitalModule",
             "refinedTraits": [
-                "ModelOfArchitecture"
+                "PlatformLayer"
             ],
             "required_properties": [
                 {"name": "nominal_frequency_in_hertz", "type": {"name": "long"}}
@@ -158,10 +178,10 @@
         {
             "name": "AbstractStructure",
             "refinedTraits": [
-                "ModelOfArchitecture"
+                "PlatformLayer"
             ],
             "required_ports": [
-                {"name": "submodules", "vertexTrait": "ModelOfArchitecture"}
+                {"name": "submodules", "vertexTrait": "PlatformLayer"}
             ]
         },
         {
@@ -188,7 +208,7 @@
         {
             "name": "AbstractOrdering",
             "refinedTraits": [
-                "ModelOfBinding"
+                "PlatformAbstraction"
             ]
         },
         {
@@ -220,7 +240,7 @@
                 },
                 {
                     "name": "module",
-                    "vertexTrait": "ModelOfArchitecture",
+                    "vertexTrait": "PlatformLayer",
                     "direction": 1,
                     "multiple": true
                 }
@@ -247,7 +267,7 @@
                 },
                 {
                     "name": "module",
-                    "vertexTrait": "ModelOfArchitecture",
+                    "vertexTrait": "PlatformLayer",
                     "direction": 1,
                     "multiple": true
                 }
@@ -284,7 +304,7 @@
                 },
                 {
                     "name": "module",
-                    "vertexTrait": "ModelOfArchitecture",
+                    "vertexTrait": "PlatformLayer",
                     "direction": 1,
                     "multiple": true,
                     "ordered": false
@@ -294,7 +314,7 @@
         {
             "name": "TimeTriggeredScheduler",
             "refinedTraits": [
-                "ModelOfBinding"
+                "PlatformAbstraction"
             ],
             "required_properties": [
                 {
@@ -307,7 +327,7 @@
         {
             "name": "RoundRobinScheduler",
             "refinedTraits": [
-                "ModelOfBinding"
+                "PlatformAbstraction"
             ],
             "required_properties": [
                 {
@@ -378,7 +398,7 @@
             "name": "ModelOfComputationEdge"
         },
         {
-            "name": "ModelOfArchitectureEdge"
+            "name": "PlatformLayerEdge"
         },
         {
             "name": "ModelOfImplementationEdge"
@@ -395,13 +415,13 @@
         {
             "name": "AbstractPhysicalConnection",
             "refinedTraits": [
-                "ModelOfArchitectureEdge"
+                "PlatformLayerEdge"
             ]
         },
         {
             "name": "AbstractStructuralConnection",
             "refinedTraits": [
-                "ModelOfArchitectureEdge"
+                "PlatformLayerEdge"
             ]
         },
         {
@@ -763,12 +783,12 @@
         },
         "AbstractStorageComponent": {
             "refinedTraits": [
-                "ModelOfArchitecture"
+                "PlatformLayer"
             ]
         },
         "AbsractInterfaceComponent": {
             "refinedTraits": [
-                "ModelOfArchitecture"
+                "PlatformLayer"
             ]
         },
         "InstrumentedCommunicationInterconnect": {
