@@ -24,10 +24,10 @@
             "refinedTraits": ["PlatformLayer"]
         },
         {
-        	"name": "InstrumentedFunction",
+        	"name": "ProfiledFunction",
         	"refinedTraits": ["FunctionLayer"],
         	"required_properties": [
-        		{"name": "requirements", "type": {"name": "stringmap", "valueType": {"name":  "long"}}}
+        		{"name": "requirements", "type": {"name": "stringmap", "valueType": {"name": "stringmap", "valueType": {"name":  "long"}}}}
         	]
         },
         {
@@ -69,7 +69,7 @@
             "name": "LinguaFrancaReaction",
             "refinedTraits": ["LinguaFrancaElement"],
             "required_ports": [
-                {"name": "implementation", "vertexTrait": "ModelOfComputation", "multiple": false},
+                {"name": "implementation", "vertexTrait": "InlineFunction", "multiple": false},
                 {"name": "triggers", "vertexTrait": "LinguaFrancaElement", "multiple": true},
                 {"name": "effects", "vertexTrait": "LinguaFrancaElement", "multiple": true}
             ],
@@ -152,6 +152,18 @@
                     "name": "can_be_explored",
                     "type": {"name": "bool"},
                     "default": true
+                }
+            ]
+        },
+        {
+            "name": "ProfiledProcessingModule",
+            "refinedTraits": [
+                "AbstractDigitalModule"
+            ],
+            "required_properties": [
+                {
+                    "name": "provisions",
+                    "type": {"name": "stringmap", "valueType": {"name": "stringmap", "valueType": {"name":  "long"}}}
                 }
             ]
         },
@@ -540,7 +552,7 @@
         "CustomScheduler": null,
         "RoundRobinScheduler": null,
         "ModelOfComputation": null,
-        "InstrumentedFunction": {
+        "ProfiledFunction": {
             "refinedTraits": [
                 "ModelOfComputation"
             ],
@@ -572,7 +584,7 @@
                 "Signal"
             ]
         },
-        "Instrumented": {
+        "Profiled": {
             "refinedTraits": [],
             "required_properties": {
                 "requires": {
@@ -613,10 +625,10 @@
                 }
             }
         },
-        "InstrumentedSignal": {
+        "ProfiledSignal": {
             "refinedTraits": [
                 "Signal",
-                "Instrumented"
+                "Profiled"
             ],
             "required_properties": {
                 "max_elem_size_bytes": {
@@ -755,10 +767,10 @@
                 }
             }
         },
-        "InstrumentedProcessorTile": {
+        "ProfiledProcessorTile": {
             "refinedTraits": [
                 "AbstractProcessingComponent",
-                "Instrumented"
+                "Profiled"
             ],
             "required_properties": {
                 "min_frequency_hz": {
@@ -791,7 +803,7 @@
                 "PlatformLayer"
             ]
         },
-        "InstrumentedCommunicationInterconnect": {
+        "ProfiledCommunicationInterconnect": {
             "refinedTraits": [
                 "AbstractCommunicationComponent"
             ],
