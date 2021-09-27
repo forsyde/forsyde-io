@@ -337,6 +337,30 @@
             ]
         },
         {
+            "name": "FixedPriorityScheduler",
+            "refinedTraits": [
+                "PlatformAbstraction"
+            ],
+            "required_properties": [
+                {
+                    "name": "maximum_number_of_priorities",
+                    "type": {"name": "integer"},
+                    "comment": "Maximum number of priorities in the scheduler. -1 means no limit.",
+                    "default": -1
+                },
+                {
+                    "name": "preemptive",
+                    "type": {"name": "boolean"},
+                    "default": true
+                },
+                {
+                    "name": "priorities_assignment",
+                    "type": {"name": "integerMap", "valueType": {"name": "string"}},
+                    "default": {}
+                }
+            ]
+        },
+        {
             "name": "RoundRobinScheduler",
             "refinedTraits": [
                 "PlatformAbstraction"
