@@ -32,7 +32,7 @@ public class OpaqueTrait implements Trait, CharSequence {
 
     @Override
     public boolean refines(Trait other) {
-        return false;
+        return opaqueTraitName.equals(other.getName());
     }
 
     @Override

@@ -100,6 +100,15 @@ final public class Vertex {
 	public Boolean hasTrait(Trait trait) {
 		return vertexTraits.stream().anyMatch(t -> t.refines(trait));
 	}
+	
+	public Boolean hasTrait(String traitName) {
+		try {
+			VertexTrait trait = VertexTrait.valueOf(traitName);
+			return hasTrait(trait);
+		} catch (IllegalArgumentException e) {
+			return vertexTraits.stream().map(t -> t.getName()).anyMatch(t -> t.equals(traitName));
+		}
+	}
 
 	public boolean putProperty(String propertyName, Object propertyValue) {
 		return properties.put(propertyName, VertexProperty.create(propertyValue)) == null;
