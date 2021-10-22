@@ -39,9 +39,9 @@ class PropertyTypeSpec:
         )
 
     def meta_to_py(self) -> str:
-        if self.typeName == "strMap" or self.typeName == "strmap":
+        if self.typeName == "strMap" or self.typeName == "strmap" or self.typeName == "stringMap" or self.typeName == "stringmap":
             return "Mapping[str, {0}]".format(self.valueType.meta_to_py() if self.valueType else "Any")
-        elif self.typeName == "intMap" or self.typeName == "intmap":
+        elif self.typeName == "intMap" or self.typeName == "intmap" or self.typeName == "integerMap" or self.typeName == "integermap":
             return "Mapping[int, {0}]".format(self.valueType.meta_to_py() if self.valueType else "Any")
         elif self.typeName == "array":
             return "Sequence[{0}]".format(self.valueType.meta_to_py() if self.valueType else "Any")
@@ -87,8 +87,8 @@ class PortSpec:
         return PortSpec(
             name = data["name"],
             vertexTraitName = data["vertexTrait"],
-            ordered = "ordered" in data and data["ordered"] == True,
-            multiple = "multiple" in data and data["multiple"] == True
+            ordered = data["ordered"] if "ordered" in data  else False,
+            multiple = data["multiple"] if "multiple" in data else True
         )
 
     def __hash__(self):
@@ -123,7 +123,10 @@ class VertexTraitSpec(TraitSpec):
     def to_viewer_code(self):
         code = ""
         # class def
-        code += "class {0}(core.VertexViewer):\n".format(self.name)
+        if self.refinedTraits:
+            code += "class {0}({1}):\n".format(self.name, ", ".join(self.refinedTraitsNames))
+        else:
+            code += "class {0}(core.VertexViewer):\n".format(self.name)
         # conforms method
         code += 4*" " + "@classmethod\n"
         code += 4*" " + "def conforms(cls, vertex):\n"
@@ -131,21 +134,32 @@ class VertexTraitSpec(TraitSpec):
             self.name
         )
         # safe cast method
-        code += 4*" " + "@classmethod\n"
-        code += 4*" " + "def safe_cast(cls, vertex):\n"
-        code += 8*" " + "return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None\n\n"
+        # code += 4*" " + "@classmethod\n"
+        # code += 4*" " + "def safe_cast(cls, vertex):\n"
+        # code += 8*" " + "return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None\n\n"
+        # identity override
+        code += 4*" " + "@property\n"
+        code += 4*" " + "def identifier(self) -> str:\n"
+        code += 8*" " + 'return "{0}" + self.viewed_vertex.identifier\n\n'.format(self.name)
         # property getter
         for p in self.required_properties:
+            code += 4*" " + "@property\n"
             code += 4*" " + "def {0}(self) -> {1}:\n".format(p.name, p.propertyType.meta_to_py())
-            code += 8*" " + 'return self.properties["{0}"]\n\n'.format(p.name)
+            code += 8*" " + 'return self.viewed_vertex.properties["{0}"]\n\n'.format(p.name)
         # port getter
         for p in self.required_ports:
             if p.multiple:
-                code += 4*" " + 'def get_{0}(self, model: core.ForSyDeModel) -> List["{1}"]:\n'.format(p.name, p.vertexTraitName)
-                code += 8*" " + 'return [{0}.safe_cast(n) for n in model[self] if {0}.conforms(n)]\n\n'.format(p.vertexTraitName)
+                code += 4*" " + 'def get_{0}(self, model: core.ForSyDeModel) -> Sequence["{1}"]:\n'.format(p.name, p.vertexTraitName)
+                if p.ordered:
+                    code += 8*" " + 'return sorted(\n'
+                    code += 12*" " + '[{0}.safe_cast(n) for n in model[self.viewed_vertex] if {0}.conforms(n)],\n'.format(p.vertexTraitName)
+                    code += 12*" " + 'key = lambda v: int(self.viewed_vertex.properties["__{0}_ordering__"][v.viewed_vertex.identifier])\n'.format(p.name)
+                    code += 8*" " + ')\n\n'
+                else:
+                    code += 8*" " + 'return [{0}.safe_cast(n) for n in model[self.viewed_vertex] if {0}.conforms(n)]\n\n'.format(p.vertexTraitName)
             else:
                 code += 4*" " + 'def get_{0}(self, model: core.ForSyDeModel) -> Optional["{1}"]:\n'.format(p.name, p.vertexTraitName)
-                code += 8*" " + 'return next(({0}.safe_cast(n) for n in model[self] if {0}.conforms(n)), None)\n\n'.format(p.vertexTraitName)
+                code += 8*" " + 'return next(({0}.safe_cast(n) for n in model[self.viewed_vertex] if {0}.conforms(n)), None)\n\n'.format(p.vertexTraitName)
         return code
 
 @dataclass
@@ -263,7 +277,7 @@ import forsyde.io.python.core as core
 
 '''
 
-vertexEnum = "class VertexTrait(core.Trait, enum):\n"
+vertexEnum = "class VertexTrait(core.Trait, Enum):\n"
 for v in vertexes:
     vertexEnum += 4*" " + "{0} = auto()\n".format(v.name)
 vertexEnum += "\n"
@@ -274,10 +288,12 @@ for v in vertexes:
         vertexEnum += 8*" " + "if one is cls.{0} and other is cls.{1}:\n".format(v.name, vv.name)
         vertexEnum += 12*" " + "return True\n"
 vertexEnum += 8*" " + "return one == other\n\n"
+vertexEnum += 4*" " + "def __str__(self):\n"
+vertexEnum += 8*" " + "return self.name\n\n"
 vertexEnum += 4*" " + "def refines(self, other):\n"
 vertexEnum += 8*" " + "return VertexTrait.refines_static(self, other)\n\n"
 
-edgeEnum = "class EdgeTrait(core.Trait, enum):\n"
+edgeEnum = "class EdgeTrait(core.Trait, Enum):\n"
 for v in edges:
     edgeEnum += 4*" " + "{0} = auto()\n".format(v.name)
 edgeEnum += "\n"
@@ -288,6 +304,8 @@ for v in edges:
         edgeEnum += 8*" " + "if one is cls.{0} and other is cls.{1}:\n".format(v.name, vv.name)
         edgeEnum += 12*" " + "return True\n"
 edgeEnum += 8*" " + "return one == other\n\n"
+edgeEnum += 4*" " + "def __str__(self):\n"
+edgeEnum += 8*" " + "return self.name\n\n"
 edgeEnum += 4*" " + "def refines(self, other):\n"
 edgeEnum += 8*" " + "return EdgeTrait.refines_static(self, other)\n\n"
 

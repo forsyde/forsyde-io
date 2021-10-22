@@ -201,8 +201,12 @@ class VertexViewer:
         return False
 
     @classmethod
-    def safe_Cast(cls, vertex) -> Optional["VertexViewer"]:
-        return None
+    def safe_cast(cls, vertex):
+        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+
+    @property
+    def identifier(self) -> str:
+        return self.viewed_vertex.identifier
 
 @dataclass
 class EdgeViewer:
@@ -214,7 +218,7 @@ class EdgeViewer:
         return False
 
     @classmethod
-    def safe_Cast(cls, edge: Edge) -> Optional["EdgeViewer"]:
+    def safe_cast(cls, edge: Edge) -> Optional["EdgeViewer"]:
         return None
 
 class ForSyDeModel(nx.MultiDiGraph):

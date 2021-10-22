@@ -7,7 +7,7 @@ from typing import Sequence
 
 import forsyde.io.python.core as core
 
-class VertexTrait(core.Trait, enum):
+class VertexTrait(core.Trait, Enum):
     SpecificationLayer = auto()
     AlgorithmicSkeleton = auto()
     FunctionLayer = auto()
@@ -125,10 +125,13 @@ class VertexTrait(core.Trait, enum):
             return True
         return one == other
 
+    def __str__(self):
+        return self.name
+
     def refines(self, other):
         return VertexTrait.refines_static(self, other)
 
-class EdgeTrait(core.Trait, enum):
+class EdgeTrait(core.Trait, Enum):
     ModelOfComputationEdge = auto()
     PlatformLayerEdge = auto()
     ModelOfImplementationEdge = auto()
@@ -149,6 +152,9 @@ class EdgeTrait(core.Trait, enum):
     def refines_static(cls, one, other):
         return one == other
 
+    def __str__(self):
+        return self.name
+
     def refines(self, other):
         return EdgeTrait.refines_static(self, other)
 
@@ -157,39 +163,39 @@ class SpecificationLayer(core.VertexViewer):
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.SpecificationLayer) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "SpecificationLayer" + self.viewed_vertex.identifier
 
 
-class AlgorithmicSkeleton(core.VertexViewer):
+class AlgorithmicSkeleton(SpecificationLayer):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.AlgorithmicSkeleton) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "AlgorithmicSkeleton" + self.viewed_vertex.identifier
 
 
-class FunctionLayer(core.VertexViewer):
+class FunctionLayer(SpecificationLayer):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.FunctionLayer) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "FunctionLayer" + self.viewed_vertex.identifier
 
 
-class ModelOfComputation(core.VertexViewer):
+class ModelOfComputation(SpecificationLayer):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.ModelOfComputation) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "ModelOfComputation" + self.viewed_vertex.identifier
 
 
 class PlatformLayer(core.VertexViewer):
@@ -197,345 +203,380 @@ class PlatformLayer(core.VertexViewer):
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.PlatformLayer) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "PlatformLayer" + self.viewed_vertex.identifier
 
 
-class PlatformAbstraction(core.VertexViewer):
+class PlatformAbstraction(PlatformLayer):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.PlatformAbstraction) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "PlatformAbstraction" + self.viewed_vertex.identifier
 
 
-class ProfiledFunction(core.VertexViewer):
+class ProfiledFunction(FunctionLayer):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.ProfiledFunction) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "ProfiledFunction" + self.viewed_vertex.identifier
 
-    def requirements(self) -> str:
-        return self.properties["requirements"]
+    @property
+    def requirements(self) -> Mapping[str, Mapping[str, int]]:
+        return self.viewed_vertex.properties["requirements"]
 
 
-class InlineFunction(core.VertexViewer):
+class InlineFunction(FunctionLayer):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.InlineFunction) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "InlineFunction" + self.viewed_vertex.identifier
 
+    @property
     def source_code(self) -> str:
-        return self.properties["source_code"]
+        return self.viewed_vertex.properties["source_code"]
 
 
-class LinguaFrancaElement(core.VertexViewer):
+class LinguaFrancaElement(ModelOfComputation):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.LinguaFrancaElement) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "LinguaFrancaElement" + self.viewed_vertex.identifier
 
 
-class LinguaFrancaReactor(core.VertexViewer):
+class LinguaFrancaReactor(LinguaFrancaElement):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.LinguaFrancaReactor) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "LinguaFrancaReactor" + self.viewed_vertex.identifier
 
-    def state_names(self) -> Sequence[str]:
-        return self.properties["state_names"]
-
+    @property
     def state_sizes_in_bits(self) -> Sequence[int]:
-        return self.properties["state_sizes_in_bits"]
+        return self.viewed_vertex.properties["state_sizes_in_bits"]
 
-    def get_timers(self, model: core.ForSyDeModel) -> Optional["LinguaFrancaTimer"]:
-        return next((LinguaFrancaTimer.safe_cast(n) for n in model[self] if LinguaFrancaTimer.conforms(n)), None)
+    @property
+    def state_names(self) -> Sequence[str]:
+        return self.viewed_vertex.properties["state_names"]
 
-    def get_reactions(self, model: core.ForSyDeModel) -> Optional["LinguaFrancaReaction"]:
-        return next((LinguaFrancaReaction.safe_cast(n) for n in model[self] if LinguaFrancaReaction.conforms(n)), None)
+    def get_children_reactors(self, model: core.ForSyDeModel) -> Sequence["LinguaFrancaReactor"]:
+        return sorted(
+            [LinguaFrancaReactor.safe_cast(n) for n in model[self.viewed_vertex] if LinguaFrancaReactor.conforms(n)],
+            key = lambda v: int(self.viewed_vertex.properties["__children_reactors_ordering__"][v.viewed_vertex.identifier])
+        )
 
-    def get_children_reactors(self, model: core.ForSyDeModel) -> Optional["LinguaFrancaReactor"]:
-        return next((LinguaFrancaReactor.safe_cast(n) for n in model[self] if LinguaFrancaReactor.conforms(n)), None)
+    def get_timers(self, model: core.ForSyDeModel) -> Sequence["LinguaFrancaTimer"]:
+        return [LinguaFrancaTimer.safe_cast(n) for n in model[self.viewed_vertex] if LinguaFrancaTimer.conforms(n)]
+
+    def get_reactions(self, model: core.ForSyDeModel) -> Sequence["LinguaFrancaReaction"]:
+        return sorted(
+            [LinguaFrancaReaction.safe_cast(n) for n in model[self.viewed_vertex] if LinguaFrancaReaction.conforms(n)],
+            key = lambda v: int(self.viewed_vertex.properties["__reactions_ordering__"][v.viewed_vertex.identifier])
+        )
 
 
-class LinguaFrancaReaction(core.VertexViewer):
+class LinguaFrancaReaction(LinguaFrancaElement):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.LinguaFrancaReaction) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "LinguaFrancaReaction" + self.viewed_vertex.identifier
 
+    @property
     def size_in_bits(self) -> int:
-        return self.properties["size_in_bits"]
+        return self.viewed_vertex.properties["size_in_bits"]
 
     def get_implementation(self, model: core.ForSyDeModel) -> Optional["InlineFunction"]:
-        return next((InlineFunction.safe_cast(n) for n in model[self] if InlineFunction.conforms(n)), None)
+        return next((InlineFunction.safe_cast(n) for n in model[self.viewed_vertex] if InlineFunction.conforms(n)), None)
 
-    def get_triggers(self, model: core.ForSyDeModel) -> List["LinguaFrancaElement"]:
-        return [LinguaFrancaElement.safe_cast(n) for n in model[self] if LinguaFrancaElement.conforms(n)]
+    def get_triggers(self, model: core.ForSyDeModel) -> Sequence["LinguaFrancaElement"]:
+        return [LinguaFrancaElement.safe_cast(n) for n in model[self.viewed_vertex] if LinguaFrancaElement.conforms(n)]
 
-    def get_effects(self, model: core.ForSyDeModel) -> List["LinguaFrancaElement"]:
-        return [LinguaFrancaElement.safe_cast(n) for n in model[self] if LinguaFrancaElement.conforms(n)]
+    def get_effects(self, model: core.ForSyDeModel) -> Sequence["LinguaFrancaElement"]:
+        return [LinguaFrancaElement.safe_cast(n) for n in model[self.viewed_vertex] if LinguaFrancaElement.conforms(n)]
 
 
-class LinguaFrancaTimer(core.VertexViewer):
+class LinguaFrancaTimer(LinguaFrancaElement):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.LinguaFrancaTimer) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "LinguaFrancaTimer" + self.viewed_vertex.identifier
 
-    def period_numerator_per_sec(self) -> int:
-        return self.properties["period_numerator_per_sec"]
-
+    @property
     def offset_numerator_per_sec(self) -> int:
-        return self.properties["offset_numerator_per_sec"]
+        return self.viewed_vertex.properties["offset_numerator_per_sec"]
 
-    def period_denominator_per_sec(self) -> int:
-        return self.properties["period_denominator_per_sec"]
+    @property
+    def period_numerator_per_sec(self) -> int:
+        return self.viewed_vertex.properties["period_numerator_per_sec"]
 
+    @property
     def offset_denominator_per_sec(self) -> int:
-        return self.properties["offset_denominator_per_sec"]
+        return self.viewed_vertex.properties["offset_denominator_per_sec"]
+
+    @property
+    def period_denominator_per_sec(self) -> int:
+        return self.viewed_vertex.properties["period_denominator_per_sec"]
 
 
-class LinguaFrancaSignal(core.VertexViewer):
+class LinguaFrancaSignal(LinguaFrancaElement):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.LinguaFrancaSignal) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "LinguaFrancaSignal" + self.viewed_vertex.identifier
 
+    @property
+    def propagation_delay_in_secs_numerator(self) -> int:
+        return self.viewed_vertex.properties["propagation_delay_in_secs_numerator"]
+
+    @property
     def size_in_bits(self) -> int:
-        return self.properties["size_in_bits"]
+        return self.viewed_vertex.properties["size_in_bits"]
 
-    def get_target_reaction(self, model: core.ForSyDeModel) -> Optional["LinguaFrancaReaction"]:
-        return next((LinguaFrancaReaction.safe_cast(n) for n in model[self] if LinguaFrancaReaction.conforms(n)), None)
+    @property
+    def propagation_delay_in_secs_denominator(self) -> int:
+        return self.viewed_vertex.properties["propagation_delay_in_secs_denominator"]
 
     def get_source_reaction(self, model: core.ForSyDeModel) -> Optional["LinguaFrancaReaction"]:
-        return next((LinguaFrancaReaction.safe_cast(n) for n in model[self] if LinguaFrancaReaction.conforms(n)), None)
+        return next((LinguaFrancaReaction.safe_cast(n) for n in model[self.viewed_vertex] if LinguaFrancaReaction.conforms(n)), None)
+
+    def get_target_reaction(self, model: core.ForSyDeModel) -> Optional["LinguaFrancaReaction"]:
+        return next((LinguaFrancaReaction.safe_cast(n) for n in model[self.viewed_vertex] if LinguaFrancaReaction.conforms(n)), None)
 
 
-class SDFElement(core.VertexViewer):
+class SDFElement(ModelOfComputation):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.SDFElement) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "SDFElement" + self.viewed_vertex.identifier
 
 
-class SDFComb(core.VertexViewer):
+class SDFComb(SDFElement):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.SDFComb) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "SDFComb" + self.viewed_vertex.identifier
 
-    def production(self) -> str:
-        return self.properties["production"]
+    @property
+    def consumption(self) -> Mapping[str, int]:
+        return self.viewed_vertex.properties["consumption"]
 
-    def consumption(self) -> str:
-        return self.properties["consumption"]
+    @property
+    def production(self) -> Mapping[str, int]:
+        return self.viewed_vertex.properties["production"]
 
     def get_combinator(self, model: core.ForSyDeModel) -> Optional["ModelOfComputation"]:
-        return next((ModelOfComputation.safe_cast(n) for n in model[self] if ModelOfComputation.conforms(n)), None)
+        return next((ModelOfComputation.safe_cast(n) for n in model[self.viewed_vertex] if ModelOfComputation.conforms(n)), None)
 
 
-class SDFPrefix(core.VertexViewer):
+class SDFPrefix(SDFElement):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.SDFPrefix) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "SDFPrefix" + self.viewed_vertex.identifier
 
     def get_prefixer(self, model: core.ForSyDeModel) -> Optional["ModelOfComputation"]:
-        return next((ModelOfComputation.safe_cast(n) for n in model[self] if ModelOfComputation.conforms(n)), None)
+        return next((ModelOfComputation.safe_cast(n) for n in model[self.viewed_vertex] if ModelOfComputation.conforms(n)), None)
 
 
-class SDFSignal(core.VertexViewer):
+class SDFSignal(SDFElement):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.SDFSignal) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "SDFSignal" + self.viewed_vertex.identifier
 
+    @property
     def token_size_in_bits(self) -> int:
-        return self.properties["token_size_in_bits"]
+        return self.viewed_vertex.properties["token_size_in_bits"]
 
 
-class AbstractDigitalModule(core.VertexViewer):
+class AbstractDigitalModule(PlatformLayer):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.AbstractDigitalModule) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "AbstractDigitalModule" + self.viewed_vertex.identifier
 
+    @property
     def nominal_frequency_in_hertz(self) -> int:
-        return self.properties["nominal_frequency_in_hertz"]
+        return self.viewed_vertex.properties["nominal_frequency_in_hertz"]
 
 
-class GenericProcessingModule(core.VertexViewer):
+class GenericProcessingModule(AbstractDigitalModule):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.GenericProcessingModule) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "GenericProcessingModule" + self.viewed_vertex.identifier
 
+    @property
     def can_be_explored(self) -> bool:
-        return self.properties["can_be_explored"]
+        return self.viewed_vertex.properties["can_be_explored"]
 
 
-class ProfiledProcessingModule(core.VertexViewer):
+class ProfiledProcessingModule(AbstractDigitalModule):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.ProfiledProcessingModule) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "ProfiledProcessingModule" + self.viewed_vertex.identifier
 
-    def provisions(self) -> str:
-        return self.properties["provisions"]
+    @property
+    def provisions(self) -> Mapping[str, Mapping[str, int]]:
+        return self.viewed_vertex.properties["provisions"]
 
 
-class GenericDigitalInterconnect(core.VertexViewer):
+class GenericDigitalInterconnect(AbstractDigitalModule):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.GenericDigitalInterconnect) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "GenericDigitalInterconnect" + self.viewed_vertex.identifier
 
-    def max_concurrent_flits(self) -> int:
-        return self.properties["max_concurrent_flits"]
-
+    @property
     def max_flit_size_in_bits(self) -> int:
-        return self.properties["max_flit_size_in_bits"]
+        return self.viewed_vertex.properties["max_flit_size_in_bits"]
+
+    @property
+    def max_concurrent_flits(self) -> int:
+        return self.viewed_vertex.properties["max_concurrent_flits"]
 
 
-class RoundRobinInterconnect(core.VertexViewer):
+class RoundRobinInterconnect(GenericDigitalInterconnect):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.RoundRobinInterconnect) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "RoundRobinInterconnect" + self.viewed_vertex.identifier
 
+    @property
     def total_weights(self) -> int:
-        return self.properties["total_weights"]
+        return self.viewed_vertex.properties["total_weights"]
 
-    def allocated_weights(self) -> str:
-        return self.properties["allocated_weights"]
+    @property
+    def allocated_weights(self) -> Mapping[str, int]:
+        return self.viewed_vertex.properties["allocated_weights"]
 
 
-class AbstractStructure(core.VertexViewer):
+class AbstractStructure(PlatformLayer):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.AbstractStructure) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "AbstractStructure" + self.viewed_vertex.identifier
 
-    def get_submodules(self, model: core.ForSyDeModel) -> Optional["PlatformLayer"]:
-        return next((PlatformLayer.safe_cast(n) for n in model[self] if PlatformLayer.conforms(n)), None)
+    def get_submodules(self, model: core.ForSyDeModel) -> Sequence["PlatformLayer"]:
+        return [PlatformLayer.safe_cast(n) for n in model[self.viewed_vertex] if PlatformLayer.conforms(n)]
 
 
-class GenericDigitalStorage(core.VertexViewer):
+class GenericDigitalStorage(AbstractDigitalModule):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.GenericDigitalStorage) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "GenericDigitalStorage" + self.viewed_vertex.identifier
 
 
-class GenericCacheModule(core.VertexViewer):
+class GenericCacheModule(GenericDigitalStorage):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.GenericCacheModule) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "GenericCacheModule" + self.viewed_vertex.identifier
 
 
-class GenericMemoryModule(core.VertexViewer):
+class GenericMemoryModule(GenericDigitalStorage):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.GenericMemoryModule) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "GenericMemoryModule" + self.viewed_vertex.identifier
 
+    @property
     def max_memory_in_bits(self) -> int:
-        return self.properties["max_memory_in_bits"]
+        return self.viewed_vertex.properties["max_memory_in_bits"]
 
 
-class AbstractOrdering(core.VertexViewer):
+class AbstractOrdering(PlatformAbstraction):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.AbstractOrdering) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "AbstractOrdering" + self.viewed_vertex.identifier
 
 
-class TriggeredTask(core.VertexViewer):
+class TriggeredTask(AbstractOrdering):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.TriggeredTask) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "TriggeredTask" + self.viewed_vertex.identifier
 
 
-class SporadicTask(core.VertexViewer):
+class SporadicTask(AbstractOrdering):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.SporadicTask) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "SporadicTask" + self.viewed_vertex.identifier
 
 
 class ExtraFunctional(core.VertexViewer):
@@ -543,47 +584,49 @@ class ExtraFunctional(core.VertexViewer):
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.ExtraFunctional) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "ExtraFunctional" + self.viewed_vertex.identifier
 
 
-class WCET(core.VertexViewer):
+class WCET(ExtraFunctional):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.WCET) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "WCET" + self.viewed_vertex.identifier
 
+    @property
     def time(self) -> int:
-        return self.properties["time"]
+        return self.viewed_vertex.properties["time"]
 
-    def get_functionality(self, model: core.ForSyDeModel) -> List["ModelOfComputation"]:
-        return [ModelOfComputation.safe_cast(n) for n in model[self] if ModelOfComputation.conforms(n)]
+    def get_functionality(self, model: core.ForSyDeModel) -> Sequence["ModelOfComputation"]:
+        return [ModelOfComputation.safe_cast(n) for n in model[self.viewed_vertex] if ModelOfComputation.conforms(n)]
 
-    def get_module(self, model: core.ForSyDeModel) -> List["PlatformLayer"]:
-        return [PlatformLayer.safe_cast(n) for n in model[self] if PlatformLayer.conforms(n)]
+    def get_module(self, model: core.ForSyDeModel) -> Sequence["PlatformLayer"]:
+        return [PlatformLayer.safe_cast(n) for n in model[self.viewed_vertex] if PlatformLayer.conforms(n)]
 
 
-class WCCT(core.VertexViewer):
+class WCCT(ExtraFunctional):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.WCCT) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "WCCT" + self.viewed_vertex.identifier
 
+    @property
     def time(self) -> int:
-        return self.properties["time"]
+        return self.viewed_vertex.properties["time"]
 
-    def get_signal(self, model: core.ForSyDeModel) -> List["ModelOfComputation"]:
-        return [ModelOfComputation.safe_cast(n) for n in model[self] if ModelOfComputation.conforms(n)]
+    def get_module(self, model: core.ForSyDeModel) -> Sequence["PlatformLayer"]:
+        return [PlatformLayer.safe_cast(n) for n in model[self.viewed_vertex] if PlatformLayer.conforms(n)]
 
-    def get_module(self, model: core.ForSyDeModel) -> List["PlatformLayer"]:
-        return [PlatformLayer.safe_cast(n) for n in model[self] if PlatformLayer.conforms(n)]
+    def get_signal(self, model: core.ForSyDeModel) -> Sequence["ModelOfComputation"]:
+        return [ModelOfComputation.safe_cast(n) for n in model[self.viewed_vertex] if ModelOfComputation.conforms(n)]
 
 
 class Requirement(core.VertexViewer):
@@ -591,121 +634,131 @@ class Requirement(core.VertexViewer):
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.Requirement) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "Requirement" + self.viewed_vertex.identifier
 
 
-class HardRequirement(core.VertexViewer):
+class HardRequirement(Requirement):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.HardRequirement) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "HardRequirement" + self.viewed_vertex.identifier
 
 
-class LocationRequirement(core.VertexViewer):
+class LocationRequirement(Requirement):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.LocationRequirement) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "LocationRequirement" + self.viewed_vertex.identifier
 
-    def get_functionality(self, model: core.ForSyDeModel) -> List["ModelOfComputation"]:
-        return [ModelOfComputation.safe_cast(n) for n in model[self] if ModelOfComputation.conforms(n)]
+    def get_functionality(self, model: core.ForSyDeModel) -> Sequence["ModelOfComputation"]:
+        return [ModelOfComputation.safe_cast(n) for n in model[self.viewed_vertex] if ModelOfComputation.conforms(n)]
 
-    def get_module(self, model: core.ForSyDeModel) -> List["PlatformLayer"]:
-        return [PlatformLayer.safe_cast(n) for n in model[self] if PlatformLayer.conforms(n)]
+    def get_module(self, model: core.ForSyDeModel) -> Sequence["PlatformLayer"]:
+        return [PlatformLayer.safe_cast(n) for n in model[self.viewed_vertex] if PlatformLayer.conforms(n)]
 
 
-class TimeTriggeredScheduler(core.VertexViewer):
+class TimeTriggeredScheduler(PlatformAbstraction):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.TimeTriggeredScheduler) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "TimeTriggeredScheduler" + self.viewed_vertex.identifier
 
-    def trigger_time(self) -> str:
-        return self.properties["trigger_time"]
+    @property
+    def trigger_time(self) -> Mapping[int, str]:
+        return self.viewed_vertex.properties["trigger_time"]
 
 
-class FixedPriorityScheduler(core.VertexViewer):
+class FixedPriorityScheduler(PlatformAbstraction):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.FixedPriorityScheduler) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "FixedPriorityScheduler" + self.viewed_vertex.identifier
 
-    def priorities_assignment(self) -> str:
-        return self.properties["priorities_assignment"]
-
+    @property
     def maximum_number_of_priorities(self) -> int:
-        return self.properties["maximum_number_of_priorities"]
+        return self.viewed_vertex.properties["maximum_number_of_priorities"]
 
+    @property
+    def priorities_assignment(self) -> Mapping[int, str]:
+        return self.viewed_vertex.properties["priorities_assignment"]
+
+    @property
     def preemptive(self) -> bool:
-        return self.properties["preemptive"]
+        return self.viewed_vertex.properties["preemptive"]
 
 
-class RoundRobinScheduler(core.VertexViewer):
+class RoundRobinScheduler(PlatformAbstraction):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.RoundRobinScheduler) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "RoundRobinScheduler" + self.viewed_vertex.identifier
 
-    def allocated_cycles(self) -> str:
-        return self.properties["allocated_cycles"]
-
-    def maximum_time_slice_in_cycles(self) -> int:
-        return self.properties["maximum_time_slice_in_cycles"]
-
+    @property
     def hyper_round_cycles(self) -> int:
-        return self.properties["hyper_round_cycles"]
+        return self.viewed_vertex.properties["hyper_round_cycles"]
 
-    def maximum_overhead_in_cycles(self) -> int:
-        return self.properties["maximum_overhead_in_cycles"]
+    @property
+    def maximum_time_slice_in_cycles(self) -> int:
+        return self.viewed_vertex.properties["maximum_time_slice_in_cycles"]
 
+    @property
     def minimum_time_slice_in_cycles(self) -> int:
-        return self.properties["minimum_time_slice_in_cycles"]
+        return self.viewed_vertex.properties["minimum_time_slice_in_cycles"]
+
+    @property
+    def allocated_cycles(self) -> Mapping[str, int]:
+        return self.viewed_vertex.properties["allocated_cycles"]
+
+    @property
+    def maximum_overhead_in_cycles(self) -> int:
+        return self.viewed_vertex.properties["maximum_overhead_in_cycles"]
 
 
-class MapVector(core.VertexViewer):
+class MapVector(AlgorithmicSkeleton):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.MapVector) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "MapVector" + self.viewed_vertex.identifier
 
+    @property
     def maximum_invocations(self) -> int:
-        return self.properties["maximum_invocations"]
+        return self.viewed_vertex.properties["maximum_invocations"]
 
     def get_mapped(self, model: core.ForSyDeModel) -> Optional["SpecificationLayer"]:
-        return next((SpecificationLayer.safe_cast(n) for n in model[self] if SpecificationLayer.conforms(n)), None)
+        return next((SpecificationLayer.safe_cast(n) for n in model[self.viewed_vertex] if SpecificationLayer.conforms(n)), None)
 
 
-class ReduceVector(core.VertexViewer):
+class ReduceVector(AlgorithmicSkeleton):
     @classmethod
     def conforms(cls, vertex):
         return any(t.refines(VertexTrait.ReduceVector) for t in vertex.vertex_traits)
 
-    @classmethod
-    def safe_cast(cls, vertex):
-        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+    @property
+    def identifier(self) -> str:
+        return "ReduceVector" + self.viewed_vertex.identifier
 
     def get_reduced(self, model: core.ForSyDeModel) -> Optional["SpecificationLayer"]:
-        return next((SpecificationLayer.safe_cast(n) for n in model[self] if SpecificationLayer.conforms(n)), None)
+        return next((SpecificationLayer.safe_cast(n) for n in model[self.viewed_vertex] if SpecificationLayer.conforms(n)), None)
 
 class ModelOfComputationEdge(core.EdgeViewer):
     @classmethod
