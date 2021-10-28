@@ -129,7 +129,7 @@ public class VertexProperty {
             case INTMAP:
                 return intMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().unwrap()));
             case STRINGMAP:
-                return stringMap.entrySet().stream().collect(Collectors.toMap(k -> k.getKey().toString(), v -> v.getValue().unwrap()));
+                return stringMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().unwrap()));
             default:
                 return s;
         }

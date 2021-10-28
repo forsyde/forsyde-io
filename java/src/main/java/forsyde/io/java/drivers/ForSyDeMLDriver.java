@@ -171,19 +171,19 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 	 */
 	static protected VertexProperty readData(Element elem) throws XPathExpressionException {
 		// it is a collection
-		if (elem.getAttribute("attr.type").toLowerCase().equals("integer")
-				|| elem.getAttribute("attr.type").toLowerCase().equals("int")) {
+		if (elem.getAttribute("attr.type").equalsIgnoreCase("integer")
+				|| elem.getAttribute("attr.type").equalsIgnoreCase("int")) {
 			return VertexProperty.create(Integer.valueOf(elem.getTextContent()));
-		} else if (elem.getAttribute("attr.type").toLowerCase().equals("float")) {
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("float")) {
 			return VertexProperty.create(Float.valueOf(elem.getTextContent()));
-		} else if (elem.getAttribute("attr.type").toLowerCase().equals("long")) {
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("long")) {
 			return VertexProperty.create(Long.valueOf(elem.getTextContent()));
-		} else if (elem.getAttribute("attr.type").toLowerCase().equals("double")) {
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("double")) {
 			return VertexProperty.create(Double.valueOf(elem.getTextContent()));
-		} else if (elem.getAttribute("attr.type").toLowerCase().equals("boolean")
-				|| elem.getAttribute("attr.type").toLowerCase().equals("bool")) {
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("boolean")
+				|| elem.getAttribute("attr.type").equalsIgnoreCase("bool")) {
 			return VertexProperty.create(Boolean.valueOf(elem.getTextContent()));
-		} else if (elem.getAttribute("attr.type").toLowerCase().equals("intmap")) {
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("intmap")) {
 			Map<Integer, Object> map = new HashMap<Integer, Object>();
 			NodeList children = (NodeList) xPath.compile("data").evaluate(elem, XPathConstants.NODESET);
 			for (int i = 0; i < children.getLength(); i++) {
@@ -191,7 +191,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 				map.put(Integer.valueOf(child.getAttribute("attr.name")), readData(child));
 			}
 			return VertexProperty.create(map);
-		} else if (elem.getAttribute("attr.type").toLowerCase().equals("stringmap")) {
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("stringmap")) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			NodeList children = (NodeList) xPath.compile("data").evaluate(elem, XPathConstants.NODESET);
 			for (int i = 0; i < children.getLength(); i++) {
@@ -199,7 +199,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 				map.put(child.getAttribute("attr.name"), readData(child));
 			}
 			return VertexProperty.create(map);
-		} else if (elem.getAttribute("attr.type").toLowerCase().equals("array")) {
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("array")) {
 			NodeList children = (NodeList) xPath.compile("data").evaluate(elem, XPathConstants.NODESET);
 			List<Object> array = new ArrayList<>(children.getLength());
 			for (int i = 0; i < children.getLength(); i++) {

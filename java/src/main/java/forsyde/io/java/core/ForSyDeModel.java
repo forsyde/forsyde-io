@@ -9,6 +9,7 @@ import forsyde.io.java.drivers.ForSyDeModelDriver;
 import forsyde.io.java.drivers.ForSyDeModelHandler;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -50,7 +51,7 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 			boolean present = false;
 			for (Vertex thisV : vertexSet()) {
 				// found a match
-				if (v.getIdentifier() == thisV.getIdentifier()) {
+				if (Objects.equals(v.getIdentifier(), thisV.getIdentifier())) {
 					mergeDefined = mergeDefined && thisV.mergeInPlace(v);
 					present = true;
 					break;
@@ -68,6 +69,7 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 				// found a match
 				if (e.equals(thisE)) {
 					thisE.getTraits().addAll(e.getTraits());
+					present = true;
 				}
 			}
 			if (!present) {

@@ -76,7 +76,11 @@ class ForSyDeModelDriver(abc.ABC):
         if isinstance(v, bool):
             return "boolean"
         elif isinstance(v, int):
-            return "int"
+            # TODO: Find a robust way to distinguish between int and long
+            if v.bit_length() > 32:
+                return "long"
+            else:
+                return "int"
         elif isinstance(v, float):
             return "double"
         elif isinstance(v, str):
@@ -84,7 +88,8 @@ class ForSyDeModelDriver(abc.ABC):
         elif isinstance(v, list):
             return "array"
         elif isinstance(v, dict):
-            if all(isinstance(k, int) for k in v):
+            # TODO: find a non hac to fix the dict difference
+            if len(v) > 0 and all(isinstance(k, int) for k in v):
                 return "intMap"
             else:
                 return "stringMap"

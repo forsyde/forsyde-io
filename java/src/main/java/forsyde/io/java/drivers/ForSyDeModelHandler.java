@@ -4,10 +4,7 @@
 package forsyde.io.java.drivers;
 
 import java.io.File;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 import forsyde.io.java.core.ForSyDeModel;
 
@@ -24,11 +21,19 @@ public final class ForSyDeModelHandler {
 	PathMatcher amaltheaMatcher;
 
 	public ForSyDeModelHandler() {
-		forsydeMLMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{forxml,forsyde.xml,xml}");
-		graphMLMatcher = FileSystems.getDefault().getPathMatcher("glob:*.graphml");
-		dotMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{dot,gv,graphviz}");
-		linguaFrancaMatcher = FileSystems.getDefault().getPathMatcher("glob:*.lf");
-		amaltheaMatcher = FileSystems.getDefault().getPathMatcher("glob:*.amxmi");
+		forsydeMLMatcher = FileSystems.getDefault().getPathMatcher("glob:**.{forxml,forsyde.xml,xml}");
+		graphMLMatcher = FileSystems.getDefault().getPathMatcher("glob:**.graphml");
+		dotMatcher = FileSystems.getDefault().getPathMatcher("glob:**.{dot,gv,graphviz}");
+		linguaFrancaMatcher = FileSystems.getDefault().getPathMatcher("glob:**.lf");
+		amaltheaMatcher = FileSystems.getDefault().getPathMatcher("glob:**.amxmi");
+	}
+
+	public boolean canLoadModel(Path path) {
+	    return forsydeMLMatcher.matches(path) ||
+				graphMLMatcher.matches(path) ||
+				dotMatcher.matches(path) ||
+				linguaFrancaMatcher.matches(path) ||
+				amaltheaMatcher.matches(path);
 	}
 
 	public ForSyDeModel loadModel(String filePath) throws Exception {
@@ -72,6 +77,11 @@ public final class ForSyDeModelHandler {
 		} else {
 			throw new Exception("Supported write formats: ['forxml', 'forsyde.xml', 'graphml', 'dot', 'gv', 'graphviz'].");
 		}
+		if (outPath.getParent() != null)
+			Files.createDirectories(outPath.getParent());
+		try {
+			Files.createFile(outPath);
+		} catch (FileAlreadyExistsException ignored) {}
 		driver.writeModel(model, outPath);
 	}
 }

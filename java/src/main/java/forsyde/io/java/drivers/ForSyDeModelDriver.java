@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import forsyde.io.java.core.ForSyDeModel;
 
@@ -43,7 +44,7 @@ public interface ForSyDeModelDriver {
 	}
 
 	default void writeModel(ForSyDeModel model, Path outPath) throws Exception {
-		writeModel(model, Files.newOutputStream(outPath));
+		writeModel(model, Files.newOutputStream(outPath, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE));
 	}
 	
 	void writeModel(ForSyDeModel model, OutputStream out) throws Exception;

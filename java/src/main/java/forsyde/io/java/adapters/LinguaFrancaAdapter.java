@@ -5,6 +5,8 @@ import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
+import forsyde.io.java.typed.viewers.LinguaFrancaSignal;
+import forsyde.io.java.typed.viewers.LinguaFrancaSignalViewer;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.lflang.LFStandaloneSetup;
 import org.lflang.lf.*;
@@ -189,11 +191,19 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                         final String outPort = outVarRef.getVariable() instanceof Port ? ((Port) outVarRef.getVariable()).getName() : "";
                         final Vertex signal = new Vertex(connectionSrc.identifier
                                 + "." + inPort +  "-" + connectionDst.identifier + "." + outPort, VertexTrait.LinguaFrancaSignal);
+                        final LinguaFrancaSignal linguaFrancaSignal = new LinguaFrancaSignalViewer(signal);
                         final Long signalSize = inVarRef.getVariable() instanceof Port ? varTypeToSize(((Port) inVarRef.getVariable()).getType()) : 0L;
                         model.addVertex(signal);
                         signal.ports.add("source_reaction");
                         signal.ports.add("target_reaction");
-                        signal.putProperty("size_in_bits", signalSize);
+                        linguaFrancaSignal.setSizeInBits(signalSize);
+                        linguaFrancaSignal.setPropagationDelayInSecsNumerator(
+                                connection.getDelay() != null ? (long) connection.getDelay().getInterval() : 0L
+                        );
+                        linguaFrancaSignal.setPropagationDelayInSecsDenominator(
+                                connection.getDelay() != null ? (long) fromLFTimeUnitToSecondsDenominator(connection.getDelay().getUnit()) : 1L
+                        );
+                        // signal.putProperty("size_in_bits", signalSize);
                         model.connect(connectionSrc, signal, inPort, "source_reaction", EdgeTrait.LinguaFrancaConnection);
                         model.connect(signal, connectionDst, "target_reaction", outPort, EdgeTrait.LinguaFrancaConnection);
                     }

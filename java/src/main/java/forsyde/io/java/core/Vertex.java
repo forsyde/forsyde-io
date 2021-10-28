@@ -133,7 +133,7 @@ final public class Vertex {
 
 	public boolean mergeInPlace(Vertex other) {
 		boolean mergeDefined = true;
-		if (identifier != other.getIdentifier())
+		if (!Objects.equals(identifier, other.getIdentifier()))
 			return false;
 		ports.addAll(other.getPorts());
 		vertexTraits.addAll(other.getTraits());
