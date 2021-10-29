@@ -95,7 +95,9 @@
                 {"name": "target_reaction", "vertexTrait": "LinguaFrancaReaction", "multiple": false}
             ],
             "required_properties": [
-                {"name": "size_in_bits", "type": {"name": "long"}, "default": 0}
+                {"name": "size_in_bits", "type": {"name": "long"}, "default": 0},
+                {"name": "propagation_delay_in_secs_numerator", "type": {"name": "long"}, "default": 0},
+                {"name": "propagation_delay_in_secs_denominator", "type": {"name": "long"}, "default": 1}
             ]
         },
         {
