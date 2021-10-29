@@ -6,7 +6,7 @@ package forsyde.io.java.drivers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,31 +24,23 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import forsyde.io.java.core.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import forsyde.io.java.core.ArrayVertexProperty;
-import forsyde.io.java.core.BooleanVertexProperty;
-import forsyde.io.java.core.DoubleVertexProperty;
-import forsyde.io.java.core.Edge;
-import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.FloatVertexProperty;
-import forsyde.io.java.core.ForSyDeModel;
-import forsyde.io.java.core.IntegerVertexProperty;
-import forsyde.io.java.core.LongVertexProperty;
-import forsyde.io.java.core.MapVertexProperty;
-import forsyde.io.java.core.StringVertexProperty;
-import forsyde.io.java.core.Vertex;
-import forsyde.io.java.core.VertexPropertyElement;
-import forsyde.io.java.core.VertexTrait;
-
 /**
  * @author rjordao
  *
  */
-public class ForSyDeMLDriver extends ForSyDeModelDriver {
+public class ForSyDeMLDriver implements ForSyDeModelDriver {
+
+	private final static Set<String> allowedVertexes = Stream.of(VertexTrait.values()).map(t -> t.getName())
+			.collect(Collectors.toSet());
+	private final static Set<String> allowedEdges = Stream.of(EdgeTrait.values()).map(t -> t.getName())
+			.collect(Collectors.toSet());
+	private final static XPath xPath = XPathFactory.newInstance().newXPath();
 
 	/**
 	 * Parses ForSyDe's graphML varatiation schema.
@@ -73,14 +65,13 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document xmlDoc = builder.parse(inStream);
 		// get the XPath object
-		XPath xPath = XPathFactory.newInstance().newXPath();
 		NodeList vertexList = (NodeList) xPath.compile("/graphml//graph/node").evaluate(xmlDoc, XPathConstants.NODESET);
 		for (int i = 0; i < vertexList.getLength(); i++) {
 			Element vertexElem = (Element) vertexList.item(i);
-			// TODO: the type creation could be safer or signal some exception
 			Vertex vertex = new Vertex(vertexElem.getAttribute("id"));
 			vertex.vertexTraits = Stream.of(vertexElem.getAttribute("traits").split(";"))
-					.map(s -> VertexTrait.valueOf(s)).collect(Collectors.toSet());
+					.map(s -> allowedVertexes.contains(s) ? VertexTrait.valueOf(s) : new OpaqueTrait(s))
+					.collect(Collectors.toSet());
 			model.addVertex(vertex);
 			// iterate through ports and add them
 			NodeList portsList = (NodeList) xPath.compile("port").evaluate(vertexElem, XPathConstants.NODESET);
@@ -92,8 +83,7 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			NodeList propertyList = (NodeList) xPath.compile("data").evaluate(vertexElem, XPathConstants.NODESET);
 			for (int j = 0; j < propertyList.getLength(); j++) {
 				Element propertyElem = (Element) propertyList.item(j);
-				// TODO: assure safety of this call
-				VertexPropertyElement property = readData(propertyElem);
+				VertexProperty property = readData(propertyElem);
 				vertex.properties.put(propertyElem.getAttribute("attr.name"), property);
 			}
 		}
@@ -104,19 +94,20 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 			String tid = edgeElem.getAttribute("target");
 			// TODO: later put more safety here, even though for consistency should never
 			// fail
-			Vertex source = model.vertexSet().stream().filter(v -> v.identifier.equals(sid)).findFirst().get();
-			Vertex target = model.vertexSet().stream().filter(v -> v.identifier.equals(tid)).findFirst().get();
+			Vertex source = model.vertexSet().stream().filter(v -> v.getIdentifier().equals(sid)).findFirst().get();
+			Vertex target = model.vertexSet().stream().filter(v -> v.getIdentifier().equals(tid)).findFirst().get();
 			Edge edge = new Edge(source, target);
-			edge.edgeTraits = Stream.of(edgeElem.getAttribute("traits").split(";")).map(s -> EdgeTrait.valueOf(s))
+			edge.edgeTraits = Stream.of(edgeElem.getAttribute("traits").split(";"))
+					.map(s -> allowedEdges.contains(s) ? EdgeTrait.valueOf(s) : new OpaqueTrait(s))
 					.collect(Collectors.toSet());
 			if (edgeElem.hasAttribute("sourceport")) {
-				String sourcePort = source.ports.stream().filter(p -> p.equals(edgeElem.getAttribute("sourceport")))
-						.findFirst().get();
+				String sourcePort = source.getPorts().stream()
+						.filter(p -> p.equals(edgeElem.getAttribute("sourceport"))).findFirst().get();
 				edge.sourcePort = Optional.of(sourcePort);
 			}
 			if (edgeElem.hasAttribute("targetport")) {
-				String targetPort = target.ports.stream().filter(p -> p.equals(edgeElem.getAttribute("targetport")))
-						.findFirst().get();
+				String targetPort = target.getPorts().stream()
+						.filter(p -> p.equals(edgeElem.getAttribute("targetport"))).findFirst().get();
 				edge.targetPort = Optional.of(targetPort);
 			}
 			model.addEdge(source, target, edge);
@@ -138,32 +129,30 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 		doc.appendChild(root);
 		for (Vertex v : model.vertexSet()) {
 			Element vElem = doc.createElement("node");
-			vElem.setAttribute("id", v.identifier);
-			vElem.setAttribute("traits",
-					v.vertexTraits.stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
+			vElem.setAttribute("id", v.getIdentifier());
+			vElem.setAttribute("traits", v.getTraits().stream().map(t -> t.getName()).collect(Collectors.joining(";")));
 			graph.appendChild(vElem);
-			for (String p : v.ports) {
+			for (String p : v.getPorts()) {
 				Element pElem = doc.createElement("port");
 				pElem.setAttribute("name", p);
 				vElem.appendChild(pElem);
 			}
-			for (String key : v.properties.keySet()) {
-				Element propElem = writeData(doc, v.properties.get(key));
+			for (String key : v.getProperties().keySet()) {
+				Element propElem = writeData(doc, v.getProperties().get(key));
 				propElem.setAttribute("attr.name", key);
 				vElem.appendChild(propElem);
 			}
 		}
 		for (Edge e : model.edgeSet()) {
 			Element eElem = doc.createElement("edge");
-			eElem.setAttribute("source", e.source.identifier);
-			eElem.setAttribute("target", e.target.identifier);
-			eElem.setAttribute("traits",
-					e.edgeTraits.stream().map(t -> t.getName()).reduce("", (s1, s2) -> s1 + ";" + s2));
-			if (e.sourcePort.isPresent()) {
-				eElem.setAttribute("sourceport", e.sourcePort.get());
+			eElem.setAttribute("source", e.getSource().getIdentifier());
+			eElem.setAttribute("target", e.getTarget().getIdentifier());
+			eElem.setAttribute("traits", e.getTraits().stream().map(t -> t.getName()).collect(Collectors.joining(";")));
+			if (e.getSourcePort().isPresent()) {
+				eElem.setAttribute("sourceport", e.getSourcePort().get());
 			}
-			if (e.targetPort.isPresent()) {
-				eElem.setAttribute("targetport", e.targetPort.get());
+			if (e.getTargetPort().isPresent()) {
+				eElem.setAttribute("targetport", e.getTargetPort().get());
 			}
 			graph.appendChild(eElem);
 		}
@@ -178,120 +167,104 @@ public class ForSyDeMLDriver extends ForSyDeModelDriver {
 	 * 
 	 * @param elem the XML element being parsed.
 	 * @return the parsed object.
+	 * @throws XPathExpressionException 
 	 */
-	static protected VertexPropertyElement readData(Element elem) {
+	static protected VertexProperty readData(Element elem) throws XPathExpressionException {
 		// it is a collection
-		if (elem.getAttribute("attr.type").equals("integer") || elem.getAttribute("attr.type").equals("int")) {
-			return new IntegerVertexProperty(Integer.valueOf(elem.getTextContent()));
-		} else if (elem.getAttribute("attr.type").equals("float")) {
-			return new FloatVertexProperty(Float.valueOf(elem.getTextContent()));
-		} else if (elem.getAttribute("attr.type").equals("double")) {
-			return new DoubleVertexProperty(Double.valueOf(elem.getTextContent()));
-		} else if (elem.getAttribute("attr.type").equals("boolean") || elem.getAttribute("attr.type").equals("bool")) {
-			return new BooleanVertexProperty(Boolean.valueOf(elem.getTextContent()));
-		} else if (elem.getAttribute("attr.type").equals("object")) {
-			MapVertexProperty map = new MapVertexProperty();
-			NodeList children = elem.getElementsByTagName("data");
+		if (elem.getAttribute("attr.type").equalsIgnoreCase("integer")
+				|| elem.getAttribute("attr.type").equalsIgnoreCase("int")) {
+			return VertexProperty.create(Integer.valueOf(elem.getTextContent()));
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("float")) {
+			return VertexProperty.create(Float.valueOf(elem.getTextContent()));
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("long")) {
+			return VertexProperty.create(Long.valueOf(elem.getTextContent()));
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("double")) {
+			return VertexProperty.create(Double.valueOf(elem.getTextContent()));
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("boolean")
+				|| elem.getAttribute("attr.type").equalsIgnoreCase("bool")) {
+			return VertexProperty.create(Boolean.valueOf(elem.getTextContent()));
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("intmap")) {
+			Map<Integer, Object> map = new HashMap<Integer, Object>();
+			NodeList children = (NodeList) xPath.compile("data").evaluate(elem, XPathConstants.NODESET);
+			for (int i = 0; i < children.getLength(); i++) {
+				Element child = (Element) children.item(i);
+				map.put(Integer.valueOf(child.getAttribute("attr.name")), readData(child));
+			}
+			return VertexProperty.create(map);
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("stringmap")) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			NodeList children = (NodeList) xPath.compile("data").evaluate(elem, XPathConstants.NODESET);
 			for (int i = 0; i < children.getLength(); i++) {
 				Element child = (Element) children.item(i);
 				map.put(child.getAttribute("attr.name"), readData(child));
 			}
-			return map;
-		} else if (elem.getAttribute("attr.type").equals("array")) {
-			NodeList children = elem.getElementsByTagName("data");
-			ArrayVertexProperty array = new ArrayVertexProperty(children.getLength());
+			return VertexProperty.create(map);
+		} else if (elem.getAttribute("attr.type").equalsIgnoreCase("array")) {
+			NodeList children = (NodeList) xPath.compile("data").evaluate(elem, XPathConstants.NODESET);
+			List<Object> array = new ArrayList<>(children.getLength());
 			for (int i = 0; i < children.getLength(); i++) {
 				Element child = (Element) children.item(i);
-				array.set(Integer.valueOf(child.getAttribute("attr.name")), readData(child));
+				array.set(Integer.parseInt(child.getAttribute("attr.name")), readData(child));
 			}
-			return array;
+			return VertexProperty.create(array);
 		} else {
-			return new StringVertexProperty(elem.getTextContent());
+			return VertexProperty.create(elem.getTextContent());
 		}
 	}
 
-	static protected Element writeData(Document doc, MapVertexProperty map) {
+	static protected Element writeData(Document doc, VertexProperty prop) {
 		Element newElem = doc.createElement("data");
-		newElem.setAttribute("attr.type", "object");
-		for (String key : map.keySet()) {
-			Element child = writeData(doc, map.get(key));
-			child.setAttribute("attr.name", key);
-			newElem.appendChild(child);
+		switch (prop.type) {
+		case ARRAY:
+			newElem.setAttribute("attr.type", "array");
+			for (int i = 0; i < prop.array.size(); i++) {
+				Element child = writeData(doc, prop.array.get(i));
+				child.setAttribute("attr.name", String.valueOf(i));
+				newElem.appendChild(child);
+			}
+			break;
+		case INTMAP:
+			newElem.setAttribute("attr.type", "intMap");
+			for (Integer key : prop.intMap.keySet()) {
+				Element child = writeData(doc, prop.intMap.get(key));
+				child.setAttribute("attr.name", key.toString());
+				newElem.appendChild(child);
+			}
+			break;
+		case STRINGMAP:
+			newElem.setAttribute("attr.type", "stringMap");
+			for (String key : prop.stringMap.keySet()) {
+				Element child = writeData(doc, prop.stringMap.get(key));
+				child.setAttribute("attr.name", key);
+				newElem.appendChild(child);
+			}
+			break;
+		case INTEGER:
+			newElem.setAttribute("attr.type", "integer");
+			newElem.setTextContent(String.valueOf(prop.i));
+			break;
+		case DOUBLE:
+			newElem.setAttribute("attr.type", "double");
+			newElem.setTextContent(String.valueOf(prop.d));
+			break;
+		case LONG:
+			newElem.setAttribute("attr.type", "long");
+			newElem.setTextContent(String.valueOf(prop.l));
+			break;
+		case FLOAT:
+			newElem.setAttribute("attr.type", "float");
+			newElem.setTextContent(String.valueOf(prop.f));
+			break;
+		case BOOLEAN:
+			newElem.setAttribute("attr.type", "boolean");
+			newElem.setTextContent(String.valueOf(prop.b));
+			break;
+		default:
+			newElem.setAttribute("attr.type", "string");
+			newElem.setTextContent(prop.s);
+			break;
 		}
 		return newElem;
-	}
-
-	static protected Element writeData(Document doc, ArrayVertexProperty array) {
-		Element newElem = doc.createElement("data");
-		newElem.setAttribute("attr.type", "array");
-		for (int i = 0; i < array.size(); i++) {
-			Element child = writeData(doc, array.get(i));
-			child.setAttribute("attr.name", String.valueOf(i));
-			newElem.appendChild(child);
-		}
-		return newElem;
-	}
-
-	static protected Element writeData(Document doc, IntegerVertexProperty num) {
-		Element newElem = doc.createElement("data");
-		newElem.setAttribute("attr.type", "int");
-		newElem.setTextContent(String.valueOf(num.intValue()));
-		return newElem;
-	}
-
-	static protected Element writeData(Document doc, LongVertexProperty num) {
-		Element newElem = doc.createElement("data");
-		newElem.setAttribute("attr.type", "long");
-		newElem.setTextContent(String.valueOf(num.longValue()));
-		return newElem;
-	}
-
-	static protected Element writeData(Document doc, FloatVertexProperty num) {
-		Element newElem = doc.createElement("data");
-		newElem.setAttribute("attr.type", "float");
-		newElem.setTextContent(String.valueOf(num.floatValue()));
-		return newElem;
-	}
-
-	static protected Element writeData(Document doc, DoubleVertexProperty num) {
-		Element newElem = doc.createElement("data");
-		newElem.setAttribute("attr.type", "double");
-		newElem.setTextContent(String.valueOf(num.doubleValue()));
-		return newElem;
-	}
-
-	static protected Element writeData(Document doc, BooleanVertexProperty b) {
-		Element newElem = doc.createElement("data");
-		newElem.setAttribute("attr.type", "boolean");
-		newElem.setTextContent(b.toString());
-		return newElem;
-	}
-
-	static protected Element writeData(Document doc, StringVertexProperty str) {
-		Element newElem = doc.createElement("data");
-		newElem.setAttribute("attr.type", "string");
-		newElem.setTextContent(str.toString());
-		return newElem;
-	}
-
-	static protected Element writeData(Document doc, VertexPropertyElement value) {
-		if (value instanceof IntegerVertexProperty) {
-			return writeData(doc, (IntegerVertexProperty) value);
-		} else if (value instanceof LongVertexProperty) {
-			return writeData(doc, (LongVertexProperty) value);
-		} else if (value instanceof FloatVertexProperty) {
-			return writeData(doc, (FloatVertexProperty) value);
-		} else if (value instanceof DoubleVertexProperty) {
-			return writeData(doc, (DoubleVertexProperty) value);
-		} else if (value instanceof MapVertexProperty) {
-			return writeData(doc, (MapVertexProperty) value);
-		} else if (value instanceof ArrayVertexProperty) {
-			return writeData(doc, (ArrayVertexProperty) value);
-		} else if (value instanceof BooleanVertexProperty) {
-			return writeData(doc, (BooleanVertexProperty) value);
-		} else {
-			return writeData(doc, (StringVertexProperty) value);
-		}
 	}
 
 }

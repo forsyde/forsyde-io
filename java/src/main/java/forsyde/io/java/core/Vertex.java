@@ -3,14 +3,8 @@
  */
 package forsyde.io.java.core;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -25,17 +19,18 @@ import java.util.Set;
  * 
  * @author Rodolfo Jordao (jordao@kth.se)
  */
-public class Vertex {
+final public class Vertex {
 
 	private volatile static long genSymSuffix = 0L;
 
 	public String identifier;
 	public Set<String> ports = new HashSet<String>();
-	public Map<String, VertexPropertyElement> properties = new HashMap<String, VertexPropertyElement>();
-	public Set<VertexTrait> vertexTraits = new HashSet<VertexTrait>();
+	public Map<String, VertexProperty> properties = new HashMap<String, VertexProperty>();
+	public Set<Trait> vertexTraits = new HashSet<Trait>();
 
 	/**
-	 * Utility constructor initializing all associated data as empty and the vertex with a unique random identifier.
+	 * Utility constructor initializing all associated data as empty and the vertex
+	 * with a unique random identifier.
 	 * 
 	 */
 	public Vertex() {
@@ -46,10 +41,21 @@ public class Vertex {
 	/**
 	 * Utility constructor initializing all associated data as empty.
 	 * 
-	 * @param identifier the obligatory unique ID for this vertex.q
+	 * @param identifier the obligatory unique ID for this vertex.
 	 */
 	public Vertex(String identifier) {
 		this.identifier = identifier;
+	}
+
+	/**
+	 * Utility constructor initializing all associated data as empty.
+	 *
+	 * @param identifier the obligatory unique ID for this vertex.
+	 * @param traits all initial traits for this vertex
+	 */
+	public Vertex(String identifier, Trait... traits) {
+		this.identifier = identifier;
+		addTraits(traits);
 	}
 
 	/**
@@ -64,7 +70,7 @@ public class Vertex {
 	 *                   vertex. Remember that it should be a tree of primitive
 	 *                   types such as Integers, Floats, Strings etc.
 	 */
-	public Vertex(String identifier, Set<String> ports, Map<String, VertexPropertyElement> properties) {
+	public Vertex(String identifier, Set<String> ports, Map<String, VertexProperty> properties) {
 		this.identifier = identifier;
 		this.ports = ports;
 		this.properties = properties;
@@ -72,33 +78,40 @@ public class Vertex {
 
 	@Override
 	public String toString() {
-		final int maxLen = 5;
-		StringBuilder builder = new StringBuilder();
-		builder.append("Vertex [identifier=").append(identifier).append(", type=").append(", ports=")
-				.append(ports != null ? toString(ports, maxLen) : null).append(", properties=")
-				.append(properties != null ? toString(properties.entrySet(), maxLen) : null).append("]");
-		return builder.toString();
+		final StringBuilder sb = new StringBuilder("");
+		sb.append(identifier);
+		sb.append("[").append(
+				vertexTraits.stream().map(Trait::getName).collect(Collectors.joining("; "))
+		).append("]");
+		sb.append("(").append(
+				String.join(", ", ports)
+		).append(")");
+		sb.append("{").append(
+				properties.entrySet().stream().map(e -> e.getKey() + ": " + e.getValue().toString())
+						.collect(Collectors.joining(", "))
+		).append("}");
+		return sb.toString();
 	}
 
-	public Set<VertexTrait> getTraits() {
+	public Set<Trait> getTraits() {
 		return vertexTraits;
 	}
 
 	public Boolean hasTrait(Trait trait) {
 		return vertexTraits.stream().anyMatch(t -> t.refines(trait));
 	}
-
-	private String toString(Collection<?> collection, int maxLen) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[");
-		int i = 0;
-		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
-			if (i > 0)
-				builder.append(", ");
-			builder.append(iterator.next());
+	
+	public Boolean hasTrait(String traitName) {
+		try {
+			VertexTrait trait = VertexTrait.valueOf(traitName);
+			return hasTrait(trait);
+		} catch (IllegalArgumentException e) {
+			return vertexTraits.stream().map(t -> t.getName()).anyMatch(t -> t.equals(traitName));
 		}
-		builder.append("]");
-		return builder.toString();
+	}
+
+	public boolean putProperty(String propertyName, Object propertyValue) {
+		return properties.put(propertyName, VertexProperty.create(propertyValue)) == null;
 	}
 
 	@Override
@@ -120,22 +133,22 @@ public class Vertex {
 
 	public boolean mergeInPlace(Vertex other) {
 		boolean mergeDefined = true;
-		if (identifier != other.identifier)
+		if (!Objects.equals(identifier, other.getIdentifier()))
 			return false;
-		ports.addAll(other.ports);
-		vertexTraits.addAll(other.vertexTraits);
-		for (String key : other.properties.keySet()) {
+		ports.addAll(other.getPorts());
+		vertexTraits.addAll(other.getTraits());
+		for (String key : other.getProperties().keySet()) {
 			if (properties.containsKey(key)) {
-				mergeDefined = mergeDefined && properties.get(key).mergeInPlace(other.properties.get(key));
+				mergeDefined = mergeDefined && properties.get(key).mergeInPlace(other.getProperties().get(key));
 			} else {
-				properties.put(key, other.properties.get(key));
+				properties.put(key, other.getProperties().get(key));
 			}
 		}
 		return mergeDefined;
 	}
 
 	public Optional<Vertex> merge(Vertex other) {
-		if (identifier != other.identifier)
+		if (identifier != other.getIdentifier())
 			return Optional.empty();
 		else {
 			Vertex merged = new Vertex(identifier);
@@ -145,6 +158,22 @@ public class Vertex {
 				return Optional.empty();
 			}
 		}
+	}
+
+	public Map<String, VertexProperty> getProperties() {
+		return properties;
+	}
+
+	public Set<String> getPorts() {
+		return ports;
+	}
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void addTraits(Trait... traits) {
+		vertexTraits.addAll(Arrays.asList(traits.clone()));
 	}
 
 }

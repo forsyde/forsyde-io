@@ -21,7 +21,7 @@ def load_model(source: str,
     """
     # if '.db' in source:
     #     self.read_db(source)
-    if '.forxml' in source:
+    if '.forxml' in source or '.forsyde.xml' in source:
         return ForSyDeMLDriver().read(source, other_model)
     elif '.xml' in source:
         warnings.warn(
@@ -35,16 +35,15 @@ def load_model(source: str,
 
 def write_model(model: ForSyDeModel, sink: str) -> None:
     logger = logging.getLogger(LOGGER_NAME)
-    ext = pathlib.Path(sink).suffix
-    if ext == '.forxml':
+    if sink.endswith('.forxml') or sink.endswith(".forsyde.xml"):
         ForSyDeMLDriver().write(model, sink)
-    elif ext == '.xml':
+    elif sink.endswith('.xml'):
         logger.warning(
-            f"Ad hoc xml is not supported. Converting to '.forxml' instead.")
+            "Ad hoc xml is not supported. Converting to '.forxml' instead.")
         ForSyDeMLDriver().write(model, sink.replace('.xml', '.forxml'))
-    elif ext == '.dot' or ext == ".gv":
+    elif sink.endswith('.dot') or sink.endswith(".gv"):
         ForSyDeDotDriver().write(model, sink)
-    elif ext == ".graphml":
+    elif sink.endswith(".graphml"):
         ForSyDeGraphMLDriver().write(model, sink)
     else:
-        raise NotImplementedError(f"Format {ext} is unkown.")
+        raise NotImplementedError(f"Format of {sink} is unkown.")

@@ -1,0 +1,59 @@
+// buildscript {
+// 	repositories {
+// 		mavenCentral()
+// 	}
+// 	dependencies {
+// 		classpath 'org.xtext:xtext-gradle-plugin:2.0.8'
+// 	}
+// }
+
+plugins {
+	id 'java-library'
+	id 'java'
+	id 'eclipse'
+	id 'application'
+	id 'publishing'
+}
+
+group = 'io.github.forsyde.io.meta'
+version = '1.0.0-SNAPSHOT'
+
+// subprojects {
+// 	ext.xtextVersion = '2.25.0'
+// 	repositories {
+// 		mavenCentral()
+// 	}
+	
+// 	apply plugin: 'java'
+// 	dependencies {
+// 		compile platform("org.eclipse.xtext:xtext-dev-bom:${xtextVersion}")
+// 	}
+
+// 	apply plugin: 'org.xtext.xtend'
+// 	apply from: "${rootDir}/gradle/source-layout.gradle"
+// 	apply plugin: 'eclipse'
+	
+// 	group = 'io.github.forsyde.io.meta'
+// 	version = '1.0.0-SNAPSHOT'
+	
+// 	sourceCompatibility = '11'
+// 	targetCompatibility = '11'
+	
+// 	configurations.all {
+// 		exclude group: 'asm'
+// 	}
+// }
+
+repositories {
+	mavenCentral()
+	jcenter()
+}
+
+dependencies {
+	implementation 'info.picocli:picocli:4.6.1'
+    annotationProcessor 'info.picocli:picocli-codegen:4.6.1'
+	// implementation project("io.github.forsyde.io.meta")
+	implementation 'io.github.classgraph:classgraph:4.8.114'
+}
+
+mainClassName = "meta.ExtractorAndGenerator"

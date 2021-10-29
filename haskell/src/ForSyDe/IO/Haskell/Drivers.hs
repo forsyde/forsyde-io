@@ -6,57 +6,57 @@ import ForSyDe.IO.Haskell
 import Text.XML.HXT.Core
 import Text.XML.HXT.XPath
 
-modelFromForSyDeMLTree ::
-  XmlTree ->
-  ForSyDeModel
-modelFromForSyDeMLTree root = m
-  where
-    vElems = getXPath "/graphml/graph//node" root
-    mWithVertex = foldr addVertexFromForSyDeMLTree emptyForSyDeModel vElems
-    eElems = getXPath "/graphml/graph//edge" root
-    m = foldr addEdgeFromForSyDeMLTree mWithVertex eElems
+-- modelFromForSyDeMLTree ::
+--   XmlTree ->
+--   ForSyDeModel
+-- modelFromForSyDeMLTree root = m
+--   where
+--     vElems = getXPath "/graphml/graph//node" root
+--     mWithVertex = foldr addVertexFromForSyDeMLTree emptyForSyDeModel vElems
+--     eElems = getXPath "/graphml/graph//edge" root
+--     m = foldr addEdgeFromForSyDeMLTree mWithVertex eElems
 
-addEdgeFromForSyDeMLTree ::
-  XmlTree ->
-  ForSyDeModel ->
-  ForSyDeModel
-addEdgeFromForSyDeMLTree edgeElement m = modelAddEdge m e
-  where
-    sId = read . head $ (runLA $ getAttrValue "source") edgeElement
-    tId = read . head $ (runLA $ getAttrValue "target") edgeElement
-    pSourceId = read . head $ (runLA $ getAttrValue "sourceport") edgeElement
-    pTargetId = read . head $ (runLA $ getAttrValue "targetport") edgeElement
-    tString = head $ (runLA $ getAttrValue "traits") edgeElement
-    source = fromJust $ modelGetVertex m sId
-    target = fromJust $ modelGetVertex m tId
-    sourcePort = case pSourceId of
-      "" -> Nothing
-      a -> Just a
-    targetPort = case pTargetId of
-      "" -> Nothing
-      a -> Just a
-    ts = map read $ splitOn ";" tString
-    e = Edge source target sourcePort targetPort ts
+-- addEdgeFromForSyDeMLTree ::
+--   XmlTree ->
+--   ForSyDeModel ->
+--   ForSyDeModel
+-- addEdgeFromForSyDeMLTree edgeElement m = modelAddEdge m e
+--   where
+--     sId = read . head $ (runLA $ getAttrValue "source") edgeElement
+--     tId = read . head $ (runLA $ getAttrValue "target") edgeElement
+--     pSourceId = read . head $ (runLA $ getAttrValue "sourceport") edgeElement
+--     pTargetId = read . head $ (runLA $ getAttrValue "targetport") edgeElement
+--     tString = head $ (runLA $ getAttrValue "traits") edgeElement
+--     source = fromJust $ modelGetVertex m sId
+--     target = fromJust $ modelGetVertex m tId
+--     sourcePort = case pSourceId of
+--       "" -> Nothing
+--       a -> Just a
+--     targetPort = case pTargetId of
+--       "" -> Nothing
+--       a -> Just a
+--     ts = map read $ splitOn ";" tString
+--     e = Edge source target sourcePort targetPort ts
 
-addVertexFromForSyDeMLTree ::
-  XmlTree ->
-  ForSyDeModel ->
-  ForSyDeModel
-addVertexFromForSyDeMLTree vertexElement m = modelAddVertex m v
-  where
-    vidString = head $ (runLA $ getAttrValue "id") vertexElement
-    tString = head $ (runLA $ getAttrValue "traits") vertexElement
-    portsElems = (runLA $ getChildren >>> isElem >>> hasName "port") vertexElement
-    vid = read vidString
-    ts = map read $ splitOn ";" tString
-    ports = map parsePortFromXML portsElems
-    properties = []
-    v = Vertex vid ports properties ts
+-- addVertexFromForSyDeMLTree ::
+--   XmlTree ->
+--   ForSyDeModel ->
+--   ForSyDeModel
+-- addVertexFromForSyDeMLTree vertexElement m = modelAddVertex m v
+--   where
+--     vidString = head $ (runLA $ getAttrValue "id") vertexElement
+--     tString = head $ (runLA $ getAttrValue "traits") vertexElement
+--     portsElems = (runLA $ getChildren >>> isElem >>> hasName "port") vertexElement
+--     vid = read vidString
+--     ts = map read $ splitOn ";" tString
+--     ports = map parsePortFromXML portsElems
+--     properties = []
+--     v = Vertex vid ports properties ts
 
-parsePortFromXML ::
-  XmlTree ->
-  String
-parsePortFromXML portElement = head $ (runLA $ getAttrValue "name") portElement
+-- parsePortFromXML ::
+--   XmlTree ->
+--   String
+-- parsePortFromXML portElement = head $ (runLA $ getAttrValue "name") portElement
 
 -- propertiesFromForSyDeMLTree ::
 --   XmlTree ->

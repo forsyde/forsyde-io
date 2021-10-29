@@ -17,6 +17,7 @@ package forsyde.io.java.core;
  * @see Vertex
  * @see Edge
  */
+@Deprecated
 public class Port {
 
 	public String identifier;

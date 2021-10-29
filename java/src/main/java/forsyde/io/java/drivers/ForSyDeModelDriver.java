@@ -9,7 +9,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import forsyde.io.java.core.ForSyDeModel;
 
@@ -17,26 +19,34 @@ import forsyde.io.java.core.ForSyDeModel;
  * @author rjordao
  *
  */
-public abstract class ForSyDeModelDriver {
+public interface ForSyDeModelDriver {
 	
-	public ForSyDeModel loadModel(String filePath) throws Exception {
-		return loadModel(Files.newInputStream(Paths.get(filePath)));
+	default ForSyDeModel loadModel(String filePath) throws Exception {
+		return loadModel(Paths.get(filePath));
 	}
 
-	public ForSyDeModel loadModel(File file) throws Exception {
-		return loadModel(new FileInputStream(file));
-	}
-	
-	abstract public ForSyDeModel loadModel(InputStream in) throws Exception;
-	
-	public void writeModel(ForSyDeModel model, String filePath) throws Exception {
-		writeModel(model, Files.newOutputStream(Paths.get(filePath)));
+	default ForSyDeModel loadModel(File file) throws Exception {
+		return loadModel(file.toPath());
 	}
 
-	public void writeModel(ForSyDeModel model, File file) throws Exception {
-		writeModel(model, new FileOutputStream(file));
+	default ForSyDeModel loadModel(Path inPath) throws Exception {
+		return loadModel(Files.newInputStream(inPath));
 	}
 	
-	abstract public void writeModel(ForSyDeModel model, OutputStream out) throws Exception;
+	ForSyDeModel loadModel(InputStream in) throws Exception;
+	
+	default void writeModel(ForSyDeModel model, String filePath) throws Exception {
+		writeModel(model, Paths.get(filePath));
+	}
+
+	default void writeModel(ForSyDeModel model, File file) throws Exception {
+		writeModel(model, file.toPath());
+	}
+
+	default void writeModel(ForSyDeModel model, Path outPath) throws Exception {
+		writeModel(model, Files.newOutputStream(outPath, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE));
+	}
+	
+	void writeModel(ForSyDeModel model, OutputStream out) throws Exception;
 
 }

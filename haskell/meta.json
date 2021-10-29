@@ -1,5 +1,13 @@
 {
     "vertexTraits": {
+        "Composite": {
+            "required_ports": {
+                "containment": {
+                    "direction": 1,
+                    "multiple": "unordered"
+                }
+            }
+        },
         "AbstractGrouping": null,
         "AbstractOrdering": {
             "superTraits": [
@@ -23,7 +31,7 @@
             ],
             "required_ports": {
                 "application": {
-                    "class": "Process",
+                    "class": "ForSyDeFunction",
                     "direction": 1,
                     "multiple": "unordered"
                 },
@@ -46,7 +54,7 @@
             ],
             "required_ports": {
                 "signal": {
-                    "class": "Process",
+                    "class": "ForSyDeFunction",
                     "direction": 1,
                     "multiple": "unordered"
                 },
@@ -74,8 +82,8 @@
                 "Requirement"
             ],
             "required_ports": {
-                "process": {
-                    "class": "Process",
+                "ForSyDeFunction": {
+                    "class": "ForSyDeFunction",
                     "direction": 1,
                     "multiple": "unordered"
                 },
@@ -93,7 +101,7 @@
             ],
             "required_ports": {
                 "application": {
-                    "class": "Process",
+                    "class": "ForSyDeFunction",
                     "direction": 1,
                     "multiple": "unordered"
                 }
@@ -137,12 +145,12 @@
                         "class": "string"
                     },
                     "value": {
-                        "class": "integer"
+                        "class": "long"
                     },
                     "default": {}
                 },
                 "max_memory_size_in_bytes": {
-                    "class": "integer",
+                    "class": "long",
                     "default": 1
                 }
             }
@@ -206,10 +214,10 @@
             ],
             "required_properties": {
                 "max_elem_size_bytes": {
-                    "class": "integer"
+                    "class": "long"
                 },
                 "max_elem_count": {
-                    "class": "integer",
+                    "class": "long",
                     "default": 1
                 }
             }
@@ -308,7 +316,7 @@
                 }
             }
         },
-        "ReactorActor": {
+        "ReactorReaction": {
             "superTraits": [
                 "ReactorElement",
                 "ForSyDeFunction"
@@ -319,10 +327,24 @@
                     "multiple": "ordered",
                     "direction": -1
                 },
+                "effects": {
+                    "class": "ReactorElement",
+                    "multiple": "ordered",
+                    "direction": 1
+                },
                 "reaction_implementation": {
                     "class": "ForSyDeFunction",
                     "direction": 0
                 }
+            }
+        },
+        "ReactorActor": {
+            "superTraits": [
+                "ReactorElement",
+                "Composite"
+            ],
+            "required_ports": {
+
             }
         },
         "AbstractPhysicalComponent": null,
@@ -344,10 +366,10 @@
             ],
             "required_properties": {
                 "min_frequency_hz": {
-                    "class": "integer"
+                    "class": "long"
                 },
                 "max_frequency_hz": {
-                    "class": "integer"
+                    "class": "long"
                 },
                 "max_clock_cycles_per_op": {
                     "class": "object",
@@ -355,11 +377,11 @@
                         "class": "string"
                     },
                     "value": {
-                        "class": "int"
+                        "class": "long"
                     }
                 },
                 "max_memory_internal_bytes": {
-                    "class": "integer"
+                    "class": "long"
                 }
             }
         },

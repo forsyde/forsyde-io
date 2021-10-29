@@ -1,0 +1,1219 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+    <graph edgedefault="directed" id="model">
+        <node id="Main" traits="LinguaFrancaReactor">
+            <port name="timers"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap"/>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap">
+                <data attr.name="Main.Lane_detection_actor" attr.type="integer">12</data>
+                <data attr.name="Main.POST_Detection_actor" attr.type="integer">16</data>
+                <data attr.name="Main.Localization_actor" attr.type="integer">9</data>
+                <data attr.name="Main.POST_Lane_detection_actor" attr.type="integer">13</data>
+                <data attr.name="Main.POST_Localization_actor" attr.type="integer">10</data>
+                <data attr.name="Main.Planner_actor" attr.type="integer">3</data>
+                <data attr.name="Main.SFM_actor" attr.type="integer">6</data>
+                <data attr.name="Main.PRE_SFM_actor" attr.type="integer">5</data>
+                <data attr.name="Main.CANBus_polling_actor" attr.type="integer">2</data>
+                <data attr.name="Main.PRE_Localization_actor" attr.type="integer">8</data>
+                <data attr.name="Main.PRE_Detection_actor" attr.type="integer">14</data>
+                <data attr.name="Main.EKF_actor" attr.type="integer">4</data>
+                <data attr.name="Main.POST_SFM_actor" attr.type="integer">7</data>
+                <data attr.name="Main.PRE_Lane_detection_actor" attr.type="integer">11</data>
+                <data attr.name="Main.Detection_actor" attr.type="integer">15</data>
+                <data attr.name="Main.DASM_actor" attr.type="integer">1</data>
+                <data attr.name="Main.Lidar_Grabber_actor" attr.type="integer">0</data>
+            </data>
+        </node>
+        <node id="Main.Lidar_Grabber_actor" traits="LinguaFrancaReactor">
+            <port name="timers"/>
+            <port name="children_reactors"/>
+            <port name="Cloud_map_out"/>
+            <port name="reactions"/>
+            <port name="Occupancy_grid"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.Lidar_Grabber_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.Lidar_Grabber_actor.t" traits="LinguaFrancaTimer">
+            <data attr.name="period_denominator_per_sec" attr.type="integer">1000</data>
+            <data attr.name="period_numerator_per_sec" attr.type="integer">100</data>
+        </node>
+        <node id="Main.Lidar_Grabber_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="t"/>
+            <port name="Cloud_map_out"/>
+            <port name="Occupancy_grid"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.DASM_actor" traits="LinguaFrancaReactor">
+            <port name="steer_objective_out"/>
+            <port name="timers"/>
+            <port name="speed_objective_out"/>
+            <port name="speed_objective_in"/>
+            <port name="steer_objective_in"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.DASM_actor.reaction1" attr.type="integer">1</data>
+                <data attr.name="Main.DASM_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.DASM_actor.t" traits="LinguaFrancaTimer">
+            <data attr.name="period_denominator_per_sec" attr.type="integer">1000</data>
+            <data attr.name="period_numerator_per_sec" attr.type="integer">5</data>
+        </node>
+        <node id="Main.DASM_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="steer_objective_out"/>
+            <port name="speed_objective_out"/>
+            <port name="t"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.DASM_actor.reaction1" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="speed_objective_in"/>
+            <port name="steer_objective_in"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.CANBus_polling_actor" traits="LinguaFrancaReactor">
+            <port name="Vehicle_status"/>
+            <port name="timers"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.CANBus_polling_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.CANBus_polling_actor.t" traits="LinguaFrancaTimer">
+            <data attr.name="period_denominator_per_sec" attr.type="integer">1000</data>
+            <data attr.name="period_numerator_per_sec" attr.type="integer">10</data>
+        </node>
+        <node id="Main.CANBus_polling_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Vehicle_status"/>
+            <port name="t"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.Planner_actor" traits="LinguaFrancaReactor">
+            <port name="Vehicle_status"/>
+            <port name="timers"/>
+            <port name="Lane_boundaries"/>
+            <port name="vel_car"/>
+            <port name="x_car"/>
+            <port name="Occupancy_grid"/>
+            <port name="steer_objective"/>
+            <port name="Bounding_box"/>
+            <port name="speed_objective"/>
+            <port name="Matrix_SFM"/>
+            <port name="yaw_car"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <port name="y_car"/>
+            <port name="yaw_rate"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.Planner_actor.reaction0" attr.type="integer">0</data>
+                <data attr.name="Main.Planner_actor.reaction1" attr.type="integer">1</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.Planner_actor.t" traits="LinguaFrancaTimer">
+            <data attr.name="period_denominator_per_sec" attr.type="integer">1000</data>
+            <data attr.name="period_numerator_per_sec" attr.type="integer">15</data>
+        </node>
+        <node id="Main.Planner_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="t"/>
+            <port name="steer_objective"/>
+            <port name="speed_objective"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.Planner_actor.reaction1" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Vehicle_status"/>
+            <port name="Lane_boundaries"/>
+            <port name="Matrix_SFM"/>
+            <port name="yaw_car"/>
+            <port name="vel_car"/>
+            <port name="x_car"/>
+            <port name="y_car"/>
+            <port name="yaw_rate"/>
+            <port name="Occupancy_grid"/>
+            <port name="Bounding_box"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.EKF_actor" traits="LinguaFrancaReactor">
+            <port name="Vehicle_status"/>
+            <port name="timers"/>
+            <port name="vel_car"/>
+            <port name="children_reactors"/>
+            <port name="y_car_out"/>
+            <port name="reactions"/>
+            <port name="x_car_out"/>
+            <port name="yaw_rate"/>
+            <port name="y_car_in"/>
+            <port name="yaw_car_in"/>
+            <port name="yaw_car_out"/>
+            <port name="x_car_in"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.EKF_actor.reaction0" attr.type="integer">0</data>
+                <data attr.name="Main.EKF_actor.reaction1" attr.type="integer">1</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.EKF_actor.t" traits="LinguaFrancaTimer">
+            <data attr.name="period_denominator_per_sec" attr.type="integer">1000</data>
+            <data attr.name="period_numerator_per_sec" attr.type="integer">15</data>
+        </node>
+        <node id="Main.EKF_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="t"/>
+            <port name="vel_car"/>
+            <port name="y_car_out"/>
+            <port name="x_car_out"/>
+            <port name="yaw_rate"/>
+            <port name="yaw_car_out"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.EKF_actor.reaction1" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Vehicle_status"/>
+            <port name="y_car_in"/>
+            <port name="yaw_car_in"/>
+            <port name="x_car_in"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.PRE_SFM_actor" traits="LinguaFrancaReactor">
+            <port name="timers"/>
+            <port name="Image_SFM_out"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.PRE_SFM_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.PRE_SFM_actor.t" traits="LinguaFrancaTimer">
+            <data attr.name="period_denominator_per_sec" attr.type="integer">1000</data>
+            <data attr.name="period_numerator_per_sec" attr.type="integer">30</data>
+        </node>
+        <node id="Main.PRE_SFM_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Image_SFM_out"/>
+            <port name="t"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.SFM_actor" traits="LinguaFrancaReactor">
+            <port name="timers"/>
+            <port name="Image_SFM_in"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <port name="Matrix_SFM_out"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.SFM_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.SFM_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Image_SFM_in"/>
+            <port name="Matrix_SFM_out"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.POST_SFM_actor" traits="LinguaFrancaReactor">
+            <port name="timers"/>
+            <port name="Matrix_SFM_in"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <port name="Matrix_SFM_out"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.POST_SFM_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.POST_SFM_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Matrix_SFM_in"/>
+            <port name="Matrix_SFM_out"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.PRE_Localization_actor" traits="LinguaFrancaReactor">
+            <port name="Vehicle_status_out"/>
+            <port name="timers"/>
+            <port name="Vehicle_status_in"/>
+            <port name="children_reactors"/>
+            <port name="Cloud_map_out"/>
+            <port name="reactions"/>
+            <port name="Cloud_map_in"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.PRE_Localization_actor.reaction1" attr.type="integer">1</data>
+                <data attr.name="Main.PRE_Localization_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.PRE_Localization_actor.t" traits="LinguaFrancaTimer">
+            <data attr.name="period_denominator_per_sec" attr.type="integer">1000</data>
+            <data attr.name="period_numerator_per_sec" attr.type="integer">400</data>
+        </node>
+        <node id="Main.PRE_Localization_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Vehicle_status_out"/>
+            <port name="t"/>
+            <port name="Cloud_map_out"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.PRE_Localization_actor.reaction1" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Vehicle_status_in"/>
+            <port name="Cloud_map_in"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.Localization_actor" traits="LinguaFrancaReactor">
+            <port name="Vehicle_status"/>
+            <port name="timers"/>
+            <port name="Cloud_map"/>
+            <port name="yaw_car"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <port name="x_car"/>
+            <port name="y_car"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.Localization_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.Localization_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Vehicle_status"/>
+            <port name="Cloud_map"/>
+            <port name="yaw_car"/>
+            <port name="x_car"/>
+            <port name="y_car"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.POST_Localization_actor" traits="LinguaFrancaReactor">
+            <port name="timers"/>
+            <port name="children_reactors"/>
+            <port name="y_car_out"/>
+            <port name="reactions"/>
+            <port name="x_car_out"/>
+            <port name="y_car_in"/>
+            <port name="yaw_car_in"/>
+            <port name="yaw_car_out"/>
+            <port name="x_car_in"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.POST_Localization_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.POST_Localization_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="y_car_out"/>
+            <port name="x_car_out"/>
+            <port name="y_car_in"/>
+            <port name="yaw_car_in"/>
+            <port name="yaw_car_out"/>
+            <port name="x_car_in"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.PRE_Lane_detection_actor" traits="LinguaFrancaReactor">
+            <port name="timers"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <port name="Image_lane_lines_out"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.PRE_Lane_detection_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.PRE_Lane_detection_actor.t" traits="LinguaFrancaTimer">
+            <data attr.name="period_denominator_per_sec" attr.type="integer">1000</data>
+            <data attr.name="period_numerator_per_sec" attr.type="integer">60</data>
+        </node>
+        <node id="Main.PRE_Lane_detection_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="t"/>
+            <port name="Image_lane_lines_out"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.Lane_detection_actor" traits="LinguaFrancaReactor">
+            <port name="timers"/>
+            <port name="Lane_boundaries"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <port name="Image_lane_lines"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.Lane_detection_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.Lane_detection_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Lane_boundaries"/>
+            <port name="Image_lane_lines"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.POST_Lane_detection_actor" traits="LinguaFrancaReactor">
+            <port name="Lane_boundaries_out"/>
+            <port name="timers"/>
+            <port name="children_reactors"/>
+            <port name="Lane_boundaries_in"/>
+            <port name="reactions"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.POST_Lane_detection_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.POST_Lane_detection_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Lane_boundaries_out"/>
+            <port name="Lane_boundaries_in"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.PRE_Detection_actor" traits="LinguaFrancaReactor">
+            <port name="timers"/>
+            <port name="Image_out"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.PRE_Detection_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.PRE_Detection_actor.t" traits="LinguaFrancaTimer">
+            <data attr.name="period_denominator_per_sec" attr.type="integer">1000</data>
+            <data attr.name="period_numerator_per_sec" attr.type="integer">200</data>
+        </node>
+        <node id="Main.PRE_Detection_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="t"/>
+            <port name="Image_out"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.Detection_actor" traits="LinguaFrancaReactor">
+            <port name="timers"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <port name="Image"/>
+            <port name="Bounding_box"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.Detection_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.Detection_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Image"/>
+            <port name="Bounding_box"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.POST_Detection_actor" traits="LinguaFrancaReactor">
+            <port name="timers"/>
+            <port name="Bounding_box_in"/>
+            <port name="children_reactors"/>
+            <port name="reactions"/>
+            <port name="Bounding_box_out"/>
+            <data attr.name="__reactions_ordering__" attr.type="stringMap">
+                <data attr.name="Main.POST_Detection_actor.reaction0" attr.type="integer">0</data>
+            </data>
+            <data attr.name="state_sizes_in_bits" attr.type="array"/>
+            <data attr.name="state_names" attr.type="array"/>
+            <data attr.name="__children_reactors_ordering__" attr.type="stringMap"/>
+        </node>
+        <node id="Main.POST_Detection_actor.reaction0" traits="LinguaFrancaReaction">
+            <port name="implementation"/>
+            <port name="Bounding_box_in"/>
+            <port name="Bounding_box_out"/>
+            <data attr.name="size_in_bits" attr.type="long">0</data>
+        </node>
+        <node id="Main.PRE_SFM_actor.Image_SFM_out-Main.SFM_actor.Image_SFM_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">16000000</data>
+        </node>
+        <node id="Main.SFM_actor.Matrix_SFM_out-Main.POST_SFM_actor.Matrix_SFM_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">192000</data>
+        </node>
+        <node id="Main.POST_SFM_actor.Matrix_SFM_out-Main.Planner_actor.Matrix_SFM" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">192000</data>
+        </node>
+        <node id="Main.PRE_Localization_actor.Cloud_map_out-Main.Localization_actor.Cloud_map" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">12000000</data>
+        </node>
+        <node id="Main.PRE_Localization_actor.Vehicle_status_out-Main.Localization_actor.Vehicle_status" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.Localization_actor.x_car-Main.POST_Localization_actor.x_car_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.Localization_actor.y_car-Main.POST_Localization_actor.y_car_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.Localization_actor.yaw_car-Main.POST_Localization_actor.yaw_car_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.POST_Localization_actor.x_car_out-Main.EKF_actor.x_car_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.POST_Localization_actor.y_car_out-Main.EKF_actor.y_car_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.POST_Localization_actor.yaw_car_out-Main.EKF_actor.yaw_car_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.PRE_Lane_detection_actor.Image_lane_lines_out-Main.Lane_detection_actor.Image_lane_lines" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">16000000</data>
+        </node>
+        <node id="Main.Lane_detection_actor.Lane_boundaries-Main.POST_Lane_detection_actor.Lane_boundaries_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">2048</data>
+        </node>
+        <node id="Main.POST_Lane_detection_actor.Lane_boundaries_out-Main.Planner_actor.Lane_boundaries" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">2048</data>
+        </node>
+        <node id="Main.PRE_Detection_actor.Image_out-Main.Detection_actor.Image" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">16000000</data>
+        </node>
+        <node id="Main.Detection_actor.Bounding_box-Main.POST_Detection_actor.Bounding_box_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">6000000</data>
+        </node>
+        <node id="Main.POST_Detection_actor.Bounding_box_out-Main.Planner_actor.Bounding_box" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">6000000</data>
+        </node>
+        <node id="Main.CANBus_polling_actor.Vehicle_status-Main.Planner_actor.Vehicle_status" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.CANBus_polling_actor.Vehicle_status-Main.EKF_actor.Vehicle_status" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.CANBus_polling_actor.Vehicle_status-Main.PRE_Localization_actor.Vehicle_status_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.EKF_actor.x_car_out-Main.Planner_actor.x_car" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.EKF_actor.y_car_out-Main.Planner_actor.y_car" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.EKF_actor.yaw_car_out-Main.Planner_actor.yaw_car" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.EKF_actor.vel_car-Main.Planner_actor.vel_car" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.EKF_actor.yaw_rate-Main.Planner_actor.yaw_rate" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.Lidar_Grabber_actor.Cloud_map_out-Main.PRE_Localization_actor.Cloud_map_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">12000000</data>
+        </node>
+        <node id="Main.Lidar_Grabber_actor.Occupancy_grid-Main.Planner_actor.Occupancy_grid" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">4000000</data>
+        </node>
+        <node id="Main.Planner_actor.speed_objective-Main.DASM_actor.speed_objective_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="Main.Planner_actor.steer_objective-Main.DASM_actor.steer_objective_in" traits="LinguaFrancaSignal">
+            <port name="source_reaction"/>
+            <port name="target_reaction"/>
+            <data attr.name="size_in_bits" attr.type="long">8000</data>
+        </node>
+        <node id="JetsonTX2" traits="AbstractStructure">
+            <port name="submodules"/>
+        </node>
+        <node id="JetsonTX2.GPU island" traits="AbstractStructure">
+            <port name="submodules"/>
+        </node>
+        <node id="JetsonTX2.GPU island.GP10B" traits="GenericProcessingModule;ProfiledProcessingModule">
+            <port name="P1"/>
+            <data attr.name="nominal_frequency_in_hertz" attr.type="long">1500000000</data>
+            <data attr.name="provisions" attr.type="stringMap">
+                <data attr.name="default" attr.type="stringMap">
+                    <data attr.name="GPU" attr.type="long">1</data>
+                </data>
+            </data>
+        </node>
+        <node id="JetsonTX2.GPU island.L2_GP10B" traits="GenericCacheModule">
+            <data attr.name="nominal_frequency_in_hertz" attr.type="long">1500000000</data>
+        </node>
+        <node id="JetsonTX2.ARM island" traits="AbstractStructure">
+            <port name="submodules"/>
+        </node>
+        <node id="JetsonTX2.ARM island.Core2" traits="GenericProcessingModule;ProfiledProcessingModule">
+            <port name="P1"/>
+            <data attr.name="nominal_frequency_in_hertz" attr.type="long">2000000000</data>
+            <data attr.name="provisions" attr.type="stringMap">
+                <data attr.name="default" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">1</data>
+                </data>
+            </data>
+        </node>
+        <node id="JetsonTX2.ARM island.Core3" traits="GenericProcessingModule;ProfiledProcessingModule">
+            <port name="P1"/>
+            <data attr.name="nominal_frequency_in_hertz" attr.type="long">2000000000</data>
+            <data attr.name="provisions" attr.type="stringMap">
+                <data attr.name="default" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">1</data>
+                </data>
+            </data>
+        </node>
+        <node id="JetsonTX2.ARM island.Core4" traits="GenericProcessingModule;ProfiledProcessingModule">
+            <port name="P1"/>
+            <data attr.name="nominal_frequency_in_hertz" attr.type="long">2000000000</data>
+            <data attr.name="provisions" attr.type="stringMap">
+                <data attr.name="default" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">1</data>
+                </data>
+            </data>
+        </node>
+        <node id="JetsonTX2.ARM island.Core5" traits="GenericProcessingModule;ProfiledProcessingModule">
+            <port name="P1"/>
+            <data attr.name="nominal_frequency_in_hertz" attr.type="long">2000000000</data>
+            <data attr.name="provisions" attr.type="stringMap">
+                <data attr.name="default" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">1</data>
+                </data>
+            </data>
+        </node>
+        <node id="JetsonTX2.ARM island.L2_A57" traits="GenericCacheModule">
+            <data attr.name="nominal_frequency_in_hertz" attr.type="long">2000000000</data>
+        </node>
+        <node id="JetsonTX2.Denver island" traits="AbstractStructure">
+            <port name="submodules"/>
+        </node>
+        <node id="JetsonTX2.Denver island.Core0" traits="GenericProcessingModule;ProfiledProcessingModule">
+            <port name="P1"/>
+            <data attr.name="nominal_frequency_in_hertz" attr.type="long">2000000000</data>
+            <data attr.name="provisions" attr.type="stringMap">
+                <data attr.name="default" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">1</data>
+                </data>
+            </data>
+        </node>
+        <node id="JetsonTX2.Denver island.Core1" traits="GenericProcessingModule;ProfiledProcessingModule">
+            <port name="P1"/>
+            <data attr.name="nominal_frequency_in_hertz" attr.type="long">2000000000</data>
+            <data attr.name="provisions" attr.type="stringMap">
+                <data attr.name="default" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">1</data>
+                </data>
+            </data>
+        </node>
+        <node id="JetsonTX2.Denver island.L2_Denver" traits="GenericCacheModule">
+            <data attr.name="nominal_frequency_in_hertz" attr.type="long">2000000000</data>
+        </node>
+        <node id="JetsonTX2.SYSTEM_DRAM" traits="GenericMemoryModule">
+            <port name="Mem_P1"/>
+            <data attr.name="max_memory_in_bits" attr.type="long">64000000000</data>
+            <data attr.name="nominal_frequency_in_hertz" attr.type="long">1500000000</data>
+        </node>
+        <node id="JetsonTX2.Intercon" traits="RoundRobinInterconnect;GenericDigitalInterconnect">
+            <port name="Inter_P2"/>
+            <port name="Inter_P1"/>
+            <port name="Inter_P4"/>
+            <port name="Inter_P3"/>
+            <data attr.name="total_weights" attr.type="integer">510</data>
+            <data attr.name="max_concurrent_flits" attr.type="integer">1</data>
+            <data attr.name="max_flit_size_in_bits" attr.type="long">32</data>
+            <!-- fixed manually -->
+            <data attr.name="allocated_weights" attr.type="stringMap">
+                <data attr.name="JetsonTX2.GPU island.L2_GP10B" attr.type="int">200</data>
+                <data attr.name="JetsonTX2.Denver island.Core0" attr.type="int">70</data>
+                <data attr.name="JetsonTX2.Denver island.Core1" attr.type="int">70</data>
+                <data attr.name="JetsonTX2.ARM island.Core2" attr.type="int">11</data>
+                <data attr.name="JetsonTX2.ARM island.Core3" attr.type="int">11</data>
+                <data attr.name="JetsonTX2.ARM island.Core4" attr.type="int">11</data>
+                <data attr.name="JetsonTX2.ARM island.Core5" attr.type="int">11</data>
+            </data>
+            <data attr.name="nominal_frequency_in_hertz" attr.type="long">1500000000</data>
+        </node>
+        <edge source="Main.Lidar_Grabber_actor" sourceport="timers" target="Main.Lidar_Grabber_actor.t" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Lidar_Grabber_actor" sourceport="reactions" target="Main.Lidar_Grabber_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Lidar_Grabber_actor.t" target="Main.Lidar_Grabber_actor.reaction0" targetport="t" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Lidar_Grabber_actor.reaction0" sourceport="Cloud_map_out" target="Main.Lidar_Grabber_actor" targetport="Cloud_map_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Lidar_Grabber_actor.reaction0" sourceport="Occupancy_grid" target="Main.Lidar_Grabber_actor" targetport="Occupancy_grid" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.Lidar_Grabber_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.DASM_actor" sourceport="timers" target="Main.DASM_actor.t" traits="LinguaFrancaConnection"/>
+        <edge source="Main.DASM_actor" sourceport="reactions" target="Main.DASM_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.DASM_actor.t" target="Main.DASM_actor.reaction0" targetport="t" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.DASM_actor.reaction0" sourceport="speed_objective_out" target="Main.DASM_actor" targetport="speed_objective_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.DASM_actor.reaction0" sourceport="steer_objective_out" target="Main.DASM_actor" targetport="steer_objective_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.DASM_actor" sourceport="reactions" target="Main.DASM_actor.reaction1" traits="LinguaFrancaConnection"/>
+        <edge source="Main.DASM_actor" sourceport="speed_objective_in" target="Main.DASM_actor.reaction1" targetport="speed_objective_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.DASM_actor" sourceport="steer_objective_in" target="Main.DASM_actor.reaction1" targetport="steer_objective_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.DASM_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.CANBus_polling_actor" sourceport="timers" target="Main.CANBus_polling_actor.t" traits="LinguaFrancaConnection"/>
+        <edge source="Main.CANBus_polling_actor" sourceport="reactions" target="Main.CANBus_polling_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.CANBus_polling_actor.t" target="Main.CANBus_polling_actor.reaction0" targetport="t" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.CANBus_polling_actor.reaction0" sourceport="Vehicle_status" target="Main.CANBus_polling_actor" targetport="Vehicle_status" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.CANBus_polling_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.Planner_actor" sourceport="timers" target="Main.Planner_actor.t" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Planner_actor" sourceport="reactions" target="Main.Planner_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Planner_actor.t" target="Main.Planner_actor.reaction0" targetport="t" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Planner_actor.reaction0" sourceport="speed_objective" target="Main.Planner_actor" targetport="speed_objective" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Planner_actor.reaction0" sourceport="steer_objective" target="Main.Planner_actor" targetport="steer_objective" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Planner_actor" sourceport="reactions" target="Main.Planner_actor.reaction1" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Planner_actor" sourceport="Lane_boundaries" target="Main.Planner_actor.reaction1" targetport="Lane_boundaries" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Planner_actor" sourceport="Occupancy_grid" target="Main.Planner_actor.reaction1" targetport="Occupancy_grid" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Planner_actor" sourceport="Vehicle_status" target="Main.Planner_actor.reaction1" targetport="Vehicle_status" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Planner_actor" sourceport="Matrix_SFM" target="Main.Planner_actor.reaction1" targetport="Matrix_SFM" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Planner_actor" sourceport="Bounding_box" target="Main.Planner_actor.reaction1" targetport="Bounding_box" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Planner_actor" sourceport="x_car" target="Main.Planner_actor.reaction1" targetport="x_car" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Planner_actor" sourceport="y_car" target="Main.Planner_actor.reaction1" targetport="y_car" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Planner_actor" sourceport="yaw_car" target="Main.Planner_actor.reaction1" targetport="yaw_car" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Planner_actor" sourceport="vel_car" target="Main.Planner_actor.reaction1" targetport="vel_car" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Planner_actor" sourceport="yaw_rate" target="Main.Planner_actor.reaction1" targetport="yaw_rate" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.Planner_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.EKF_actor" sourceport="timers" target="Main.EKF_actor.t" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor" sourceport="reactions" target="Main.EKF_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor.t" target="Main.EKF_actor.reaction0" targetport="t" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.EKF_actor.reaction0" sourceport="x_car_out" target="Main.EKF_actor" targetport="x_car_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.EKF_actor.reaction0" sourceport="y_car_out" target="Main.EKF_actor" targetport="y_car_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.EKF_actor.reaction0" sourceport="yaw_car_out" target="Main.EKF_actor" targetport="yaw_car_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.EKF_actor.reaction0" sourceport="vel_car" target="Main.EKF_actor" targetport="vel_car" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.EKF_actor.reaction0" sourceport="yaw_rate" target="Main.EKF_actor" targetport="yaw_rate" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.EKF_actor" sourceport="reactions" target="Main.EKF_actor.reaction1" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor" sourceport="Vehicle_status" target="Main.EKF_actor.reaction1" targetport="Vehicle_status" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.EKF_actor" sourceport="x_car_in" target="Main.EKF_actor.reaction1" targetport="x_car_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.EKF_actor" sourceport="y_car_in" target="Main.EKF_actor.reaction1" targetport="y_car_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.EKF_actor" sourceport="yaw_car_in" target="Main.EKF_actor.reaction1" targetport="yaw_car_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.EKF_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.PRE_SFM_actor" sourceport="timers" target="Main.PRE_SFM_actor.t" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_SFM_actor" sourceport="reactions" target="Main.PRE_SFM_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_SFM_actor.t" target="Main.PRE_SFM_actor.reaction0" targetport="t" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.PRE_SFM_actor.reaction0" sourceport="Image_SFM_out" target="Main.PRE_SFM_actor" targetport="Image_SFM_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.PRE_SFM_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.SFM_actor" sourceport="reactions" target="Main.SFM_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.SFM_actor" sourceport="Image_SFM_in" target="Main.SFM_actor.reaction0" targetport="Image_SFM_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.SFM_actor.reaction0" sourceport="Matrix_SFM_out" target="Main.SFM_actor" targetport="Matrix_SFM_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.SFM_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.POST_SFM_actor" sourceport="reactions" target="Main.POST_SFM_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_SFM_actor" sourceport="Matrix_SFM_in" target="Main.POST_SFM_actor.reaction0" targetport="Matrix_SFM_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.POST_SFM_actor.reaction0" sourceport="Matrix_SFM_out" target="Main.POST_SFM_actor" targetport="Matrix_SFM_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.POST_SFM_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.PRE_Localization_actor" sourceport="timers" target="Main.PRE_Localization_actor.t" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Localization_actor" sourceport="reactions" target="Main.PRE_Localization_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Localization_actor.t" target="Main.PRE_Localization_actor.reaction0" targetport="t" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.PRE_Localization_actor.reaction0" sourceport="Cloud_map_out" target="Main.PRE_Localization_actor" targetport="Cloud_map_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.PRE_Localization_actor.reaction0" sourceport="Vehicle_status_out" target="Main.PRE_Localization_actor" targetport="Vehicle_status_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.PRE_Localization_actor" sourceport="reactions" target="Main.PRE_Localization_actor.reaction1" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Localization_actor" sourceport="Cloud_map_in" target="Main.PRE_Localization_actor.reaction1" targetport="Cloud_map_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.PRE_Localization_actor" sourceport="Vehicle_status_in" target="Main.PRE_Localization_actor.reaction1" targetport="Vehicle_status_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.PRE_Localization_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.Localization_actor" sourceport="reactions" target="Main.Localization_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Localization_actor" sourceport="Cloud_map" target="Main.Localization_actor.reaction0" targetport="Cloud_map" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Localization_actor" sourceport="Vehicle_status" target="Main.Localization_actor.reaction0" targetport="Vehicle_status" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Localization_actor.reaction0" sourceport="x_car" target="Main.Localization_actor" targetport="x_car" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Localization_actor.reaction0" sourceport="y_car" target="Main.Localization_actor" targetport="y_car" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Localization_actor.reaction0" sourceport="yaw_car" target="Main.Localization_actor" targetport="yaw_car" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.Localization_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.POST_Localization_actor" sourceport="reactions" target="Main.POST_Localization_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Localization_actor" sourceport="x_car_in" target="Main.POST_Localization_actor.reaction0" targetport="x_car_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.POST_Localization_actor" sourceport="y_car_in" target="Main.POST_Localization_actor.reaction0" targetport="y_car_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.POST_Localization_actor" sourceport="yaw_car_in" target="Main.POST_Localization_actor.reaction0" targetport="yaw_car_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.POST_Localization_actor.reaction0" sourceport="x_car_out" target="Main.POST_Localization_actor" targetport="x_car_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.POST_Localization_actor.reaction0" sourceport="y_car_out" target="Main.POST_Localization_actor" targetport="y_car_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.POST_Localization_actor.reaction0" sourceport="yaw_car_out" target="Main.POST_Localization_actor" targetport="yaw_car_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.POST_Localization_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.PRE_Lane_detection_actor" sourceport="timers" target="Main.PRE_Lane_detection_actor.t" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Lane_detection_actor" sourceport="reactions" target="Main.PRE_Lane_detection_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Lane_detection_actor.t" target="Main.PRE_Lane_detection_actor.reaction0" targetport="t" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.PRE_Lane_detection_actor.reaction0" sourceport="Image_lane_lines_out" target="Main.PRE_Lane_detection_actor" targetport="Image_lane_lines_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.PRE_Lane_detection_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.Lane_detection_actor" sourceport="reactions" target="Main.Lane_detection_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Lane_detection_actor" sourceport="Image_lane_lines" target="Main.Lane_detection_actor.reaction0" targetport="Image_lane_lines" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Lane_detection_actor.reaction0" sourceport="Lane_boundaries" target="Main.Lane_detection_actor" targetport="Lane_boundaries" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.Lane_detection_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.POST_Lane_detection_actor" sourceport="reactions" target="Main.POST_Lane_detection_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Lane_detection_actor" sourceport="Lane_boundaries_in" target="Main.POST_Lane_detection_actor.reaction0" targetport="Lane_boundaries_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.POST_Lane_detection_actor.reaction0" sourceport="Lane_boundaries_out" target="Main.POST_Lane_detection_actor" targetport="Lane_boundaries_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.POST_Lane_detection_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.PRE_Detection_actor" sourceport="timers" target="Main.PRE_Detection_actor.t" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Detection_actor" sourceport="reactions" target="Main.PRE_Detection_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Detection_actor.t" target="Main.PRE_Detection_actor.reaction0" targetport="t" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.PRE_Detection_actor.reaction0" sourceport="Image_out" target="Main.PRE_Detection_actor" targetport="Image_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.PRE_Detection_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.Detection_actor" sourceport="reactions" target="Main.Detection_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Detection_actor" sourceport="Image" target="Main.Detection_actor.reaction0" targetport="Image" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.Detection_actor.reaction0" sourceport="Bounding_box" target="Main.Detection_actor" targetport="Bounding_box" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.Detection_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.POST_Detection_actor" sourceport="reactions" target="Main.POST_Detection_actor.reaction0" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Detection_actor" sourceport="Bounding_box_in" target="Main.POST_Detection_actor.reaction0" targetport="Bounding_box_in" traits="LinguaFrancaTrigger"/>
+        <edge source="Main.POST_Detection_actor.reaction0" sourceport="Bounding_box_out" target="Main.POST_Detection_actor" targetport="Bounding_box_out" traits="LinguaFrancaTrigger"/>
+        <edge source="Main" sourceport="children_reactors" target="Main.POST_Detection_actor" traits="LinguaFrancaContainment"/>
+        <edge source="Main.PRE_SFM_actor" sourceport="Image_SFM_out" target="Main.PRE_SFM_actor.Image_SFM_out-Main.SFM_actor.Image_SFM_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_SFM_actor.Image_SFM_out-Main.SFM_actor.Image_SFM_in" sourceport="target_reaction" target="Main.SFM_actor" targetport="Image_SFM_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.SFM_actor" sourceport="Matrix_SFM_out" target="Main.SFM_actor.Matrix_SFM_out-Main.POST_SFM_actor.Matrix_SFM_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.SFM_actor.Matrix_SFM_out-Main.POST_SFM_actor.Matrix_SFM_in" sourceport="target_reaction" target="Main.POST_SFM_actor" targetport="Matrix_SFM_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_SFM_actor" sourceport="Matrix_SFM_out" target="Main.POST_SFM_actor.Matrix_SFM_out-Main.Planner_actor.Matrix_SFM" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_SFM_actor.Matrix_SFM_out-Main.Planner_actor.Matrix_SFM" sourceport="target_reaction" target="Main.Planner_actor" targetport="Matrix_SFM" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Localization_actor" sourceport="Cloud_map_out" target="Main.PRE_Localization_actor.Cloud_map_out-Main.Localization_actor.Cloud_map" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Localization_actor.Cloud_map_out-Main.Localization_actor.Cloud_map" sourceport="target_reaction" target="Main.Localization_actor" targetport="Cloud_map" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Localization_actor" sourceport="Vehicle_status_out" target="Main.PRE_Localization_actor.Vehicle_status_out-Main.Localization_actor.Vehicle_status" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Localization_actor.Vehicle_status_out-Main.Localization_actor.Vehicle_status" sourceport="target_reaction" target="Main.Localization_actor" targetport="Vehicle_status" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Localization_actor" sourceport="x_car" target="Main.Localization_actor.x_car-Main.POST_Localization_actor.x_car_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Localization_actor.x_car-Main.POST_Localization_actor.x_car_in" sourceport="target_reaction" target="Main.POST_Localization_actor" targetport="x_car_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Localization_actor" sourceport="y_car" target="Main.Localization_actor.y_car-Main.POST_Localization_actor.y_car_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Localization_actor.y_car-Main.POST_Localization_actor.y_car_in" sourceport="target_reaction" target="Main.POST_Localization_actor" targetport="y_car_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Localization_actor" sourceport="yaw_car" target="Main.Localization_actor.yaw_car-Main.POST_Localization_actor.yaw_car_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Localization_actor.yaw_car-Main.POST_Localization_actor.yaw_car_in" sourceport="target_reaction" target="Main.POST_Localization_actor" targetport="yaw_car_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Localization_actor" sourceport="x_car_out" target="Main.POST_Localization_actor.x_car_out-Main.EKF_actor.x_car_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Localization_actor.x_car_out-Main.EKF_actor.x_car_in" sourceport="target_reaction" target="Main.EKF_actor" targetport="x_car_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Localization_actor" sourceport="y_car_out" target="Main.POST_Localization_actor.y_car_out-Main.EKF_actor.y_car_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Localization_actor.y_car_out-Main.EKF_actor.y_car_in" sourceport="target_reaction" target="Main.EKF_actor" targetport="y_car_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Localization_actor" sourceport="yaw_car_out" target="Main.POST_Localization_actor.yaw_car_out-Main.EKF_actor.yaw_car_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Localization_actor.yaw_car_out-Main.EKF_actor.yaw_car_in" sourceport="target_reaction" target="Main.EKF_actor" targetport="yaw_car_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Lane_detection_actor" sourceport="Image_lane_lines_out" target="Main.PRE_Lane_detection_actor.Image_lane_lines_out-Main.Lane_detection_actor.Image_lane_lines" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Lane_detection_actor.Image_lane_lines_out-Main.Lane_detection_actor.Image_lane_lines" sourceport="target_reaction" target="Main.Lane_detection_actor" targetport="Image_lane_lines" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Lane_detection_actor" sourceport="Lane_boundaries" target="Main.Lane_detection_actor.Lane_boundaries-Main.POST_Lane_detection_actor.Lane_boundaries_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Lane_detection_actor.Lane_boundaries-Main.POST_Lane_detection_actor.Lane_boundaries_in" sourceport="target_reaction" target="Main.POST_Lane_detection_actor" targetport="Lane_boundaries_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Lane_detection_actor" sourceport="Lane_boundaries_out" target="Main.POST_Lane_detection_actor.Lane_boundaries_out-Main.Planner_actor.Lane_boundaries" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Lane_detection_actor.Lane_boundaries_out-Main.Planner_actor.Lane_boundaries" sourceport="target_reaction" target="Main.Planner_actor" targetport="Lane_boundaries" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Detection_actor" sourceport="Image_out" target="Main.PRE_Detection_actor.Image_out-Main.Detection_actor.Image" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.PRE_Detection_actor.Image_out-Main.Detection_actor.Image" sourceport="target_reaction" target="Main.Detection_actor" targetport="Image" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Detection_actor" sourceport="Bounding_box" target="Main.Detection_actor.Bounding_box-Main.POST_Detection_actor.Bounding_box_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Detection_actor.Bounding_box-Main.POST_Detection_actor.Bounding_box_in" sourceport="target_reaction" target="Main.POST_Detection_actor" targetport="Bounding_box_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Detection_actor" sourceport="Bounding_box_out" target="Main.POST_Detection_actor.Bounding_box_out-Main.Planner_actor.Bounding_box" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.POST_Detection_actor.Bounding_box_out-Main.Planner_actor.Bounding_box" sourceport="target_reaction" target="Main.Planner_actor" targetport="Bounding_box" traits="LinguaFrancaConnection"/>
+        <edge source="Main.CANBus_polling_actor" sourceport="Vehicle_status" target="Main.CANBus_polling_actor.Vehicle_status-Main.Planner_actor.Vehicle_status" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.CANBus_polling_actor.Vehicle_status-Main.Planner_actor.Vehicle_status" sourceport="target_reaction" target="Main.Planner_actor" targetport="Vehicle_status" traits="LinguaFrancaConnection"/>
+        <edge source="Main.CANBus_polling_actor" sourceport="Vehicle_status" target="Main.CANBus_polling_actor.Vehicle_status-Main.EKF_actor.Vehicle_status" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.CANBus_polling_actor.Vehicle_status-Main.EKF_actor.Vehicle_status" sourceport="target_reaction" target="Main.EKF_actor" targetport="Vehicle_status" traits="LinguaFrancaConnection"/>
+        <edge source="Main.CANBus_polling_actor" sourceport="Vehicle_status" target="Main.CANBus_polling_actor.Vehicle_status-Main.PRE_Localization_actor.Vehicle_status_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.CANBus_polling_actor.Vehicle_status-Main.PRE_Localization_actor.Vehicle_status_in" sourceport="target_reaction" target="Main.PRE_Localization_actor" targetport="Vehicle_status_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor" sourceport="x_car_out" target="Main.EKF_actor.x_car_out-Main.Planner_actor.x_car" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor.x_car_out-Main.Planner_actor.x_car" sourceport="target_reaction" target="Main.Planner_actor" targetport="x_car" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor" sourceport="y_car_out" target="Main.EKF_actor.y_car_out-Main.Planner_actor.y_car" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor.y_car_out-Main.Planner_actor.y_car" sourceport="target_reaction" target="Main.Planner_actor" targetport="y_car" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor" sourceport="yaw_car_out" target="Main.EKF_actor.yaw_car_out-Main.Planner_actor.yaw_car" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor.yaw_car_out-Main.Planner_actor.yaw_car" sourceport="target_reaction" target="Main.Planner_actor" targetport="yaw_car" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor" sourceport="vel_car" target="Main.EKF_actor.vel_car-Main.Planner_actor.vel_car" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor.vel_car-Main.Planner_actor.vel_car" sourceport="target_reaction" target="Main.Planner_actor" targetport="vel_car" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor" sourceport="yaw_rate" target="Main.EKF_actor.yaw_rate-Main.Planner_actor.yaw_rate" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.EKF_actor.yaw_rate-Main.Planner_actor.yaw_rate" sourceport="target_reaction" target="Main.Planner_actor" targetport="yaw_rate" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Lidar_Grabber_actor" sourceport="Cloud_map_out" target="Main.Lidar_Grabber_actor.Cloud_map_out-Main.PRE_Localization_actor.Cloud_map_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Lidar_Grabber_actor.Cloud_map_out-Main.PRE_Localization_actor.Cloud_map_in" sourceport="target_reaction" target="Main.PRE_Localization_actor" targetport="Cloud_map_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Lidar_Grabber_actor" sourceport="Occupancy_grid" target="Main.Lidar_Grabber_actor.Occupancy_grid-Main.Planner_actor.Occupancy_grid" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Lidar_Grabber_actor.Occupancy_grid-Main.Planner_actor.Occupancy_grid" sourceport="target_reaction" target="Main.Planner_actor" targetport="Occupancy_grid" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Planner_actor" sourceport="speed_objective" target="Main.Planner_actor.speed_objective-Main.DASM_actor.speed_objective_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Planner_actor.speed_objective-Main.DASM_actor.speed_objective_in" sourceport="target_reaction" target="Main.DASM_actor" targetport="speed_objective_in" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Planner_actor" sourceport="steer_objective" target="Main.Planner_actor.steer_objective-Main.DASM_actor.steer_objective_in" targetport="source_reaction" traits="LinguaFrancaConnection"/>
+        <edge source="Main.Planner_actor.steer_objective-Main.DASM_actor.steer_objective_in" sourceport="target_reaction" target="Main.DASM_actor" targetport="steer_objective_in" traits="LinguaFrancaConnection"/>
+        <edge source="JetsonTX2.GPU island" sourceport="submodules" target="JetsonTX2.GPU island.GP10B" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2.GPU island" sourceport="submodules" target="JetsonTX2.GPU island.L2_GP10B" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2" sourceport="submodules" target="JetsonTX2.GPU island" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2.ARM island" sourceport="submodules" target="JetsonTX2.ARM island.Core2" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2.ARM island" sourceport="submodules" target="JetsonTX2.ARM island.Core3" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2.ARM island" sourceport="submodules" target="JetsonTX2.ARM island.Core4" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2.ARM island" sourceport="submodules" target="JetsonTX2.ARM island.Core5" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2.ARM island" sourceport="submodules" target="JetsonTX2.ARM island.L2_A57" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2" sourceport="submodules" target="JetsonTX2.ARM island" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2.Denver island" sourceport="submodules" target="JetsonTX2.Denver island.Core0" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2.Denver island" sourceport="submodules" target="JetsonTX2.Denver island.Core1" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2.Denver island" sourceport="submodules" target="JetsonTX2.Denver island.L2_Denver" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2" sourceport="submodules" target="JetsonTX2.Denver island" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2" sourceport="submodules" target="JetsonTX2.SYSTEM_DRAM" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2" sourceport="submodules" target="JetsonTX2.Intercon" traits="AbstractStructuralConnection"/>
+        <edge source="JetsonTX2.Intercon" target="JetsonTX2.SYSTEM_DRAM" traits="AbstractPhysicalConnection"/>
+        <edge source="JetsonTX2.GPU island.GP10B" target="JetsonTX2.Intercon" traits="AbstractPhysicalConnection"/>
+        <edge source="JetsonTX2.ARM island.Core2" target="JetsonTX2.Intercon" traits="AbstractPhysicalConnection"/>
+        <edge source="JetsonTX2.ARM island.Core3" target="JetsonTX2.Intercon" traits="AbstractPhysicalConnection"/>
+        <edge source="JetsonTX2.ARM island.Core4" target="JetsonTX2.Intercon" traits="AbstractPhysicalConnection"/>
+        <edge source="JetsonTX2.ARM island.Core5" target="JetsonTX2.Intercon" traits="AbstractPhysicalConnection"/>
+        <edge source="JetsonTX2.Denver island.Core0" target="JetsonTX2.Intercon" traits="AbstractPhysicalConnection"/>
+        <edge source="JetsonTX2.Denver island.Core1" target="JetsonTX2.Intercon" traits="AbstractPhysicalConnection"/>
+        <edge source="JetsonTX2.SYSTEM_DRAM" traits="AbstractPhysicalConnection" target="JetsonTX2.Intercon"/>
+        <edge source="JetsonTX2.Intercon" traits="AbstractPhysicalConnection" target="JetsonTX2.GPU island.GP10B"/>
+        <edge source="JetsonTX2.Intercon" traits="AbstractPhysicalConnection" target="JetsonTX2.ARM island.Core2"/>
+        <edge source="JetsonTX2.Intercon" traits="AbstractPhysicalConnection" target="JetsonTX2.ARM island.Core3"/>
+        <edge source="JetsonTX2.Intercon" traits="AbstractPhysicalConnection" target="JetsonTX2.ARM island.Core4"/>
+        <edge source="JetsonTX2.Intercon" traits="AbstractPhysicalConnection" target="JetsonTX2.ARM island.Core5"/>
+        <edge source="JetsonTX2.Intercon" traits="AbstractPhysicalConnection" target="JetsonTX2.Denver island.Core0"/>
+
+        <node id="Main.POST_Detection_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">18160</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">20400</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.Lidar_Grabber_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">21736</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">27320</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.DASM_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">25999</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">37199</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.DASM_actor.reaction1.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">0</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">0</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.CANBus_polling_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">11997</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">11993</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.Planner_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">248735</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">264838</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.Planner_actor.reaction1.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">0</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">0</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.EKF_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">88589</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">95193</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.EKF_actor.reaction1.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">0</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">0</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.PRE_SFM_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">63551</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">74593</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.SFM_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">55623</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">59003</data>
+                </data>
+                <data attr.name="option3" attr.type="stringMap">
+                    <data attr.name="GPU" attr.type="long">11850</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.POST_SFM_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">70645</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">83473</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.PRE_Localization_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">16431</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">17878</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.PRE_Localization_actor.reaction1.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">0</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">0</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.Localization_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">58961</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">77483</data>
+                </data>
+                <data attr.name="option3" attr.type="stringMap">
+                    <data attr.name="GPU" attr.type="long">18600</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.POST_Localization_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">1259</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">1739</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.PRE_Lane_detection_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">70513</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">79519</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.Lane_detection_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">8447</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">10208</data>
+                </data>
+                <data attr.name="option3" attr.type="stringMap">
+                    <data attr.name="GPU" attr.type="long">41000</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.POST_Lane_detection_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">81994</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">85136</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.PRE_Detection_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">63545</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">73791</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.Detection_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="GPU" attr.type="long">174000</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <node id="Main.POST_Detection_actor.reaction0.body" traits="InlineFunction;ProfiledFunction">
+            <data attr.name="requirements" attr.type="stringMap">
+                <data attr.name="option1" attr.type="stringMap">
+                    <data attr.name="Denver" attr.type="long">18160</data>
+                </data>
+                <data attr.name="option2" attr.type="stringMap">
+                    <data attr.name="A57" attr.type="long">20400</data>
+                </data>
+            </data>
+            <data attr.name="source_code" attr.type="string"/>
+        </node>
+        <!-- added manually -->
+        <node id="JetsonTX2.FixedPriorityOS 0" traits="FixedPriorityScheduler">
+        </node>
+        <node id="JetsonTX2.FixedPriorityOS 1" traits="FixedPriorityScheduler">
+        </node>
+        <node id="JetsonTX2.FixedPriorityOS 2" traits="FixedPriorityScheduler">
+        </node>
+        <node id="JetsonTX2.FixedPriorityOS 3" traits="FixedPriorityScheduler">
+        </node>
+        <node id="JetsonTX2.FixedPriorityOS 4" traits="FixedPriorityScheduler">
+        </node>
+        <node id="JetsonTX2.FixedPriorityOS 5" traits="FixedPriorityScheduler">
+        </node>
+        <node id="JetsonTX2.RoundRobinService 0" traits="RoundRobinScheduler">
+            <data attr.name="minimum_time_slice_in_cycles" attr.type="long">1500000</data>
+            <data attr.name="maximum_time_slice_in_cycles" attr.type="long">75000000</data>
+        </node>
+        <edge source="JetsonTX2.FixedPriorityOS 0" target="JetsonTX2.ARM island.Core2" traits="AbstractScheduling"/>
+        <edge source="JetsonTX2.FixedPriorityOS 1" target="JetsonTX2.ARM island.Core3" traits="AbstractScheduling"/>
+        <edge source="JetsonTX2.FixedPriorityOS 2" target="JetsonTX2.ARM island.Core4" traits="AbstractScheduling"/>
+        <edge source="JetsonTX2.FixedPriorityOS 3" target="JetsonTX2.ARM island.Core5" traits="AbstractScheduling"/>
+        <edge source="JetsonTX2.FixedPriorityOS 4" target="JetsonTX2.Denver island.Core0" traits="AbstractScheduling"/>
+        <edge source="JetsonTX2.FixedPriorityOS 5" target="JetsonTX2.Denver island.Core1" traits="AbstractScheduling"/>
+        <edge source="JetsonTX2.RoundRobinService 0" target="JetsonTX2.GPU island.GP10B" traits="AbstractScheduling"/>
+        <edge sourceport="implementation" source="Main.POST_Detection_actor.reaction0" target="Main.POST_Detection_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.Lidar_Grabber_actor.reaction0" target="Main.Lidar_Grabber_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.DASM_actor.reaction0" target="Main.DASM_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.DASM_actor.reaction1" target="Main.DASM_actor.reaction1.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.CANBus_polling_actor.reaction0" target="Main.CANBus_polling_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.Planner_actor.reaction0" target="Main.Planner_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.Planner_actor.reaction1" target="Main.Planner_actor.reaction1.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.EKF_actor.reaction0" target="Main.EKF_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.EKF_actor.reaction1" target="Main.EKF_actor.reaction1.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.PRE_SFM_actor.reaction0" target="Main.PRE_SFM_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.SFM_actor.reaction0" target="Main.SFM_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.POST_SFM_actor.reaction0" target="Main.POST_SFM_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.PRE_Localization_actor.reaction0" target="Main.PRE_Localization_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.PRE_Localization_actor.reaction1" target="Main.PRE_Localization_actor.reaction1.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.Localization_actor.reaction0" target="Main.Localization_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.POST_Localization_actor.reaction0" target="Main.POST_Localization_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.PRE_Lane_detection_actor.reaction0" target="Main.PRE_Lane_detection_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.Lane_detection_actor.reaction0" target="Main.Lane_detection_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.POST_Lane_detection_actor.reaction0" target="Main.POST_Lane_detection_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.PRE_Detection_actor.reaction0" target="Main.PRE_Detection_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.Detection_actor.reaction0" target="Main.Detection_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+        <edge sourceport="implementation" source="Main.POST_Detection_actor.reaction0" target="Main.POST_Detection_actor.reaction0.body" traits="LinguaFrancaContainment"/>
+    </graph>
+</graphml>

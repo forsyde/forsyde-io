@@ -1,0 +1,43 @@
+# This workflow will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+name:  Released Supporting Libraries
+
+on:
+  release:
+    types: [created]
+
+env:
+    MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+    MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+    GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+    GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
+    USERNAME: ${{ github.actor }}
+    TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  deploy-python:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - id: get_version
+      uses: battila7/get-version-action@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - uses: abatilo/actions-poetry@v2.1.0
+      with:
+        poetry-version: '1.1.5'
+    - name: Generate lib
+      run: |
+        cd ${{ github.workspace }}
+        make prepare-version-${{ steps.get_version.outputs.version }}
+        cd python
+        python -m pip install jinja2 networkx
+        python generate.py
+    - name: Build and publish core and generated code
+      run: |
+        cd ${{ github.workspace }}/python
+        poetry update
+        poetry build
+        poetry publish -u __token__ -p ${{ secrets.FORSYDE_IO_PYTHON_TOKEN }}

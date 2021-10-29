@@ -42,17 +42,24 @@ class EdgeTrait(core.Trait, Enum):
     def refines(self, o):
         return EdgeTrait.refines_static(self, o)
 
-class VertexAcessor(object):
+{% for type_name, type_data in vertexTraits.items() %}
+{%- if type_data['superTraits']|length > 0 %}
+class {{type_name}}({{ type_data['superTraits'] | join(', ') }}):
+{%- else %}
+class {{type_name}}(core.Vertex):
+{%- endif %}
+
     """This class is a method holder for all the possible type-safe acesses
     for the vertexes properties."""
 
-{%- for prop_name, prop_data in property_map.items() %}
-    @classmethod
-    def get_{{prop_name}}(cls, v: core.Vertex) -> Optional[{{prop_data[1]}}]:
-        if "{{prop_name}}" in v.properties:
+{%- for prop_name, prop_data in vertexTraitProps[type_name].items() %}
+    @property
+    def {{prop_name}}(self) -> {{prop_data}}:
+        return self.properties["{{prop_name}}"]
+        {# if "{{prop_name}}" in v.properties:
             return v.properties["{{prop_name}}"]
-        else:
-        {%- for trait_name in prop_data[0] %}
+        else: #}
+        {# {%- for trait_name in prop_data[0] %}
         {%- if prop_name in default_property_map %}
             if v.has_trait(VertexTrait.{{trait_name}}):
                 return {{default_property_map[prop_name]}}
@@ -62,5 +69,6 @@ class VertexAcessor(object):
         {%- endif %}
         {%- endfor %}
             else:
-                return None
+                return None #}
+{% endfor %}
 {% endfor %}

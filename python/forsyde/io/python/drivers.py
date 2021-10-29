@@ -8,8 +8,8 @@ from typing import Any
 from typing import Optional
 
 # from lxml import etree  # type: ignore
-import networkx as nx
-import pydot
+# import networkx as nx
+import pydot # type: ignore
 
 # from networkx.drawing.nx_pydot import write_dot  # type: ignore
 
@@ -42,7 +42,9 @@ class ForSyDeModelDriver(abc.ABC):
         elif t is str:
             return "string"
         elif t is list:
-            return "list"
+            return "array"
+        elif t is dict:
+            return "stringMap"
         else:
             return "object"
 
@@ -61,10 +63,39 @@ class ForSyDeModelDriver(abc.ABC):
             return float
         elif s == "string":
             return str
-        elif s == "list":
+        elif s == "array":
             return list
+        elif s == "intMap" or s == "intmap":
+            return dict
+        elif s == "stringMap" or s == "stringmap" or s == "strMap" or s == "strmap":
+            return dict
         else:
             return dict
+
+    def typename_from_val(self, v) -> str:
+        if isinstance(v, bool):
+            return "boolean"
+        elif isinstance(v, int):
+            # TODO: Find a robust way to distinguish between int and long
+            if v.bit_length() > 32:
+                return "long"
+            else:
+                return "int"
+        elif isinstance(v, float):
+            return "double"
+        elif isinstance(v, str):
+            return "string"
+        elif isinstance(v, list):
+            return "array"
+        elif isinstance(v, dict):
+            # TODO: find a non hac to fix the dict difference
+            if len(v) > 0 and all(isinstance(k, int) for k in v):
+                return "intMap"
+            else:
+                return "stringMap"
+        else:
+            return "object"
+
 
 
 class ForSyDeMLDriver(ForSyDeModelDriver):
@@ -93,7 +124,7 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
                 for (prop, val) in cur_iter:
                     prop_elem = etree.SubElement(parent, xmlns + "data")
                     prop_elem.set("attr.name", str(prop))
-                    prop_elem.set("attr.type", self.type_to_str(type(val)))
+                    prop_elem.set("attr.type", self.typename_from_val(val))
                     # prop_elem.text = json.dumps(val)
                     # it is a terminal property
                     if (
@@ -150,7 +181,7 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
                                 data[dataname] = datatype(datanode.text)
                         else:
                             child = datatype()
-                            if datatype is list:
+                            if isinstance(data, list):
                                 data.append(child)
                             else:
                                 data[dataname] = child
@@ -476,7 +507,7 @@ class ForSyDeGraphMLDriver(ForSyDeModelDriver):
                         or isinstance(val, bool)
                     ):
                         prop_elem = etree.SubElement(node_elem, xmlns + "data")
-                        type_str = self.type_to_str(type(val))
+                        type_str = self.typename_from_val(val)
                         idx = -1 
                         if (name, type_str) not in saved_props:
                             saved_props.append((name, type_str))

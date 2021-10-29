@@ -3,10 +3,8 @@
  */
 package forsyde.io.java.core;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author rjordao
@@ -18,23 +16,22 @@ import java.util.Set;
  *         ends, in case they exist. The edges also have types associated with
  *         them so that extra deductions can be made along the EDA flow.
  */
-public class Edge {
+final public class Edge {
 
 	public Vertex source;
 	public Vertex target;
 	public Optional<String> sourcePort;
 	public Optional<String> targetPort;
-	public Set<EdgeTrait> edgeTraits = new HashSet<EdgeTrait>();
+	public Set<Trait> edgeTraits = new HashSet<Trait>();
 
 	/**
 	 * Utility constructor wrapping the source and target ports into empty optionals
-	 * for constructor {@link #Edge(Vertex, Vertex, Optional, Optional)}.
+	 * for constructor.
 	 * 
 	 * @param target Target Vertex for this edge.
 	 * @param source Source vertex for this edge.
-	 * @see #Edge(Vertex, Vertex, Optional, Optional)
 	 */
-	public Edge(Vertex target, Vertex source) {
+	public Edge(Vertex source, Vertex target) {
 		this.target = target;
 		this.source = source;
 		this.sourcePort = Optional.empty();
@@ -43,19 +40,18 @@ public class Edge {
 
 	/**
 	 * Utility constructor wrapping the source and target ports into optionals for
-	 * constructor {@link #Edge(Vertex, Vertex, Optional, Optional)}.
+	 * constructor.
 	 * 
 	 * @param target     Target Vertex for this edge.
 	 * @param source     Source vertex for this edge.
 	 * @param targetPort target vertex port for this edge.
 	 * @param sourcePort source vertex port for this edge.
-	 * @see #Edge(Vertex, Vertex, Optional, Optional)
 	 */
 	public Edge(Vertex source, Vertex target, String sourcePort, String targetPort) {
 		this.target = target;
 		this.source = source;
-		this.targetPort = Optional.of(targetPort);
-		this.sourcePort = Optional.of(sourcePort);
+		this.targetPort = targetPort == null ? Optional.empty() : Optional.of(targetPort);
+		this.sourcePort = sourcePort == null ? Optional.empty() : Optional.of(sourcePort);
 	}
 
 	/**
@@ -68,14 +64,15 @@ public class Edge {
 	 * @param targetPort {@link Optional} target vertex port for this edge.
 	 * @param sourcePort {@link Optional} source vertex port for this edge.
 	 */
-	public Edge(Vertex source, Vertex target, Optional<String> sourcePort, Optional<String> targetPort) {
+	public Edge(Vertex source, Vertex target, Optional<String> sourcePort,
+			Optional<String> targetPort) {
 		this.target = target;
 		this.source = source;
 		this.targetPort = targetPort;
 		this.sourcePort = sourcePort;
 	}
 
-	public Set<EdgeTrait> getTraits() {
+	public Set<Trait> getTraits() {
 		return edgeTraits;
 	}
 
@@ -104,9 +101,41 @@ public class Edge {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Edge [type=").append(", source=").append(source).append(", target=").append(target)
+		builder.append("Edge [traits=").append(edgeTraits).append(", source=").append(source).append(", target=").append(target)
 				.append(", sourcePort=").append(sourcePort).append(", targetPort=").append(targetPort).append("]");
 		return builder.toString();
+	}
+
+	public String toIDString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(source.getIdentifier());
+		sourcePort.ifPresent(s -> builder.append(".").append(s));
+		builder.append("[").append(
+				edgeTraits.stream().map(Trait::getName).collect(Collectors.joining(";"))
+		).append("]");
+		targetPort.ifPresent(s -> builder.append(".").append(s));
+		builder.append(target.getIdentifier());
+		return builder.toString();
+	}
+
+	public Vertex getSource() {
+		return source;
+	}
+
+	public Vertex getTarget() {
+		return target;
+	}
+
+	public Optional<String> getSourcePort() {
+		return sourcePort;
+	}
+
+	public Optional<String> getTargetPort() {
+		return targetPort;
+	}
+
+	public void addTraits(Trait... traits) {
+		edgeTraits.addAll(Arrays.asList(traits.clone()));
 	}
 
 }

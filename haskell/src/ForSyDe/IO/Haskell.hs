@@ -4,7 +4,11 @@ module ForSyDe.IO.Haskell
   ( Vertex (..),
     -- Edge (..),
     MapItem (..),
-    ForSyDeModel (..),
+    ForSyDeModel,
+    MultiEdgeLabel (..),
+    EdgeLabel (..),
+    linkVertexes,
+    linkVertexes',
     -- emptyForSyDeModel,
     -- modelAddEdge,
     -- modelAddVertex,
@@ -15,12 +19,14 @@ module ForSyDe.IO.Haskell
 where
 
 -- Base libraries
-import Data.Dynamic
+
 -- External libraries
+
+import Algebra.Graph.Labelled
+import Data.Dynamic
 import Data.List
 import qualified Data.Map
 import Data.Maybe
-import Algebra.Graph.Labelled
 -- Internal libraries
 import ForSyDe.IO.Haskell.Types
   ( EdgeTrait (..),
@@ -32,8 +38,9 @@ data MapItem
   | IntegerMapItem Integer
   | FloatMapItem Float
   | ListMapItem [MapItem]
-  | DictMapItem (Data.Map.Map String MapItem)
-  deriving (Eq)
+  | StringDictMapItem (Data.Map.Map String MapItem)
+  | IntDictMapItem (Data.Map.Map Integer MapItem)
+  deriving (Eq, Show)
 
 data Vertex = Vertex
   { vertexId :: String,
@@ -41,11 +48,16 @@ data Vertex = Vertex
     vertexProperties :: Data.Map.Map String MapItem,
     vertexTraits :: [VertexTrait]
   }
+  deriving (Show)
+
+newtype VertexRef = VertexRef String deriving (Eq, Show)
+
+newtype Edge = Edge (VertexRef, VertexRef, Maybe String, Maybe String, [EdgeTrait])
 
 instance Eq Vertex where
   (==) v other = vertexId v == vertexId other
 
--- data EdgeLabel = EdgeLabel
+-- data MultiEdgeLabel = MultiEdgeLabel
 --   {
 --     -- edgeSource :: Vertex,
 --     -- edgeTarget :: Vertex,
@@ -55,27 +67,45 @@ instance Eq Vertex where
 --   }
 --   deriving (Eq)
 
-newtype EdgeLabelEntry = EdgeLabelEntry (String, String, [EdgeTrait]) deriving (Eq)
+newtype EdgeLabel = EdgeLabel (Maybe String, Maybe String, [EdgeTrait]) deriving (Eq, Show)
 
-get2 (EdgeLabelEntry (a, b, c)) = (a, b)
+get2 (EdgeLabel (a, b, c)) = (a, b)
 
-newtype EdgeLabel = EdgeLabel [EdgeLabelEntry] deriving (Eq)
+newtype MultiEdgeLabel = MultiEdgeLabel [EdgeLabel] deriving (Eq, Show)
 
-instance Semigroup EdgeLabel where
-    (<>) (EdgeLabel l1) (EdgeLabel l2) = unified
-        where
-            l1ports = map get2 l1
-            l2minusl1 = nub $ filter ((flip notElem l1ports) . get2) l2
-            intersect = nub $ filter ((flip elem l1ports) . get2) l2
-            -- join all the label entries, maintaing the most refined ones
-            unified = EdgeLabel $ (nub l1) ++ l2minusl1
+instance Semigroup MultiEdgeLabel where
+  (<>) (MultiEdgeLabel l1) (MultiEdgeLabel l2) = unified
+    where
+      -- join all the label entries, maintaing the most refined ones
+      justL1 = nub [EdgeLabel (sp, tp, traits1) | EdgeLabel (sp, tp, traits1) <- l1, EdgeLabel (s2, t2, traits2) <- l2, sp /= s2 && tp /= t2]
+      justL2 = nub [EdgeLabel (s2, t2, traits2) | EdgeLabel (sp, tp, traits1) <- l1, EdgeLabel (s2, t2, traits2) <- l2, sp /= s2 && tp /= t2]
+      uniList = nub [EdgeLabel (sp, tp, traits1 ++ traits2) | EdgeLabel (sp, tp, traits1) <- l1, EdgeLabel (s2, t2, traits2) <- l2, sp == s2 && tp == t2]
+      unified = MultiEdgeLabel $ nub $ justL1 ++ uniList ++ justL2
 
-instance Monoid EdgeLabel where
-    mempty = EdgeLabel []
-    mappend (EdgeLabel l1) (EdgeLabel l2) = EdgeLabel $ mappend l1 l2
-    mconcat ls = foldl (<>) mempty ls
+instance Monoid MultiEdgeLabel where
+  mempty = MultiEdgeLabel []
+  mappend (MultiEdgeLabel l1) (MultiEdgeLabel l2) = MultiEdgeLabel $ mappend l1 l2
+  mconcat ls = foldl (<>) mempty ls
 
-type ForSyDeModel = Graph EdgeLabel Vertex
+type ForSyDeModel = Graph MultiEdgeLabel Vertex
+
+linkVertexes' :: ForSyDeModel -> Vertex -> Vertex -> Maybe String -> Maybe String -> [EdgeTrait] -> ForSyDeModel
+linkVertexes' m v1 v2 p1 p2 ts = overlayed
+  where
+    eGraph = edge (MultiEdgeLabel [EdgeLabel (p1, p2, ts)]) v1 v2
+    overlayed = m `overlay` eGraph
+
+linkVertexes :: ForSyDeModel -> Vertex -> Vertex -> String -> String -> [EdgeTrait] -> ForSyDeModel
+linkVertexes m v1 v2 p1 p2 ts = overlayed
+  where
+    eGraph = edge (MultiEdgeLabel [EdgeLabel (Just p1, Just p2, ts)]) v1 v2
+    overlayed = m `overlay` eGraph
+
+linkVertexesNoPorts :: ForSyDeModel -> Vertex -> Vertex -> [EdgeTrait] -> ForSyDeModel
+linkVertexesNoPorts m v1 v2 = linkVertexes' m v1 v2 Nothing Nothing
+
+linkVertexesDirect :: ForSyDeModel -> Vertex -> Vertex -> ForSyDeModel
+linkVertexesDirect m v1 v2 = linkVertexes' m v1 v2 Nothing Nothing []
 
 -- data ForSyDeModel = ForSyDeModel
 --   { vertexes :: [Vertex],

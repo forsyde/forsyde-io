@@ -1,0 +1,579 @@
+vertex ModelOfComputation () {}
+
+vertex ModelOfArchitecture () {}
+
+vertex ModelOfExtraFunctional () {}
+
+edge ModelOfImplementation {}
+
+vertex TimeTriggeredScheduler () {}
+
+vertex RoundRobinScheduler () {}
+
+vertex FixedPriorityScheduler() {}
+
+edge AbstractScheduling refines ModelOfImplementation {}
+
+edge AbstractMapping refines ModelOfImplementation {}
+
+vertex ReactorElement refines ModelOfComputation () {}
+
+vertex ReactorSignal refines ReactorElement (
+	in port sourceReaction: ReactorElement
+	out port targetReaction: ReactorElement
+) {}
+
+vertex ReactorTimer refines ReactorElement () {
+	property period_numerator_per_sec: int
+	property period_denominator_per_sec: int = 1				
+}
+
+vertex ReactorActor refines ReactorElement (
+	multiple ordered port children: ReactorElement
+	multiple ordered port reactions: ReactorReaction
+	multiple port timers: ReactorTimer
+) {
+	property state_names: array<string>
+	property state_sizes_in_bytes: array<int>
+	property state_types: array<string>
+}
+
+vertex ReactorReaction refines ReactorElement (
+   multiple in port triggers: ReactorElement
+   multiple out port effects: ReactorElement
+   port implementation: ModelOfComputation 
+) {
+	property deadline: int = -1
+	
+}
+
+edge ReactorConnection {
+	constraint source ReactorElement
+	constraint target ReactorElement				
+}
+
+vertex LocationRequirement refines ModelOfExtraFunctional (
+	multiple port functions: ModelOfComputation
+	multiple port processors: ModelOfArchitecture
+) {
+
+}
+
+vertex WCET refines ModelOfExtraFunctional () {
+
+}
+
+vertex AbstractCommunicationComponent refines ModelOfArchitecture () {}
+
+vertex AbstractProcessingComponent refines ModelOfArchitecture () {}
+
+vertex AbstractStorageComponent refines ModelOfArchitecture () {}
+
+vertex TimeDivisionMultiplexer refines AbstractCommunicationComponent () {}
+
+vertex CachedProcessor refines AbstractProcessingComponent () {
+    property instruction_cache_max_bytes: int
+    property data_cache_max_bytes: int 
+}
+
+/*
+{
+    "vertexTraits": {
+        "Composite": {
+            "required_ports": {
+                
+            }
+        },
+        "AbstractGrouping": null,
+        "AbstractOrdering": {
+            "superTraits": [
+                "AbstractGrouping"
+            ]
+        },
+        "TriggeredTask": {
+            "superTraits": [
+                "AbstractOrdering"
+            ]
+        },
+        "SporadicTask": {
+            "superTraits": [
+                "AbstractOrdering"
+            ]
+        },
+        "ExtraFunctional": null,
+        "WCET": {
+            "superTraits": [
+                "ExtraFunctional"
+            ],
+            "required_ports": {
+                "application": {
+                    "class": "ForSyDeFunction",
+                    "direction": 1,
+                    "multiple": "unordered"
+                },
+                "platform": {
+                    "class": "AbstractProcessingComponent",
+                    "direction": 1,
+                    "multiple": "unordered"
+                }
+            },
+            "required_properties": {
+                "time": {
+                    "class": "integer",
+                    "default": 0
+                }
+            }
+        },
+        "WCCT": {
+            "superTraits": [
+                "ExtraFunctional"
+            ],
+            "required_ports": {
+                "signal": {
+                    "class": "ForSyDeFunction",
+                    "direction": 1,
+                    "multiple": "unordered"
+                },
+                "platform_element": {
+                    "class": "AbstractCommunicationComponent",
+                    "direction": 1,
+                    "multiple": "unordered"
+                }
+            },
+            "required_properties": {
+                "time": {
+                    "class": "integer",
+                    "default": 0
+                }
+            }
+        },
+        "Requirement": null,
+        "HardRequirement": {
+            "superTraits": [
+                "Requirement"
+            ]
+        },
+        "LocationRequirement": {
+            "superTraits": [
+                "Requirement"
+            ],
+            "required_ports": {
+                "ForSyDeFunction": {
+                    "class": "ForSyDeFunction",
+                    "direction": 1,
+                    "multiple": "unordered"
+                },
+                "processing_unit": {
+                    "class": "AbstractProcessingComponent",
+                    "direction": 1,
+                    "multiple": "unordered"
+                }
+            }
+        },
+        "Goal": null,
+        "MinimumThroughput": {
+            "superTraits": [
+                "Goal"
+            ],
+            "required_ports": {
+                "application": {
+                    "class": "ForSyDeFunction",
+                    "direction": 1,
+                    "multiple": "unordered"
+                }
+            },
+            "required_properties": {
+                "apriori_importance": {
+                    "class": "integer",
+                    "default": 1
+                }
+            }
+        },
+        "TimeTriggeredScheduler": {
+            "superTraits": [
+                "AbstractGrouping"
+            ],
+            "required_properties": {
+                "trigger_time": {
+                    "class": "object",
+                    "key": {
+                        "class": "integer"
+                    },
+                    "value": {
+                        "class": "string"
+                    },
+                    "default": {}
+                }
+            }
+        },
+        "FixedPriorityScheduler": null,
+        "CustomScheduler": null,
+        "RoundRobinScheduler": null,
+        "ForSyDeFunction": null,
+        "InstrumentedFunction": {
+            "superTraits": [
+                "ForSyDeFunction"
+            ],
+            "required_properties": {
+                "max_operations": {
+                    "class": "object",
+                    "key": {
+                        "class": "string"
+                    },
+                    "value": {
+                        "class": "long"
+                    },
+                    "default": {}
+                },
+                "max_memory_size_in_bytes": {
+                    "class": "long",
+                    "default": 1
+                }
+            }
+        },
+        "Signal": null,
+        "BufferSignal": {
+            "superTraits": [
+                "Signal"
+            ]
+        },
+        "LabelSignal": {
+            "superTraits": [
+                "Signal"
+            ]
+        },
+        "Instrumented": {
+            "superTraits": [],
+            "required_properties": {
+                "requires": {
+                    "class": "object",
+                    "key": {
+                        "class": "string"
+                    },
+                    "value": {
+                        "class": "object",
+                        "key": {
+                            "class": "string"
+                        },
+                        "value": {
+                            "class": "int"
+                        }
+                    }
+                },
+                "provides": {
+                    "class": "object",
+                    "key": {
+                        "class": "string"
+                    },
+                    "value": {
+                        "class": "object",
+                        "key": {
+                            "class": "string"
+                        },
+                        "value": {
+                            "class": "int"
+                        }
+                    }
+                },
+                "configurations": {
+                    "class": "array",
+                    "value": {
+                        "class": "string"
+                    }
+                }
+            }
+        },
+        "InstrumentedSignal": {
+            "superTraits": [
+                "Signal",
+                "Instrumented"
+            ],
+            "required_properties": {
+                "max_elem_size_bytes": {
+                    "class": "long"
+                },
+                "max_elem_count": {
+                    "class": "long",
+                    "default": 1
+                }
+            }
+        },
+        "SYComb": {
+            "superTraits": [
+                "ForSyDeFunction"
+            ],
+            "required_ports": {
+                "combinator": {
+                    "class": "ForSyDeFunction",
+                    "direction": 0
+                }
+            }
+        },
+        "SYPrefix": {
+            "superTraits": [
+                "ForSyDeFunction"
+            ],
+            "required_ports": {
+                "prefixer": {
+                    "class": "ForSyDeFunction",
+                    "direction": 0
+                }
+            }
+        },
+        "SDFComb": {
+            "superTraits": [
+                "ForSyDeFunction"
+            ],
+            "required_ports": {
+                "combinator": {
+                    "class": "ForSyDeFunction",
+                    "direction": 0
+                }
+            },
+            "required_properties": {
+                "consumption": {
+                    "class": "object",
+                    "key": {
+                        "class": "string"
+                    },
+                    "value": {
+                        "class": "integer"
+                    }
+                },
+                "production": {
+                    "class": "object",
+                    "key": {
+                        "class": "string"
+                    },
+                    "value": {
+                        "class": "integer"
+                    }
+                }
+            }
+        },
+        "SDFPrefix": {
+            "superTraits": [
+                "ForSyDeFunction"
+            ],
+            "required_ports": {
+                "prefixer": {
+                    "class": "ForSyDeFunction",
+                    "direction": 0
+                }
+            }
+        },
+        "ReactorElement": null,
+        "ReactorTimer": {
+            "superTraits": [
+                "ReactorElement"
+            ],
+            "required_properties": {
+                "period_numerator_per_sec": {
+                    "class": "integer"
+                },
+                "period_denominator_per_sec": {
+                    "class": "integer",
+                    "default": 1
+                },
+                "offset_numerator_per_sec": {
+                    "class": "integer",
+                    "default": 0
+                },
+                "offset_denominator_per_sec": {
+                    "class": "integer",
+                    "default": 1
+                }
+            },
+            "required_ports": {
+                "output": {
+                    "class": "ReactorElement",
+                    "multiple": "unordered",
+                    "direction": 1
+                }
+            }
+        },
+        "ReactorReaction": {
+            "superTraits": [
+                "ReactorElement",
+                "ForSyDeFunction"
+            ],
+            "required_ports": {
+                "triggers": {
+                    "class": "ReactorElement",
+                    "multiple": "ordered",
+                    "direction": -1
+                },
+                "effects": {
+                    "class": "ReactorElement",
+                    "multiple": "ordered",
+                    "direction": 1
+                },
+                "reaction_implementation": {
+                    "class": "ForSyDeFunction",
+                    "direction": 0
+                }
+            }
+        },
+        "ReactorActor": {
+            "superTraits": [
+                "ReactorElement",
+                "Composite"
+            ],
+            "required_ports": {
+				"children": {
+                    "direction": 1,
+                    "multiple": "unordered"
+                }
+            }
+        },
+        "AbstractPhysicalComponent": null,
+        "AbstractProcessingComponent": {
+            "superTraits": [
+                "AbstractPhysicalComponent"
+            ],
+            "required_properties": {
+                "can_be_explored": {
+                    "class": "bool",
+                    "default": true
+                }
+            }
+        },
+        "InstrumentedProcessorTile": {
+            "superTraits": [
+                "AbstractProcessingComponent",
+                "Instrumented"
+            ],
+            "required_properties": {
+                "min_frequency_hz": {
+                    "class": "long"
+                },
+                "max_frequency_hz": {
+                    "class": "long"
+                },
+                "max_clock_cycles_per_op": {
+                    "class": "object",
+                    "key": {
+                        "class": "string"
+                    },
+                    "value": {
+                        "class": "long"
+                    }
+                },
+                "max_memory_internal_bytes": {
+                    "class": "long"
+                }
+            }
+        },
+        "AbstractStorageComponent": {
+            "superTraits": [
+                "AbstractPhysicalComponent"
+            ]
+        },
+        "AbsractInterfaceComponent": {
+            "superTraits": [
+                "AbstractPhysicalComponent"
+            ]
+        },
+        "AbstractCommunicationComponent": {
+            "superTraits": [
+                "AbstractPhysicalComponent"
+            ]
+        },
+        "InstrumentedCommunicationInterconnect": {
+            "superTraits": [
+                "AbstractCommunicationComponent"
+            ],
+            "required_properties": {
+                "max_bandwith_bytes_per_sec": {
+                    "class": "integer"
+                }
+            }
+        },
+        "TimeDivisionMultiplexer": {
+            "superTraits": [
+                "AbstractCommunicationComponent"
+            ],
+            "required_properties": {
+                "slots": {
+                    "class": "integer",
+                    "default": 1
+                }
+            }
+        }
+    },
+    "edgeTraits": {
+        "Input": null,
+        "Output": null,
+        "Annotation": null,
+        "Composition": {
+            "superTraits": []
+        },
+        "AbstractPhysicalConnection": null,
+        "AbstractDecision": null,
+        "AbstractScheduling": {
+            "superTraits": [
+                "AbstractDecision"
+            ]
+        },
+        "AbstractMapping": {
+            "superTraits": [
+                "AbstractDecision"
+            ]
+        },
+        "AbstractAllocation": {
+            "superTraits": [
+                "AbstractDecision"
+            ]
+        }
+    },
+    "portTraits": {},
+    "__commented__": {
+        "vertexTraits": {
+            "TypeRepresentation": null,
+            "integer": {
+                "superTraits": [
+                    "TypeRepresentation"
+                ],
+                "required_properties": {
+                    "bits": {
+                        "class": "integer",
+                        "default": 0
+                    }
+                }
+            },
+            "Floating": {
+                "superTraits": [
+                    "TypeRepresentation"
+                ],
+                "required_properties": {
+                    "bits": {
+                        "class": "integer",
+                        "default": 0
+                    }
+                }
+            },
+            "Record": {
+                "superTraits": [
+                    "TypeRepresentation"
+                ],
+                "required_properties": {
+                    "name": {
+                        "class": "String"
+                    }
+                }
+            },
+            "Array": {
+                "superTraits": [
+                    "TypeRepresentation"
+                ],
+                "required_properties": {
+                    "size": {
+                        "class": "integer",
+                        "default": 0
+                    }
+                }
+            }
+        }
+    }
+}
+*/

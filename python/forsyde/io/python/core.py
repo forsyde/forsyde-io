@@ -191,6 +191,35 @@ class Edge(object):
     #     return self.source_vertex.is_type(
     #         tsource) and self.target_vertex.is_type(ttarget)
 
+@dataclass
+class VertexViewer:
+
+    viewed_vertex: Vertex
+
+    @classmethod
+    def conforms(cls, vertex: Vertex) -> bool:
+        return False
+
+    @classmethod
+    def safe_cast(cls, vertex):
+        return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None
+
+    @property
+    def identifier(self) -> str:
+        return self.viewed_vertex.identifier
+
+@dataclass
+class EdgeViewer:
+
+    viewed_edge: Edge
+
+    @classmethod
+    def conforms(cls, edge: Edge) -> bool:
+        return False
+
+    @classmethod
+    def safe_cast(cls, edge: Edge) -> Optional["EdgeViewer"]:
+        return None
 
 class ForSyDeModel(nx.MultiDiGraph):
     """The main graph holder element representing a ForSyDe Model
