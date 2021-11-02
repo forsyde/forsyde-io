@@ -30,6 +30,7 @@ dependencies:
 - split
 - bytestring
 - algebraic-graphs >= 0.5
+- graphite >= 0.10.1.0
 
 library:
   source-dirs: src
