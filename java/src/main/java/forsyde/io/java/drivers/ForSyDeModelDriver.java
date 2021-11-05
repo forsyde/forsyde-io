@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 import forsyde.io.java.core.ForSyDeModel;
 
@@ -20,6 +21,10 @@ import forsyde.io.java.core.ForSyDeModel;
  *
  */
 public interface ForSyDeModelDriver {
+
+	List<String> inputExtensions();
+
+	List<String> outputExtensions();
 	
 	default ForSyDeModel loadModel(String filePath) throws Exception {
 		return loadModel(Paths.get(filePath));

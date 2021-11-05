@@ -29,6 +29,16 @@ public class ForSyDeGraphMLDriver implements ForSyDeModelDriver {
 	}
 
 	@Override
+	public List<String> inputExtensions() {
+		return List.of("graphml");
+	}
+
+	@Override
+	public List<String> outputExtensions() {
+		return List.of("graphml");
+	}
+
+	@Override
 	@Deprecated
 	public ForSyDeModel loadModel(InputStream in) throws Exception {
 		throw new Exception("GraphML reading is not supported.");

@@ -20,10 +20,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ForSyDeLFDriver implements ForSyDeModelDriver {
+
+    @Override
+    public List<String> inputExtensions() {
+        return List.of("lf", "linguafranca");
+    }
+
+    @Override
+    public List<String> outputExtensions() {
+        return List.of("lf", "linguafranca");
+    }
 
     @Override
     public ForSyDeModel loadModel(Path inPath) throws Exception {
@@ -38,7 +49,7 @@ public class ForSyDeLFDriver implements ForSyDeModelDriver {
     public ForSyDeModel loadModel(InputStream in) throws Exception {
         final Injector injector = new LFStandaloneSetup().createInjectorAndDoEMFRegistration();
         final ResourceSet resourceSet = injector.getInstance(ResourceSet.class);
-        final Resource res = resourceSet.getResource(URI.createURI("inmemory.lf"), true);
+        final Resource res = resourceSet.getResource(URI.createURI("inmemory-lf.lf"), true);
         res.load(in, resourceSet.getLoadOptions());
         final LinguaFrancaAdapter linguaFrancaAdapter = new LinguaFrancaAdapter();
         return linguaFrancaAdapter.convert((Model) res.getContents().get(0));

@@ -25,7 +25,7 @@ tasks.compileJava.dependsOn generateForSyDeModel
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = project.name
-version = '0.3.8'
+version = '0.3.9'
 
 
 // In this section you declare where to find the dependencies of your project

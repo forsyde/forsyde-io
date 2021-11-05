@@ -42,6 +42,16 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 			.collect(Collectors.toSet());
 	private final static XPath xPath = XPathFactory.newInstance().newXPath();
 
+	@Override
+	public List<String> inputExtensions() {
+		return List.of("forsyde.xml", "forxml");
+	}
+
+	@Override
+	public List<String> outputExtensions() {
+		return List.of("forsyde.xml", "forxml");
+	}
+
 	/**
 	 * Parses ForSyDe's graphML varatiation schema.
 	 * 

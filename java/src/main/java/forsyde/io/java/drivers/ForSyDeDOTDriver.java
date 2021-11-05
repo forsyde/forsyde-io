@@ -7,14 +7,31 @@ import org.jgrapht.nio.dot.DOTExporter;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 public class ForSyDeDOTDriver implements ForSyDeModelDriver {
 
     DOTExporter<Vertex, Edge> dotExporter;
 
     ForSyDeDOTDriver() {
-        dotExporter = new DOTExporter<>(Vertex::getIdentifier);
-        dotExporter.setEdgeIdProvider(Edge::toIDString);
+        dotExporter = new DOTExporter<>(v -> v.getIdentifier()
+                .replace(".", "_")
+                .replace("-", "__to__")
+                .replace(" ", "__"));
+        dotExporter.setEdgeIdProvider(e -> e.toIDString()
+                .replace(".", "_")
+                .replace("-", "__to__")
+                .replace(" ", "__"));
+    }
+
+    @Override
+    public List<String> inputExtensions() {
+        return List.of("dot", "gv", "graphviz");
+    }
+
+    @Override
+    public List<String> outputExtensions() {
+        return List.of("dot", "gv", "graphviz");
     }
 
     @Override

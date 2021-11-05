@@ -3,13 +3,32 @@ package forsyde.io.java.drivers;
 import forsyde.io.java.adapters.AmaltheaAdapter;
 import forsyde.io.java.core.ForSyDeModel;
 import org.eclipse.app4mc.amalthea.model.Amalthea;
+import org.eclipse.app4mc.amalthea.model.AmaltheaExtensions;
+import org.eclipse.app4mc.amalthea.model.AmaltheaFactory;
+import org.eclipse.app4mc.amalthea.model.AmaltheaServices;
+import org.eclipse.app4mc.amalthea.model.emf.AmaltheaResource;
+import org.eclipse.app4mc.amalthea.model.emf.AmaltheaResourceFactory;
 import org.eclipse.app4mc.amalthea.model.io.AmaltheaLoader;
+import org.eclipse.app4mc.amalthea.model.io.AmaltheaWriter;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.List;
 
 public class ForSyDeAmaltheaDriver implements ForSyDeModelDriver {
+
+
+    @Override
+    public List<String> inputExtensions() {
+        return List.of("amxmi");
+    }
+
+    @Override
+    public List<String> outputExtensions() {
+        return List.of("amxmi");
+    }
 
     @Override
     public ForSyDeModel loadModel(File file) throws Exception {
@@ -27,7 +46,13 @@ public class ForSyDeAmaltheaDriver implements ForSyDeModelDriver {
 
     @Override
     public ForSyDeModel loadModel(InputStream in) throws Exception {
-        throw new Exception("Amalthea models cannot be consumed from InputStreams directly");
+        final AmaltheaResourceFactory amaltheaResourceFactory = new AmaltheaResourceFactory();
+        final Resource res = amaltheaResourceFactory.createResource(URI.createURI("inmemory_amxmi.amxmi"));
+        //final Resource res = resourceSet.getResource(URI.createURI("inmemory.lf"), true);
+        res.load(in, res.getResourceSet().getLoadOptions());
+        final AmaltheaAdapter amaltheaAdapter = new AmaltheaAdapter();
+        return amaltheaAdapter.convert((Amalthea) res.getContents().get(0));
+        //throw new Exception("Amalthea models cannot be consumed from InputStreams directly");
     }
 
     @Override

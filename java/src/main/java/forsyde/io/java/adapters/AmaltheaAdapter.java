@@ -4,17 +4,14 @@ import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
-import forsyde.io.java.typed.viewers.GenericDigitalInterconnectViewer;
-import forsyde.io.java.typed.viewers.RoundRobinInterconnectViewer;
+import forsyde.io.java.typed.viewers.*;
 import org.eclipse.app4mc.amalthea.model.*;
 
-import java.lang.System;
-import java.math.BigInteger;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
 
@@ -34,6 +31,7 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
 
 	@Override
 	public Amalthea convert(ForSyDeModel inputModel) {
+		Map<Vertex, ReferableBaseObject> transformed = new HashMap<>();
 		return null;
 	}
 
@@ -124,8 +122,52 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
 		}
 	}
 
+	public void fromVertexesToModules(ForSyDeModel model, Amalthea target, Map<Vertex, ReferableBaseObject> transformed) {
+		final Set<AbstractDigitalModule> modules = model.vertexSet()
+				.stream().filter(AbstractDigitalModule::conforms)
+				.map(v -> AbstractDigitalModule.safeCast(v).get())
+				.collect(Collectors.toSet());
+		for (AbstractDigitalModule p : modules) {
+
+		}
+	}
+
+	public void fromVertexToPU(ForSyDeModel model, Amalthea target, GenericProcessingModule pu, Map<Vertex, ReferableBaseObject> transformed) {
+		ProcessingUnit amaltheaPu = AmaltheaFactory.eINSTANCE.createProcessingUnit();
+		amaltheaPu.setName(pu.getViewedVertex().getIdentifier());
+	}
+
+	public void fromVertexesToStructures(ForSyDeModel model, Map<Vertex, ReferableBaseObject> transformed) {
+		final Set<AbstractStructure> platforms = model.vertexSet()
+				.stream().filter(AbstractStructure::conforms)
+				.map(v -> AbstractStructure.safeCast(v).get())
+				.collect(Collectors.toSet());
+		for (AbstractStructure p : platforms) {
+			HwStructure hwStructure = AmaltheaFactory.eINSTANCE.createHwStructure();
+			hwStructure.setName(p.getViewedVertex().getIdentifier());
+			transformed.put(p.getViewedVertex(), hwStructure);
+		}
+		for (AbstractStructure parent : platforms) {
+			for (AbstractStructure child : platforms) {
+				if (model.hasConnection(parent, child, "submodules", null)) {
+					final HwStructure parentHwStructure = (HwStructure) transformed.get(parent.getViewedVertex());
+					final HwStructure childHwStructure = (HwStructure) transformed.get(child.getViewedVertex());
+					parentHwStructure.getStructures().add(childHwStructure);
+					// remove the 'namespace' from the child identifier
+					if (child.getViewedVertex().getIdentifier().contains(
+							"." + parent.getViewedVertex().getIdentifier()
+					)) {
+						final String newName = child.getViewedVertex().getIdentifier()
+								.replace("." + parent.getViewedVertex().getIdentifier(), "");
+						childHwStructure.setName(newName);
+					}
+				}
+			}
+		}
+	}
+
 	protected Long fromFrequencyToLong(Frequency freq) {
-		Double multiplier = 1.0;
+		double multiplier = 1.0;
 		switch (freq.getUnit()) {
 		case HZ:
 			multiplier = 1.0;
