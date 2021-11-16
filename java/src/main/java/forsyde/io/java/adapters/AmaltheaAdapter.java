@@ -7,10 +7,8 @@ import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.typed.viewers.*;
 import org.eclipse.app4mc.amalthea.model.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.lang.System;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
@@ -18,7 +16,7 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
 	@Override
 	public ForSyDeModel convert(Amalthea inputModel) {
 		final ForSyDeModel forSyDeModel = new ForSyDeModel();
-		Map<ReferableBaseObject, Vertex> transformed = Map.of();
+		Map<INamed, Vertex> transformed = Map.of();
 		for (HwStructure structure : inputModel.getHwModel().getStructures()) {
 			transformed = fromStructureToVertex(forSyDeModel, structure);
 		}
@@ -26,6 +24,7 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
 		for (HwStructure structure : inputModel.getHwModel().getStructures()) {
 			fromStructureToEdges(forSyDeModel, structure, transformed);
 		}
+		oSModelToBinding(inputModel, forSyDeModel, transformed);
 		return forSyDeModel;
 	}
 
@@ -35,14 +34,46 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
 		return null;
 	}
 
-	protected Map<ReferableBaseObject, Vertex> fromStructureToVertex(ForSyDeModel model, HwStructure structure) {
+	protected void fromPUIntoVertex(ProcessingUnit pu, Vertex v) {
+		ProcessingUnitDefinition puDef = pu.getDefinition();
+		v.addTraits(VertexTrait.ProfiledProcessingModule);
+		ProfiledProcessingModule profPu = ProfiledProcessingModule.safeCast(v).get();
+		HashMap<String, HashMap<String, Long>> provisions = new HashMap<>();
+		HashMap<String, Long> provisionsInner = new HashMap<>();
+		for (HwFeature feature : puDef.getFeatures()) {
+			if (feature.getContainingCategory().getName().startsWith("Provisions")) {
+				provisionsInner.put(feature.getName(), Math.round(feature.getValue()));
+			}
+		}
+		provisions.put(puDef.getName(), provisionsInner);
+		profPu.setProvisions(provisions);
+	}
+
+	protected void fromCUIntoVertex(ConnectionHandler connectionHandler, Vertex v) {
+		switch (connectionHandler.getDefinition().getPolicy()) {
+			case ROUND_ROBIN:
+				v.addTraits(VertexTrait.RoundRobinInterconnect);
+				final RoundRobinInterconnect rrVertex = new RoundRobinInterconnectViewer(v);
+				List<HwConnection> connections = connectionHandler.getPorts().stream().flatMap(p -> p.getConnections().stream())
+								.filter(p -> p.getPort1().getNamedContainer().equals(connectionHandler)).collect(Collectors.toList());
+				HashMap<String, Integer> allocation = new HashMap<>();
+				connections.forEach(p -> allocation.put(p.getPort2().getNamedContainer().getName(), 1));
+				rrVertex.setAllocatedWeights(allocation);
+				rrVertex.setTotalWeights(allocation.size());
+				break;
+			default:
+				break;
+		}
+	}
+
+	protected Map<INamed, Vertex> fromStructureToVertex(ForSyDeModel model, HwStructure structure) {
 		return fromStructureToVertex(model, structure, "");
 	}
 
-	protected Map<ReferableBaseObject, Vertex> fromStructureToVertex(ForSyDeModel model, HwStructure structure,
+	protected Map<INamed, Vertex> fromStructureToVertex(ForSyDeModel model, HwStructure structure,
 			String prefix) {
 		final Vertex structureVertex = new Vertex(prefix + structure.getName(), VertexTrait.AbstractStructure);
-		final HashMap<ReferableBaseObject, Vertex> transformed = new HashMap<>();
+		final HashMap<INamed, Vertex> transformed = new HashMap<>();
 		model.addVertex(structureVertex);
 		transformed.put(structure, structureVertex);
 		structureVertex.ports.add("submodules");
@@ -62,6 +93,7 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
 			if (module instanceof ProcessingUnit) {
 				ProcessingUnit processingUnit = (ProcessingUnit) module;
 				moduleVertex.addTraits(VertexTrait.GenericProcessingModule);
+				fromPUIntoVertex(processingUnit, moduleVertex);
 			} else if (module instanceof Memory) {
 				Memory memory = (Memory) module;
 				moduleVertex.addTraits(VertexTrait.GenericMemoryModule);
@@ -77,17 +109,9 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
 				interconnectVertex.setMaxConcurrentFlits(connectionHandler.getDefinition().getMaxConcurrentTransfers());
 				// burst size is always in B, it seems
 				interconnectVertex
-						.setMaxFlitSizeInBits(Long.valueOf(connectionHandler.getDefinition().getMaxBurstSize() * 8));
-				switch (connectionHandler.getDefinition().getPolicy()) {
-				case ROUND_ROBIN:
-					moduleVertex.addTraits(VertexTrait.RoundRobinInterconnect);
-					final RoundRobinInterconnectViewer rrVertex = new RoundRobinInterconnectViewer(moduleVertex);
-					rrVertex.setAllocatedWeights(new HashMap<>());
-					rrVertex.setTotalWeights(0);
-					break;
-				default:
-					break;
-				}
+						.setMaxFlitSizeInBits((long) (connectionHandler.getDefinition().getMaxBurstSize() * 8L));
+
+				fromCUIntoVertex(connectionHandler, moduleVertex);
 				moduleVertex.addTraits(VertexTrait.GenericDigitalInterconnect);
 			}
 			model.addVertex(moduleVertex);
@@ -100,23 +124,50 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
 	}
 
 	protected void fromStructureToEdges(ForSyDeModel model, HwStructure structure,
-			Map<ReferableBaseObject, Vertex> transformed) {
+			Map<INamed, Vertex> transformed) {
 		for (HwStructure childStructure : structure.getStructures()) {
 			fromStructureToEdges(model, childStructure, transformed);
 		}
-		for (HwModule module : structure.getModules()) {
+		for (HwConnection connection : structure.getConnections()) {
+			final Vertex sourceVertex = transformed.get(connection.getPort1().getNamedContainer());
+			final Vertex targetVertex = transformed.get(connection.getPort2().getNamedContainer());
+			model.connect(sourceVertex, targetVertex, connection.getPort1().getName(), connection.getPort2().getName(), EdgeTrait.AbstractPhysicalConnection);
+		}
+	/*	for (HwModule module : structure.getModules()) {
 			final Vertex moduleVertex = transformed.get(module);
 			if (module instanceof ProcessingUnit) {
 				final ProcessingUnit processingUnit = (ProcessingUnit) module;
 				for (HwAccessElement hwAccessElement : processingUnit.getAccessElements()) {
 					Vertex prev = transformed.get(hwAccessElement.getSource());
-					for (HwPathElement elem : hwAccessElement.getAccessPath().getPathElements()) {
-						final Vertex cur = transformed.get(elem);
-						model.connect(prev, cur, EdgeTrait.AbstractPhysicalConnection);
-						prev = cur;
+					if (hwAccessElement.getAccessPath() != null) {
+						for (HwPathElement elem : hwAccessElement.getAccessPath().getPathElements()) {
+							final Vertex cur = transformed.get(elem);
+							model.connect(prev, cur, EdgeTrait.AbstractPhysicalConnection);
+							prev = cur;
+						}
 					}
 					model.connect(prev, transformed.get(hwAccessElement.getDestination()),
 							EdgeTrait.AbstractPhysicalConnection);
+				}
+			}
+		}*/
+	}
+
+	protected void oSModelToBinding(Amalthea amalthea, ForSyDeModel model, Map<INamed, Vertex> transformed) {
+		for (OperatingSystem os: amalthea.getOsModel().getOperatingSystems()) {
+			for(TaskScheduler taskScheduler : os.getTaskSchedulers()) {
+				final Vertex platformVertex = new Vertex(os.getName() + "." + taskScheduler.getName(), VertexTrait.PlatformLayer);
+				if (taskScheduler.getSchedulingAlgorithm() instanceof FixedPriorityPreemptive) {
+					platformVertex.addTraits(VertexTrait.FixedPriorityScheduler);
+				}
+				transformed.put(os, platformVertex);
+				transformed.put(taskScheduler, platformVertex);
+				model.addVertex(platformVertex);
+				for (SchedulerAllocation allocation : amalthea.getMappingModel().getSchedulerAllocation()) {
+					if (allocation.getScheduler().equals(taskScheduler)) {
+						final Vertex puVertex = transformed.get(allocation.getExecutingPU());
+						model.connect(platformVertex, puVertex, EdgeTrait.AbstractAllocation);
+					}
 				}
 			}
 		}
@@ -132,7 +183,7 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
 		}
 	}
 
-	public void fromVertexToPU(ForSyDeModel model, Amalthea target, GenericProcessingModule pu, Map<Vertex, ReferableBaseObject> transformed) {
+	public void fromVertexToPU(GenericProcessingModule pu, Map<Vertex, ReferableBaseObject> transformed) {
 		ProcessingUnit amaltheaPu = AmaltheaFactory.eINSTANCE.createProcessingUnit();
 		amaltheaPu.setName(pu.getViewedVertex().getIdentifier());
 	}

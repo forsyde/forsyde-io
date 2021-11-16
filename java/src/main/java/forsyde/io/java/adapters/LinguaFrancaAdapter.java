@@ -5,6 +5,7 @@ import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
+import forsyde.io.java.typed.viewers.LinguaFrancaReaction;
 import forsyde.io.java.typed.viewers.LinguaFrancaSignal;
 import forsyde.io.java.typed.viewers.LinguaFrancaSignalViewer;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -141,6 +142,7 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                 model.connect(instantiationVertex, reactionVertex, "reactions", EdgeTrait.LinguaFrancaConnection);
                 reactionsOrdering.put(reactionVertex.identifier, i);
                 reactionVertex.putProperty("size_in_bits", 0L);
+                reactionVertex.ports.add("implementation");
                 final Vertex functionVertex = new Vertex(reactionVertex.identifier + ".body", VertexTrait.InlineFunction);
                 model.addVertex(functionVertex);
                 model.connect(reactionVertex, functionVertex, "implementation", EdgeTrait.LinguaFrancaContainment);
@@ -240,7 +242,7 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                 bitMultiplier = 64L;
                 break;
         }
-        if (type.getArraySpec().isOfVariableLength()) {
+        if (type.getArraySpec() == null || type.getArraySpec().isOfVariableLength()) {
             return bitMultiplier;
         } else {
             return type.getArraySpec().getLength() * bitMultiplier;

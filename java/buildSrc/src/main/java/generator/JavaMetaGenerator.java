@@ -201,31 +201,31 @@ public class JavaMetaGenerator extends DefaultTask {
 		if (port.multiple.orElse(true)) {
 			if (port.ordered.orElse(false)) {
 				getPortMethod.returns(listOut);
-				String statement = "return getMultipleNamedPort(model, \"$L\", \"$L\", $L).stream().map(v -> $T.safeCast(v).get()).collect($T.toList())";
+				String statement = "return getMultipleNamedPort(model, \"$L\", \"$L\", \"$L\").stream().map(v -> $T.safeCast(v).get()).collect($T.toList())";
 				getPortMethod.addStatement(statement, 
 						port.name, 
 						port.vertexTrait.name, 
-						directionToInt(port.direction),
+						port.direction.toString().toLowerCase(),
 						vertexClass,
 						Collectors.class);
 //				getPortMethod.addStatement("$T outList = new $T()", arrayType, arrayType);
 			} else {
 				getPortMethod.returns(setOut);
-				String statement = "return getMultipleNamedPort(model, \"$L\", \"$L\", $L).stream().map(v -> $T.safeCast(v).get()).collect($T.toSet())";
+				String statement = "return getMultipleNamedPort(model, \"$L\", \"$L\", \"$L\").stream().map(v -> $T.safeCast(v).get()).collect($T.toSet())";
 				getPortMethod.addStatement(statement, 
 						port.name, 
 						port.vertexTrait.name, 
-						directionToInt(port.direction),
+						port.direction.toString().toLowerCase(),
 						vertexClass,
 						Collectors.class);
 //				getPortMethod.addStatement("$T outList = new $T()", setType, setType);
 			}
 		} else {
 			getPortMethod.returns(optionalOut);
-			getPortMethod.addStatement("return getNamedPort(model, \"$L\", \"$L\", $L).map(v -> $T.safeCast(v).get())", 
+			getPortMethod.addStatement("return getNamedPort(model, \"$L\", \"$L\", \"$L\").map(v -> $T.safeCast(v).get())",
 					port.name, 
 					port.vertexTrait.name, 
-					directionToInt(port.direction),
+					port.direction.toString().toLowerCase(),
 					vertexClass);
 		}
 		// // decide if a collection needs to be generated
@@ -460,11 +460,11 @@ public class JavaMetaGenerator extends DefaultTask {
 	private Integer directionToInt(PortDirection dir) {
 		switch (dir) {
 			case INCOMING:
-				return -1;
+				return 0;
 			case OUTGOING:
 				return 1;
 			default:
-				return 0;
+				return 2;
 		}
 	}
 

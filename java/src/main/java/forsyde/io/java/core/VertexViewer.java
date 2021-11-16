@@ -29,13 +29,13 @@ public interface VertexViewer {
     }
     
     private Optional<Vertex> getNamedPort(ForSyDeModel model, String portName, String traitName) {
-    	return getNamedPort(model, portName, traitName, 0);
+    	return getNamedPort(model, portName, traitName, "BIDIRECTIONAL");
     }
     
-    default Optional<Vertex> getNamedPort(ForSyDeModel model, String portName, String traitName, int direction) {
+    default Optional<Vertex> getNamedPort(ForSyDeModel model, String portName, String traitName, String direction) {
     	Vertex v = getViewedVertex();
     	Trait t = traitFromString(traitName);
-    	if (direction >= 0) {
+    	if (direction.equalsIgnoreCase("outgoing") || direction.equalsIgnoreCase("bidirectional")) {
     		Set<Edge> outEdges = model.outgoingEdgesOf(v);
     		Optional<Vertex> dst = outEdges.stream()
     				.filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
@@ -45,7 +45,7 @@ public interface VertexViewer {
     		if (dst.isPresent())
     			return dst;
     	}
-    	if (direction <= 0) {
+    	if (direction.equalsIgnoreCase("incoming") || direction.equalsIgnoreCase("bidirectional")) {
     		Set<Edge> inEdges = model.incomingEdgesOf(v);
     		Optional<Vertex> src = inEdges.stream()
     				.filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
@@ -59,14 +59,14 @@ public interface VertexViewer {
     }
     
     default Set<Vertex> getMultipleNamedPort(ForSyDeModel model, String portName, String traitName) {
-    	return getMultipleNamedPort(model, portName, traitName, 0);
+    	return getMultipleNamedPort(model, portName, traitName, "BIDIRECTIONAL");
     }
     
-    default Set<Vertex> getMultipleNamedPort(ForSyDeModel model, String portName, String traitName, int direction) {
+    default Set<Vertex> getMultipleNamedPort(ForSyDeModel model, String portName, String traitName, String direction) {
     	Vertex v = getViewedVertex();
     	Set<Vertex> vs = new HashSet<>();
     	Trait t = traitFromString(traitName);
-    	if (direction >= 0) {
+    	if (direction.equalsIgnoreCase("outgoing") || direction.equalsIgnoreCase("bidirectional")) {
     		Set<Edge> outEdges = model.outgoingEdgesOf(v);
     		vs.addAll(outEdges.stream()
     				.filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
@@ -74,7 +74,7 @@ public interface VertexViewer {
     				.filter(vv -> vv.hasTrait(t))
     				.collect(Collectors.toSet()));
     	}
-    	if (direction <= 0) {
+    	if (direction.equalsIgnoreCase("incoming") || direction.equalsIgnoreCase("bidirectional")) {
     		Set<Edge> inEdges = model.incomingEdgesOf(v);
     		vs.addAll(inEdges.stream()
     				.filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
@@ -86,10 +86,10 @@ public interface VertexViewer {
     }
     
     default List<Vertex> getOrderedMultipleNamedPort(ForSyDeModel model, String portName, String traitName) {
-    	return getOrderedMultipleNamedPort(model, portName, traitName, 0);
+    	return getOrderedMultipleNamedPort(model, portName, traitName, "BIDIRECTIONAL");
     }
     
-    default List<Vertex> getOrderedMultipleNamedPort(ForSyDeModel model, String portName, String traitName, int direction) {
+    default List<Vertex> getOrderedMultipleNamedPort(ForSyDeModel model, String portName, String traitName, String direction) {
     	Vertex v = getViewedVertex();
     	Trait t = traitFromString(traitName);
     	@SuppressWarnings("unchecked")
@@ -97,7 +97,7 @@ public interface VertexViewer {
 			.get("__" + portName + "_ordering__")
 			.unwrap();
     	List<Vertex> vs = new ArrayList<>(order.size());
-    	if (direction >= 0) {
+    	if (direction.equalsIgnoreCase("outgoing") || direction.equalsIgnoreCase("bidirectional")) {
     		Set<Edge> outEdges = model.outgoingEdgesOf(v);
     		outEdges.stream()
     				.filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
@@ -107,7 +107,7 @@ public interface VertexViewer {
     					vs.set(order.get(dst.identifier), dst);
     				});
     	}
-    	if (direction <= 0) {
+    	if (direction.equalsIgnoreCase("incoming") || direction.equalsIgnoreCase("bidirectional")) {
     		Set<Edge> inEdges = model.incomingEdgesOf(v);
     		inEdges.stream()
 				.filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
