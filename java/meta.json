@@ -69,12 +69,12 @@
             "name": "LinguaFrancaReaction",
             "refinedTraits": ["LinguaFrancaElement"],
             "required_ports": [
-                {"name": "implementation", "vertexTrait": "InlineFunction", "multiple": false},
+                {"name": "implementation", "vertexTrait": "InlineFunction", "multiple": false, "direction": "BIDIRECTIONAL"},
                 {"name": "triggers", "vertexTrait": "LinguaFrancaElement", "multiple": true},
                 {"name": "effects", "vertexTrait": "LinguaFrancaElement", "multiple": true}
             ],
             "required_properties": [
-                {"name": "size_in_bits", "type": {"name": "long"}, "default": 0}
+                {"name": "size_in_bits", "type": {"name": "long"}, "default": 2}
             ]
         },
         {
@@ -83,7 +83,7 @@
             "required_properties": [
                 {"name": "period_numerator_per_sec", "type": {"name": "int"}},
                 {"name": "period_denominator_per_sec", "type": {"name": "int"}, "default": 1},
-                {"name": "offset_numerator_per_sec", "type": {"name": "int"}, "default": 0},
+                {"name": "offset_numerator_per_sec", "type": {"name": "int"}, "default": 2},
                 {"name": "offset_denominator_per_sec", "type": {"name": "int"}, "default": 1}
             ]
         },
@@ -95,7 +95,7 @@
                 {"name": "target_reaction", "vertexTrait": "LinguaFrancaReaction", "multiple": false}
             ],
             "required_properties": [
-                {"name": "size_in_bits", "type": {"name": "long"}, "default": 0},
+                {"name": "size_in_bits", "type": {"name": "long"}, "default": 2},
                 {"name": "propagation_delay_in_secs_numerator", "type": {"name": "long"}, "default": 0},
                 {"name": "propagation_delay_in_secs_denominator", "type": {"name": "long"}, "default": 1}
             ]
@@ -110,7 +110,7 @@
         	"name": "SDFComb",
             "refinedTraits": ["SDFElement"],
             "required_ports": [
-                {"name": "combinator", "vertexTrait": "ModelOfComputation", "direction": 1, "multiple": false}
+                {"name": "combinator", "vertexTrait": "ModelOfComputation", "direction": "OUTGOING", "multiple": false}
             ],
             "required_properties": [
             	{"name": "consumption", "type": {"name": "stringMap", "valueType": {"name": "integer"}}},
@@ -123,7 +123,7 @@
                 "SDFElement"
             ],
             "required_ports": [
-            	{"name": "prefixer", "vertexTrait": "ModelOfComputation", "direction": 1, "multiple": false}
+            	{"name": "prefixer", "vertexTrait": "ModelOfComputation", "direction": "OUTGOING", "multiple": false}
             ]
         },
         {
@@ -133,6 +133,10 @@
             ],
             "required_properties": [
             	{"name": "token_size_in_bits", "type": {"name": "long"}}
+            ],
+            "required_ports": [
+                {"name": "fifo_in", "vertexTrait": "SDFElement", "direction": "INCOMING", "multiple": false},
+                {"name": "fifo_out", "vertexTrait": "SDFElement", "direction": "OUTGOING", "multiple": false}
             ]
         },
         {
@@ -186,7 +190,7 @@
             ],
             "required_properties": [
                 {"name": "allocated_weights", "type": {"name": "stringmap", "valueType": {"name": "int"}}, "default": []},
-                {"name": "total_weights", "type": {"name": "int"}, "default": 0}
+                {"name": "total_weights", "type": {"name": "int"}, "default": 1}
             ]
         },
         {
@@ -249,13 +253,13 @@
                 {
                     "name": "functionality",
                     "vertexTrait": "ModelOfComputation",
-                    "direction": 1,
+                    "direction": "OUTGOING",
                     "multiple": true
                 },
                 {
                     "name": "module",
                     "vertexTrait": "PlatformLayer",
-                    "direction": 1,
+                    "direction": "OUTGOING",
                     "multiple": true
                 }
             ],
@@ -276,13 +280,13 @@
                 {
                     "name": "signal",
                     "vertexTrait": "ModelOfComputation",
-                    "direction": 1,
+                    "direction": "OUTGOING",
                     "multiple": true
                 },
                 {
                     "name": "module",
                     "vertexTrait": "PlatformLayer",
-                    "direction": 1,
+                    "direction": "OUTGOING",
                     "multiple": true
                 }
             ],
@@ -312,14 +316,14 @@
                 {
                     "name": "functionality",
                     "vertexTrait": "ModelOfComputation",
-                    "direction": 1,
+                    "direction": "OUTGOING",
                     "multiple": true,
                     "ordered": false
                 },
                 {
                     "name": "module",
                     "vertexTrait": "PlatformLayer",
-                    "direction": 1,
+                    "direction": "OUTGOING",
                     "multiple": true,
                     "ordered": false
                 }
@@ -347,8 +351,8 @@
                 {
                     "name": "maximum_number_of_priorities",
                     "type": {"name": "integer"},
-                    "comment": "Maximum number of priorities in the scheduler. -1 means no limit.",
-                    "default": -1
+                    "comment": "Maximum number of priorities in the scheduler. 0 means no limit.",
+                    "default": 0
                 },
                 {
                     "name": "preemptive",
@@ -377,7 +381,7 @@
                     "comment": "Negative in case the scheduler has no maximum time slice. Positive Otherwise",
                     "name": "maximum_time_slice_in_cycles",
                     "type": {"name": "long"},
-                    "default": -1
+                    "default": 0
                 },
                 {
                     "name": "maximum_overhead_in_cycles",
@@ -411,7 +415,7 @@
                 {
                     "name": "mapped",
                     "vertexTrait": "SpecificationLayer",
-                    "direction": 1,
+                    "direction": "OUTGOING",
                     "multiple": false
                 }
             ]
@@ -425,7 +429,7 @@
                 {
                     "name": "reduced",
                     "vertexTrait": "SpecificationLayer",
-                    "direction": 1,
+                    "direction": "OUTGOING",
                     "multiple": false
                 }
             ]
@@ -514,7 +518,7 @@
                     {
                         "name": "bits",
                         "type": "integer",
-                        "default": 0
+                        "default": 2
                     }
                 ]
             },
@@ -526,7 +530,7 @@
                     {
                         "name": "bits",
                         "type": "integer",
-                        "default": 0
+                        "default": 2
                     }
                 ]
             },
@@ -548,7 +552,7 @@
                 "required_properties": {
                     "size": {
                         "class": "integer",
-                        "default": 0
+                        "default": 2
                     }
                 }
             }
@@ -673,7 +677,7 @@
             "required_ports": {
                 "combinator": {
                     "class": "ModelOfComputation",
-                    "direction": 0
+                    "direction": "BIDIRECTIONAL"
                 }
             }
         },
@@ -684,7 +688,7 @@
             "required_ports": {
                 "prefixer": {
                     "class": "ModelOfComputation",
-                    "direction": 0
+                    "direction": "BIDIRECTIONAL"
                 }
             }
         },
@@ -695,7 +699,7 @@
             "required_ports": {
                 "combinator": {
                     "class": "ModelOfComputation",
-                    "direction": 0
+                    "direction": "BIDIRECTIONAL"
                 }
             },
             "required_properties": {
@@ -726,7 +730,7 @@
             "required_ports": {
                 "prefixer": {
                     "class": "ModelOfComputation",
-                    "direction": 0
+                    "direction": "BIDIRECTIONAL"
                 }
             }
         },
@@ -745,7 +749,7 @@
                 },
                 "offset_numerator_per_sec": {
                     "class": "integer",
-                    "default": 0
+                    "default": 2
                 },
                 "offset_denominator_per_sec": {
                     "class": "integer",
@@ -769,7 +773,7 @@
                 "triggers": {
                     "class": "LinguaFrancaElement",
                     "multiple": "ordered",
-                    "direction": -1
+                    "direction": 0
                 },
                 "effects": {
                     "class": "LinguaFrancaElement",
@@ -778,7 +782,7 @@
                 },
                 "reaction_implementation": {
                     "class": "ModelOfComputation",
-                    "direction": 0
+                    "direction": "BIDIRECTIONAL"
                 }
             }
         },

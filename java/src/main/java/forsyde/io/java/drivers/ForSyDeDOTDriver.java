@@ -26,7 +26,7 @@ public class ForSyDeDOTDriver implements ForSyDeModelDriver {
 
     @Override
     public List<String> inputExtensions() {
-        return List.of("dot", "gv", "graphviz");
+        return List.of();
     }
 
     @Override
