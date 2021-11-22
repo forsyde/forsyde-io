@@ -57,7 +57,9 @@ public class ForSyDeAmaltheaDriver implements ForSyDeModelDriver {
 
     @Override
     public void writeModel(ForSyDeModel model, Path outPath) throws Exception {
-        throw new Exception("Writing Amalthea models is still not supported");
+        final AmaltheaAdapter amaltheaAdapter = new AmaltheaAdapter();
+        final Amalthea amalthea = amaltheaAdapter.convert(model);
+        AmaltheaWriter.writeToURI(amalthea, URI.createURI(outPath.toUri().toString()));
     }
 
     @Override

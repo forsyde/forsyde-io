@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="ForSyDeIOTraitMeta" nsURI="ForSyDeIO" nsPrefix="ForSyDeIO">
-  <eClassifiers xsi:type="ecore:EClass" name="VertexTraitSpec">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
-        iD="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="VertexTraitSpec" eSuperTypes="#//TraitSpec">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ports" upperBound="-1"
         eType="#//PortSpec" containment="true" eKeys="#//PortSpec/name"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="refinedTraits" upperBound="-1"
-        eType="#//VertexTraitSpec"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
         eType="#//PropertySpec" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EdgeTraitSpec">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
-        iD="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="refinedTraits" upperBound="-1"
-        eType="#//EdgeTraitSpec"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EdgeTraitSpec" eSuperTypes="#//TraitSpec">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PortSpec">
@@ -31,9 +23,9 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ForSyDeIOTraitModel">
     <eStructuralFeatures xsi:type="ecore:EReference" name="vertexTraits" upperBound="-1"
-        eType="#//VertexTraitSpec" containment="true" eKeys="#//VertexTraitSpec/name"/>
+        eType="#//VertexTraitSpec" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="edgeTraits" upperBound="-1"
-        eType="#//EdgeTraitSpec" containment="true" eKeys="#//VertexTraitSpec/name"/>
+        eType="#//EdgeTraitSpec" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertySpec">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -55,5 +47,11 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="repr" lowerBound="1" eType="#//PropertyTypeEnum"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="valueType" eType="#//PropertyTypeSpec"
         containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TraitSpec" abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refinedTraits" upperBound="-1"
+        eType="#//TraitSpec"/>
   </eClassifiers>
 </ecore:EPackage>

@@ -46,7 +46,7 @@
     <domains xsi:type="am:FrequencyDomain" xmi:id="DefaultFrequencyDomain?type=FrequencyDomain" name="DefaultFrequencyDomain" clockGating="false">
       <defaultValue value="50.0" unit="MHz"/>
     </domains>
-    <domains xsi:type="am:PowerDomain" xmi:id="DefaultPowerDomain?type=PowerDomain" name="DefaultPowerDomain" powerGating="false">
+    <domains xsi:type="am:PowerDomain" xmi:id="DefaultPowerDomain?type=PowerDomain" name="DefaultPowerDomain" powerGating="true">
       <defaultValue value="1.0" unit="mV"/>
     </domains>
   </hwModel>

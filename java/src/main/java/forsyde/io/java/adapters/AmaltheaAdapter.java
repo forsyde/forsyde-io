@@ -1,5 +1,8 @@
 package forsyde.io.java.adapters;
 
+import forsyde.io.java.adapters.amalthea.ForSyDe2AmaltheaHWAdapter;
+import forsyde.io.java.adapters.amalthea.ForSyDe2AmaltheaMappingAdapter;
+import forsyde.io.java.adapters.amalthea.ForSyDe2AmaltheaOSAdapter;
 import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeModel;
 import forsyde.io.java.core.Vertex;
@@ -30,8 +33,12 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
 
 	@Override
 	public Amalthea convert(ForSyDeModel inputModel) {
-		Map<Vertex, ReferableBaseObject> transformed = new HashMap<>();
-		return null;
+		Amalthea target = AmaltheaFactory.eINSTANCE.createAmalthea();
+		Map<Vertex, INamed> transformed = new HashMap<>();
+		ForSyDe2AmaltheaHWAdapter.fromVertexesToHWModel(inputModel, target, transformed);
+		ForSyDe2AmaltheaOSAdapter.fromVertexesToOSModel(inputModel, target, transformed);
+		ForSyDe2AmaltheaMappingAdapter.fromEdgesToMappings(inputModel, target, transformed);
+		return target;
 	}
 
 	protected void fromPUIntoVertex(ProcessingUnit pu, Vertex v) {
@@ -179,13 +186,16 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea> {
 				.map(v -> AbstractDigitalModule.safeCast(v).get())
 				.collect(Collectors.toSet());
 		for (AbstractDigitalModule p : modules) {
+			if (GenericProcessingModule.conforms(p)) {
 
+			}
 		}
 	}
 
 	public void fromVertexToPU(GenericProcessingModule pu, Map<Vertex, ReferableBaseObject> transformed) {
 		ProcessingUnit amaltheaPu = AmaltheaFactory.eINSTANCE.createProcessingUnit();
 		amaltheaPu.setName(pu.getViewedVertex().getIdentifier());
+		transformed.put(pu.getViewedVertex(), amaltheaPu);
 	}
 
 	public void fromVertexesToStructures(ForSyDeModel model, Map<Vertex, ReferableBaseObject> transformed) {
