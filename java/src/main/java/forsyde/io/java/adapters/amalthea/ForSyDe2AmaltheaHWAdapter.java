@@ -1,5 +1,6 @@
 package forsyde.io.java.adapters.amalthea;
 
+import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.Edge;
 import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeModel;
@@ -14,16 +15,16 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ForSyDe2AmaltheaHWAdapter {
+public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<Vertex, INamed> {
 
-    static public void fromVertexesToHWModel(ForSyDeModel model, Amalthea target, Map<Vertex, INamed> cache) {
+    default void fromVertexesToHWModel(ForSyDeModel model, Amalthea target) {
         target.setHwModel(AmaltheaFactory.eINSTANCE.createHWModel());
-        fromVertexesToModules(model, target, cache);
-        fromVertexesToStructures(model, target, cache);
-        fromEdgesToConnections(model, target, cache);
+        fromVertexesToModules(model, target);
+        fromVertexesToStructures(model, target);
+        fromEdgesToConnections(model, target);
     }
 
-    static public void fromVertexesToModules(ForSyDeModel model, Amalthea target, Map<Vertex, INamed> cache) {
+    default void fromVertexesToModules(ForSyDeModel model, Amalthea target) {
         final Set<AbstractDigitalModule> modules = model.vertexSet()
                 .stream().filter(AbstractDigitalModule::conforms)
                 .map(v -> AbstractDigitalModule.safeCast(v).get())
@@ -49,7 +50,7 @@ public class ForSyDe2AmaltheaHWAdapter {
                 amaltheaPu.setName(p.getViewedVertex().getIdentifier());
                 amaltheaPu.setDefinition(puDef);
                 amaltheaPu.setFrequencyDomain(freqDef);
-                cache.put(p.getViewedVertex(), amaltheaPu);
+                addEquivalence(p.getViewedVertex(), amaltheaPu);
             }
             if (GenericMemoryModule.conforms(p)) {
                 final GenericMemoryModule genericMemoryModule = GenericMemoryModule.safeCast(p).get();
@@ -74,7 +75,7 @@ public class ForSyDe2AmaltheaHWAdapter {
                 Memory mem = AmaltheaFactory.eINSTANCE.createMemory();
                 mem.setName(p.getViewedVertex().getIdentifier());
                 mem.setDefinition(memDef);
-                cache.put(p.getViewedVertex(), mem);
+                addEquivalence(p.getViewedVertex(), mem);
             }
             if (GenericDigitalInterconnect.conforms(p)) {
                 final GenericDigitalInterconnect genericDigitalInterconnect = GenericDigitalInterconnect.safeCast(p).get();
@@ -102,17 +103,17 @@ public class ForSyDe2AmaltheaHWAdapter {
                 ConnectionHandler conn = AmaltheaFactory.eINSTANCE.createConnectionHandler();
                 conn.setName(p.getViewedVertex().getIdentifier());
                 conn.setDefinition(commDef);
-                cache.put(p.getViewedVertex(), conn);
+                addEquivalence(p.getViewedVertex(), conn);
             }
             if (GenericCacheModule.conforms(p)) {
                 Cache cacheModule = AmaltheaFactory.eINSTANCE.createCache();
                 cacheModule.setName(p.getViewedVertex().getIdentifier());
-                cache.put(p.getViewedVertex(), cacheModule);
+                addEquivalence(p.getViewedVertex(), cacheModule);
             }
         }
     }
 
-    static public void fromVertexesToStructures(ForSyDeModel model, Amalthea target, Map<Vertex, INamed> cache) {
+    default void fromVertexesToStructures(ForSyDeModel model, Amalthea target) {
         final Set<AbstractStructure> platforms = model.vertexSet()
                 .stream().filter(AbstractStructure::conforms)
                 .map(v -> AbstractStructure.safeCast(v).get())
@@ -125,48 +126,53 @@ public class ForSyDe2AmaltheaHWAdapter {
         for (AbstractStructure p : platforms) {
             HwStructure hwStructure = AmaltheaFactory.eINSTANCE.createHwStructure();
             hwStructure.setName(p.getViewedVertex().getIdentifier());
-            cache.put(p.getViewedVertex(), hwStructure);
+            addEquivalence(p.getViewedVertex(), hwStructure);
         }
         for (AbstractStructure p : topPlatform) {
-            final HwStructure hwStructure = (HwStructure) cache.get(p.getViewedVertex());
-            target.getHwModel().getStructures().add(hwStructure);
+            equivalent(p.getViewedVertex()).map(e -> (HwStructure) e).ifPresent(hwStructure -> {
+                target.getHwModel().getStructures().add(hwStructure);
+            });
         }
         final Set<AbstractDigitalModule> modules = model.vertexSet()
                 .stream().filter(AbstractDigitalModule::conforms)
                 .map(v -> AbstractDigitalModule.safeCast(v).get())
                 .collect(Collectors.toSet());
         for (AbstractStructure parent : platforms) {
-            final HwStructure parentHwStructure = (HwStructure) cache.get(parent.getViewedVertex());
-            for (AbstractStructure child : platforms) {
-                if (model.hasConnection(parent, child, "submodules", null)) {
-                    final HwStructure childHwStructure = (HwStructure) cache.get(child.getViewedVertex());
-                    parentHwStructure.getStructures().add(childHwStructure);
-                    // remove the 'namespace' from the child identifier
-                    if (child.getViewedVertex().getIdentifier().contains(
-                            "." + parent.getViewedVertex().getIdentifier()
-                    )) {
-                        final String newName = child.getViewedVertex().getIdentifier()
-                                .replace("." + parent.getViewedVertex().getIdentifier(), "");
-                        childHwStructure.setName(newName);
+            equivalent(parent.getViewedVertex()).map(e -> (HwStructure) e).ifPresent(parentHwStructure -> {
+                for (AbstractStructure child : platforms) {
+                    if (model.hasConnection(parent, child, "submodules", null)) {
+                        equivalent(child.getViewedVertex()).map(e -> (HwStructure) e).ifPresent(childHwStructure -> {
+                            parentHwStructure.getStructures().add(childHwStructure);
+                            // remove the 'namespace' from the child identifier
+                            if (child.getViewedVertex().getIdentifier().contains(
+                                    "." + parent.getViewedVertex().getIdentifier()
+                            )) {
+                                final String newName = child.getViewedVertex().getIdentifier()
+                                        .replace("." + parent.getViewedVertex().getIdentifier(), "");
+                                childHwStructure.setName(newName);
+                            }
+                        });
                     }
                 }
-            }
-            for (AbstractDigitalModule module : modules) {
-                if (model.hasConnection(parent, module, "submodules", null)) {
-                    final HwModule hwModule = (HwModule) cache.get(module.getViewedVertex());
-                    parentHwStructure.getModules().add(hwModule);
+                for (AbstractDigitalModule module : modules) {
+                    if (model.hasConnection(parent, module, "submodules", null)) {
+                        equivalent(module.getViewedVertex()).map(e -> (HwModule) e).ifPresent(hwModule -> {
+                            parentHwStructure.getModules().add(hwModule);
+                        });
+                    }
                 }
-            }
+            });
         }
     }
 
-    static public void fromEdgesToConnections(ForSyDeModel model, Amalthea targetModel,  Map<Vertex, INamed> cache) {
+    default void fromEdgesToConnections(ForSyDeModel model, Amalthea targetModel) {
         for (Edge e: model.edgeSet()) {
             if (e.edgeTraits.contains(EdgeTrait.AbstractPhysicalConnection) &&
                 (AbstractStructure.conforms(e.getSource()) || AbstractDigitalModule.conforms(e.getSource())) &&
                 (AbstractStructure.conforms(e.getTarget()) || AbstractDigitalModule.conforms(e.getTarget()))) {
-                final INamed source = cache.get(e.getSource());
-                final INamed target = cache.get(e.getTarget());
+                // the vertices are supposed to be generated
+                final INamed source = equivalent(e.getSource()).get();
+                final INamed target = equivalent(e.getTarget()).get();
                 // get the minimum parent.
                 HwStructure commonLeastParent = null;
                 for (HwStructure sourceParent = (HwStructure) source.eContainer(); sourceParent != null;
