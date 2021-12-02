@@ -5,19 +5,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import forsyde.io.java.core.*;
-import forsyde.io.java.drivers.ForSyDeModelDriver;
 import org.jgrapht.nio.graphml.GraphMLExporter;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class ForSyDeGraphMLDriver implements ForSyDeModelDriver {
 
@@ -30,7 +19,7 @@ public class ForSyDeGraphMLDriver implements ForSyDeModelDriver {
 
 	@Override
 	public List<String> inputExtensions() {
-		return List.of("graphml");
+		return List.of();
 	}
 
 	@Override
@@ -40,12 +29,12 @@ public class ForSyDeGraphMLDriver implements ForSyDeModelDriver {
 
 	@Override
 	@Deprecated
-	public ForSyDeModel loadModel(InputStream in) throws Exception {
+	public ForSyDeSystemGraph loadModel(InputStream in) throws Exception {
 		throw new Exception("GraphML reading is not supported.");
 	}
 
 	@Override
-	public void writeModel(ForSyDeModel model, OutputStream out) throws Exception {
+	public void writeModel(ForSyDeSystemGraph model, OutputStream out) throws Exception {
 		graphMLExporter.exportGraph(model, out);
 //		List<String> vertexDataNames = new ArrayList<>();
 //		List<String> vertexDataTypes = new ArrayList<>();
@@ -107,7 +96,7 @@ public class ForSyDeGraphMLDriver implements ForSyDeModelDriver {
 	}
 
 	static protected List<Integer> writeData(List<String> names, List<String> types, String name,
-			VertexProperty value) {
+			VertexPropertyOld value) {
 		if (!names.contains(name)) {
 			List<Integer> indexes = new ArrayList<>();
 			switch (value.type) {

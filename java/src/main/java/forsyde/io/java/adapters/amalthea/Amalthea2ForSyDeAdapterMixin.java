@@ -1,7 +1,7 @@
 package forsyde.io.java.adapters.amalthea;
 
 import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeModel;
+import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.typed.viewers.*;
@@ -10,7 +10,6 @@ import org.eclipse.app4mc.amalthea.model.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface Amalthea2ForSyDeAdapterMixin {
@@ -47,12 +46,12 @@ public interface Amalthea2ForSyDeAdapterMixin {
         }
     }
 
-    default Map<INamed, Vertex> fromStructureToVertex(ForSyDeModel model, HwStructure structure) {
+    default Map<INamed, Vertex> fromStructureToVertex(ForSyDeSystemGraph model, HwStructure structure) {
         return fromStructureToVertex(model, structure, "");
     }
 
-    default Map<INamed, Vertex> fromStructureToVertex(ForSyDeModel model, HwStructure structure,
-                                                        String prefix) {
+    default Map<INamed, Vertex> fromStructureToVertex(ForSyDeSystemGraph model, HwStructure structure,
+                                                      String prefix) {
         final Vertex structureVertex = new Vertex(prefix + structure.getName(), VertexTrait.AbstractStructure);
         final HashMap<INamed, Vertex> transformed = new HashMap<>();
         model.addVertex(structureVertex);
@@ -104,8 +103,8 @@ public interface Amalthea2ForSyDeAdapterMixin {
         return transformed;
     }
 
-    default void fromStructureToEdges(ForSyDeModel model, HwStructure structure,
-                                        Map<INamed, Vertex> transformed) {
+    default void fromStructureToEdges(ForSyDeSystemGraph model, HwStructure structure,
+                                      Map<INamed, Vertex> transformed) {
         for (HwStructure childStructure : structure.getStructures()) {
             fromStructureToEdges(model, childStructure, transformed);
         }
@@ -134,7 +133,7 @@ public interface Amalthea2ForSyDeAdapterMixin {
 		}*/
     }
 
-    default void oSModelToBinding(Amalthea amalthea, ForSyDeModel model, Map<INamed, Vertex> transformed) {
+    default void oSModelToBinding(Amalthea amalthea, ForSyDeSystemGraph model, Map<INamed, Vertex> transformed) {
         for (OperatingSystem os: amalthea.getOsModel().getOperatingSystems()) {
             for(TaskScheduler taskScheduler : os.getTaskSchedulers()) {
                 final Vertex platformVertex = new Vertex(os.getName() + "." + taskScheduler.getName(), VertexTrait.PlatformLayer);

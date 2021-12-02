@@ -1,10 +1,10 @@
 package forsyde.io.java.adapters;
 
-import forsyde.io.java.core.ForSyDeModel;
+import forsyde.io.java.core.ForSyDeSystemGraph;
 
 public interface ModelAdapter<ModelT> {
 
-    ForSyDeModel convert(ModelT inputModel);
+    ForSyDeSystemGraph convert(ModelT inputModel);
 
-    ModelT convert(ForSyDeModel inputModel);
+    ModelT convert(ForSyDeSystemGraph inputModel);
 }

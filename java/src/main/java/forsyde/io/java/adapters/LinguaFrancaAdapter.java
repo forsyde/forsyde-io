@@ -1,18 +1,13 @@
 package forsyde.io.java.adapters;
 
-import com.google.inject.Injector;
 import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeModel;
+import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
-import forsyde.io.java.typed.viewers.LinguaFrancaReaction;
 import forsyde.io.java.typed.viewers.LinguaFrancaSignal;
 import forsyde.io.java.typed.viewers.LinguaFrancaSignalViewer;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.lflang.LFStandaloneSetup;
 import org.lflang.lf.*;
 
-import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,34 +16,34 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
 
 
     @Override
-    public ForSyDeModel convert(Model inputModel) {
+    public ForSyDeSystemGraph convert(Model inputModel) {
         return fromLFtoForSyDe(inputModel);
     }
 
     @Override
-    public Model convert(ForSyDeModel inputModel) {
+    public Model convert(ForSyDeSystemGraph inputModel) {
         return null;
     }
 
-    protected ForSyDeModel fromLFtoForSyDe(Model model) {
-        final ForSyDeModel forSyDeModel = new ForSyDeModel();
+    protected ForSyDeSystemGraph fromLFtoForSyDe(Model model) {
+        final ForSyDeSystemGraph forSyDeSystemGraph = new ForSyDeSystemGraph();
         final Reactor mainReactor = model.getReactors().stream().filter(Reactor::isMain).findAny().orElseThrow();
         Instantiation mainInstance = LfFactory.eINSTANCE.createInstantiation();
         mainInstance.setName("Main");
         mainInstance.setReactorClass(mainReactor);
-        processLFInstanceToForSyDeReactor(forSyDeModel, mainInstance, "");
-        return forSyDeModel;
+        processLFInstanceToForSyDeReactor(forSyDeSystemGraph, mainInstance, "");
+        return forSyDeSystemGraph;
     }
 
-    protected Vertex fromLFTimerToForsyDeTimer(ForSyDeModel model, Timer timer) {
+    protected Vertex fromLFTimerToForsyDeTimer(ForSyDeSystemGraph model, Timer timer) {
         return fromLFTimerToForsyDeTimer(model, timer, "", "");
     }
 
-    protected Vertex fromLFTimerToForsyDeTimer(ForSyDeModel model, Timer timer, String prefix) {
+    protected Vertex fromLFTimerToForsyDeTimer(ForSyDeSystemGraph model, Timer timer, String prefix) {
         return fromLFTimerToForsyDeTimer(model, timer, prefix, "");
     }
 
-    protected Vertex fromLFTimerToForsyDeTimer(ForSyDeModel model, Timer timer, String prefix, String suffix) {
+    protected Vertex fromLFTimerToForsyDeTimer(ForSyDeSystemGraph model, Timer timer, String prefix, String suffix) {
         Vertex timerVertex = new Vertex(prefix +  timer.getName() + suffix, VertexTrait.LinguaFrancaTimer);
         model.addVertex(timerVertex);
         if (timer.getPeriod().getTime() != null) {
@@ -74,15 +69,15 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
         }
     }
 
-    protected Vertex processLFReactionToForSyDeReaction(ForSyDeModel model, Reaction reaction) {
+    protected Vertex processLFReactionToForSyDeReaction(ForSyDeSystemGraph model, Reaction reaction) {
         return processLFReactionToForSyDeReaction(model, reaction, "", "");
     }
 
-    protected Vertex processLFReactionToForSyDeReaction(ForSyDeModel model, Reaction reaction, String prefix) {
+    protected Vertex processLFReactionToForSyDeReaction(ForSyDeSystemGraph model, Reaction reaction, String prefix) {
         return processLFReactionToForSyDeReaction(model, reaction, prefix, "");
     }
 
-    protected Vertex processLFReactionToForSyDeReaction(ForSyDeModel model, Reaction reaction, String prefix, String suffix) {
+    protected Vertex processLFReactionToForSyDeReaction(ForSyDeSystemGraph model, Reaction reaction, String prefix, String suffix) {
         Vertex reactionVertex = new Vertex(prefix + "reaction" + suffix, VertexTrait.LinguaFrancaReaction);
         model.addVertex(reactionVertex);
         for (TriggerRef triggerRef : reaction.getTriggers()) {
@@ -97,11 +92,11 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
         return reactionVertex;
     }
 
-    protected Vertex processLFInstanceToForSyDeReactor(ForSyDeModel model, Instantiation instantiation, String prefix) {
+    protected Vertex processLFInstanceToForSyDeReactor(ForSyDeSystemGraph model, Instantiation instantiation, String prefix) {
         return processLFInstanceToForSyDeReactor(model, instantiation, prefix, "");
     }
 
-    protected Vertex processLFInstanceToForSyDeReactor(ForSyDeModel model, Instantiation instantiation, String prefix, String suffix) {
+    protected Vertex processLFInstanceToForSyDeReactor(ForSyDeSystemGraph model, Instantiation instantiation, String prefix, String suffix) {
         final Map<Timer, Vertex> timerToVertex = new HashMap<>();
         final Map<Instantiation, Vertex> childInstancesToVertex = new HashMap<>();
         final String instantiationName = prefix + instantiation.getName();

@@ -6,9 +6,8 @@ package forsyde.io.java.drivers;
 import java.io.File;
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import forsyde.io.java.core.ForSyDeModel;
+import forsyde.io.java.core.ForSyDeSystemGraph;
 
 /**
  * @author rjordao
@@ -77,15 +76,15 @@ public final class ForSyDeModelHandler {
 		);
 	}
 
-	public ForSyDeModel loadModel(String filePath) throws Exception {
+	public ForSyDeSystemGraph loadModel(String filePath) throws Exception {
 		return loadModel(Paths.get(filePath));
 	}
 
-	public ForSyDeModel loadModel(File file) throws Exception {
+	public ForSyDeSystemGraph loadModel(File file) throws Exception {
 		return loadModel(file.toPath());
 	}
 
-	public ForSyDeModel loadModel(Path inPath) throws Exception {
+	public ForSyDeSystemGraph loadModel(Path inPath) throws Exception {
 		for (int i = 0; i < registeredDrivers.size(); i++) {
 			if (registeredDriversInputMatchers.get(i).matches(inPath)) {
 				return registeredDrivers.get(i).loadModel(inPath);
@@ -104,15 +103,15 @@ public final class ForSyDeModelHandler {
 //		return driver.loadModel(inPath);
 	}
 	
-	public void writeModel(ForSyDeModel model, String filePath) throws Exception {
+	public void writeModel(ForSyDeSystemGraph model, String filePath) throws Exception {
 		writeModel(model, Paths.get(filePath));
 	}
 
-	public void writeModel(ForSyDeModel model, File file) throws Exception {
+	public void writeModel(ForSyDeSystemGraph model, File file) throws Exception {
 		writeModel(model, file.toPath());
 	}
 
-	public void writeModel(ForSyDeModel model, Path outPath) throws Exception {
+	public void writeModel(ForSyDeSystemGraph model, Path outPath) throws Exception {
 		for (int i = 0; i < registeredDrivers.size(); i++) {
 			if (registeredDriversOutputMatchers.get(i).matches(outPath)) {
 				registeredDrivers.get(i).writeModel(model, outPath);

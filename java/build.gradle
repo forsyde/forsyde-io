@@ -25,7 +25,7 @@ tasks.compileJava.dependsOn generateForSyDeModel
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = project.name
-version = '0.3.9'
+version = '0.4.0'
 
 
 // In this section you declare where to find the dependencies of your project
@@ -33,7 +33,6 @@ repositories {
   // Use 'jcenter' for resolving your dependencies.
   // You can declare any Maven/Ivy/file repository here.
   mavenCentral()
-  jcenter()
 }
 
 // get sources until the developers decide to properly release stuff.
@@ -49,14 +48,16 @@ apply from: "lflang-build.gradle"
 // In this section you declare the dependencies for your production and test code
 dependencies {
   // The production code uses the SLF4J logging API at compile time
-  implementation 'org.slf4j:slf4j-api:1.7.25'
+  implementation 'org.slf4j:slf4j-api:1.7.32'
   implementation group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.1'
   implementation group: 'org.jgrapht', name: 'jgrapht-io', version: '1.5.1'
   // these two are intrusive results of lingua franca
   implementation 'org.eclipse.xtend:org.eclipse.xtend.lib:2.25.0'
   implementation 'commons-cli:commons-cli:1.4'
 
-  // implementation project(':org.lflang')
+  compileOnly "org.derive4j:derive4j-annotation:1.1.1"
+  annotationProcessor "org.derive4j:derive4j:1.1.1"
+
 
   // implementation('org.lflang:org.lflang')
   // AMALTHEA connection

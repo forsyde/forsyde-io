@@ -1,7 +1,7 @@
 package forsyde.io.java.adapters;
 
 import forsyde.io.java.adapters.amalthea.*;
-import forsyde.io.java.core.ForSyDeModel;
+import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.app4mc.amalthea.model.*;
@@ -16,22 +16,22 @@ public class AmaltheaAdapter implements ModelAdapter<Amalthea>, Amalthea2ForSyDe
 	protected Set<Pair<Vertex, INamed>> equivalences = new HashSet<>();
 
 	@Override
-	public ForSyDeModel convert(Amalthea inputModel) {
-		final ForSyDeModel forSyDeModel = new ForSyDeModel();
+	public ForSyDeSystemGraph convert(Amalthea inputModel) {
+		final ForSyDeSystemGraph forSyDeSystemGraph = new ForSyDeSystemGraph();
 		Map<INamed, Vertex> transformed = Map.of();
 		for (HwStructure structure : inputModel.getHwModel().getStructures()) {
-			transformed = fromStructureToVertex(forSyDeModel, structure);
+			transformed = fromStructureToVertex(forSyDeSystemGraph, structure);
 		}
 		// edges after all vertexes axist
 		for (HwStructure structure : inputModel.getHwModel().getStructures()) {
-			fromStructureToEdges(forSyDeModel, structure, transformed);
+			fromStructureToEdges(forSyDeSystemGraph, structure, transformed);
 		}
-		oSModelToBinding(inputModel, forSyDeModel, transformed);
-		return forSyDeModel;
+		oSModelToBinding(inputModel, forSyDeSystemGraph, transformed);
+		return forSyDeSystemGraph;
 	}
 
 	@Override
-	public Amalthea convert(ForSyDeModel inputModel) {
+	public Amalthea convert(ForSyDeSystemGraph inputModel) {
 		Amalthea target = AmaltheaFactory.eINSTANCE.createAmalthea();
 		fromVertexesToHWModel(inputModel, target);
 		fromVertexesToOSModel(inputModel, target);

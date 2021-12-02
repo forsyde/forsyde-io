@@ -24,9 +24,9 @@ final public class Vertex {
 	private volatile static long genSymSuffix = 0L;
 
 	public String identifier;
-	public Set<String> ports = new HashSet<String>();
-	public Map<String, VertexProperty> properties = new HashMap<String, VertexProperty>();
-	public Set<Trait> vertexTraits = new HashSet<Trait>();
+	public Set<String> ports = new HashSet<>();
+	public Map<String, VertexProperty> properties = new HashMap<>();
+	public Set<Trait> vertexTraits = new HashSet<>();
 
 	/**
 	 * Utility constructor initializing all associated data as empty and the vertex

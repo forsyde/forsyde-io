@@ -196,7 +196,7 @@ public class JavaMetaGenerator extends DefaultTask {
 		ParameterizedTypeName setType = ParameterizedTypeName.get(ClassName.get(HashSet.class), vertexClass);
 		MethodSpec.Builder getPortMethod = MethodSpec.methodBuilder("get" + toCamelCase(port.name) + "Port")
 				.addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
-				.addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeModel"), "model");
+				.addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model");
 		// .addParameter(vertexClass, "vertex");
 		if (port.multiple.orElse(true)) {
 			if (port.ordered.orElse(false)) {

@@ -3,28 +3,26 @@ package forsyde.io.java.adapters.amalthea;
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.Edge;
 import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeModel;
+import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.typed.viewers.*;
 import org.eclipse.app4mc.amalthea.model.*;
 
-import java.lang.System;
 import java.math.BigInteger;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<Vertex, INamed> {
 
-    default void fromVertexesToHWModel(ForSyDeModel model, Amalthea target) {
+    default void fromVertexesToHWModel(ForSyDeSystemGraph model, Amalthea target) {
         target.setHwModel(AmaltheaFactory.eINSTANCE.createHWModel());
         fromVertexesToModules(model, target);
         fromVertexesToStructures(model, target);
         fromEdgesToConnections(model, target);
     }
 
-    default void fromVertexesToModules(ForSyDeModel model, Amalthea target) {
+    default void fromVertexesToModules(ForSyDeSystemGraph model, Amalthea target) {
         final Set<AbstractDigitalModule> modules = model.vertexSet()
                 .stream().filter(AbstractDigitalModule::conforms)
                 .map(v -> AbstractDigitalModule.safeCast(v).get())
@@ -113,7 +111,7 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
         }
     }
 
-    default void fromVertexesToStructures(ForSyDeModel model, Amalthea target) {
+    default void fromVertexesToStructures(ForSyDeSystemGraph model, Amalthea target) {
         final Set<AbstractStructure> platforms = model.vertexSet()
                 .stream().filter(AbstractStructure::conforms)
                 .map(v -> AbstractStructure.safeCast(v).get())
@@ -145,10 +143,10 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
                             parentHwStructure.getStructures().add(childHwStructure);
                             // remove the 'namespace' from the child identifier
                             if (child.getViewedVertex().getIdentifier().contains(
-                                    "." + parent.getViewedVertex().getIdentifier()
+                                    parent.getViewedVertex().getIdentifier() + "."
                             )) {
                                 final String newName = child.getViewedVertex().getIdentifier()
-                                        .replace("." + parent.getViewedVertex().getIdentifier(), "");
+                                        .replace(parent.getViewedVertex().getIdentifier() + ".", "");
                                 childHwStructure.setName(newName);
                             }
                         });
@@ -165,7 +163,7 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
         }
     }
 
-    default void fromEdgesToConnections(ForSyDeModel model, Amalthea targetModel) {
+    default void fromEdgesToConnections(ForSyDeSystemGraph model, Amalthea targetModel) {
         for (Edge e: model.edgeSet()) {
             if (e.edgeTraits.contains(EdgeTrait.AbstractPhysicalConnection) &&
                 (AbstractStructure.conforms(e.getSource()) || AbstractDigitalModule.conforms(e.getSource())) &&

@@ -28,11 +28,11 @@ public interface VertexViewer {
         return getViewedVertex().getProperties();
     }
     
-    private Optional<Vertex> getNamedPort(ForSyDeModel model, String portName, String traitName) {
+    private Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, String portName, String traitName) {
     	return getNamedPort(model, portName, traitName, "BIDIRECTIONAL");
     }
     
-    default Optional<Vertex> getNamedPort(ForSyDeModel model, String portName, String traitName, String direction) {
+    default Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, String portName, String traitName, String direction) {
     	Vertex v = getViewedVertex();
     	Trait t = traitFromString(traitName);
     	if (direction.equalsIgnoreCase("outgoing") || direction.equalsIgnoreCase("bidirectional")) {
@@ -58,11 +58,11 @@ public interface VertexViewer {
 		return Optional.empty();
     }
     
-    default Set<Vertex> getMultipleNamedPort(ForSyDeModel model, String portName, String traitName) {
+    default Set<Vertex> getMultipleNamedPort(ForSyDeSystemGraph model, String portName, String traitName) {
     	return getMultipleNamedPort(model, portName, traitName, "BIDIRECTIONAL");
     }
     
-    default Set<Vertex> getMultipleNamedPort(ForSyDeModel model, String portName, String traitName, String direction) {
+    default Set<Vertex> getMultipleNamedPort(ForSyDeSystemGraph model, String portName, String traitName, String direction) {
     	Vertex v = getViewedVertex();
     	Set<Vertex> vs = new HashSet<>();
     	Trait t = traitFromString(traitName);
@@ -85,11 +85,11 @@ public interface VertexViewer {
 		return vs;
     }
     
-    default List<Vertex> getOrderedMultipleNamedPort(ForSyDeModel model, String portName, String traitName) {
+    default List<Vertex> getOrderedMultipleNamedPort(ForSyDeSystemGraph model, String portName, String traitName) {
     	return getOrderedMultipleNamedPort(model, portName, traitName, "BIDIRECTIONAL");
     }
     
-    default List<Vertex> getOrderedMultipleNamedPort(ForSyDeModel model, String portName, String traitName, String direction) {
+    default List<Vertex> getOrderedMultipleNamedPort(ForSyDeSystemGraph model, String portName, String traitName, String direction) {
     	Vertex v = getViewedVertex();
     	Trait t = traitFromString(traitName);
     	@SuppressWarnings("unchecked")

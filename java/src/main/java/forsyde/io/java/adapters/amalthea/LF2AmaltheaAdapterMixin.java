@@ -1,7 +1,7 @@
 package forsyde.io.java.adapters.amalthea;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.ForSyDeModel;
+import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.typed.viewers.LinguaFrancaReaction;
 import forsyde.io.java.typed.viewers.LinguaFrancaReactor;
@@ -11,13 +11,12 @@ import org.eclipse.app4mc.amalthea.model.*;
 import org.eclipse.app4mc.amalthea.model.Runnable;
 
 import java.math.BigInteger;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface LF2AmaltheaAdapterMixin extends EquivalenceModel2ModelMixin<Vertex, INamed> {
 
-    default  void convertToSWModel(ForSyDeModel model, Amalthea amalthea) {
+    default  void convertToSWModel(ForSyDeSystemGraph model, Amalthea amalthea) {
         if (amalthea.getSwModel() == null) amalthea.setSwModel(AmaltheaFactory.eINSTANCE.createSWModel());
         if (amalthea.getStimuliModel() == null) amalthea.setStimuliModel(AmaltheaFactory.eINSTANCE.createStimuliModel());
 
@@ -26,7 +25,7 @@ public interface LF2AmaltheaAdapterMixin extends EquivalenceModel2ModelMixin<Ver
         convertFromSignals(model, amalthea);
     }
 
-    default  void convertToStimuli(ForSyDeModel model, Amalthea amalthea) {
+    default  void convertToStimuli(ForSyDeSystemGraph model, Amalthea amalthea) {
         model.vertexSet()
         .stream().filter(LinguaFrancaTimer::conforms)
         .map(v -> LinguaFrancaTimer.safeCast(v).get())
@@ -44,7 +43,7 @@ public interface LF2AmaltheaAdapterMixin extends EquivalenceModel2ModelMixin<Ver
         });
     }
 
-    default  void convertToReactors(ForSyDeModel model, Amalthea amalthea) {
+    default  void convertToReactors(ForSyDeSystemGraph model, Amalthea amalthea) {
         final Set<LinguaFrancaReactor> reactors = model.vertexSet()
                 .stream().filter(LinguaFrancaReactor::conforms)
                 .map(v -> LinguaFrancaReactor.safeCast(v).get())
@@ -80,7 +79,7 @@ public interface LF2AmaltheaAdapterMixin extends EquivalenceModel2ModelMixin<Ver
         }
     }
 
-    default  void convertFromSignals(ForSyDeModel model, Amalthea amalthea) {
+    default  void convertFromSignals(ForSyDeSystemGraph model, Amalthea amalthea) {
         final Set<LinguaFrancaSignal> signals = model.vertexSet()
                 .stream().filter(LinguaFrancaSignal::conforms)
                 .map(v -> LinguaFrancaSignal.safeCast(v).get())

@@ -32,17 +32,17 @@ import javax.annotation.Nonnull;
  * @see Vertex
  * @see Edge
  */
-public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
+public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, Edge> {
 
 	/**
 	 * Default constructor, returning an empty (system) model graph.
 	 */
-	public ForSyDeModel() {
+	public ForSyDeSystemGraph() {
 		super(Edge.class);
 
 	}
 
-	public boolean mergeInPlace(ForSyDeModel other) {
+	public boolean mergeInPlace(ForSyDeSystemGraph other) {
 		boolean mergeDefined = true;
 		// do the double for since we would need to
 		// find the conflicting vertexInterface anyhow. Indexing/hashing
@@ -81,8 +81,8 @@ public class ForSyDeModel extends DirectedPseudograph<Vertex, Edge> {
 		return mergeDefined;
 	}
 	
-	public ForSyDeModel merge(ForSyDeModel other) {
-		ForSyDeModel merged = new ForSyDeModel();
+	public ForSyDeSystemGraph merge(ForSyDeSystemGraph other) {
+		ForSyDeSystemGraph merged = new ForSyDeSystemGraph();
 		merged.mergeInPlace(this);
 		merged.mergeInPlace(other);
 		return merged;
