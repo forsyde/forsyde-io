@@ -95,6 +95,7 @@ public interface ForSyDe2AmaltheaMappingAdapterMixin extends EquivalenceModel2Mo
                         final SchedulerAllocation schedulerAllocation = AmaltheaFactory.eINSTANCE.createSchedulerAllocation();
                         schedulerAllocation.setScheduler(taskScheduler);
                         schedulerAllocation.setExecutingPU(targetPu);
+                        schedulerAllocation.getResponsibility().add(targetPu);
                         amalthea.getMappingModel().getSchedulerAllocation().add(schedulerAllocation);
                     });
                 });
@@ -108,6 +109,7 @@ public interface ForSyDe2AmaltheaMappingAdapterMixin extends EquivalenceModel2Mo
                             final SchedulerAllocation schedulerAllocation = AmaltheaFactory.eINSTANCE.createSchedulerAllocation();
                             schedulerAllocation.setScheduler(taskScheduler);
                             schedulerAllocation.setExecutingPU(targetPu);
+                            schedulerAllocation.getResponsibility().add(targetPu);
                             amalthea.getMappingModel().getSchedulerAllocation().add(schedulerAllocation);
                         });
                     });

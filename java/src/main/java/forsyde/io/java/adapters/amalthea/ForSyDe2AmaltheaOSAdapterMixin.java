@@ -14,11 +14,12 @@ public interface ForSyDe2AmaltheaOSAdapterMixin extends EquivalenceModel2ModelMi
 //        fromVertexesToStructures(model, target, cache);
 //        fromEdgesToConnections(model, target, cache);
         for (Vertex v : model.vertexSet()) {
+            final String newId = v.getIdentifier().replace(".", "_");
             if (FixedPriorityScheduler.conforms(v)) {
                 final OperatingSystem operatingSystem = AmaltheaFactory.eINSTANCE.createOperatingSystem();
                 final TaskScheduler taskScheduler = AmaltheaFactory.eINSTANCE.createTaskScheduler();
-                operatingSystem.setName(v.getIdentifier());
-                taskScheduler.setName(v.getIdentifier() + "FPScheduler");
+                operatingSystem.setName(newId);
+                taskScheduler.setName(newId + "_FPScheduler");
                 taskScheduler.setSchedulingAlgorithm(AmaltheaFactory.eINSTANCE.createFixedPriorityPreemptive());
                 operatingSystem.getTaskSchedulers().add(taskScheduler);
                 addEquivalence(v, operatingSystem);
@@ -26,8 +27,8 @@ public interface ForSyDe2AmaltheaOSAdapterMixin extends EquivalenceModel2ModelMi
             } else if (RoundRobinScheduler.conforms(v)) {
                 final OperatingSystem operatingSystem = AmaltheaFactory.eINSTANCE.createOperatingSystem();
                 final TaskScheduler taskScheduler = AmaltheaFactory.eINSTANCE.createTaskScheduler();
-                operatingSystem.setName(v.getIdentifier());
-                taskScheduler.setName(v.getIdentifier() + "RRScheduler");
+                operatingSystem.setName(newId);
+                taskScheduler.setName(newId + "_RRScheduler");
                 taskScheduler.setSchedulingAlgorithm(AmaltheaFactory.eINSTANCE.createPriorityBasedRoundRobin());
                 operatingSystem.getTaskSchedulers().add(taskScheduler);
                 addEquivalence(v, operatingSystem);
@@ -35,8 +36,8 @@ public interface ForSyDe2AmaltheaOSAdapterMixin extends EquivalenceModel2ModelMi
             } else if (TimeTriggeredScheduler.conforms(v)) {
                 final OperatingSystem operatingSystem = AmaltheaFactory.eINSTANCE.createOperatingSystem();
                 final TaskScheduler taskScheduler = AmaltheaFactory.eINSTANCE.createTaskScheduler();
-                operatingSystem.setName(v.getIdentifier());
-                taskScheduler.setName(v.getIdentifier() + "TTScheduler");
+                operatingSystem.setName(newId);
+                taskScheduler.setName(newId + "_TTScheduler");
                 taskScheduler.setSchedulingAlgorithm(AmaltheaFactory.eINSTANCE.createUserSpecificSchedulingAlgorithm());
                 operatingSystem.getTaskSchedulers().add(taskScheduler);
                 addEquivalence(v, operatingSystem);

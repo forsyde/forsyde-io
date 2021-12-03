@@ -1,12 +1,7 @@
 package forsyde.io.java.core;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public interface VertexViewer {
 	
@@ -27,7 +22,7 @@ public interface VertexViewer {
     default Map<String, VertexProperty> getProperties() {
         return getViewedVertex().getProperties();
     }
-    
+    /*
     private Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, String portName, String traitName) {
     	return getNamedPort(model, portName, traitName, "BIDIRECTIONAL");
     }
@@ -127,7 +122,7 @@ public interface VertexViewer {
 			return new OpaqueTrait(traitName);
 		}
     }
-    
+    */
 //	default<T> T getNamedProperty(String propName, Class<T> propType) {
 //    	return propType.cast(getViewedVertex().getProperties().get(propName).unwrap()); 
 //    }

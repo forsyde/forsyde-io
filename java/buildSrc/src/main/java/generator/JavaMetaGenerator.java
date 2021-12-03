@@ -201,8 +201,9 @@ public class JavaMetaGenerator extends DefaultTask {
 		if (port.multiple.orElse(true)) {
 			if (port.ordered.orElse(false)) {
 				getPortMethod.returns(listOut);
-				String statement = "return getMultipleNamedPort(model, \"$L\", \"$L\", \"$L\").stream().map(v -> $T.safeCast(v).get()).collect($T.toList())";
-				getPortMethod.addStatement(statement, 
+				String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), \"$L\", \"$L\", \"$L\").stream().map(v -> $T.safeCast(v).get()).collect($T.toList())";
+				getPortMethod.addStatement(statement,
+						ClassName.get("forsyde.io.java.core", "VertexAcessor"),
 						port.name, 
 						port.vertexTrait.name, 
 						port.direction.toString().toLowerCase(),
@@ -211,8 +212,9 @@ public class JavaMetaGenerator extends DefaultTask {
 //				getPortMethod.addStatement("$T outList = new $T()", arrayType, arrayType);
 			} else {
 				getPortMethod.returns(setOut);
-				String statement = "return getMultipleNamedPort(model, \"$L\", \"$L\", \"$L\").stream().map(v -> $T.safeCast(v).get()).collect($T.toSet())";
-				getPortMethod.addStatement(statement, 
+				String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), \"$L\", \"$L\", \"$L\").stream().map(v -> $T.safeCast(v).get()).collect($T.toSet())";
+				getPortMethod.addStatement(statement,
+						ClassName.get("forsyde.io.java.core", "VertexAcessor"),
 						port.name, 
 						port.vertexTrait.name, 
 						port.direction.toString().toLowerCase(),
@@ -222,7 +224,8 @@ public class JavaMetaGenerator extends DefaultTask {
 			}
 		} else {
 			getPortMethod.returns(optionalOut);
-			getPortMethod.addStatement("return getNamedPort(model, \"$L\", \"$L\", \"$L\").map(v -> $T.safeCast(v).get())",
+			getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), \"$L\", \"$L\", \"$L\").map(v -> $T.safeCast(v).get())",
+					ClassName.get("forsyde.io.java.core", "VertexAcessor"),
 					port.name, 
 					port.vertexTrait.name, 
 					port.direction.toString().toLowerCase(),
@@ -350,14 +353,18 @@ public class JavaMetaGenerator extends DefaultTask {
 		for (VertexTraitSpec trait : traits) {
 			TypeSpec.Builder traitInterface = TypeSpec.interfaceBuilder(trait.name).addModifiers(Modifier.PUBLIC)
 					.addJavadoc(trait.comment);
+			for (VertexTraitSpec refinedTrait : trait.refinedTraits) {
+				traitInterface
+						.addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", refinedTrait.name));
+			}
+			traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"));
+			/*
 			if (trait.refinedTraits.isEmpty()) {
 				traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"));
 			} else {
-				for (VertexTraitSpec refinedTrait : trait.refinedTraits) {
-					traitInterface
-							.addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", refinedTrait.name));
-				}
+
 			}
+			*/
 			for (PropertySpec prop : trait.requiredProperties) {
 				traitInterface.addMethod(generatePropertyGetter(prop));
 				traitInterface.addMethod(generatePropertySetter(prop));
@@ -418,6 +425,7 @@ public class JavaMetaGenerator extends DefaultTask {
 			TypeSpec.Builder traitInterface = TypeSpec.classBuilder(trait.name + "Viewer")
 					.addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 					.addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", trait.name))
+					//.superclass(ClassName.get("forsyde.io.java.core", "VertexViewer"))
 					.addJavadoc(trait.comment)
 					.addField(ClassName.get("forsyde.io.java.core", "Vertex"), "viewedVertex", Modifier.PUBLIC,
 							Modifier.FINAL);

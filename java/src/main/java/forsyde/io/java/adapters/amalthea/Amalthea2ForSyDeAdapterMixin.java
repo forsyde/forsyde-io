@@ -112,6 +112,23 @@ public interface Amalthea2ForSyDeAdapterMixin {
             final Vertex sourceVertex = transformed.get(connection.getPort1().getNamedContainer());
             final Vertex targetVertex = transformed.get(connection.getPort2().getNamedContainer());
             model.connect(sourceVertex, targetVertex, connection.getPort1().getName(), connection.getPort2().getName(), EdgeTrait.AbstractPhysicalConnection);
+            // add the port information
+            if (!SynthetizableDigitalPorts.conforms(sourceVertex)) {
+                sourceVertex.addTraits(VertexTrait.SynthetizableDigitalPorts);
+            }
+            if (!SynthetizableDigitalPorts.conforms(targetVertex)) {
+                targetVertex.addTraits(VertexTrait.SynthetizableDigitalPorts);
+            }
+            SynthetizableDigitalPorts.safeCast(sourceVertex).ifPresent(source -> {
+                source.setPortProtocolAcronym(connection.getPort1().getPortInterface().getLiteral());
+                source.setPortWidthInBits(connection.getPort1().getBitWidth());
+                source.setPortIsInitiator(connection.getPort1().getPortType().equals(PortType.INITIATOR));
+            });
+            SynthetizableDigitalPorts.safeCast(targetVertex).ifPresent(target -> {
+                target.setPortProtocolAcronym(connection.getPort2().getPortInterface().getLiteral());
+                target.setPortWidthInBits(connection.getPort2().getBitWidth());
+                target.setPortIsInitiator(connection.getPort2().getPortType().equals(PortType.INITIATOR));
+            });
         }
 	/*	for (HwModule module : structure.getModules()) {
 			final Vertex moduleVertex = transformed.get(module);

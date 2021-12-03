@@ -48,10 +48,12 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 		public String getNamespaceURI(String s) {
 			if (s.equals("forsydeio") || s.equals("graph")) {
 				return "forsyde.io.system.graph";
-			} else if (s.equals("xsd")) {
+			} else if (s.equals("xmi")) {
 				return "http://www.omg.org/XMI";
 			} else if (s.equals("xsi")) {
 				return "http://www.w3.org/2001/XMLSchema-instance";
+			} else if (s.equals("xmlns")) {
+				return "http://www.w3.org/2000/xmlns/";
 			}
 			return null;
 		}
@@ -61,9 +63,11 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 			if (s.equals("forsyde.io.system.graph")) {
 				return "forsydeio";
 			} else if (s.equals("http://www.omg.org/XMI")) {
-				return "xsd";
+				return "xmi";
 			} else if (s.equals("http://www.w3.org/2001/XMLSchema-instance")) {
 				return "xsi";
+			} else if (s.equals("http://www.w3.org/2000/xmlns/")) {
+				return "xmlns";
 			}
 			return null;
 		}
@@ -112,11 +116,11 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 		Document xmlDoc = builder.parse(inStream);
 
 		// get the XPath object
-		NodeList vertexList = (NodeList) xPath.compile("/forsydeio:ForSyDeSystemGraph//nodes").evaluate(xmlDoc, XPathConstants.NODESET);
+		NodeList vertexList = (NodeList) xPath.compile("/graph:ForSyDeSystemGraph//nodes").evaluate(xmlDoc, XPathConstants.NODESET);
 		for (int i = 0; i < vertexList.getLength(); i++) {
 			Element vertexElem = (Element) vertexList.item(i);
 			Vertex vertex = new Vertex(vertexElem.getAttribute("identifier"));
-			NodeList vertexTraitList = (NodeList) xPath.compile("forsydeio:traits").evaluate(vertexElem, XPathConstants.NODESET);
+			NodeList vertexTraitList = (NodeList) xPath.compile("graph:traits").evaluate(vertexElem, XPathConstants.NODESET);
 			for (int j = 0; j < vertexTraitList.getLength(); j++) {
 				final String name = vertexTraitList.item(j).getTextContent();
 				vertex.vertexTraits.add(allowedVertexes.contains(name) ?
@@ -124,21 +128,21 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 			}
 			model.addVertex(vertex);
 			// iterate through ports and add them
-			NodeList portsList = (NodeList) xPath.compile("forsydeio:ports").evaluate(vertexElem, XPathConstants.NODESET);
+			NodeList portsList = (NodeList) xPath.compile("graph:ports").evaluate(vertexElem, XPathConstants.NODESET);
 			for (int j = 0; j < portsList.getLength(); j++) {
 				Element portElem = (Element) portsList.item(j);
 				vertex.ports.add(portElem.getTextContent());
 			}
 			// iterate through properties and add them
-			NodeList propertyValuesList = (NodeList) xPath.compile("forsydeio:propertiesValues").evaluate(vertexElem, XPathConstants.NODESET);
-			NodeList propertyNamesList = (NodeList) xPath.compile("forsydeio:propertiesNames").evaluate(vertexElem, XPathConstants.NODESET);
+			NodeList propertyValuesList = (NodeList) xPath.compile("graph:propertiesValues").evaluate(vertexElem, XPathConstants.NODESET);
+			NodeList propertyNamesList = (NodeList) xPath.compile("graph:propertiesNames").evaluate(vertexElem, XPathConstants.NODESET);
 			for (int j = 0; j < propertyValuesList.getLength(); j++) {
 				Element propertyElem = (Element) propertyValuesList.item(j);
 				VertexProperty property = readData(propertyElem);
 				vertex.properties.put(propertyNamesList.item(j).getTextContent(), property);
 			}
 		}
-		NodeList edgeList = (NodeList) xPath.compile("/forsydeio:ForSyDeSystemGraph//edges").evaluate(xmlDoc, XPathConstants.NODESET);
+		NodeList edgeList = (NodeList) xPath.compile("/graph:ForSyDeSystemGraph//edges").evaluate(xmlDoc, XPathConstants.NODESET);
 		for (int i = 0; i < edgeList.getLength(); i++) {
 			Element edgeElem = (Element) edgeList.item(i);
 			String sid = edgeElem.getAttribute("source");
@@ -148,7 +152,7 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 			Vertex source = model.vertexSet().stream().filter(v -> v.getIdentifier().equals(sid)).findFirst().get();
 			Vertex target = model.vertexSet().stream().filter(v -> v.getIdentifier().equals(tid)).findFirst().get();
 			Edge edge = new Edge(source, target);
-			NodeList edgeTraitList = (NodeList) xPath.compile("forsydeio:traits").evaluate(edgeElem, XPathConstants.NODESET);
+			NodeList edgeTraitList = (NodeList) xPath.compile("graph:traits").evaluate(edgeElem, XPathConstants.NODESET);
 			for (int j = 0; j < edgeTraitList.getLength(); j++) {
 				final String name = edgeTraitList.item(j).getTextContent();
 				edge.edgeTraits.add(allowedEdges.contains(name) ?
@@ -174,58 +178,58 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.newDocument();
-		Element root = doc.createElementNS("forsyde.io.system.graph", "ForSyDeSystemGraph");
-		root.setAttribute("xmlns:forsydeio", "forsyde.system.io.graph");
+		Element root = doc.createElement("graph:ForSyDeSystemGraph");
+		root.setAttribute("xmi:version", "2.0");
 		root.setAttribute("xmlns:xmi", "http://www.omg.org/XMI");
 		root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-		root.setAttribute("xmi:version", "2.0");
-		root.setAttribute("xsi:schemaLocation", "forsyde.system.io.graph systemgraphmeta.xcore#/EPackage");
-		// Element graph = doc.createElementNS("forsyde.io.system.graph", "ForSyDeSystemGraph");
+		root.setAttribute("xmlns:graph", "forsyde.io.system.graph");
+		root.setAttribute("xsi:schemaLocation", "forsyde.io.system.graph systemgraph.xcore#/EPackage");
+		// Element graph = doc.createElement( "ForSyDeSystemGraph");
 		// graph.setAttribute("id", "model");
 		// graph.setAttribute("edgedefault", "directed");
 		//root.appendChild(graph);
 		doc.appendChild(root);
 		for (Vertex v : model.vertexSet()) {
-			Element vElem = doc.createElementNS("forsyde.io.system.graph","nodes");
-			vElem.setAttributeNS("forsyde.io.system.graph", "identifier", v.getIdentifier());
+			Element vElem = doc.createElement("nodes");
+			vElem.setAttribute("identifier", v.getIdentifier());
 			v.vertexTraits.forEach(t -> {
-				final Element traitElem = doc.createElementNS("forsyde.io.system.graph", "traits");
+				final Element traitElem = doc.createElement( "traits");
 				traitElem.setTextContent(t.getName());
 				vElem.appendChild(traitElem);
 			});
-			//vElem.setAttributeNS("forsyde.io.system.graph", "traits", v.getTraits().stream().map(t -> t.getName()).collect(Collectors.joining(";")));
+			//vElem.setAttribute("traits", v.getTraits().stream().map(t -> t.getName()).collect(Collectors.joining(";")));
 			root.appendChild(vElem);
 			for (String p : v.getPorts()) {
-				Element pElem = doc.createElementNS("forsyde.io.system.graph","ports");
+				Element pElem = doc.createElement("ports");
 				pElem.setTextContent(p);
-				//pElem.setAttributeNS("forsyde.io.system.graph", "name", p);
+				//pElem.setAttribute("name", p);
 				vElem.appendChild(pElem);
 			}
 			for (String key : v.getProperties().keySet()) {
 				Element propElem = writeData(doc, v.getProperties().get(key));
-				doc.renameNode(propElem, "forsyde.io.system.graph", "propertiesValues");
-				propElem.setAttributeNS("forsyde.io.system.graph", "attr.name", key);
+				doc.renameNode(propElem, null, "propertiesValues");
+				//propElem.setAttribute("attr.name", key);
 				vElem.appendChild(propElem);
-				final Element name = doc.createElementNS("forsyde.io.system.graph", "propertiesNames");
+				final Element name = doc.createElement( "propertiesNames");
 				name.setTextContent(key);
 				vElem.appendChild(name);
 			}
 		}
 		for (Edge e : model.edgeSet()) {
-			Element eElem = doc.createElement("edge");
-			eElem.setAttributeNS("forsyde.io.system.graph", "source", e.getSource().getIdentifier());
-			eElem.setAttributeNS("forsyde.io.system.graph", "target", e.getTarget().getIdentifier());
+			Element eElem = doc.createElement( "edges");
+			eElem.setAttribute("source", e.getSource().getIdentifier());
+			eElem.setAttribute("target", e.getTarget().getIdentifier());
 			e.edgeTraits.forEach(t -> {
-				final Element traitElem = doc.createElementNS("forsyde.io.system.graph", "traits");
+				final Element traitElem = doc.createElement( "traits");
 				traitElem.setTextContent(t.getName());
 				eElem.appendChild(traitElem);
 			});
-			// eElem.setAttributeNS("forsyde.io.system.graph", "traits", e.getTraits().stream().map(t -> t.getName()).collect(Collectors.joining(";")));
+			// eElem.setAttribute("traits", e.getTraits().stream().map(t -> t.getName()).collect(Collectors.joining(";")));
 			if (e.getSourcePort().isPresent()) {
-				eElem.setAttributeNS("forsyde.io.system.graph", "sourceport", e.getSourcePort().get());
+				eElem.setAttribute("sourceport", e.getSourcePort().get());
 			}
 			if (e.getTargetPort().isPresent()) {
-				eElem.setAttributeNS("forsyde.io.system.graph", "targetport", e.getTargetPort().get());
+				eElem.setAttribute("targetport", e.getTargetPort().get());
 			}
 			root.appendChild(eElem);
 		}
@@ -244,36 +248,36 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 	 */
 	static protected VertexProperty readData(Element elem) throws XPathExpressionException {
 		// it is a collection
-		if (elem.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type").equalsIgnoreCase("forsydeio:IntVertexProperty")) {
+		if (elem.getAttribute("xsi:type").equalsIgnoreCase("graph:IntVertexProperty")) {
 			return VertexProperty.create(Integer.valueOf(elem.getAttributeNS("forsyde.io.system.graph", "intValue")));
-		} else if (elem.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type").equalsIgnoreCase("forsydeio:FloatVertexProperty")) {
+		} else if (elem.getAttribute("xsi:type").equalsIgnoreCase("graph:FloatVertexProperty")) {
 			return VertexProperty.create(Float.valueOf(elem.getAttributeNS("forsyde.io.system.graph", "floatValue")));
-		} else if (elem.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type").equalsIgnoreCase("forsydeio:LongVertexProperty")) {
+		} else if (elem.getAttribute("xsi:type").equalsIgnoreCase("graph:LongVertexProperty")) {
 			return VertexProperty.create(Long.valueOf(elem.getAttributeNS("forsyde.io.system.graph", "longValue")));
-		} else if (elem.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type").equalsIgnoreCase("forsydeio:DoubleVertexProperty")) {
+		} else if (elem.getAttribute("xsi:type").equalsIgnoreCase("graph:DoubleVertexProperty")) {
 			return VertexProperty.create(Double.valueOf(elem.getAttributeNS("forsyde.io.system.graph", "doubleValue")));
-		} else if (elem.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type").equalsIgnoreCase("forsydeio:BooleanVertexProperty")) {
+		} else if (elem.getAttribute("xsi:type").equalsIgnoreCase("graph:BooleanVertexProperty")) {
 			return VertexProperty.create(Boolean.valueOf(elem.getAttributeNS("forsyde.io.system.graph", "booleanValue")));
-		} else if (elem.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type").equalsIgnoreCase("forsydeio:IntMapVertexProperty")) {
+		} else if (elem.getAttribute("xsi:type").equalsIgnoreCase("graph:IntMapVertexProperty")) {
 			Map<Integer, Object> map = new HashMap<Integer, Object>();
-			NodeList children = (NodeList) xPath.compile("forsydeio:values").evaluate(elem, XPathConstants.NODESET);
-			NodeList childrenIndexes = (NodeList) xPath.compile("forsydeio:indexes").evaluate(elem, XPathConstants.NODESET);
+			NodeList children = (NodeList) xPath.compile("graph:values").evaluate(elem, XPathConstants.NODESET);
+			NodeList childrenIndexes = (NodeList) xPath.compile("graph:indexes").evaluate(elem, XPathConstants.NODESET);
 			for (int i = 0; i < children.getLength(); i++) {
 				Element child = (Element) children.item(i);
 				map.put(Integer.valueOf(childrenIndexes.item(i).getTextContent()), readData(child));
 			}
 			return VertexProperty.create(map);
-		} else if (elem.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type").equalsIgnoreCase("forsydeio:StringMapVertexProperty")) {
+		} else if (elem.getAttribute("xsi:type").equalsIgnoreCase("graph:StringMapVertexProperty")) {
 			Map<String, Object> map = new HashMap<String, Object>();
-			NodeList children = (NodeList) xPath.compile("forsydeio:values").evaluate(elem, XPathConstants.NODESET);
-			NodeList childrenIndexes = (NodeList) xPath.compile("forsydeio:indexes").evaluate(elem, XPathConstants.NODESET);
+			NodeList children = (NodeList) xPath.compile("graph:values").evaluate(elem, XPathConstants.NODESET);
+			NodeList childrenIndexes = (NodeList) xPath.compile("graph:indexes").evaluate(elem, XPathConstants.NODESET);
 			for (int i = 0; i < children.getLength(); i++) {
 				Element child = (Element) children.item(i);
 				map.put(childrenIndexes.item(i).getTextContent(), readData(child));
 			}
 			return VertexProperty.create(map);
-		} else if (elem.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type").equalsIgnoreCase("forsydeio:ArrayVertexProperty")) {
-			NodeList children = (NodeList) xPath.compile("forsydeio:values").evaluate(elem, XPathConstants.NODESET);
+		} else if (elem.getAttribute("xsi:type").equalsIgnoreCase("graph:ArrayVertexProperty")) {
+			NodeList children = (NodeList) xPath.compile("graph:values").evaluate(elem, XPathConstants.NODESET);
 			List<Object> array = new ArrayList<>(children.getLength());
 			for (int i = 0; i < children.getLength(); i++) {
 				Element child = (Element) children.item(i);
@@ -286,35 +290,35 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 	}
 
 	static protected Element writeData(Document doc, VertexProperty prop) {
-		final Element newElem = doc.createElementNS("forsyde.io.system.graph", "values");
+		final Element newElem = doc.createElement( "values");
 		return VertexProperties.cases()
 				.StringVertexProperty(s -> {
-					newElem.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type", "forsydeio:StringVertexProperty");
-					newElem.setAttributeNS("forsyde.io.system.graph", "string", s);
+					newElem.setAttribute("xsi:type", "graph:StringVertexProperty");
+					newElem.setAttribute("string", s);
 					return newElem;
 				})
 				.IntVertexProperty(i -> {
-					newElem.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type", "forsydeio:IntVertexProperty");
-					newElem.setAttributeNS("forsyde.io.system.graph", "intValue", i.toString());
+					newElem.setAttribute("xsi:type", "graph:IntVertexProperty");
+					newElem.setAttribute("intValue", i.toString());
 					return newElem;
 				})
 				.BooleanVertexProperty(b -> {
-					newElem.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type", "forsydeio:BooleanVertexProperty");
-					newElem.setAttributeNS("forsyde.io.system.graph", "booleanValue", b.toString());
+					newElem.setAttribute("xsi:type", "graph:BooleanVertexProperty");
+					newElem.setAttribute("booleanValue", b.toString());
 					return newElem;
 				})
 				.FloatVertexProperty(f -> {
-					newElem.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type", "forsydeio:FloatVertexProperty");
-					newElem.setAttributeNS("forsyde.io.system.graph", "floatValue", f.toString());
+					newElem.setAttribute("xsi:type", "graph:FloatVertexProperty");
+					newElem.setAttribute("floatValue", f.toString());
 					return newElem;
 				})
 				.LongVertexProperty(l -> {
-					newElem.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type", "forsydeio:LongVertexProperty");
-					newElem.setAttributeNS("forsyde.io.system.graph", "longValue", l.toString());
+					newElem.setAttribute("xsi:type", "graph:LongVertexProperty");
+					newElem.setAttribute("longValue", l.toString());
 					return newElem;
 				})
 				.ArrayVertexProperty(array -> {
-					newElem.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type", "forsydeio:ArrayVertexProperty");
+					newElem.setAttribute("xsi:type", "graph:ArrayVertexProperty");
 					for (VertexProperty vertexProperty : array) {
 						Element child = writeData(doc, vertexProperty);
 						//child.setAttribute("attr.name", String.valueOf(i));
@@ -323,11 +327,11 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 					return newElem;
 				})
 				.IntMapVertexProperty(intMap -> {
-					newElem.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type", "forsydeio:IntMapVertexProperty");
+					newElem.setAttribute("xsi:type", "graph:IntMapVertexProperty");
 					// newElem.setAttribute("attr.type", "intMap");
 					for (Integer key : intMap.keySet()) {
 						Element child = writeData(doc, intMap.get(key));
-						final Element index = doc.createElementNS("forsyde.io.system.graph", "indexes");
+						final Element index = doc.createElement( "indexes");
 						index.setTextContent(key.toString());
 						//child.setAttribute("attr.name", key.toString());
 						newElem.appendChild(child);
@@ -336,10 +340,10 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 					return newElem;
 				})
 				.StringMapVertexProperty(stringMap -> {
-					newElem.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type", "forsydeio:StringMapVertexProperty");
+					newElem.setAttribute("xsi:type", "graph:StringMapVertexProperty");
 					for (String key : stringMap.keySet()) {
 						Element child = writeData(doc, stringMap.get(key));
-						final Element index = doc.createElementNS("forsyde.io.system.graph", "indexes");
+						final Element index = doc.createElement( "indexes");
 						index.setTextContent(key.toString());
 						//child.setAttribute("attr.name", key);
 						newElem.appendChild(child);

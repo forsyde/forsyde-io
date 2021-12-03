@@ -149,6 +149,17 @@
             ]
         },
         {
+            "name": "SynthetizableDigitalPorts",
+            "refinedTraits": [
+                "AbstractDigitalModule"
+            ],
+            "required_properties": [
+                {"name": "port_width_in_bits", "type": {"name": "integer"}},
+                {"name": "port_protocol_acronym", "type": {"name": "string"}},
+                {"name": "port_is_initiator", "type": {"name": "boolean"}}
+            ]
+        },
+        {
             "name": "GenericProcessingModule",
             "refinedTraits": [
                 "AbstractDigitalModule"

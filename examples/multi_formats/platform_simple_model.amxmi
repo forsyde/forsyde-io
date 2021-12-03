@@ -16,24 +16,24 @@
     </featureCategories>
     <structures xmi:id="SystemStructure?type=HwStructure" name="SystemStructure" structureType="System">
       <modules xsi:type="am:ProcessingUnit" xmi:id="CPU1?type=ProcessingUnit" name="CPU1" powerDomain="DefaultPowerDomain?type=PowerDomain" frequencyDomain="DefaultFrequencyDomain?type=FrequencyDomain" definition="DefaultCPU?type=ProcessingUnitDefinition">
-        <ports xmi:id="CPU1/P1?type=HwPort" name="P1" bitWidth="0" priority="0" portType="initiator" portInterface="SPI"/>
+        <ports xmi:id="CPU1/P1?type=HwPort" name="P1" bitWidth="32" priority="0" portType="initiator" portInterface="SPI"/>
       </modules>
       <modules xsi:type="am:ProcessingUnit" xmi:id="CPU2?type=ProcessingUnit" name="CPU2" powerDomain="DefaultPowerDomain?type=PowerDomain" frequencyDomain="DefaultFrequencyDomain?type=FrequencyDomain" definition="DefaultCPU?type=ProcessingUnitDefinition">
-        <ports xmi:id="CPU2/P1?type=HwPort" name="P1" bitWidth="0" priority="0" portType="initiator" portInterface="SPI"/>
+        <ports xmi:id="CPU2/P1?type=HwPort" name="P1" bitWidth="32" priority="0" portType="initiator" portInterface="SPI"/>
       </modules>
       <modules xsi:type="am:ConnectionHandler" xmi:id="Intercomm?type=ConnectionHandler" name="Intercomm" powerDomain="DefaultPowerDomain?type=PowerDomain" frequencyDomain="DefaultFrequencyDomain?type=FrequencyDomain" definition="DefaultHandler?type=ConnectionHandlerDefinition">
-        <ports xmi:id="Intercomm/P1?type=HwPort" name="P1" bitWidth="0" priority="0" portType="responder" portInterface="SPI"/>
-        <ports xmi:id="Intercomm/P2?type=HwPort" name="P2" bitWidth="0" priority="0" portType="responder" portInterface="SPI"/>
-        <ports xmi:id="Intercomm/P3?type=HwPort" name="P3" bitWidth="0" priority="0" portType="initiator" portInterface="SPI"/>
+        <ports xmi:id="Intercomm/P1?type=HwPort" name="P1" bitWidth="32" priority="0" portType="responder" portInterface="SPI"/>
+        <ports xmi:id="Intercomm/P2?type=HwPort" name="P2" bitWidth="32" priority="0" portType="responder" portInterface="SPI"/>
+        <ports xmi:id="Intercomm/P3?type=HwPort" name="P3" bitWidth="32" priority="0" portType="initiator" portInterface="SPI"/>
       </modules>
       <modules xsi:type="am:Memory" xmi:id="OnChipMemory1?type=Memory" name="OnChipMemory1" powerDomain="DefaultPowerDomain?type=PowerDomain" frequencyDomain="DefaultFrequencyDomain?type=FrequencyDomain" definition="OnChipMemory?type=MemoryDefinition">
-        <ports xmi:id="OnChipMemory1/P1?type=HwPort" name="P1" bitWidth="0" priority="0" portType="responder" portInterface="SPI"/>
+        <ports xmi:id="OnChipMemory1/P1?type=HwPort" name="P1" bitWidth="32" priority="0" portType="responder" portInterface="SPI"/>
       </modules>
       <modules xsi:type="am:Memory" xmi:id="OnChipMemory2?type=Memory" name="OnChipMemory2" powerDomain="DefaultPowerDomain?type=PowerDomain" frequencyDomain="DefaultFrequencyDomain?type=FrequencyDomain" definition="OnChipMemory?type=MemoryDefinition">
-        <ports xmi:id="OnChipMemory2/P1?type=HwPort" name="P1" bitWidth="0" priority="0" portType="responder" portInterface="SPI"/>
+        <ports xmi:id="OnChipMemory2/P1?type=HwPort" name="P1" bitWidth="32" priority="0" portType="responder" portInterface="SPI"/>
       </modules>
       <modules xsi:type="am:Memory" xmi:id="SystemDRAM?type=Memory" name="SystemDRAM" powerDomain="DefaultPowerDomain?type=PowerDomain" frequencyDomain="DefaultFrequencyDomain?type=FrequencyDomain" definition="DefaultDRAM?type=MemoryDefinition">
-        <ports xmi:id="SystemDRAM/P1?type=HwPort" name="P1" bitWidth="0" priority="0" portType="initiator" portInterface="SPI"/>
+        <ports xmi:id="SystemDRAM/P1?type=HwPort" name="P1" bitWidth="32" priority="0" portType="initiator" portInterface="SPI"/>
       </modules>
       <connections xmi:id="SystemStructure/CPU1_OnChipMemory1?type=HwConnection" name="CPU1_OnChipMemory1" port1="CPU1/P1?type=HwPort" port2="OnChipMemory1/P1?type=HwPort"/>
       <connections xmi:id="SystemStructure/CPU2_OCM2?type=HwConnection" name="CPU2_OCM2" port1="CPU2/P1?type=HwPort" port2="OnChipMemory2/P1?type=HwPort"/>

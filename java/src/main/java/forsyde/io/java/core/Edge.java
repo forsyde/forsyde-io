@@ -118,6 +118,19 @@ final public class Edge {
 		return builder.toString();
 	}
 
+	public String toCppCompileableIDString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(source.getIdentifier());
+		sourcePort.ifPresent(s -> builder.append("_").append(s));
+		builder.append("_to_");
+		targetPort.ifPresent(s -> builder.append("_").append(s));
+		builder.append(target.getIdentifier());
+		builder.append("_with_").append(
+				edgeTraits.stream().map(Trait::getName).collect(Collectors.joining("_"))
+		);
+		return builder.toString();
+	}
+
 	public Vertex getSource() {
 		return source;
 	}

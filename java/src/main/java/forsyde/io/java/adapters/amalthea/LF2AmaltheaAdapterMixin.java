@@ -30,15 +30,34 @@ public interface LF2AmaltheaAdapterMixin extends EquivalenceModel2ModelMixin<Ver
         .stream().filter(LinguaFrancaTimer::conforms)
         .map(v -> LinguaFrancaTimer.safeCast(v).get())
         .forEach(timer -> {
-            final PeriodicStimulus stimulus = AmaltheaFactory.eINSTANCE.createPeriodicStimulus();
+            final Time time = AmaltheaFactory.eINSTANCE.createTime();
+            time.setUnit(fromDenominatorToTimeUnit(timer.getPeriodDenominatorPerSec()));
+            time.setValue(BigInteger.valueOf(timer.getPeriodNumeratorPerSec()));
+            // try to find if the timer already exists or not, and if not, create it
+            final PeriodicStimulus stimulus = amalthea.getStimuliModel().getStimuli().stream()
+                    .filter(st -> st instanceof PeriodicStimulus)
+                    .map(st -> (PeriodicStimulus) st)
+                    .filter(periodicStimulus -> periodicStimulus.getRecurrence().getValue().equals(time.getValue()) &&
+                            periodicStimulus.getRecurrence().getUnit().equals(time.getUnit()))
+                    .findAny()
+                    .orElseGet(() -> {
+                        final PeriodicStimulus newStimulus = AmaltheaFactory.eINSTANCE.createPeriodicStimulus();
+                        newStimulus.setRecurrence(time);
+                        newStimulus.setName("PeriodicStimulusOf" + timer.getPeriodNumeratorPerSec().toString() + "_" + timer.getPeriodDenominatorPerSec().toString());
+                        amalthea.getStimuliModel().getStimuli().add(newStimulus);
+                        return newStimulus;
+                    });
+            /*final PeriodicStimulus stimulus = AmaltheaFactory.eINSTANCE.createPeriodicStimulus();
             final Time time = AmaltheaFactory.eINSTANCE.createTime();
             time.setUnit(TimeUnit.S);
             time.setValue(BigInteger.valueOf(timer.getPeriodNumeratorPerSec() / timer.getPeriodDenominatorPerSec()));
             stimulus.setRecurrence(time);
-            stimulus.setName("PeriodicStimulusOf" + timer.getPeriodNumeratorPerSec().toString() + "/" + timer.getPeriodDenominatorPerSec().toString());
-
-            amalthea.getStimuliModel().getStimuli().add(stimulus);
-
+            stimulus.setName("PeriodicStimulusOf" + timer.getPeriodNumeratorPerSec().toString() + "_" + timer.getPeriodDenominatorPerSec().toString());
+            int pos = amalthea.getStimuliModel().getStimuli().indexOf(stimulus);
+            if (pos < 0) {
+                pos = amalthea.getStimuliModel().getStimuli().size();
+                amalthea.getStimuliModel().getStimuli().add(stimulus);
+            }*/
             addEquivalence(timer.getViewedVertex(), stimulus);
         });
     }
@@ -54,9 +73,10 @@ public interface LF2AmaltheaAdapterMixin extends EquivalenceModel2ModelMixin<Ver
                 final ActivityGraph activityGraph = AmaltheaFactory.eINSTANCE.createActivityGraph();
                 final RunnableCall activityGraphItem = AmaltheaFactory.eINSTANCE.createRunnableCall();
                 final Runnable runnable = AmaltheaFactory.eINSTANCE.createRunnable();
-                task.setName(reaction.getIdentifier());
+                final String newId = reaction.getViewedVertex().getIdentifier().replace(".", "_");
+                task.setName(newId);
                 task.setPreemption(Preemption.NON_PREEMPTIVE);
-                runnable.setName(reaction.getIdentifier() + "Runnable");
+                runnable.setName(newId + "Runnable");
 
                 activityGraphItem.setRunnable(runnable);
                 activityGraph.getItems().add(activityGraphItem);
@@ -90,8 +110,9 @@ public interface LF2AmaltheaAdapterMixin extends EquivalenceModel2ModelMixin<Ver
             final DataSize dataSize = AmaltheaFactory.eINSTANCE.createDataSize();
             dataSize.setValue(BigInteger.valueOf(signal.getSizeInBits()));
             dataSize.setUnit(DataSizeUnit.BIT);
+            final String newId = signal.getViewedVertex().getIdentifier().replace(".", "_").replace("-", "_");
             label.setSize(dataSize);
-            label.setName(signal.getIdentifier());
+            label.setName(newId);
             amalthea.getSwModel().getLabels().add(label);
 
             addEquivalence(signal.getViewedVertex(), label);
@@ -145,5 +166,15 @@ public interface LF2AmaltheaAdapterMixin extends EquivalenceModel2ModelMixin<Ver
         }
     }
 
+    private TimeUnit fromDenominatorToTimeUnit(Integer denominator) {
+        switch (denominator) {
+            case 1: return TimeUnit.S;
+            case 1000: return TimeUnit.MS;
+            case 1000000: return TimeUnit.US;
+            case 1000000000: return TimeUnit.NS;
+            //case 1000000000000: return TimeUnit.PS;
+            default: return TimeUnit.PS;
+        }
+    }
 
 }
