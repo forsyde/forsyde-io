@@ -55,6 +55,8 @@ dependencies {
   implementation 'org.eclipse.xtend:org.eclipse.xtend.lib:2.25.0'
   implementation 'commons-cli:commons-cli:1.4'
 
+  implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
+
   compileOnly "org.derive4j:derive4j-annotation:1.1.1"
   annotationProcessor "org.derive4j:derive4j:1.1.1"
 
