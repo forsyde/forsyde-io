@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5798255e7f171a99f81fe89dc44565e346ef633f8d1cd1ea709d908ad851956d
+-- hash: 59aa732cadbac7823457630c494af63ffde5a810f870a73375f020547092daee
 
 name:           forsyde-io-haskell
 version:        0.2.12
@@ -39,6 +39,7 @@ library
     , base >=4.7 && <5
     , bytestring
     , containers >=0.6
+    , graphite >=0.10
     , hashable >=1.3.0.0
     , hxt >=9.3.1
     , hxt-xpath >=9.1.2.1
@@ -51,11 +52,13 @@ executable generate-types
       Paths_forsyde_io_haskell
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      HaXml
+    , aeson
     , algebraic-graphs >=0.5
     , base >=4.7 && <5
     , bytestring
     , containers >=0.6
+    , graphite >=0.10
     , hashable >=1.3.0.0
     , hxt >=9.3.1
     , hxt-xpath >=9.1.2.1
@@ -78,6 +81,7 @@ test-suite forsyde-io-haskell-test
     , bytestring
     , containers >=0.6
     , forsyde-io-haskell
+    , graphite >=0.10
     , hashable >=1.3.0.0
     , hxt >=9.3.1
     , hxt-xpath >=9.1.2.1
