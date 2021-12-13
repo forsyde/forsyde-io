@@ -32,7 +32,7 @@ jobs:
     - name: Build with Gradle (Unix)
       if: ${{ matrix.os != 'windows-latest' }}
       run: |
-        cd ${{ github.workspace }}/java/cara
+        cd ${{ github.workspace }}/java/core
         ./gradlew build
     - name: Build with Gradle (Windows)
       if: ${{ matrix.os == 'windows-latest' }}
