@@ -25,3 +25,4 @@ rootProject.name = 'forsyde-io-java'
 
 include 'amalthea'
 include 'core'
+include 'sdf3'

@@ -13,8 +13,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
 /**
  * @author rjordao
  *
@@ -212,7 +210,7 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, Edge> {
 	 * @param dst The viewer for the target vertex.
 	 * @return whether the edge exists or not (with or without ports)
 	 */
-	public boolean hasConnection(@Nonnull VertexViewer src, @Nonnull VertexViewer dst) {
+	public boolean hasConnection(VertexViewer src, VertexViewer dst) {
 		return containsEdge(src.getViewedVertex(), dst.getViewedVertex());
 	}
 	
@@ -228,7 +226,7 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, Edge> {
 	 * @param dstPort the optional port for the target vertex.
 	 * @return whether the edge exists or not (with specified ports)
 	 */
-	public boolean hasConnection(@Nonnull VertexViewer src, @Nonnull VertexViewer dst, String srcPort, String dstPort) {
+	public boolean hasConnection(VertexViewer src, VertexViewer dst, String srcPort, String dstPort) {
 		Set<Edge> edges = getAllEdges(src.getViewedVertex(), dst.getViewedVertex());
 		Boolean isConnected = edges.size() > 0;
 		if (isConnected && srcPort != null && !srcPort.isEmpty()) {

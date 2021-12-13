@@ -1,4 +1,4 @@
-import generator.JavaMetaGenerator
+import forsyde.io.java.generator.GenerateForSyDeModelTask
 
 plugins {
   id 'java-library'
@@ -11,10 +11,10 @@ plugins {
   id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
   id "org.xtext.builder" version "2.0.8"
   id "org.xtext.xtend" version "2.0.8"
+  id "com.github.mrsarm.jshell.plugin" version "1.1.0"
 }
 
-
-tasks.register('generateForSyDeModel', JavaMetaGenerator) {
+tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
 //  inputs.property('inputModelJson',file('./meta.json'))
 //  inputs.property('rootOutDir', file('.'))
 }
@@ -56,6 +56,8 @@ dependencies {
   implementation 'commons-cli:commons-cli:1.4'
 
   implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
+  // https://mvnrepository.com/artifact/jakarta.annotation/jakarta.annotation-api
+
 
   compileOnly "org.derive4j:derive4j-annotation:1.1.1"
   annotationProcessor "org.derive4j:derive4j:1.1.1"

@@ -1,4 +1,5 @@
-import generator.JavaMetaGenerator
+import forsyde.io.java.generator.GenerateForSyDeModelTask
+
 
 plugins {
     id 'java-library'
@@ -8,22 +9,24 @@ plugins {
     id 'idea'
     id 'eclipse'
     id 'maven'
+    // id 'io.github.forsyde.generator'
     // id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
 }
 
 
-tasks.register('generateForSyDeModel', JavaMetaGenerator) {
+tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
 //  inputs.property('inputModelJson',file('./meta.json'))
 //  inputs.property('rootOutDir', file('.'))
 }
 
 tasks.compileJava.dependsOn generateForSyDeModel
 
+
 // due to how maven central works, the groupId must be the same as the
 // website which we host
 group = 'io.github.forsyde'
-archivesBaseName = project.name
-version = '0.4.0'
+archivesBaseName = rootProject.name + '-' + project.name
+version = rootProject.version
 
 
 // In this section you declare where to find the dependencies of your project
@@ -46,14 +49,14 @@ repositories {
 // In this section you declare the dependencies for your production and test code
 dependencies {
     // The production code uses the SLF4J logging API at compile time
-    implementation 'org.slf4j:slf4j-api:1.7.32'
-    implementation group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.1'
-    implementation group: 'org.jgrapht', name: 'jgrapht-io', version: '1.5.1'
+    //implementation 'org.slf4j:slf4j-api:1.7.32'
+    api group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.1'
+    api group: 'org.jgrapht', name: 'jgrapht-io', version: '1.5.1'
     // these two are intrusive results of lingua franca
-    implementation 'org.eclipse.xtend:org.eclipse.xtend.lib:2.25.0'
-    implementation 'commons-cli:commons-cli:1.4'
+    //implementation 'org.eclipse.xtend:org.eclipse.xtend.lib:2.25.0'
+    api 'commons-cli:commons-cli:1.4'
 
-    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
+    api group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
 
     compileOnly "org.derive4j:derive4j-annotation:1.1.1"
     annotationProcessor "org.derive4j:derive4j:1.1.1"
@@ -61,7 +64,7 @@ dependencies {
 
     // implementation('org.lflang:org.lflang')
     // AMALTHEA connection
-    implementation 'org.eclipse.app4mc:org.eclipse.app4mc.amalthea.model:1.1.0'
+
 
     testImplementation 'junit:junit:4.12'
 }
