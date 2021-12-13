@@ -21,6 +21,11 @@ tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
 
 tasks.compileJava.dependsOn generateForSyDeModel
 
+tasks.register('getVersion') {
+    doFirst {
+        println version
+    }
+}
 
 // due to how maven central works, the groupId must be the same as the
 // website which we host
