@@ -38,7 +38,7 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
 
-    api 'org.eclipse.app4mc:org.eclipse.app4mc.amalthea.model:1.1.2'
+    api 'org.eclipse.app4mc:org.eclipse.app4mc.amalthea.model:2.0.0'
     api project(':core')
 }
 
