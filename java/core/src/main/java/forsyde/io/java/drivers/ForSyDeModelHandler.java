@@ -25,13 +25,13 @@ public final class ForSyDeModelHandler {
 //	PathMatcher amaltheaMatcher;
 
 	public ForSyDeModelHandler(ForSyDeModelDriver... extraDrivers) {
-		// register extra drivers
-		registeredDrivers.addAll(Arrays.asList(extraDrivers));
 		// register default drivers
 		registeredDrivers.add(new ForSyDeMLDriver());
 		registeredDrivers.add(new ForSyDeXMIDriver());
 		registeredDrivers.add(new ForSyDeDOTDriver());
 		registeredDrivers.add(new ForSyDeGraphMLDriver());
+		// register extra drivers
+		registeredDrivers.addAll(Arrays.asList(extraDrivers));
 		// make their
 		for (ForSyDeModelDriver driver : registeredDrivers) {
 			final String inExtensions = "{" + String.join(",", driver.inputExtensions()) + "}";
