@@ -19,8 +19,7 @@ public interface ForSyDe2AmaltheaOSAdapterMixin extends EquivalenceModel2ModelMi
                 final OperatingSystem operatingSystem = AmaltheaFactory.eINSTANCE.createOperatingSystem();
                 final TaskScheduler taskScheduler = AmaltheaFactory.eINSTANCE.createTaskScheduler();
                 operatingSystem.setName(newId);
-                taskScheduler.setName(newId + "_FPScheduler");
-                taskScheduler.setSchedulingAlgorithm(AmaltheaFactory.eINSTANCE.createFixedPriorityPreemptive());
+                taskScheduler.setSchedulingAlgorithm(AmaltheaFactory.eINSTANCE.createPriorityBasedRoundRobin());
                 operatingSystem.getTaskSchedulers().add(taskScheduler);
                 addEquivalence(v, operatingSystem);
                 target.getOsModel().getOperatingSystems().add(operatingSystem);
