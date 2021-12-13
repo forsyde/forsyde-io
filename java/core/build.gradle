@@ -90,16 +90,16 @@ java {
 }
 
 jar {
-    archiveFileName = "${project.name}" + '-' + "${version}" + '.jar'
+    archiveFileName = archiveBaseName + '.jar'
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = project.name
+            artifactId = archiveBaseName
             from components.java
             pom {
-                name = 'ForSyDe IO Java'
+                name = 'ForSyDe IO Java Core'
                 description = 'ForSyDe IO Java (+JVM) supporting library'
                 url = 'https://github.com/forsyde/forsyde-io'
                 packaging = 'jar'

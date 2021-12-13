@@ -40,3 +40,70 @@ dependencies {
 
     api project(':core')
 }
+
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+jar {
+    archiveFileName = archiveBaseName + '.jar'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = archiveBaseName
+            from components.java
+            pom {
+                name = 'ForSyDe IO Java SDF3 Adapter'
+                description = 'ForSyDe IO Java (+JVM) Amalthea Adapter'
+                url = 'https://github.com/forsyde/forsyde-io'
+                packaging = 'jar'
+                scm {
+                    connection = 'scm:git:https://github.com/forsyde/forsyde-io.git'
+                    developerConnection = 'scm:git:git@github.com:forsyde/forsyde-io.git'
+                    url = 'https://github.com/forsyde/forsyde-io'
+                }
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'https://choosealicense.com/licenses/mit/'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'Jordao'
+                        name = 'Rodolfo Jordao'
+                        email = 'jordao@kth.se'
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = 'OSSRH'
+            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            credentials {
+                username = project.hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('MAVEN_USERNAME') ?: System.getenv('OSSRH_USERNAME') ?: ''
+                password = project.hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('MAVEN_PASSWORD') ?: System.getenv('OSSRH_PASSWORD') ?: ''
+            }
+        }
+        // maven {
+        //   name = "GitHubPackages"
+        //   url = uri("https://maven.pkg.github.com/forsyde/forsyde-io")
+        //   credentials {
+        //     username = System.getenv("GITHUB_ACTOR") ?: ""
+        //     password = System.getenv("GITHUB_TOKEN") ?: ""
+        //   }
+        // }
+    }
+}
+
+
+test {
+    useJUnit()
+    maxHeapSize = '1G'
+}
