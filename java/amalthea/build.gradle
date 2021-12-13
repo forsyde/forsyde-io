@@ -38,7 +38,7 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
 
-    api 'org.eclipse.app4mc:org.eclipse.app4mc.amalthea.model:1.1.0'
+    api 'org.eclipse.app4mc:org.eclipse.app4mc.amalthea.model:1.1.2'
     api project(':core')
 }
 
@@ -49,13 +49,13 @@ java {
 }
 
 jar {
-    archiveFileName = archiveBaseName + '.jar'
+    archiveFileName = archivesBaseName + '.jar'
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = archiveBaseName
+            artifactId = archivesBaseName
             from components.java
             pom {
                 name = 'ForSyDe IO Java Amalthea Adapter'

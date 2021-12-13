@@ -41,16 +41,6 @@ repositories {
     mavenCentral()
 }
 
-// get sources until the developers decide to properly release stuff.
-//git {
-//  implementation "https://github.com/icyphy/lingua-franca.git", {
-//    commit '7473ae1549c2b2aeed8f5469675f328d3984cb2c'
-//    projectPath 'org.lflang'
-//  }
-//}
-
-// apply from: "lflang-build.gradle"
-
 // In this section you declare the dependencies for your production and test code
 dependencies {
     // The production code uses the SLF4J logging API at compile time
@@ -90,13 +80,13 @@ java {
 }
 
 jar {
-    archiveFileName = archiveBaseName + '.jar'
+    archiveFileName = archivesBaseName + '.jar'
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = archiveBaseName
+            artifactId = archivesBaseName
             from components.java
             pom {
                 name = 'ForSyDe IO Java Core'

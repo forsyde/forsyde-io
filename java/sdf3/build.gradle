@@ -48,13 +48,13 @@ java {
 }
 
 jar {
-    archiveFileName = archiveBaseName + '.jar'
+    archiveFileName = archivesBaseName + '.jar'
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = archiveBaseName
+            artifactId = archivesBaseName
             from components.java
             pom {
                 name = 'ForSyDe IO Java SDF3 Adapter'
