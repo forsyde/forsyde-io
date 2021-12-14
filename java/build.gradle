@@ -86,7 +86,7 @@ java {
 }
 
 jar {
-    archiveFileName = "${project.name}" + '-' + "${version}" + '.jar'
+    archiveFileName = "${project.name}" + '-' + "${project.version}" + '.jar'
 }
 
 publishing {
