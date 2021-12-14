@@ -42,11 +42,21 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 			.collect(Collectors.toSet());
 	private final static XPath xPath = XPathFactory.newInstance().newXPath();
 
+	@Override
+	public List<String> inputExtensions() {
+		return List.of("forsyde.xml", "forxml");
+	}
+
+	@Override
+	public List<String> outputExtensions() {
+		return List.of("forsyde.xml", "forxml");
+	}
+
 	/**
 	 * Parses ForSyDe's graphML varatiation schema.
 	 * 
 	 * @param inStream the {@link InputStream} to fetch the model from.
-	 * @return the parsed {@link ForSyDeModel} from whichever format was fed to the
+	 * @return the parsed {@link ForSyDeSystemGraph} from whichever format was fed to the
 	 *         function.
 	 * @throws ParserConfigurationException TODO.
 	 * @throws SAXException                 In case something goes wrong with any
@@ -56,10 +66,10 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 	 * @throws XPathExpressionException     The XPaths are statically compiled, so
 	 *                                      this shound not normally happen.
 	 */
-	public ForSyDeModel loadModel(InputStream inStream)
+	public ForSyDeSystemGraph loadModel(InputStream inStream)
 			throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
 		// Build the ForSyDeModel representation
-		ForSyDeModel model = new ForSyDeModel();
+		ForSyDeSystemGraph model = new ForSyDeSystemGraph();
 		// prepare XML internal representation and build it
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -115,7 +125,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 		return model;
 	}
 
-	public void writeModel(ForSyDeModel model, OutputStream outStream)
+	public void writeModel(ForSyDeSystemGraph model, OutputStream outStream)
 			throws ParserConfigurationException, TransformerException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -213,58 +223,62 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 	}
 
 	static protected Element writeData(Document doc, VertexProperty prop) {
-		Element newElem = doc.createElement("data");
-		switch (prop.type) {
-		case ARRAY:
-			newElem.setAttribute("attr.type", "array");
-			for (int i = 0; i < prop.array.size(); i++) {
-				Element child = writeData(doc, prop.array.get(i));
-				child.setAttribute("attr.name", String.valueOf(i));
-				newElem.appendChild(child);
-			}
-			break;
-		case INTMAP:
-			newElem.setAttribute("attr.type", "intMap");
-			for (Integer key : prop.intMap.keySet()) {
-				Element child = writeData(doc, prop.intMap.get(key));
-				child.setAttribute("attr.name", key.toString());
-				newElem.appendChild(child);
-			}
-			break;
-		case STRINGMAP:
-			newElem.setAttribute("attr.type", "stringMap");
-			for (String key : prop.stringMap.keySet()) {
-				Element child = writeData(doc, prop.stringMap.get(key));
-				child.setAttribute("attr.name", key);
-				newElem.appendChild(child);
-			}
-			break;
-		case INTEGER:
-			newElem.setAttribute("attr.type", "integer");
-			newElem.setTextContent(String.valueOf(prop.i));
-			break;
-		case DOUBLE:
-			newElem.setAttribute("attr.type", "double");
-			newElem.setTextContent(String.valueOf(prop.d));
-			break;
-		case LONG:
-			newElem.setAttribute("attr.type", "long");
-			newElem.setTextContent(String.valueOf(prop.l));
-			break;
-		case FLOAT:
-			newElem.setAttribute("attr.type", "float");
-			newElem.setTextContent(String.valueOf(prop.f));
-			break;
-		case BOOLEAN:
-			newElem.setAttribute("attr.type", "boolean");
-			newElem.setTextContent(String.valueOf(prop.b));
-			break;
-		default:
-			newElem.setAttribute("attr.type", "string");
-			newElem.setTextContent(prop.s);
-			break;
-		}
-		return newElem;
+		final Element newElem = doc.createElement("data");
+		return VertexProperties.cases()
+				.StringVertexProperty(s -> {
+					newElem.setAttribute("attr.type", "string");
+					newElem.setTextContent(s);
+					return newElem;
+				})
+				.IntVertexProperty(i -> {
+					newElem.setAttribute("attr.type", "double");
+					newElem.setTextContent(String.valueOf(i));
+					return newElem;
+				})
+				.BooleanVertexProperty(b -> {
+					newElem.setAttribute("attr.type", "boolean");
+					newElem.setTextContent(String.valueOf(b));
+					return newElem;
+				})
+				.FloatVertexProperty(f -> {
+					newElem.setAttribute("attr.type", "float");
+					newElem.setTextContent(String.valueOf(f));
+					return newElem;
+				})
+				.LongVertexProperty(l -> {
+					newElem.setAttribute("attr.type", "long");
+					newElem.setTextContent(String.valueOf(l));
+					return newElem;
+				})
+				.ArrayVertexProperty(array -> {
+					newElem.setAttribute("attr.type", "array");
+					for (int i = 0; i < array.size(); i++) {
+						Element child = writeData(doc, array.get(i));
+						child.setAttribute("attr.name", String.valueOf(i));
+						newElem.appendChild(child);
+					}
+					return newElem;
+				})
+				.IntMapVertexProperty(intMap -> {
+					newElem.setAttribute("attr.type", "intMap");
+					for (Integer key : intMap.keySet()) {
+						Element child = writeData(doc, intMap.get(key));
+						child.setAttribute("attr.name", key.toString());
+						newElem.appendChild(child);
+					}
+					return newElem;
+				})
+				.StringMapVertexProperty(stringMap -> {
+					newElem.setAttribute("attr.type", "stringMap");
+					for (String key : stringMap.keySet()) {
+						Element child = writeData(doc, stringMap.get(key));
+						child.setAttribute("attr.name", key);
+						newElem.appendChild(child);
+					}
+					return newElem;
+				})
+				.otherwise_(newElem)
+				.apply(prop);
 	}
 
 }

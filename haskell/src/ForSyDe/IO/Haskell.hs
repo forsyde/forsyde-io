@@ -7,8 +7,6 @@ module ForSyDe.IO.Haskell
     ForSyDeModel,
     MultiEdgeLabel (..),
     EdgeLabel (..),
-    linkVertexes,
-    linkVertexes',
     -- emptyForSyDeModel,
     -- modelAddEdge,
     -- modelAddVertex,
@@ -22,7 +20,8 @@ where
 
 -- External libraries
 
-import Algebra.Graph.Labelled
+import Data.Graph.DMultiGraph
+-- import Algebra.Graph.Labelled
 import Data.Dynamic
 import Data.List
 import qualified Data.Map
@@ -32,6 +31,7 @@ import ForSyDe.IO.Haskell.Types
   ( EdgeTrait (..),
     VertexTrait (..),
   )
+import Data.Graph.DMultiGraph (DMultiGraph)
 
 data MapItem
   = StringMapItem String
@@ -52,7 +52,7 @@ data Vertex = Vertex
 
 newtype VertexRef = VertexRef String deriving (Eq, Show)
 
-newtype Edge = Edge (VertexRef, VertexRef, Maybe String, Maybe String, [EdgeTrait])
+newtype Edge = Edge (VertexRef, VertexRef, Maybe String, Maybe String, [EdgeTrait]) deriving (Eq, Show)
 
 instance Eq Vertex where
   (==) v other = vertexId v == vertexId other
@@ -87,25 +87,25 @@ instance Monoid MultiEdgeLabel where
   mappend (MultiEdgeLabel l1) (MultiEdgeLabel l2) = MultiEdgeLabel $ mappend l1 l2
   mconcat ls = foldl (<>) mempty ls
 
-type ForSyDeModel = Graph MultiEdgeLabel Vertex
+type ForSyDeModel = DMultiGraph Vertex Edge
 
-linkVertexes' :: ForSyDeModel -> Vertex -> Vertex -> Maybe String -> Maybe String -> [EdgeTrait] -> ForSyDeModel
-linkVertexes' m v1 v2 p1 p2 ts = overlayed
-  where
-    eGraph = edge (MultiEdgeLabel [EdgeLabel (p1, p2, ts)]) v1 v2
-    overlayed = m `overlay` eGraph
+-- linkVertexes' :: ForSyDeModel -> Vertex -> Vertex -> Maybe String -> Maybe String -> [EdgeTrait] -> ForSyDeModel
+-- linkVertexes' m v1 v2 p1 p2 ts = overlayed
+--   where
+--     eGraph = edge (MultiEdgeLabel [EdgeLabel (p1, p2, ts)]) v1 v2
+--     overlayed = m `overlay` eGraph
 
-linkVertexes :: ForSyDeModel -> Vertex -> Vertex -> String -> String -> [EdgeTrait] -> ForSyDeModel
-linkVertexes m v1 v2 p1 p2 ts = overlayed
-  where
-    eGraph = edge (MultiEdgeLabel [EdgeLabel (Just p1, Just p2, ts)]) v1 v2
-    overlayed = m `overlay` eGraph
+-- linkVertexes :: ForSyDeModel -> Vertex -> Vertex -> String -> String -> [EdgeTrait] -> ForSyDeModel
+-- linkVertexes m v1 v2 p1 p2 ts = overlayed
+--   where
+--     eGraph = edge (MultiEdgeLabel [EdgeLabel (Just p1, Just p2, ts)]) v1 v2
+--     overlayed = m `overlay` eGraph
 
-linkVertexesNoPorts :: ForSyDeModel -> Vertex -> Vertex -> [EdgeTrait] -> ForSyDeModel
-linkVertexesNoPorts m v1 v2 = linkVertexes' m v1 v2 Nothing Nothing
+-- linkVertexesNoPorts :: ForSyDeModel -> Vertex -> Vertex -> [EdgeTrait] -> ForSyDeModel
+-- linkVertexesNoPorts m v1 v2 = linkVertexes' m v1 v2 Nothing Nothing
 
-linkVertexesDirect :: ForSyDeModel -> Vertex -> Vertex -> ForSyDeModel
-linkVertexesDirect m v1 v2 = linkVertexes' m v1 v2 Nothing Nothing []
+-- linkVertexesDirect :: ForSyDeModel -> Vertex -> Vertex -> ForSyDeModel
+-- linkVertexesDirect m v1 v2 = linkVertexes' m v1 v2 Nothing Nothing []
 
 -- data ForSyDeModel = ForSyDeModel
 --   { vertexes :: [Vertex],

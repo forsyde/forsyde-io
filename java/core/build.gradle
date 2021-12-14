@@ -1,0 +1,141 @@
+import forsyde.io.java.generator.GenerateForSyDeModelTask
+
+
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'java'
+    id 'idea'
+    id 'eclipse'
+    id 'maven'
+    // id 'io.github.forsyde.generator'
+    // id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
+}
+
+
+tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
+//  inputs.property('inputModelJson',file('./meta.json'))
+//  inputs.property('rootOutDir', file('.'))
+}
+
+tasks.compileJava.dependsOn generateForSyDeModel
+
+tasks.register('getVersion') {
+    doFirst {
+        println version
+    }
+}
+
+// due to how maven central works, the groupId must be the same as the
+// website which we host
+group = 'io.github.forsyde'
+archivesBaseName = rootProject.name + '-' + project.name
+version = rootProject.version
+
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    // Use 'jcenter' for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    mavenCentral()
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+    // The production code uses the SLF4J logging API at compile time
+    //implementation 'org.slf4j:slf4j-api:1.7.32'
+    api group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.1'
+    api group: 'org.jgrapht', name: 'jgrapht-io', version: '1.5.1'
+    // these two are intrusive results of lingua franca
+    //implementation 'org.eclipse.xtend:org.eclipse.xtend.lib:2.25.0'
+    api 'commons-cli:commons-cli:1.4'
+
+    api group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
+
+    compileOnly "org.derive4j:derive4j-annotation:1.1.1"
+    annotationProcessor "org.derive4j:derive4j:1.1.1"
+
+
+    // implementation('org.lflang:org.lflang')
+    // AMALTHEA connection
+
+
+    testImplementation 'junit:junit:4.12'
+}
+
+sourceCompatibility = 1.11
+
+sourceSets {
+    main {
+        java {
+            srcDirs += ['src-gen/main/java']
+        }
+    }
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+jar {
+    archiveFileName = archivesBaseName + '.jar'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = archivesBaseName
+            from components.java
+            pom {
+                name = 'ForSyDe IO Java Core'
+                description = 'ForSyDe IO Java (+JVM) supporting library'
+                url = 'https://github.com/forsyde/forsyde-io'
+                packaging = 'jar'
+                scm {
+                    connection = 'scm:git:https://github.com/forsyde/forsyde-io.git'
+                    developerConnection = 'scm:git:git@github.com:forsyde/forsyde-io.git'
+                    url = 'https://github.com/forsyde/forsyde-io'
+                }
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'https://choosealicense.com/licenses/mit/'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'Jordao'
+                        name = 'Rodolfo Jordao'
+                        email = 'jordao@kth.se'
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = 'OSSRH'
+            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            credentials {
+                username = project.hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('MAVEN_USERNAME') ?: System.getenv('OSSRH_USERNAME') ?: ''
+                password = project.hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('MAVEN_PASSWORD') ?: System.getenv('OSSRH_PASSWORD') ?: ''
+            }
+        }
+        // maven {
+        //   name = "GitHubPackages"
+        //   url = uri("https://maven.pkg.github.com/forsyde/forsyde-io")
+        //   credentials {
+        //     username = System.getenv("GITHUB_ACTOR") ?: ""
+        //     password = System.getenv("GITHUB_TOKEN") ?: ""
+        //   }
+        // }
+    }
+}
+
+
+test {
+    useJUnit()
+    maxHeapSize = '1G'
+}

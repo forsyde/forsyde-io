@@ -28,14 +28,17 @@ jobs:
     - uses: abatilo/actions-poetry@v2.1.0
       with:
         poetry-version: '1.1.5'
-    - name: Generate lib
+    - name: Get local version
       run: |
-        cd ${{ github.workspace }}
-        make prepare-version-${{ steps.get_version.outputs.version }}
-        cd python
-        python -m pip install jinja2 networkx
+        cd ${{ github.workspace }}/python
+        poetry version | echo "localVersion=$(awk '{print $2}')" >> $GITHUB_ENV
+    - name: Generate lib
+      if: ${{ steps.get_version.outputs.version == env.localVersion }}
+      run: |
+        cd ${{ github.workspace }}/python
         python generate.py
     - name: Build and publish core and generated code
+      if: ${{ steps.get_version.outputs.version == env.localVersion }}
       run: |
         cd ${{ github.workspace }}/python
         poetry update

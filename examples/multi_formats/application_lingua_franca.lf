@@ -1,0 +1,70 @@
+target C;
+
+reactor A1 {
+    output p1: int;
+    timer t(0, 2 sec);
+    reaction (t) -> p1 {=
+        printf("a1 fire ");
+        printf("%lld\n", get_elapsed_logical_time());
+        SET(p1, 1);
+    =}
+}
+
+reactor A3 {
+    output p1: int;
+    timer t(0, 3 sec);
+    reaction (t) -> p1 {=
+        printf("a3 fire ");
+        printf("%lld\n", get_elapsed_logical_time());
+        SET(p1, 2);
+    =}
+}
+
+
+reactor A2 {
+    input p1: int;
+    input p2: int;
+    output o1: int;
+    timer t(0, 3 sec);
+    reaction (t) -> o1 {=
+        printf("a2-1 fire\n");
+        SET(o1, 3);
+    =}
+    reaction (p1,  p2) {=
+        if (p1->is_present && p2->is_present) {
+            printf("a2-2 by a1 and a2 ");
+        } else if (p2->is_present) {
+            printf("a2-2 by a3 ");
+        } else if (p1->is_present) {
+            printf("a2-2 by a1 ");
+        }
+        printf("%lld\n", get_elapsed_logical_time());
+    =}
+}
+
+reactor A4 {
+    input i1: int;
+    timer t(0, 1 sec);
+    reaction (t) {=
+        printf("a4-1 fire at");
+        printf(" %lld\n", get_elapsed_logical_time());
+    =}
+    reaction (i1) {=
+        printf("a4-2 fire at");
+        printf(" %lld\n", get_elapsed_logical_time());
+    =}
+}
+
+main reactor {
+    preamble {=
+        #include <stdlib.h>
+        #include <string.h>
+    =}
+	a1 = new A1();
+	a2 = new A2();
+	a3 = new A3();
+	a4 = new A4();
+	a1.p1 -> a2.p1 after 2 secs; 
+	a3.p1 -> a2.p2 after 3 secs;
+	a2.o1 -> a4.i1 after 3 secs;
+}

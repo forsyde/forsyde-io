@@ -300,7 +300,7 @@
 //    // write down these nice generated enums
 //    def fileStr = JavaFile.builder('forsyde.io.java.core', vertexEnum.build())
 //    file('src-gen/main/java/forsyde/io/java/core').mkdirs()
-//    file('src-gen/main/java/forsyde/io/java/core/specs.VertexTraitSpec.java').text = fileStr.build()
+//    file('src-gen/main/java/forsyde/io/java/core/VertexTraitSpec.java').text = fileStr.build()
 //}
 //
 //task generateEdgeTraits {
@@ -353,7 +353,7 @@
 //    // write down these nice generated enums
 //    def fileStr = JavaFile.builder('forsyde.io.java.core', edgeEnum.build())
 //    file('src-gen/main/java/forsyde/io/java/core').mkdirs()
-//    file('src-gen/main/java/forsyde/io/java/core/specs.EdgeTraitSpec.java').text = fileStr.build()
+//    file('src-gen/main/java/forsyde/io/java/core/EdgeTraitSpec.java').text = fileStr.build()
 //}
 //
 //

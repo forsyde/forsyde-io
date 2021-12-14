@@ -30,6 +30,7 @@ dependencies:
 - split
 - bytestring
 - algebraic-graphs >= 0.5
+- graphite >= 0.10
 
 library:
   source-dirs: src
@@ -45,6 +46,7 @@ executables:
     dependencies:
     - aeson
     - unordered-containers
+    - HaXml
     - text
 
 tests:

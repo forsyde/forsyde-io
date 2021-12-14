@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ForSyDeIO:ForSyDeIOTraitModel
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:ForSyDeIO="ForSyDeIO">
+  <vertexTraits
+      name="Dud1"
+      comment="a">
+    <properties
+        name="prop1"/>
+  </vertexTraits>
+</ForSyDeIO:ForSyDeIOTraitModel>

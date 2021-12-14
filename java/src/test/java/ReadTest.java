@@ -1,13 +1,13 @@
 import org.junit.Test;
 
-import forsyde.io.java.core.ForSyDeModel;
+import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.drivers.ForSyDeModelHandler;
 
 public class ReadTest {
 
 	@Test
 	public void testReading() {
-		ForSyDeModel model;
+		ForSyDeSystemGraph model;
 		ForSyDeModelHandler forSyDeModelHandler = new ForSyDeModelHandler();
 		try {
 			model = forSyDeModelHandler.loadModel("../examples/sobel2mpsoc.forxml");
