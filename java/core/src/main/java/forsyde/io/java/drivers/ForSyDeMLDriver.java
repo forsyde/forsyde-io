@@ -106,7 +106,7 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 			// fail
 			Vertex source = model.vertexSet().stream().filter(v -> v.getIdentifier().equals(sid)).findFirst().get();
 			Vertex target = model.vertexSet().stream().filter(v -> v.getIdentifier().equals(tid)).findFirst().get();
-			Edge edge = new Edge(source, target);
+			EdgeInfo edge = new EdgeInfo(source, target);
 			edge.edgeTraits = Stream.of(edgeElem.getAttribute("traits").split(";"))
 					.map(s -> allowedEdges.contains(s) ? EdgeTrait.valueOf(s) : new OpaqueTrait(s))
 					.collect(Collectors.toSet());
@@ -153,10 +153,10 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 				vElem.appendChild(propElem);
 			}
 		}
-		for (Edge e : model.edgeSet()) {
+		for (EdgeInfo e : model.edgeSet()) {
 			Element eElem = doc.createElement("edge");
-			eElem.setAttribute("source", e.getSource().getIdentifier());
-			eElem.setAttribute("target", e.getTarget().getIdentifier());
+			eElem.setAttribute("source", e.getSource());
+			eElem.setAttribute("target", e.getTarget());
 			eElem.setAttribute("traits", e.getTraits().stream().map(t -> t.getName()).collect(Collectors.joining(";")));
 			if (e.getSourcePort().isPresent()) {
 				eElem.setAttribute("sourceport", e.getSourcePort().get());

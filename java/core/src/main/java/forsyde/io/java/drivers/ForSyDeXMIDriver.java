@@ -151,7 +151,7 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 			// fail
 			Vertex source = model.vertexSet().stream().filter(v -> v.getIdentifier().equals(sid)).findFirst().get();
 			Vertex target = model.vertexSet().stream().filter(v -> v.getIdentifier().equals(tid)).findFirst().get();
-			Edge edge = new Edge(source, target);
+			EdgeInfo edge = new EdgeInfo(source, target);
 			NodeList edgeTraitList = (NodeList) xPath.compile("graph:traits").evaluate(edgeElem, XPathConstants.NODESET);
 			for (int j = 0; j < edgeTraitList.getLength(); j++) {
 				final String name = edgeTraitList.item(j).getTextContent();
@@ -215,10 +215,10 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 				vElem.appendChild(name);
 			}
 		}
-		for (Edge e : model.edgeSet()) {
+		for (EdgeInfo e : model.edgeSet()) {
 			Element eElem = doc.createElement( "edges");
-			eElem.setAttribute("source", e.getSource().getIdentifier());
-			eElem.setAttribute("target", e.getTarget().getIdentifier());
+			eElem.setAttribute("source", e.getSource());
+			eElem.setAttribute("target", e.getTarget());
 			e.edgeTraits.forEach(t -> {
 				final Element traitElem = doc.createElement( "traits");
 				traitElem.setTextContent(t.getName());

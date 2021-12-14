@@ -25,6 +25,21 @@ final public class EdgeInfo {
 	public Set<Trait> edgeTraits = new HashSet<Trait>();
 
 	/**
+	 * Utility constructor wrapping the source and target vertex into
+	 * their identifiers.
+	 *
+	 * @param target Target Vertex for this edge.
+	 * @param source Source vertex for this edge.
+	 */
+	public EdgeInfo(Vertex source, Vertex target) {
+		this.targetId = target.getIdentifier();
+		this.sourceId = source.getIdentifier();
+		this.sourcePort = Optional.empty();
+		this.targetPort = Optional.empty();
+	}
+
+
+	/**
 	 * Utility constructor wrapping the source and target ports into empty optionals
 	 * for constructor.
 	 *

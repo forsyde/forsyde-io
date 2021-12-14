@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * @author rjordao
@@ -30,13 +31,13 @@ import java.util.Set;
  * @see Vertex
  * @see Edge
  */
-public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, Edge> {
+public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
 
 	/**
 	 * Default constructor, returning an empty (system) model graph.
 	 */
 	public ForSyDeSystemGraph() {
-		super(Edge.class);
+		super(EdgeInfo.class);
 
 	}
 
@@ -61,9 +62,9 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, Edge> {
 
 		}
 		// this is OK to be done since "contains" checks for equality
-		for (Edge e : other.edgeSet()) {
+		for (EdgeInfo e : other.edgeSet()) {
 			boolean present = false;
-			for (Edge thisE : edgeSet()) {
+			for (EdgeInfo thisE : edgeSet()) {
 				// found a match
 				if (e.equals(thisE)) {
 					thisE.getTraits().addAll(e.getTraits());
@@ -71,8 +72,8 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, Edge> {
 				}
 			}
 			if (!present) {
-				Vertex source = vertexSet().stream().filter(v -> v.equals(e.getSource())).findAny().get();
-				Vertex target = vertexSet().stream().filter(v -> v.equals(e.getTarget())).findAny().get();
+				Vertex source = vertexSet().stream().filter(v -> v.getIdentifier().equals(e.getSource())).findAny().get();
+				Vertex target = vertexSet().stream().filter(v -> v.getIdentifier().equals(e.getTarget())).findAny().get();
 				addEdge(source, target, e);
 			}
 		}
@@ -96,7 +97,7 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, Edge> {
 	 * @return True if the addition succeeded. False otherwise.
 	 */
 	public boolean connect(Vertex src, Vertex dst, EdgeTrait... traits) {
-		Edge e = new Edge(src, dst);
+		EdgeInfo e = new EdgeInfo(src.getIdentifier(), dst.getIdentifier());
 		e.edgeTraits.addAll(Arrays.asList(traits.clone()));
 		return addEdge(src, dst, e);
 	}
@@ -130,7 +131,7 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, Edge> {
 	 */
 	public boolean connect(Vertex src, Vertex dst, String portSrc, EdgeTrait... traits) {
 		if (portSrc != null && !portSrc.isEmpty() && src.ports.contains(portSrc)) {
-			Edge e = new Edge(src, dst, Optional.of(portSrc), Optional.empty());
+			EdgeInfo e = new EdgeInfo(src.getIdentifier(), dst.getIdentifier(), Optional.of(portSrc), Optional.empty());
 			e.edgeTraits.addAll(Arrays.asList(traits.clone()));
 			return addEdge(src, dst, e);
 		} else {
@@ -174,7 +175,7 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, Edge> {
 	public boolean connect(Vertex src, Vertex dst, String portSrc, String portDst, EdgeTrait... traits) {
 		// portDst must not be null and 'if' portSrc is not null, it must be in src's ports
 		if (portDst != null && !portDst.isEmpty() && dst.ports.contains(portDst) && (portSrc == null || portSrc.isEmpty() || src.ports.contains(portSrc))) {
-			Edge e = new Edge(src, dst, portSrc != null && !portSrc.isEmpty() ? Optional.of(portSrc) : Optional.empty(), Optional.of(portDst));
+			EdgeInfo e = new EdgeInfo(src.getIdentifier(), dst.getIdentifier(), portSrc != null && !portSrc.isEmpty() ? Optional.of(portSrc) : Optional.empty(), Optional.of(portDst));
 			e.edgeTraits.addAll(Arrays.asList(traits.clone()));
 			return addEdge(src, dst, e);
 		} else {
@@ -227,7 +228,7 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, Edge> {
 	 * @return whether the edge exists or not (with specified ports)
 	 */
 	public boolean hasConnection(VertexViewer src, VertexViewer dst, String srcPort, String dstPort) {
-		Set<Edge> edges = getAllEdges(src.getViewedVertex(), dst.getViewedVertex());
+		Set<EdgeInfo> edges = getAllEdges(src.getViewedVertex(), dst.getViewedVertex());
 		Boolean isConnected = edges.size() > 0;
 		if (isConnected && srcPort != null && !srcPort.isEmpty()) {
 			isConnected = isConnected && edges.stream().filter(e -> e.sourcePort.isPresent())

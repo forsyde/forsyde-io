@@ -12,20 +12,19 @@ public class VertexAcessor {
     static public Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, String traitName, String direction) {
         Trait t = traitFromString(traitName);
         if (direction.equalsIgnoreCase("outgoing") || direction.equalsIgnoreCase("bidirectional")) {
-            Set<Edge> outEdges = model.outgoingEdgesOf(v);
+            Set<EdgeInfo> outEdges = model.outgoingEdgesOf(v);
             Optional<Vertex> dst = outEdges.stream()
                     .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
-                    .map(e -> e.target)
+                    .map(model::getEdgeTarget)
                     .filter(vv -> vv.hasTrait(t))
                     .findAny();
-            if (dst.isPresent())
-                return dst;
+            return dst;
         }
         if (direction.equalsIgnoreCase("incoming") || direction.equalsIgnoreCase("bidirectional")) {
-            Set<Edge> inEdges = model.incomingEdgesOf(v);
+            Set<EdgeInfo> inEdges = model.incomingEdgesOf(v);
             Optional<Vertex> src = inEdges.stream()
                     .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
-                    .map(e -> e.source)
+                    .map(model::getEdgeSource)
                     .filter(vv -> vv.hasTrait(t))
                     .findAny();
             if (src.isPresent())
@@ -42,18 +41,18 @@ public class VertexAcessor {
         Set<Vertex> vs = new HashSet<>();
         Trait t = traitFromString(traitName);
         if (direction.equalsIgnoreCase("outgoing") || direction.equalsIgnoreCase("bidirectional")) {
-            Set<Edge> outEdges = model.outgoingEdgesOf(v);
+            Set<EdgeInfo> outEdges = model.outgoingEdgesOf(v);
             vs.addAll(outEdges.stream()
                     .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
-                    .map(e -> e.target)
+                    .map(model::getEdgeTarget)
                     .filter(vv -> vv.hasTrait(t))
                     .collect(Collectors.toSet()));
         }
         if (direction.equalsIgnoreCase("incoming") || direction.equalsIgnoreCase("bidirectional")) {
-            Set<Edge> inEdges = model.incomingEdgesOf(v);
+            Set<EdgeInfo> inEdges = model.incomingEdgesOf(v);
             vs.addAll(inEdges.stream()
                     .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
-                    .map(e -> e.source)
+                    .map(model::getEdgeSource)
                     .filter(vv -> vv.hasTrait(t))
                     .collect(Collectors.toSet()));
         }
@@ -72,20 +71,20 @@ public class VertexAcessor {
                 .unwrap();
         List<Vertex> vs = new ArrayList<>(order.size());
         if (direction.equalsIgnoreCase("outgoing") || direction.equalsIgnoreCase("bidirectional")) {
-            Set<Edge> outEdges = model.outgoingEdgesOf(v);
+            Set<EdgeInfo> outEdges = model.outgoingEdgesOf(v);
             outEdges.stream()
                     .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
-                    .map(e -> e.target)
+                    .map(model::getEdgeTarget)
                     .filter(vv -> vv.hasTrait(t))
                     .forEach(dst -> {
                         vs.set(order.get(dst.identifier), dst);
                     });
         }
         if (direction.equalsIgnoreCase("incoming") || direction.equalsIgnoreCase("bidirectional")) {
-            Set<Edge> inEdges = model.incomingEdgesOf(v);
+            Set<EdgeInfo> inEdges = model.incomingEdgesOf(v);
             inEdges.stream()
                     .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
-                    .map(e -> e.source)
+                    .map(model::getEdgeSource)
                     .filter(vv -> vv.hasTrait(t))
                     .forEach(dst -> {
                         vs.set(order.get(dst.identifier), dst);

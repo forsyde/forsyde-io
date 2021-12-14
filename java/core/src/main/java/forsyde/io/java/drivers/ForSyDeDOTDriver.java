@@ -1,6 +1,7 @@
 package forsyde.io.java.drivers;
 
 import forsyde.io.java.core.Edge;
+import forsyde.io.java.core.EdgeInfo;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import org.jgrapht.nio.dot.DOTExporter;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class ForSyDeDOTDriver implements ForSyDeModelDriver {
 
-    DOTExporter<Vertex, Edge> dotExporter;
+    DOTExporter<Vertex, EdgeInfo> dotExporter;
 
     ForSyDeDOTDriver() {
         dotExporter = new DOTExporter<>(v -> v.getIdentifier()

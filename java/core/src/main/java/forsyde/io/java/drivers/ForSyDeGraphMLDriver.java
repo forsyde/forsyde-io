@@ -10,11 +10,11 @@ import org.jgrapht.nio.graphml.GraphMLExporter;
 
 public class ForSyDeGraphMLDriver implements ForSyDeModelDriver {
 
-	GraphMLExporter<Vertex, Edge> graphMLExporter;
+	GraphMLExporter<Vertex, EdgeInfo> graphMLExporter;
 
 	ForSyDeGraphMLDriver() {
 		graphMLExporter = new GraphMLExporter<>(Vertex::getIdentifier);
-		graphMLExporter.setEdgeIdProvider(Edge::toIDString);
+		graphMLExporter.setEdgeIdProvider(EdgeInfo::toIDString);
 	}
 
 	@Override
@@ -95,92 +95,5 @@ public class ForSyDeGraphMLDriver implements ForSyDeModelDriver {
 //		transformer.transform(new DOMSource(doc), new StreamResult(out));
 	}
 
-	static protected List<Integer> writeData(List<String> names, List<String> types, String name,
-			VertexPropertyOld value) {
-		if (!names.contains(name)) {
-			List<Integer> indexes = new ArrayList<>();
-			switch (value.type) {
-				case STRINGMAP:
-					for (String key : value.stringMap.keySet()) {
-						indexes.addAll(writeData(names, types, name + "." + key, value.stringMap.get(key)));
-					}
-					break;
-				case INTMAP:
-					for (Integer key : value.intMap.keySet()) {
-						indexes.addAll(writeData(names, types, name + "." + key, value.intMap.get(key)));
-					}
-					break;
-				case ARRAY:
-					for (int i = 0; i < value.array.size(); i++) {
-						indexes.addAll(writeData(names, types, name + "." + String.valueOf(i), value.array.get(i)));
-					}
-					break;
-				case BOOLEAN:
-					names.add(name);
-					types.add("boolean");
-					indexes.add(names.size());
-					break;
-				case FLOAT:
-					names.add(name);
-					types.add("float");
-					indexes.add(names.size());
-					break;
-				case LONG:
-					names.add(name);
-					types.add("long");
-					indexes.add(names.size());
-					break;
-				case DOUBLE:
-					names.add(name);
-					types.add("double");
-					indexes.add(names.size());
-					break;
-				case INTEGER:
-					names.add(name);
-					types.add("int");
-					indexes.add(names.size());
-					break;
-				default:
-					names.add(name);
-					types.add("string");
-					indexes.add(names.size());
-					break;
-			}
-			return indexes;
-//			if (value instanceof MapVertexProperty) {
-//				MapVertexProperty map = (MapVertexProperty) value;
-//				for (String key : map.keySet()) {
-//					indexes.addAll(writeData(names, types, name + "." + key, map.get(key)));
-//				}
-//			} else if (value instanceof ArrayVertexProperty) {
-//				ArrayVertexProperty list = (ArrayVertexProperty) value;
-//				for (int i = 0; i < list.size(); i++) {
-//					indexes.addAll(writeData(names, types, name + "." + String.valueOf(i), list.get(i)));
-//				}
-//			} else if (value instanceof IntegerVertexProperty) {
-//				names.add(name);
-//				types.add("int");
-//				indexes.add(names.size());
-//			} else if (value instanceof FloatVertexProperty) {
-//				names.add(name);
-//				types.add("float");
-//				indexes.add(names.size());
-//			} else if (value instanceof DoubleVertexProperty) {
-//				names.add(name);
-//				types.add("double");
-//				indexes.add(names.size());
-//			} else if (value instanceof BooleanVertexProperty) {
-//				names.add(name);
-//				types.add("boolean");
-//				indexes.add(names.size());
-//			} else {
-//				names.add(name);
-//				types.add("string");
-//				indexes.add(names.size());
-//			}
-//			return indexes;
-		} else {
-			return List.of(names.indexOf(name));
-		}
-	}
+
 }
