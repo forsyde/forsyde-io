@@ -36,15 +36,15 @@ dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     //api 'org.apache.commons:commons-math3:3.6.1'
 
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-
     api project(':core')
 }
 
 
 java {
     withSourcesJar()
-    withJavadocJar()
+    // taken away javadoc since the authors do not provide any
+    // java implementation for it
+    //withJavadocJar()
 }
 
 jar {
