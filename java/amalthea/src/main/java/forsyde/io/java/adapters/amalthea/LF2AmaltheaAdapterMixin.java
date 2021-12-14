@@ -123,8 +123,8 @@ public interface LF2AmaltheaAdapterMixin extends EquivalenceModel2ModelMixin<Ver
             // all in the correct ports
             model.incomingEdgesOf(signal.getViewedVertex()).forEach(eIn -> {
                 model.outgoingEdgesOf(signal.getViewedVertex()).forEach(eOut -> {
-                    final Vertex source = eIn.getSource();
-                    final Vertex target = eOut.getTarget();
+                    final Vertex source = model.getEdgeSource(eIn);
+                    final Vertex target = model.getEdgeTarget(eOut);
                     // both source and target should be reactors
                     if (LinguaFrancaReactor.conforms(source) && LinguaFrancaReactor.conforms(target)) {
                         final LinguaFrancaReactor sourceReactor = LinguaFrancaReactor.safeCast(source).get();

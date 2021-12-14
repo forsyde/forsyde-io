@@ -1,10 +1,7 @@
 package forsyde.io.java.adapters.amalthea;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.Edge;
-import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.core.Vertex;
+import forsyde.io.java.core.*;
 import forsyde.io.java.typed.viewers.*;
 import org.eclipse.app4mc.amalthea.model.*;
 
@@ -186,14 +183,16 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
     }
 
     default void fromEdgesToConnections(ForSyDeSystemGraph model, Amalthea targetModel) {
-        for (Edge e: model.edgeSet()) {
+        for (EdgeInfo e: model.edgeSet()) {
+            final Vertex sourceV = model.getEdgeSource(e);
+            final Vertex targetV = model.getEdgeTarget(e);
             if (e.edgeTraits.contains(EdgeTrait.AbstractPhysicalConnection) &&
-                (AbstractStructure.conforms(e.getSource()) || AbstractDigitalModule.conforms(e.getSource())) &&
-                (AbstractStructure.conforms(e.getTarget()) || AbstractDigitalModule.conforms(e.getTarget())) &&
+                (AbstractStructure.conforms(sourceV) || AbstractDigitalModule.conforms(sourceV)) &&
+                (AbstractStructure.conforms(targetV) || AbstractDigitalModule.conforms(targetV)) &&
                 e.sourcePort.isPresent() && e.targetPort.isPresent()) {
                 // the vertices are supposed to be generated
-                final INamed source = equivalent(e.getSource()).get();
-                final INamed target = equivalent(e.getTarget()).get();
+                final INamed source = equivalent(sourceV).get();
+                final INamed target = equivalent(targetV).get();
                 // get the minimum parent.
                 HwStructure commonLeastParent = null;
                 for (HwStructure sourceParent = (HwStructure) source.eContainer(); sourceParent != null;
