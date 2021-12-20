@@ -13,24 +13,24 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Vertex Trait String Property</b></em>'.
- * <!-- end-user-doc -->
- * <p>
+ * &lt;!-- begin-user-doc --&gt;
+ * An implementation of the model object '<em><b>Vertex Trait String Property</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
+ * &lt; &gt;
  * The following features are implemented:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitStringPropertyImpl#getDefault <em>Default</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitStringPropertyImpl#getDefault <em>Default</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @generated
  */
 public class VertexTraitStringPropertyImpl extends VertexTraitPropertyTypeImpl implements VertexTraitStringProperty
 {
   /**
-   * The default value of the '{@link #getDefault() <em>Default</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getDefault() <em>Default&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getDefault()
    * @generated
    * @ordered
@@ -38,9 +38,9 @@ public class VertexTraitStringPropertyImpl extends VertexTraitPropertyTypeImpl i
   protected static final String DEFAULT_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getDefault() <em>Default</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getDefault() <em>Default&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getDefault()
    * @generated
    * @ordered
@@ -48,8 +48,8 @@ public class VertexTraitStringPropertyImpl extends VertexTraitPropertyTypeImpl i
   protected String default_ = DEFAULT_EDEFAULT;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected VertexTraitStringPropertyImpl()
@@ -58,8 +58,8 @@ public class VertexTraitStringPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -69,8 +69,8 @@ public class VertexTraitStringPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -80,8 +80,8 @@ public class VertexTraitStringPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -94,8 +94,8 @@ public class VertexTraitStringPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -110,8 +110,8 @@ public class VertexTraitStringPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -127,8 +127,8 @@ public class VertexTraitStringPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -144,8 +144,8 @@ public class VertexTraitStringPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -160,8 +160,8 @@ public class VertexTraitStringPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override

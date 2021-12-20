@@ -17,25 +17,25 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Vertex Trait Property</b></em>'.
- * <!-- end-user-doc -->
- * <p>
+ * &lt;!-- begin-user-doc --&gt;
+ * An implementation of the model object '<em><b>Vertex Trait Property</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
+ * &lt; &gt;
  * The following features are implemented:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPropertyImpl#getName <em>Name</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPropertyImpl#getType <em>Type</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPropertyImpl#getName <em>Name</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPropertyImpl#getType <em>Type</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @generated
  */
 public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implements VertexTraitProperty
 {
   /**
-   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getName() <em>Name&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getName()
    * @generated
    * @ordered
@@ -43,9 +43,9 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   protected static final String NAME_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getName() <em>Name&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getName()
    * @generated
    * @ordered
@@ -53,9 +53,9 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   protected String name = NAME_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getType() <em>Type</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getType() <em>Type&lt;/em&gt;}' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getType()
    * @generated
    * @ordered
@@ -63,8 +63,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   protected VertexTraitPropertyType type;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected VertexTraitPropertyImpl()
@@ -73,8 +73,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -84,8 +84,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -95,8 +95,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -109,8 +109,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -120,8 +120,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   public NotificationChain basicSetType(VertexTraitPropertyType newType, NotificationChain msgs)
@@ -137,8 +137,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -159,8 +159,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -175,8 +175,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -193,8 +193,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -213,8 +213,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -233,8 +233,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -251,8 +251,8 @@ public class VertexTraitPropertyImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override

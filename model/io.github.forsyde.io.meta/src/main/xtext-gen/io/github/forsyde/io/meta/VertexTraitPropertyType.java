@@ -6,9 +6,9 @@ package io.github.forsyde.io.meta;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Vertex Trait Property Type</b></em>'.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * A representation of the model object '<em><b>Vertex Trait Property Type</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
  *
  *
  * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitPropertyType()

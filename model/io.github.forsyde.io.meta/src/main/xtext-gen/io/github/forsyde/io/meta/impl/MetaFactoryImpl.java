@@ -15,17 +15,17 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model <b>Factory</b>.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * An implementation of the model <b>Factory&lt;/b&gt;.
+ * &lt;!-- end-user-doc --&gt;
  * @generated
  */
 public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
 {
   /**
    * Creates the default factory implementation.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   public static MetaFactory init()
@@ -47,8 +47,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
 
   /**
    * Creates an instance of the factory.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   public MetaFactoryImpl()
@@ -57,8 +57,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -85,8 +85,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -102,8 +102,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -119,8 +119,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -131,8 +131,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -143,8 +143,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -155,8 +155,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -167,8 +167,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -179,8 +179,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -191,8 +191,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -203,8 +203,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -215,8 +215,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -227,8 +227,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -239,8 +239,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -251,8 +251,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -263,8 +263,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -275,8 +275,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   public VertexTraitPortDirection createVertexTraitPortDirectionFromString(EDataType eDataType, String initialValue)
@@ -287,8 +287,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   public String convertVertexTraitPortDirectionToString(EDataType eDataType, Object instanceValue)
@@ -297,8 +297,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -308,8 +308,8 @@ public class MetaFactoryImpl extends EFactoryImpl implements MetaFactory
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @deprecated
    * @generated
    */

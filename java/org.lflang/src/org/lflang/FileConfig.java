@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 /**
  * Base class that governs the interactions between code generators and the file system.
  *  
- * @author Marten Lohstroh <marten@berkeley.edu>
+ * @author Marten Lohstroh &lt;marten@berkeley.edu&gt;
  *
  */
 public class FileConfig {

@@ -11,15 +11,15 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
 
 /**
- * <!-- begin-user-doc -->
- * The <b>Switch</b> for the model's inheritance hierarchy.
+ * &lt;!-- begin-user-doc --&gt;
+ * The <b>Switch&lt;/b&gt; for the model's inheritance hierarchy.
  * It supports the call {@link #doSwitch(EObject) doSwitch(object)}
- * to invoke the <code>caseXXX</code> method for each class of the model,
+ * to invoke the caseXXX&lt;/code&gt; method for each class of the model,
  * starting with the actual class of the object
  * and proceeding up the inheritance hierarchy
  * until a non-null result is returned,
  * which is the result of the switch.
- * <!-- end-user-doc -->
+ * &lt;!-- end-user-doc --&gt;
  * @see io.github.forsyde.io.meta.MetaPackage
  * @generated
  */
@@ -27,16 +27,16 @@ public class MetaSwitch<T> extends Switch<T>
 {
   /**
    * The cached model package
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected static MetaPackage modelPackage;
 
   /**
    * Creates an instance of the switch.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   public MetaSwitch()
@@ -49,8 +49,8 @@ public class MetaSwitch<T> extends Switch<T>
 
   /**
    * Checks whether this is a switch for the given package.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @param ePackage the package in question.
    * @return whether this is a switch for the given package.
    * @generated
@@ -62,10 +62,10 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the first non-null result returned by a <code>caseXXX</code> call.
+   * Calls caseXXX&lt;/code&gt; for each class of the model until one returns a non null result; it yields that result.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the first non-null result returned by a caseXXX&lt;/code&gt; call.
    * @generated
    */
   @Override
@@ -175,13 +175,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Model</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Model&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Model</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Model&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -191,13 +191,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Vertex Trait</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Vertex Trait&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -207,13 +207,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Property</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Property</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Property&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -223,13 +223,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Property Type</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Property Type&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Property Type</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Property Type&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -239,13 +239,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Int Property</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Int Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Int Property</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Int Property&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -255,13 +255,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Real Property</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Real Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Real Property</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Real Property&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -271,13 +271,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Bool Property</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Bool Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Bool Property</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Bool Property&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -287,13 +287,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait String Property</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait String Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Vertex Trait String Property</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Vertex Trait String Property&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -303,13 +303,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Array Property</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Array Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Array Property</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Array Property&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -319,13 +319,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Object Property</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Object Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Object Property</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Object Property&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -335,13 +335,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Port</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Vertex Trait Port&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Port</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Vertex Trait Port&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -351,13 +351,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Edge Trait</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Edge Trait&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Edge Trait</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Edge Trait&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -367,13 +367,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Edge Trait Constraint</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>Edge Trait Constraint&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Edge Trait Constraint</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Edge Trait Constraint&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
@@ -383,13 +383,13 @@ public class MetaSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>EObject</em>'.
-   * <!-- begin-user-doc -->
+   * Returns the result of interpreting the object as an instance of '<em>EObject&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
    * This implementation returns null;
    * returning a non-null result will terminate the switch, but this is the last case anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>EObject</em>'.
+   * @return the result of interpreting the object as an instance of '<em>EObject&lt;/em&gt;'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject)
    * @generated
    */

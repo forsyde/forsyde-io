@@ -6,17 +6,17 @@ package io.github.forsyde.io.meta;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Vertex Trait Property</b></em>'.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * A representation of the model object '<em><b>Vertex Trait Property</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
  *
- * <p>
+ * &lt; &gt;
  * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.VertexTraitProperty#getName <em>Name</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.VertexTraitProperty#getType <em>Type</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTraitProperty#getName <em>Name</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTraitProperty#getType <em>Type</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitProperty()
  * @model
@@ -25,10 +25,10 @@ import org.eclipse.emf.ecore.EObject;
 public interface VertexTraitProperty extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Name</em>' attribute.
+   * Returns the value of the '<em><b>Name</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Name&lt;/em&gt;' attribute.
    * @see #setName(String)
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitProperty_Name()
    * @model
@@ -37,20 +37,20 @@ public interface VertexTraitProperty extends EObject
   String getName();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitProperty#getName <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Name</em>' attribute.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitProperty#getName <em>Name&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Name&lt;/em&gt;' attribute.
    * @see #getName()
    * @generated
    */
   void setName(String value);
 
   /**
-   * Returns the value of the '<em><b>Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Type</em>' containment reference.
+   * Returns the value of the '<em><b>Type</b>&lt;/em&gt;' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Type&lt;/em&gt;' containment reference.
    * @see #setType(VertexTraitPropertyType)
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitProperty_Type()
    * @model containment="true"
@@ -59,10 +59,10 @@ public interface VertexTraitProperty extends EObject
   VertexTraitPropertyType getType();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitProperty#getType <em>Type</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Type</em>' containment reference.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitProperty#getType <em>Type&lt;/em&gt;}' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Type&lt;/em&gt;' containment reference.
    * @see #getType()
    * @generated
    */

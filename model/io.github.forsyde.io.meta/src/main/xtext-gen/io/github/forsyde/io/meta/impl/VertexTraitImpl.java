@@ -26,27 +26,27 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Vertex Trait</b></em>'.
- * <!-- end-user-doc -->
- * <p>
+ * &lt;!-- begin-user-doc --&gt;
+ * An implementation of the model object '<em><b>Vertex Trait</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
+ * &lt; &gt;
  * The following features are implemented:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitImpl#getName <em>Name</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitImpl#getRefines <em>Refines</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitImpl#getPorts <em>Ports</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitImpl#getProperties <em>Properties</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitImpl#getName <em>Name</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitImpl#getRefines <em>Refines</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitImpl#getPorts <em>Ports</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitImpl#getProperties <em>Properties</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @generated
  */
 public class VertexTraitImpl extends MinimalEObjectImpl.Container implements VertexTrait
 {
   /**
-   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getName() <em>Name&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getName()
    * @generated
    * @ordered
@@ -54,9 +54,9 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   protected static final String NAME_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getName() <em>Name&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getName()
    * @generated
    * @ordered
@@ -64,9 +64,9 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   protected String name = NAME_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getRefines() <em>Refines</em>}' reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getRefines() <em>Refines&lt;/em&gt;}' reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getRefines()
    * @generated
    * @ordered
@@ -74,9 +74,9 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   protected EList<VertexTrait> refines;
 
   /**
-   * The cached value of the '{@link #getPorts() <em>Ports</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getPorts() <em>Ports&lt;/em&gt;}' containment reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getPorts()
    * @generated
    * @ordered
@@ -84,9 +84,9 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   protected EList<VertexTraitPort> ports;
 
   /**
-   * The cached value of the '{@link #getProperties() <em>Properties</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getProperties() <em>Properties&lt;/em&gt;}' containment reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getProperties()
    * @generated
    * @ordered
@@ -94,8 +94,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   protected EList<VertexTraitProperty> properties;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected VertexTraitImpl()
@@ -104,8 +104,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -115,8 +115,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -126,8 +126,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -140,8 +140,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -155,8 +155,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -170,8 +170,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -185,8 +185,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -203,8 +203,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -225,8 +225,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @SuppressWarnings("unchecked")
@@ -255,8 +255,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -281,8 +281,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -303,8 +303,8 @@ public class VertexTraitImpl extends MinimalEObjectImpl.Container implements Ver
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override

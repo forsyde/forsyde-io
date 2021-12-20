@@ -12,28 +12,28 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * &lt; &gt;Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * &lt; &gt;The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * <complexType>
- *   <complexContent>
- *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <choice>
- *         <sequence>
- *           <element ref="{}schedulingEntity" maxOccurs="unbounded" minOccurs="0"/>
- *         </sequence>
- *         <sequence>
- *           <element ref="{}message" maxOccurs="unbounded" minOccurs="0"/>
- *         </sequence>
- *       </choice>
- *       <attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="period" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *     </restriction>
- *   </complexContent>
- * </complexType>
- * </pre>
+ * &lt; &gt;
+ * &lt; &gt;
+ *   &lt;   &gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;       &gt;
+ *         &lt;         &gt;
+ *           &lt;element ref="{}schedulingEntity" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;/sequence&gt;
+ *         &lt;         &gt;
+ *           &lt;element ref="{}message" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;/sequence&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="period" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * &lt;/pre&gt;
  * 
  * 
  */
@@ -55,22 +55,23 @@ public class Messages {
     /**
      * Gets the value of the schedulingEntity property.
      * 
-     * <p>
+     * &lt; &gt;
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the schedulingEntity property.
+     * This is why there is not a set&lt;/CODE&gt; method for the schedulingEntity property.
      * 
-     * <p>
+     * &lt; &gt;
      * For example, to add a new item, do as follows:
-     * <pre>
+     * &lt; &gt;
      *    getSchedulingEntity().add(newItem);
-     * </pre>
+     * &lt;/pre&gt;
      * 
      * 
-     * <p>
+     * &lt; &gt;
      * Objects of the following type(s) are allowed in the list
      * {@link SchedulingEntity }
+* @return SchedulingEntity
      * 
      * 
      */
@@ -84,22 +85,23 @@ public class Messages {
     /**
      * Gets the value of the message property.
      * 
-     * <p>
+     * &lt; &gt;
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the message property.
+     * This is why there is not a set&lt;/CODE&gt; method for the message property.
      * 
-     * <p>
+     * &lt; &gt;
      * For example, to add a new item, do as follows:
-     * <pre>
+     * &lt; &gt;
      *    getMessage().add(newItem);
-     * </pre>
+     * &lt;/pre&gt;
      * 
      * 
-     * <p>
+     * &lt; &gt;
      * Objects of the following type(s) are allowed in the list
      * {@link Message }
+* @return Message
      * 
      * 
      */

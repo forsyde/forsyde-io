@@ -11,29 +11,29 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * &lt; &gt;Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * &lt; &gt;The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * <complexType>
- *   <complexContent>
- *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <sequence>
- *         <element ref="{}applicationGraph" minOccurs="0"/>
- *         <element ref="{}architectureGraph" minOccurs="0"/>
- *         <element ref="{}mapping" minOccurs="0"/>
- *         <element ref="{}systemUsage" minOccurs="0"/>
- *         <element ref="{}storageThroughputTradeOffs" minOccurs="0"/>
- *         <element ref="{}messagesSet" minOccurs="0"/>
- *         <element ref="{}settings" maxOccurs="unbounded" minOccurs="0"/>
- *       </sequence>
- *       <attribute name="type" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="version" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     </restriction>
- *   </complexContent>
- * </complexType>
- * </pre>
+ * &lt; &gt;
+ * &lt; &gt;
+ *   &lt;   &gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;       &gt;
+ *         &lt;element ref="{}applicationGraph" minOccurs="0"/&gt;
+ *         &lt;element ref="{}architectureGraph" minOccurs="0"/&gt;
+ *         &lt;element ref="{}mapping" minOccurs="0"/&gt;
+ *         &lt;element ref="{}systemUsage" minOccurs="0"/&gt;
+ *         &lt;element ref="{}storageThroughputTradeOffs" minOccurs="0"/&gt;
+ *         &lt;element ref="{}messagesSet" minOccurs="0"/&gt;
+ *         &lt;element ref="{}settings" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="type" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="version" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * &lt;/pre&gt;
  * 
  * 
  */
@@ -209,22 +209,23 @@ public class Sdf3 {
     /**
      * Gets the value of the settings property.
      * 
-     * <p>
+     * &lt; &gt;
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the settings property.
+     * This is why there is not a set&lt;/CODE&gt; method for the settings property.
      * 
-     * <p>
+     * &lt; &gt;
      * For example, to add a new item, do as follows:
-     * <pre>
+     * &lt; &gt;
      *    getSettings().add(newItem);
-     * </pre>
+     * &lt;/pre&gt;
      * 
      * 
-     * <p>
+     * &lt; &gt;
      * Objects of the following type(s) are allowed in the list
      * {@link Settings }
+* @return Settings
      * 
      * 
      */

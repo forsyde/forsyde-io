@@ -22,24 +22,24 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Model</b></em>'.
- * <!-- end-user-doc -->
- * <p>
+ * &lt;!-- begin-user-doc --&gt;
+ * An implementation of the model object '<em><b>Model</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
+ * &lt; &gt;
  * The following features are implemented:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.impl.ModelImpl#getTraits <em>Traits</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.ModelImpl#getTraits <em>Traits</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @generated
  */
 public class ModelImpl extends MinimalEObjectImpl.Container implements Model
 {
   /**
-   * The cached value of the '{@link #getTraits() <em>Traits</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getTraits() <em>Traits&lt;/em&gt;}' containment reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getTraits()
    * @generated
    * @ordered
@@ -47,8 +47,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   protected EList<EObject> traits;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected ModelImpl()
@@ -57,8 +57,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -68,8 +68,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -83,8 +83,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -99,8 +99,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -115,8 +115,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @SuppressWarnings("unchecked")
@@ -134,8 +134,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -151,8 +151,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override

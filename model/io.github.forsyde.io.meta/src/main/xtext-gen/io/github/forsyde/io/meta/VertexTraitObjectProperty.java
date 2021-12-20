@@ -5,17 +5,17 @@ package io.github.forsyde.io.meta;
 
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Vertex Trait Object Property</b></em>'.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * A representation of the model object '<em><b>Vertex Trait Object Property</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
  *
- * <p>
+ * &lt; &gt;
  * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.VertexTraitObjectProperty#getKeyType <em>Key Type</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.VertexTraitObjectProperty#getValueType <em>Value Type</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTraitObjectProperty#getKeyType <em>Key Type</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTraitObjectProperty#getValueType <em>Value Type</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitObjectProperty()
  * @model
@@ -24,10 +24,10 @@ package io.github.forsyde.io.meta;
 public interface VertexTraitObjectProperty extends VertexTraitPropertyType
 {
   /**
-   * Returns the value of the '<em><b>Key Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Key Type</em>' containment reference.
+   * Returns the value of the '<em><b>Key Type</b>&lt;/em&gt;' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Key Type&lt;/em&gt;' containment reference.
    * @see #setKeyType(VertexTraitPropertyType)
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitObjectProperty_KeyType()
    * @model containment="true"
@@ -36,20 +36,20 @@ public interface VertexTraitObjectProperty extends VertexTraitPropertyType
   VertexTraitPropertyType getKeyType();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitObjectProperty#getKeyType <em>Key Type</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Key Type</em>' containment reference.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitObjectProperty#getKeyType <em>Key Type&lt;/em&gt;}' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Key Type&lt;/em&gt;' containment reference.
    * @see #getKeyType()
    * @generated
    */
   void setKeyType(VertexTraitPropertyType value);
 
   /**
-   * Returns the value of the '<em><b>Value Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Value Type</em>' containment reference.
+   * Returns the value of the '<em><b>Value Type</b>&lt;/em&gt;' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Value Type&lt;/em&gt;' containment reference.
    * @see #setValueType(VertexTraitPropertyType)
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitObjectProperty_ValueType()
    * @model containment="true"
@@ -58,10 +58,10 @@ public interface VertexTraitObjectProperty extends VertexTraitPropertyType
   VertexTraitPropertyType getValueType();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitObjectProperty#getValueType <em>Value Type</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Value Type</em>' containment reference.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitObjectProperty#getValueType <em>Value Type&lt;/em&gt;}' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Value Type&lt;/em&gt;' containment reference.
    * @see #getValueType()
    * @generated
    */

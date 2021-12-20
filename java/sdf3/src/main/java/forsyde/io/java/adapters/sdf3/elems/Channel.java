@@ -10,28 +10,28 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * &lt; &gt;Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * &lt; &gt;The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * <complexType>
- *   <complexContent>
- *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="srcActor" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="srcPort" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="dstActor" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="dstPort" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="initialTokens" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="size" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="nrConnections" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="inBandwidth" type="{http://www.w3.org/2001/XMLSchema}double" />
- *       <attribute name="outBandwidth" type="{http://www.w3.org/2001/XMLSchema}double" />
- *     </restriction>
- *   </complexContent>
- * </complexType>
- * </pre>
+ * &lt; &gt;
+ * &lt; &gt;
+ *   &lt;   &gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="srcActor" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="srcPort" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="dstActor" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="dstPort" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="initialTokens" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="size" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="nrConnections" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="inBandwidth" type="{http://www.w3.org/2001/XMLSchema}double" /&gt;
+ *       &lt;attribute name="outBandwidth" type="{http://www.w3.org/2001/XMLSchema}double" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * &lt;/pre&gt;
  * 
  * 
  */
@@ -63,8 +63,8 @@ public class Channel {
 
     /**
      * Gets the value of the name property.
+	 * @return name
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -87,8 +87,8 @@ public class Channel {
 
     /**
      * Gets the value of the srcActor property.
+	 * @return srcActor
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -111,8 +111,8 @@ public class Channel {
 
     /**
      * Gets the value of the srcPort property.
+	 * @return srcPort
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -135,8 +135,8 @@ public class Channel {
 
     /**
      * Gets the value of the dstActor property.
+	 * @return dstActor
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -159,8 +159,8 @@ public class Channel {
 
     /**
      * Gets the value of the dstPort property.
+	 * @return dstPort
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -183,8 +183,8 @@ public class Channel {
 
     /**
      * Gets the value of the initialTokens property.
+	 * @return initialTokens
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
@@ -207,8 +207,8 @@ public class Channel {
 
     /**
      * Gets the value of the size property.
+	 * @return size
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
@@ -231,8 +231,8 @@ public class Channel {
 
     /**
      * Gets the value of the nrConnections property.
+	 * @return nrConnections
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
@@ -255,8 +255,8 @@ public class Channel {
 
     /**
      * Gets the value of the inBandwidth property.
+	 * @return inBandwidth
      * 
-     * @return
      *     possible object is
      *     {@link Double }
      *     
@@ -279,8 +279,8 @@ public class Channel {
 
     /**
      * Gets the value of the outBandwidth property.
+	 * @return outBandwidth
      * 
-     * @return
      *     possible object is
      *     {@link Double }
      *     

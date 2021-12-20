@@ -7,9 +7,9 @@ import org.eclipse.emf.ecore.EObject;
 /**
  * Interface for reporting errors.
  *
- * @author Edward A. Lee <eal@berkeley.edu>
- * @author Marten Lohstroh <marten@berkeley.edu>
- * @author Christian Menard <christian.menard@tu-dresden.de>
+ * @author Edward A. Lee &lt;eal@berkeley.edu&gt;
+ * @author Marten Lohstroh &lt;marten@berkeley.edu&gt;
+ * @author Christian Menard &lt;christian.menard@tu-dresden.de&gt;
  */
 public interface ErrorReporter {
 

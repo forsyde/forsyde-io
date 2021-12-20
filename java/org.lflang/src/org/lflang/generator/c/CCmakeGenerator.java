@@ -38,7 +38,7 @@ import org.lflang.TargetConfig;
  * 
  * Adapted from @see org.lflang.generator.CppCmakeGenerator.kt
  * 
- * @author Soroush Bateni <soroush@utdallas.edu>
+ * @author Soroush Bateni &lt;soroush@utdallas.edu&gt;
  *
  */
 class CCmakeGenerator {

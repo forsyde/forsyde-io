@@ -42,11 +42,11 @@ import org.lflang.util.LFCommand;
  * Responsible for creating and executing the necessary native command to compile code that is generated
  * by the CGenerator. This class invokes a compiler directly.
  * 
- * @author Soroush Bateni <soroush@utdallas.edu>
- * @author{Edward A. Lee <eal@berkeley.edu>}
- * @author{Marten Lohstroh <marten@berkeley.edu>}
- * @author{Christian Menard <christian.menard@tu-dresden.de}
- * @author{Matt Weber <matt.weber@berkeley.edu>}
+ * @author Soroush Bateni &lt;soroush@utdallas.edu&gt;
+ * @author{Edward A. Lee &lt;eal@berkeley.edu&gt;}
+ * @author{Marten Lohstroh &lt;marten@berkeley.edu&gt;}
+ * @author{Christian Menard &lt;christian.menard@tu-dresden.de}
+ * @author{Matt Weber &lt;matt.weber@berkeley.edu&gt;}
  */
 public class CCompiler {
 

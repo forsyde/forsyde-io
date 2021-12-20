@@ -18,11 +18,7 @@ public final class ForSyDeModelHandler {
 	private final List<ForSyDeModelDriver> registeredDrivers = new ArrayList<>();
 	private final List<PathMatcher> registeredDriversInputMatchers = new ArrayList<>();
 	private final List<PathMatcher> registeredDriversOutputMatchers = new ArrayList<>();
-//	PathMatcher forsydeMLMatcher;
-//	PathMatcher graphMLMatcher;
-//	PathMatcher dotMatcher;
-//	PathMatcher linguaFrancaMatcher;
-//	PathMatcher amaltheaMatcher;
+
 
 	public ForSyDeModelHandler(ForSyDeModelDriver... extraDrivers) {
 		// register extra drivers

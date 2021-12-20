@@ -12,32 +12,32 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * &lt; &gt;Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * &lt; &gt;The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * <complexType>
- *   <complexContent>
- *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <choice>
- *         <sequence>
- *           <element ref="{}tile" maxOccurs="unbounded" minOccurs="0"/>
- *           <element ref="{}router" maxOccurs="unbounded" minOccurs="0"/>
- *           <element ref="{}link" maxOccurs="unbounded"/>
- *         </sequence>
- *         <sequence>
- *           <element ref="{}messages" maxOccurs="unbounded" minOccurs="0"/>
- *         </sequence>
- *       </choice>
- *       <attribute name="slotTableSize" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="packetHeaderSize" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="flitSize" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="reconfigurationTimeNI" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *     </restriction>
- *   </complexContent>
- * </complexType>
- * </pre>
+ * &lt; &gt;
+ * &lt; &gt;
+ *   &lt;   &gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;       &gt;
+ *         &lt;         &gt;
+ *           &lt;element ref="{}tile" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *           &lt;element ref="{}router" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *           &lt;element ref="{}link" maxOccurs="unbounded"/&gt;
+ *         &lt;/sequence&gt;
+ *         &lt;         &gt;
+ *           &lt;element ref="{}messages" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;/sequence&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="slotTableSize" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="packetHeaderSize" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="flitSize" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="reconfigurationTimeNI" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * &lt;/pre&gt;
  * 
  * 
  */
@@ -67,22 +67,23 @@ public class Network {
     /**
      * Gets the value of the tile property.
      * 
-     * <p>
+     * &lt; &gt;
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the tile property.
+     * This is why there is not a set&lt;/CODE&gt; method for the tile property.
      * 
-     * <p>
+     * &lt; &gt;
      * For example, to add a new item, do as follows:
-     * <pre>
+     * &lt; &gt;
      *    getTile().add(newItem);
-     * </pre>
+     * &lt;/pre&gt;
      * 
      * 
-     * <p>
+     * &lt; &gt;
      * Objects of the following type(s) are allowed in the list
      * {@link Tile }
+* @return Tile
      * 
      * 
      */
@@ -96,22 +97,23 @@ public class Network {
     /**
      * Gets the value of the router property.
      * 
-     * <p>
+     * &lt; &gt;
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the router property.
+     * This is why there is not a set&lt;/CODE&gt; method for the router property.
      * 
-     * <p>
+     * &lt; &gt;
      * For example, to add a new item, do as follows:
-     * <pre>
+     * &lt; &gt;
      *    getRouter().add(newItem);
-     * </pre>
+     * &lt;/pre&gt;
      * 
      * 
-     * <p>
+     * &lt; &gt;
      * Objects of the following type(s) are allowed in the list
      * {@link Router }
+* @return Router
      * 
      * 
      */
@@ -125,22 +127,23 @@ public class Network {
     /**
      * Gets the value of the link property.
      * 
-     * <p>
+     * &lt; &gt;
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the link property.
+     * This is why there is not a set&lt;/CODE&gt; method for the link property.
      * 
-     * <p>
+     * &lt; &gt;
      * For example, to add a new item, do as follows:
-     * <pre>
+     * &lt; &gt;
      *    getLink().add(newItem);
-     * </pre>
+     * &lt;/pre&gt;
      * 
      * 
-     * <p>
+     * &lt; &gt;
      * Objects of the following type(s) are allowed in the list
      * {@link Link }
+* @return Link
      * 
      * 
      */
@@ -154,22 +157,23 @@ public class Network {
     /**
      * Gets the value of the messages property.
      * 
-     * <p>
+     * &lt; &gt;
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the messages property.
+     * This is why there is not a set&lt;/CODE&gt; method for the messages property.
      * 
-     * <p>
+     * &lt; &gt;
      * For example, to add a new item, do as follows:
-     * <pre>
+     * &lt; &gt;
      *    getMessages().add(newItem);
-     * </pre>
+     * &lt;/pre&gt;
      * 
      * 
-     * <p>
+     * &lt; &gt;
      * Objects of the following type(s) are allowed in the list
      * {@link Messages }
+* @return Messages
      * 
      * 
      */

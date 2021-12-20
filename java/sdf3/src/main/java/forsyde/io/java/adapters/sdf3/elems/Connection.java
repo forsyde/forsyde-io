@@ -12,25 +12,25 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * &lt; &gt;Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * &lt; &gt;The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * <complexType>
- *   <complexContent>
- *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <sequence>
- *         <element ref="{}channel" maxOccurs="unbounded" minOccurs="0"/>
- *       </sequence>
- *       <attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="srcTile" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="dstTile" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="delay" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *     </restriction>
- *   </complexContent>
- * </complexType>
- * </pre>
+ * &lt; &gt;
+ * &lt; &gt;
+ *   &lt;   &gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;       &gt;
+ *         &lt;element ref="{}channel" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="srcTile" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="dstTile" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="delay" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * &lt;/pre&gt;
  * 
  * 
  */
@@ -53,23 +53,25 @@ public class Connection {
 
     /**
      * Gets the value of the channel property.
+	 * @return channel
      * 
-     * <p>
+     * &lt; &gt;
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the channel property.
+     * This is why there is not a set&lt;/CODE&gt; method for the channel property.
      * 
-     * <p>
+     * &lt; &gt;
      * For example, to add a new item, do as follows:
-     * <pre>
+     * &lt; &gt;
      *    getChannel().add(newItem);
-     * </pre>
+     * &lt;/pre&gt;
      * 
      * 
-     * <p>
+     * &lt; &gt;
      * Objects of the following type(s) are allowed in the list
      * {@link Channel }
+	 * @return Channel
      * 
      * 
      */
@@ -82,8 +84,8 @@ public class Connection {
 
     /**
      * Gets the value of the name property.
+	 * @return name
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -106,8 +108,8 @@ public class Connection {
 
     /**
      * Gets the value of the srcTile property.
+	 * @return srcTile
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -130,8 +132,8 @@ public class Connection {
 
     /**
      * Gets the value of the dstTile property.
+	 * @return dstTile
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -154,8 +156,8 @@ public class Connection {
 
     /**
      * Gets the value of the delay property.
+	 * @return delay
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     

@@ -10,20 +10,20 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * &lt; &gt;Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * &lt; &gt;The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * <complexType>
- *   <complexContent>
- *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <attribute name="type" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="wheelsize" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *     </restriction>
- *   </complexContent>
- * </complexType>
- * </pre>
+ * &lt; &gt;
+ * &lt; &gt;
+ *   &lt;   &gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="type" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="wheelsize" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * &lt;/pre&gt;
  * 
  * 
  */
@@ -39,8 +39,8 @@ public class Arbitration {
 
     /**
      * Gets the value of the type property.
+	 * @return type
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -63,8 +63,8 @@ public class Arbitration {
 
     /**
      * Gets the value of the wheelsize property.
+	 * @return wheelsize
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     

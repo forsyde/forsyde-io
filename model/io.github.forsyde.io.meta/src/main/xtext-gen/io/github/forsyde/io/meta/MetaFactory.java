@@ -6,10 +6,10 @@ package io.github.forsyde.io.meta;
 import org.eclipse.emf.ecore.EFactory;
 
 /**
- * <!-- begin-user-doc -->
- * The <b>Factory</b> for the model.
+ * &lt;!-- begin-user-doc --&gt;
+ * The <b>Factory&lt;/b&gt; for the model.
  * It provides a create method for each non-abstract class of the model.
- * <!-- end-user-doc -->
+ * &lt;!-- end-user-doc --&gt;
  * @see io.github.forsyde.io.meta.MetaPackage
  * @generated
  */
@@ -17,133 +17,133 @@ public interface MetaFactory extends EFactory
 {
   /**
    * The singleton instance of the factory.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   MetaFactory eINSTANCE = io.github.forsyde.io.meta.impl.MetaFactoryImpl.init();
 
   /**
-   * Returns a new object of class '<em>Model</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Model</em>'.
+   * Returns a new object of class '<em>Model&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Model&lt;/em&gt;'.
    * @generated
    */
   Model createModel();
 
   /**
-   * Returns a new object of class '<em>Vertex Trait</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Vertex Trait</em>'.
+   * Returns a new object of class '<em>Vertex Trait&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Vertex Trait&lt;/em&gt;'.
    * @generated
    */
   VertexTrait createVertexTrait();
 
   /**
-   * Returns a new object of class '<em>Vertex Trait Property</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Vertex Trait Property</em>'.
+   * Returns a new object of class '<em>Vertex Trait Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Vertex Trait Property&lt;/em&gt;'.
    * @generated
    */
   VertexTraitProperty createVertexTraitProperty();
 
   /**
-   * Returns a new object of class '<em>Vertex Trait Property Type</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Vertex Trait Property Type</em>'.
+   * Returns a new object of class '<em>Vertex Trait Property Type&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Vertex Trait Property Type&lt;/em&gt;'.
    * @generated
    */
   VertexTraitPropertyType createVertexTraitPropertyType();
 
   /**
-   * Returns a new object of class '<em>Vertex Trait Int Property</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Vertex Trait Int Property</em>'.
+   * Returns a new object of class '<em>Vertex Trait Int Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Vertex Trait Int Property&lt;/em&gt;'.
    * @generated
    */
   VertexTraitIntProperty createVertexTraitIntProperty();
 
   /**
-   * Returns a new object of class '<em>Vertex Trait Real Property</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Vertex Trait Real Property</em>'.
+   * Returns a new object of class '<em>Vertex Trait Real Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Vertex Trait Real Property&lt;/em&gt;'.
    * @generated
    */
   VertexTraitRealProperty createVertexTraitRealProperty();
 
   /**
-   * Returns a new object of class '<em>Vertex Trait Bool Property</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Vertex Trait Bool Property</em>'.
+   * Returns a new object of class '<em>Vertex Trait Bool Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Vertex Trait Bool Property&lt;/em&gt;'.
    * @generated
    */
   VertexTraitBoolProperty createVertexTraitBoolProperty();
 
   /**
-   * Returns a new object of class '<em>Vertex Trait String Property</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Vertex Trait String Property</em>'.
+   * Returns a new object of class '<em>Vertex Trait String Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Vertex Trait String Property&lt;/em&gt;'.
    * @generated
    */
   VertexTraitStringProperty createVertexTraitStringProperty();
 
   /**
-   * Returns a new object of class '<em>Vertex Trait Array Property</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Vertex Trait Array Property</em>'.
+   * Returns a new object of class '<em>Vertex Trait Array Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Vertex Trait Array Property&lt;/em&gt;'.
    * @generated
    */
   VertexTraitArrayProperty createVertexTraitArrayProperty();
 
   /**
-   * Returns a new object of class '<em>Vertex Trait Object Property</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Vertex Trait Object Property</em>'.
+   * Returns a new object of class '<em>Vertex Trait Object Property&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Vertex Trait Object Property&lt;/em&gt;'.
    * @generated
    */
   VertexTraitObjectProperty createVertexTraitObjectProperty();
 
   /**
-   * Returns a new object of class '<em>Vertex Trait Port</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Vertex Trait Port</em>'.
+   * Returns a new object of class '<em>Vertex Trait Port&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Vertex Trait Port&lt;/em&gt;'.
    * @generated
    */
   VertexTraitPort createVertexTraitPort();
 
   /**
-   * Returns a new object of class '<em>Edge Trait</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Edge Trait</em>'.
+   * Returns a new object of class '<em>Edge Trait&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Edge Trait&lt;/em&gt;'.
    * @generated
    */
   EdgeTrait createEdgeTrait();
 
   /**
-   * Returns a new object of class '<em>Edge Trait Constraint</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Edge Trait Constraint</em>'.
+   * Returns a new object of class '<em>Edge Trait Constraint&lt;/em&gt;'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return a new object of class '<em>Edge Trait Constraint&lt;/em&gt;'.
    * @generated
    */
   EdgeTraitConstraint createEdgeTraitConstraint();
 
   /**
    * Returns the package supported by this factory.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @return the package supported by this factory.
    * @generated
    */

@@ -13,10 +13,10 @@ import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc -->
- * The <b>Adapter Factory</b> for the model.
- * It provides an adapter <code>createXXX</code> method for each class of the model.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * The <b>Adapter Factory&lt;/b&gt; for the model.
+ * It provides an adapter createXXX&lt;/code&gt; method for each class of the model.
+ * &lt;!-- end-user-doc --&gt;
  * @see io.github.forsyde.io.meta.MetaPackage
  * @generated
  */
@@ -24,16 +24,16 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
 {
   /**
    * The cached model package.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected static MetaPackage modelPackage;
 
   /**
    * Creates an instance of the adapter factory.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   public MetaAdapterFactory()
@@ -46,9 +46,9 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
 
   /**
    * Returns whether this factory is applicable for the type of the object.
-   * <!-- begin-user-doc -->
-   * This implementation returns <code>true</code> if the object is either the model's package or is an instance object of the model.
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * This implementation returns true&lt;/code&gt; if the object is either the model's package or is an instance object of the model.
+   * &lt;!-- end-user-doc --&gt;
    * @return whether this factory is applicable for the type of the object.
    * @generated
    */
@@ -67,9 +67,9 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * The switch that delegates to the <code>createXXX</code> methods.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The switch that delegates to the createXXX&lt;/code&gt; methods.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected MetaSwitch<Adapter> modelSwitch =
@@ -148,11 +148,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
     };
 
   /**
-   * Creates an adapter for the <code>target</code>.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * Creates an adapter for the target&lt;/code&gt;.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @param target the object to adapt.
-   * @return the adapter for the <code>target</code>.
+   * @return the adapter for the target&lt;/code&gt;.
    * @generated
    */
   @Override
@@ -163,11 +163,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
 
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.Model <em>Model</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.Model <em>Model&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.Model
    * @generated
@@ -178,11 +178,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTrait <em>Vertex Trait</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTrait <em>Vertex Trait&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.VertexTrait
    * @generated
@@ -193,11 +193,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitProperty <em>Vertex Trait Property</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitProperty <em>Vertex Trait Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.VertexTraitProperty
    * @generated
@@ -208,11 +208,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitPropertyType <em>Vertex Trait Property Type</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitPropertyType <em>Vertex Trait Property Type&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.VertexTraitPropertyType
    * @generated
@@ -223,11 +223,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitIntProperty <em>Vertex Trait Int Property</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitIntProperty <em>Vertex Trait Int Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.VertexTraitIntProperty
    * @generated
@@ -238,11 +238,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitRealProperty <em>Vertex Trait Real Property</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitRealProperty <em>Vertex Trait Real Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.VertexTraitRealProperty
    * @generated
@@ -253,11 +253,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitBoolProperty <em>Vertex Trait Bool Property</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitBoolProperty <em>Vertex Trait Bool Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.VertexTraitBoolProperty
    * @generated
@@ -268,11 +268,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitStringProperty <em>Vertex Trait String Property</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitStringProperty <em>Vertex Trait String Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.VertexTraitStringProperty
    * @generated
@@ -283,11 +283,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitArrayProperty <em>Vertex Trait Array Property</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitArrayProperty <em>Vertex Trait Array Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.VertexTraitArrayProperty
    * @generated
@@ -298,11 +298,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitObjectProperty <em>Vertex Trait Object Property</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitObjectProperty <em>Vertex Trait Object Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.VertexTraitObjectProperty
    * @generated
@@ -313,11 +313,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitPort <em>Vertex Trait Port</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.VertexTraitPort <em>Vertex Trait Port&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.VertexTraitPort
    * @generated
@@ -328,11 +328,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.EdgeTrait <em>Edge Trait</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.EdgeTrait <em>Edge Trait&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.EdgeTrait
    * @generated
@@ -343,11 +343,11 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.EdgeTraitConstraint <em>Edge Trait Constraint</em>}'.
-   * <!-- begin-user-doc -->
+   * Creates a new adapter for an object of class '{@link io.github.forsyde.io.meta.EdgeTraitConstraint <em>Edge Trait Constraint&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @see io.github.forsyde.io.meta.EdgeTraitConstraint
    * @generated
@@ -359,9 +359,9 @@ public class MetaAdapterFactory extends AdapterFactoryImpl
 
   /**
    * Creates a new adapter for the default case.
-   * <!-- begin-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
    * This default implementation returns null.
-   * <!-- end-user-doc -->
+   * &lt;!-- end-user-doc --&gt;
    * @return the new adapter.
    * @generated
    */

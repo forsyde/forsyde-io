@@ -10,26 +10,26 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * &lt; &gt;Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * &lt; &gt;The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * <complexType>
- *   <complexContent>
- *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <attribute name="nr" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="src" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="dst" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="channel" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="seqNr" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="startTime" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="duration" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="size" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *     </restriction>
- *   </complexContent>
- * </complexType>
- * </pre>
+ * &lt; &gt;
+ * &lt; &gt;
+ *   &lt;   &gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="nr" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="src" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="dst" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="channel" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="seqNr" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="startTime" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="duration" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="size" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * &lt;/pre&gt;
  * 
  * 
  */
@@ -57,8 +57,8 @@ public class Message {
 
     /**
      * Gets the value of the nr property.
+	 * @return nr
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
@@ -81,8 +81,8 @@ public class Message {
 
     /**
      * Gets the value of the src property.
+	 * @return src
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -105,8 +105,8 @@ public class Message {
 
     /**
      * Gets the value of the dst property.
+	 * @return dst
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -129,8 +129,8 @@ public class Message {
 
     /**
      * Gets the value of the channel property.
+	 * @return channel
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -153,8 +153,8 @@ public class Message {
 
     /**
      * Gets the value of the seqNr property.
+	 * @return seqNr
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
@@ -177,8 +177,8 @@ public class Message {
 
     /**
      * Gets the value of the startTime property.
+	 * @return startTime
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
@@ -201,8 +201,8 @@ public class Message {
 
     /**
      * Gets the value of the duration property.
+	 * @return duration
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
@@ -225,8 +225,8 @@ public class Message {
 
     /**
      * Gets the value of the size property.
+	 * @return size
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     

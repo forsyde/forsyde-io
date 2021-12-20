@@ -13,24 +13,24 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Vertex Trait Bool Property</b></em>'.
- * <!-- end-user-doc -->
- * <p>
+ * &lt;!-- begin-user-doc --&gt;
+ * An implementation of the model object '<em><b>Vertex Trait Bool Property</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
+ * &lt; &gt;
  * The following features are implemented:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitBoolPropertyImpl#isDefault <em>Default</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitBoolPropertyImpl#isDefault <em>Default</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @generated
  */
 public class VertexTraitBoolPropertyImpl extends VertexTraitPropertyTypeImpl implements VertexTraitBoolProperty
 {
   /**
-   * The default value of the '{@link #isDefault() <em>Default</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #isDefault() <em>Default&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #isDefault()
    * @generated
    * @ordered
@@ -38,9 +38,9 @@ public class VertexTraitBoolPropertyImpl extends VertexTraitPropertyTypeImpl imp
   protected static final boolean DEFAULT_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isDefault() <em>Default</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #isDefault() <em>Default&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #isDefault()
    * @generated
    * @ordered
@@ -48,8 +48,8 @@ public class VertexTraitBoolPropertyImpl extends VertexTraitPropertyTypeImpl imp
   protected boolean default_ = DEFAULT_EDEFAULT;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected VertexTraitBoolPropertyImpl()
@@ -58,8 +58,8 @@ public class VertexTraitBoolPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -69,8 +69,8 @@ public class VertexTraitBoolPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -80,8 +80,8 @@ public class VertexTraitBoolPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -94,8 +94,8 @@ public class VertexTraitBoolPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -110,8 +110,8 @@ public class VertexTraitBoolPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -127,8 +127,8 @@ public class VertexTraitBoolPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -144,8 +144,8 @@ public class VertexTraitBoolPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -160,8 +160,8 @@ public class VertexTraitBoolPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override

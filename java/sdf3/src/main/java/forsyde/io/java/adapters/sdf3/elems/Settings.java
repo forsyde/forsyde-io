@@ -13,22 +13,22 @@ import org.w3c.dom.Element;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * &lt; &gt;Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * &lt; &gt;The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * <complexType>
- *   <complexContent>
- *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <sequence>
- *         <any processContents='skip' maxOccurs="unbounded" minOccurs="0"/>
- *       </sequence>
- *       <attribute name="type" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     </restriction>
- *   </complexContent>
- * </complexType>
- * </pre>
+ * &lt; &gt;
+ * &lt; &gt;
+ *   &lt;   &gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;       &gt;
+ *         &lt;any processContents='skip' maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="type" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * &lt;/pre&gt;
  * 
  * 
  */
@@ -47,22 +47,23 @@ public class Settings {
     /**
      * Gets the value of the any property.
      * 
-     * <p>
+     * &lt; &gt;
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the any property.
+     * This is why there is not a set&lt;/CODE&gt; method for the any property.
      * 
-     * <p>
+     * &lt; &gt;
      * For example, to add a new item, do as follows:
-     * <pre>
+     * &lt; &gt;
      *    getAny().add(newItem);
-     * </pre>
+     * &lt;/pre&gt;
      * 
      * 
-     * <p>
+     * &lt; &gt;
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
+* @return Element
      * 
      * 
      */

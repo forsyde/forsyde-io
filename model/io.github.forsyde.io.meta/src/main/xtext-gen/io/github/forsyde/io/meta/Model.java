@@ -8,16 +8,16 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Model</b></em>'.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * A representation of the model object '<em><b>Model</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
  *
- * <p>
+ * &lt; &gt;
  * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.Model#getTraits <em>Traits</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.Model#getTraits <em>Traits</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @see io.github.forsyde.io.meta.MetaPackage#getModel()
  * @model
@@ -26,11 +26,11 @@ import org.eclipse.emf.ecore.EObject;
 public interface Model extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Traits</b></em>' containment reference list.
+   * Returns the value of the '<em><b>Traits</b>&lt;/em&gt;' containment reference list.
    * The list contents are of type {@link org.eclipse.emf.ecore.EObject}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Traits</em>' containment reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Traits&lt;/em&gt;' containment reference list.
    * @see io.github.forsyde.io.meta.MetaPackage#getModel_Traits()
    * @model containment="true"
    * @generated

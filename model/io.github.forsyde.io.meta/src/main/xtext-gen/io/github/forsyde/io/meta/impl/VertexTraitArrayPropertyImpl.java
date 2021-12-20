@@ -16,24 +16,24 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Vertex Trait Array Property</b></em>'.
- * <!-- end-user-doc -->
- * <p>
+ * &lt;!-- begin-user-doc --&gt;
+ * An implementation of the model object '<em><b>Vertex Trait Array Property</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
+ * &lt; &gt;
  * The following features are implemented:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitArrayPropertyImpl#getItemType <em>Item Type</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitArrayPropertyImpl#getItemType <em>Item Type</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @generated
  */
 public class VertexTraitArrayPropertyImpl extends VertexTraitPropertyTypeImpl implements VertexTraitArrayProperty
 {
   /**
-   * The cached value of the '{@link #getItemType() <em>Item Type</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getItemType() <em>Item Type&lt;/em&gt;}' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getItemType()
    * @generated
    * @ordered
@@ -41,8 +41,8 @@ public class VertexTraitArrayPropertyImpl extends VertexTraitPropertyTypeImpl im
   protected VertexTraitPropertyType itemType;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected VertexTraitArrayPropertyImpl()
@@ -51,8 +51,8 @@ public class VertexTraitArrayPropertyImpl extends VertexTraitPropertyTypeImpl im
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -62,8 +62,8 @@ public class VertexTraitArrayPropertyImpl extends VertexTraitPropertyTypeImpl im
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -73,8 +73,8 @@ public class VertexTraitArrayPropertyImpl extends VertexTraitPropertyTypeImpl im
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   public NotificationChain basicSetItemType(VertexTraitPropertyType newItemType, NotificationChain msgs)
@@ -90,8 +90,8 @@ public class VertexTraitArrayPropertyImpl extends VertexTraitPropertyTypeImpl im
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -112,8 +112,8 @@ public class VertexTraitArrayPropertyImpl extends VertexTraitPropertyTypeImpl im
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -128,8 +128,8 @@ public class VertexTraitArrayPropertyImpl extends VertexTraitPropertyTypeImpl im
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -144,8 +144,8 @@ public class VertexTraitArrayPropertyImpl extends VertexTraitPropertyTypeImpl im
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -161,8 +161,8 @@ public class VertexTraitArrayPropertyImpl extends VertexTraitPropertyTypeImpl im
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -178,8 +178,8 @@ public class VertexTraitArrayPropertyImpl extends VertexTraitPropertyTypeImpl im
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override

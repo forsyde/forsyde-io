@@ -9,22 +9,22 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * &lt; &gt;Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * &lt; &gt;The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * <complexType>
- *   <complexContent>
- *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="src" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="dst" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="occupiedSlots" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     </restriction>
- *   </complexContent>
- * </complexType>
- * </pre>
+ * &lt; &gt;
+ * &lt; &gt;
+ *   &lt;   &gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="src" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="dst" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="occupiedSlots" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * &lt;/pre&gt;
  * 
  * 
  */
@@ -44,8 +44,8 @@ public class Link {
 
     /**
      * Gets the value of the name property.
+	 * @return name
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -68,8 +68,8 @@ public class Link {
 
     /**
      * Gets the value of the src property.
+	 * @return src
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -92,8 +92,8 @@ public class Link {
 
     /**
      * Gets the value of the dst property.
+	 * @return dst
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -116,8 +116,8 @@ public class Link {
 
     /**
      * Gets the value of the occupiedSlots property.
+	 * @return occupiedSlots
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     

@@ -8,18 +8,18 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Edge Trait Constraint</b></em>'.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * A representation of the model object '<em><b>Edge Trait Constraint</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
  *
- * <p>
+ * &lt; &gt;
  * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.EdgeTraitConstraint#isTarget <em>Target</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.EdgeTraitConstraint#isSource <em>Source</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.EdgeTraitConstraint#getFilter <em>Filter</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.EdgeTraitConstraint#isTarget <em>Target</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.EdgeTraitConstraint#isSource <em>Source</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.EdgeTraitConstraint#getFilter <em>Filter</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @see io.github.forsyde.io.meta.MetaPackage#getEdgeTraitConstraint()
  * @model
@@ -28,10 +28,10 @@ import org.eclipse.emf.ecore.EObject;
 public interface EdgeTraitConstraint extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Target</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Target</em>' attribute.
+   * Returns the value of the '<em><b>Target</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Target&lt;/em&gt;' attribute.
    * @see #setTarget(boolean)
    * @see io.github.forsyde.io.meta.MetaPackage#getEdgeTraitConstraint_Target()
    * @model
@@ -40,20 +40,20 @@ public interface EdgeTraitConstraint extends EObject
   boolean isTarget();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.EdgeTraitConstraint#isTarget <em>Target</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Target</em>' attribute.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.EdgeTraitConstraint#isTarget <em>Target&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Target&lt;/em&gt;' attribute.
    * @see #isTarget()
    * @generated
    */
   void setTarget(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Source</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Source</em>' attribute.
+   * Returns the value of the '<em><b>Source</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Source&lt;/em&gt;' attribute.
    * @see #setSource(boolean)
    * @see io.github.forsyde.io.meta.MetaPackage#getEdgeTraitConstraint_Source()
    * @model
@@ -62,21 +62,21 @@ public interface EdgeTraitConstraint extends EObject
   boolean isSource();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.EdgeTraitConstraint#isSource <em>Source</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Source</em>' attribute.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.EdgeTraitConstraint#isSource <em>Source&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Source&lt;/em&gt;' attribute.
    * @see #isSource()
    * @generated
    */
   void setSource(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Filter</b></em>' reference list.
+   * Returns the value of the '<em><b>Filter</b>&lt;/em&gt;' reference list.
    * The list contents are of type {@link io.github.forsyde.io.meta.VertexTrait}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Filter</em>' reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Filter&lt;/em&gt;' reference list.
    * @see io.github.forsyde.io.meta.MetaPackage#getEdgeTraitConstraint_Filter()
    * @model
    * @generated

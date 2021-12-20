@@ -8,19 +8,19 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Vertex Trait</b></em>'.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * A representation of the model object '<em><b>Vertex Trait</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
  *
- * <p>
+ * &lt; &gt;
  * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.VertexTrait#getName <em>Name</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.VertexTrait#getRefines <em>Refines</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.VertexTrait#getPorts <em>Ports</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.VertexTrait#getProperties <em>Properties</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTrait#getName <em>Name</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTrait#getRefines <em>Refines</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTrait#getPorts <em>Ports</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTrait#getProperties <em>Properties</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @see io.github.forsyde.io.meta.MetaPackage#getVertexTrait()
  * @model
@@ -29,10 +29,10 @@ import org.eclipse.emf.ecore.EObject;
 public interface VertexTrait extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Name</em>' attribute.
+   * Returns the value of the '<em><b>Name</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Name&lt;/em&gt;' attribute.
    * @see #setName(String)
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTrait_Name()
    * @model
@@ -41,21 +41,21 @@ public interface VertexTrait extends EObject
   String getName();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTrait#getName <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Name</em>' attribute.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTrait#getName <em>Name&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Name&lt;/em&gt;' attribute.
    * @see #getName()
    * @generated
    */
   void setName(String value);
 
   /**
-   * Returns the value of the '<em><b>Refines</b></em>' reference list.
+   * Returns the value of the '<em><b>Refines</b>&lt;/em&gt;' reference list.
    * The list contents are of type {@link io.github.forsyde.io.meta.VertexTrait}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Refines</em>' reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Refines&lt;/em&gt;' reference list.
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTrait_Refines()
    * @model
    * @generated
@@ -63,11 +63,11 @@ public interface VertexTrait extends EObject
   EList<VertexTrait> getRefines();
 
   /**
-   * Returns the value of the '<em><b>Ports</b></em>' containment reference list.
+   * Returns the value of the '<em><b>Ports</b>&lt;/em&gt;' containment reference list.
    * The list contents are of type {@link io.github.forsyde.io.meta.VertexTraitPort}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Ports</em>' containment reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Ports&lt;/em&gt;' containment reference list.
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTrait_Ports()
    * @model containment="true"
    * @generated
@@ -75,11 +75,11 @@ public interface VertexTrait extends EObject
   EList<VertexTraitPort> getPorts();
 
   /**
-   * Returns the value of the '<em><b>Properties</b></em>' containment reference list.
+   * Returns the value of the '<em><b>Properties</b>&lt;/em&gt;' containment reference list.
    * The list contents are of type {@link io.github.forsyde.io.meta.VertexTraitProperty}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Properties</em>' containment reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Properties&lt;/em&gt;' containment reference list.
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTrait_Properties()
    * @model containment="true"
    * @generated

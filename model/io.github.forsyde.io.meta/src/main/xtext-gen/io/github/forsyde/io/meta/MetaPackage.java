@@ -10,16 +10,16 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
 /**
- * <!-- begin-user-doc -->
- * The <b>Package</b> for the model.
+ * &lt;!-- begin-user-doc --&gt;
+ * The <b>Package&lt;/b&gt; for the model.
  * It contains accessors for the meta objects to represent
- * <ul>
- *   <li>each class,</li>
- *   <li>each feature of each class,</li>
- *   <li>each enum,</li>
- *   <li>and each data type</li>
- * </ul>
- * <!-- end-user-doc -->
+ * &lt; &gt;
+ *   <li>each class,&lt;/li&gt;
+ *   <li>each feature of each class,&lt;/li&gt;
+ *   <li>each enum,&lt;/li&gt;
+ *   <li>and each data type&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;!-- end-user-doc --&gt;
  * @see io.github.forsyde.io.meta.MetaFactory
  * @model kind="package"
  * @generated
@@ -28,40 +28,40 @@ public interface MetaPackage extends EPackage
 {
   /**
    * The package name.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   String eNAME = "meta";
 
   /**
    * The package namespace URI.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   String eNS_URI = "http://www.github.io/forsyde/io/Meta";
 
   /**
    * The package namespace name.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   String eNS_PREFIX = "meta";
 
   /**
    * The singleton instance of the package.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   MetaPackage eINSTANCE = io.github.forsyde.io.meta.impl.MetaPackageImpl.init();
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.ModelImpl <em>Model</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.ModelImpl <em>Model&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.ModelImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getModel()
    * @generated
@@ -69,27 +69,27 @@ public interface MetaPackage extends EPackage
   int MODEL = 0;
 
   /**
-   * The feature id for the '<em><b>Traits</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Traits</b>&lt;/em&gt;' containment reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int MODEL__TRAITS = 0;
 
   /**
-   * The number of structural features of the '<em>Model</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Model&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int MODEL_FEATURE_COUNT = 1;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitImpl <em>Vertex Trait</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitImpl <em>Vertex Trait&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.VertexTraitImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTrait()
    * @generated
@@ -97,54 +97,54 @@ public interface MetaPackage extends EPackage
   int VERTEX_TRAIT = 1;
 
   /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Name</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT__NAME = 0;
 
   /**
-   * The feature id for the '<em><b>Refines</b></em>' reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Refines</b>&lt;/em&gt;' reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT__REFINES = 1;
 
   /**
-   * The feature id for the '<em><b>Ports</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Ports</b>&lt;/em&gt;' containment reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT__PORTS = 2;
 
   /**
-   * The feature id for the '<em><b>Properties</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Properties</b>&lt;/em&gt;' containment reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT__PROPERTIES = 3;
 
   /**
-   * The number of structural features of the '<em>Vertex Trait</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Vertex Trait&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_FEATURE_COUNT = 4;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitPropertyImpl <em>Vertex Trait Property</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitPropertyImpl <em>Vertex Trait Property&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.VertexTraitPropertyImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitProperty()
    * @generated
@@ -152,36 +152,36 @@ public interface MetaPackage extends EPackage
   int VERTEX_TRAIT_PROPERTY = 2;
 
   /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Name</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_PROPERTY__NAME = 0;
 
   /**
-   * The feature id for the '<em><b>Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Type</b>&lt;/em&gt;' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_PROPERTY__TYPE = 1;
 
   /**
-   * The number of structural features of the '<em>Vertex Trait Property</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Vertex Trait Property&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_PROPERTY_FEATURE_COUNT = 2;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitPropertyTypeImpl <em>Vertex Trait Property Type</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitPropertyTypeImpl <em>Vertex Trait Property Type&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.VertexTraitPropertyTypeImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitPropertyType()
    * @generated
@@ -189,18 +189,18 @@ public interface MetaPackage extends EPackage
   int VERTEX_TRAIT_PROPERTY_TYPE = 3;
 
   /**
-   * The number of structural features of the '<em>Vertex Trait Property Type</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Vertex Trait Property Type&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT = 0;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitIntPropertyImpl <em>Vertex Trait Int Property</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitIntPropertyImpl <em>Vertex Trait Int Property&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.VertexTraitIntPropertyImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitIntProperty()
    * @generated
@@ -208,27 +208,27 @@ public interface MetaPackage extends EPackage
   int VERTEX_TRAIT_INT_PROPERTY = 4;
 
   /**
-   * The feature id for the '<em><b>Default</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Default</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_INT_PROPERTY__DEFAULT = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 0;
 
   /**
-   * The number of structural features of the '<em>Vertex Trait Int Property</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Vertex Trait Int Property&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_INT_PROPERTY_FEATURE_COUNT = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 1;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitRealPropertyImpl <em>Vertex Trait Real Property</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitRealPropertyImpl <em>Vertex Trait Real Property&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.VertexTraitRealPropertyImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitRealProperty()
    * @generated
@@ -236,36 +236,36 @@ public interface MetaPackage extends EPackage
   int VERTEX_TRAIT_REAL_PROPERTY = 5;
 
   /**
-   * The feature id for the '<em><b>Double</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Double</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_REAL_PROPERTY__DOUBLE = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>Default</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Default</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_REAL_PROPERTY__DEFAULT = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 1;
 
   /**
-   * The number of structural features of the '<em>Vertex Trait Real Property</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Vertex Trait Real Property&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_REAL_PROPERTY_FEATURE_COUNT = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 2;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitBoolPropertyImpl <em>Vertex Trait Bool Property</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitBoolPropertyImpl <em>Vertex Trait Bool Property&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.VertexTraitBoolPropertyImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitBoolProperty()
    * @generated
@@ -273,27 +273,27 @@ public interface MetaPackage extends EPackage
   int VERTEX_TRAIT_BOOL_PROPERTY = 6;
 
   /**
-   * The feature id for the '<em><b>Default</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Default</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_BOOL_PROPERTY__DEFAULT = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 0;
 
   /**
-   * The number of structural features of the '<em>Vertex Trait Bool Property</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Vertex Trait Bool Property&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_BOOL_PROPERTY_FEATURE_COUNT = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 1;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitStringPropertyImpl <em>Vertex Trait String Property</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitStringPropertyImpl <em>Vertex Trait String Property&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.VertexTraitStringPropertyImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitStringProperty()
    * @generated
@@ -301,27 +301,27 @@ public interface MetaPackage extends EPackage
   int VERTEX_TRAIT_STRING_PROPERTY = 7;
 
   /**
-   * The feature id for the '<em><b>Default</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Default</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_STRING_PROPERTY__DEFAULT = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 0;
 
   /**
-   * The number of structural features of the '<em>Vertex Trait String Property</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Vertex Trait String Property&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_STRING_PROPERTY_FEATURE_COUNT = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 1;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitArrayPropertyImpl <em>Vertex Trait Array Property</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitArrayPropertyImpl <em>Vertex Trait Array Property&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.VertexTraitArrayPropertyImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitArrayProperty()
    * @generated
@@ -329,27 +329,27 @@ public interface MetaPackage extends EPackage
   int VERTEX_TRAIT_ARRAY_PROPERTY = 8;
 
   /**
-   * The feature id for the '<em><b>Item Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Item Type</b>&lt;/em&gt;' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_ARRAY_PROPERTY__ITEM_TYPE = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 0;
 
   /**
-   * The number of structural features of the '<em>Vertex Trait Array Property</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Vertex Trait Array Property&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_ARRAY_PROPERTY_FEATURE_COUNT = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 1;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitObjectPropertyImpl <em>Vertex Trait Object Property</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitObjectPropertyImpl <em>Vertex Trait Object Property&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.VertexTraitObjectPropertyImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitObjectProperty()
    * @generated
@@ -357,36 +357,36 @@ public interface MetaPackage extends EPackage
   int VERTEX_TRAIT_OBJECT_PROPERTY = 9;
 
   /**
-   * The feature id for the '<em><b>Key Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Key Type</b>&lt;/em&gt;' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_OBJECT_PROPERTY__KEY_TYPE = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>Value Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Value Type</b>&lt;/em&gt;' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_OBJECT_PROPERTY__VALUE_TYPE = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 1;
 
   /**
-   * The number of structural features of the '<em>Vertex Trait Object Property</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Vertex Trait Object Property&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_OBJECT_PROPERTY_FEATURE_COUNT = VERTEX_TRAIT_PROPERTY_TYPE_FEATURE_COUNT + 2;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl <em>Vertex Trait Port</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl <em>Vertex Trait Port&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.VertexTraitPortImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitPort()
    * @generated
@@ -394,63 +394,63 @@ public interface MetaPackage extends EPackage
   int VERTEX_TRAIT_PORT = 10;
 
   /**
-   * The feature id for the '<em><b>Multiple</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Multiple</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_PORT__MULTIPLE = 0;
 
   /**
-   * The feature id for the '<em><b>Ordered</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Ordered</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_PORT__ORDERED = 1;
 
   /**
-   * The feature id for the '<em><b>Direction</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Direction</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_PORT__DIRECTION = 2;
 
   /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Name</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_PORT__NAME = 3;
 
   /**
-   * The feature id for the '<em><b>Trait</b></em>' reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Trait</b>&lt;/em&gt;' reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_PORT__TRAIT = 4;
 
   /**
-   * The number of structural features of the '<em>Vertex Trait Port</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Vertex Trait Port&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int VERTEX_TRAIT_PORT_FEATURE_COUNT = 5;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.EdgeTraitImpl <em>Edge Trait</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.EdgeTraitImpl <em>Edge Trait&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.EdgeTraitImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getEdgeTrait()
    * @generated
@@ -458,45 +458,45 @@ public interface MetaPackage extends EPackage
   int EDGE_TRAIT = 11;
 
   /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Name</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int EDGE_TRAIT__NAME = 0;
 
   /**
-   * The feature id for the '<em><b>Refines</b></em>' reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Refines</b>&lt;/em&gt;' reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int EDGE_TRAIT__REFINES = 1;
 
   /**
-   * The feature id for the '<em><b>Specs</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Specs</b>&lt;/em&gt;' containment reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int EDGE_TRAIT__SPECS = 2;
 
   /**
-   * The number of structural features of the '<em>Edge Trait</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Edge Trait&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int EDGE_TRAIT_FEATURE_COUNT = 3;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.EdgeTraitConstraintImpl <em>Edge Trait Constraint</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.impl.EdgeTraitConstraintImpl <em>Edge Trait Constraint&lt;/em&gt;}' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.impl.EdgeTraitConstraintImpl
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getEdgeTraitConstraint()
    * @generated
@@ -504,45 +504,45 @@ public interface MetaPackage extends EPackage
   int EDGE_TRAIT_CONSTRAINT = 12;
 
   /**
-   * The feature id for the '<em><b>Target</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Target</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int EDGE_TRAIT_CONSTRAINT__TARGET = 0;
 
   /**
-   * The feature id for the '<em><b>Source</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Source</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int EDGE_TRAIT_CONSTRAINT__SOURCE = 1;
 
   /**
-   * The feature id for the '<em><b>Filter</b></em>' reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The feature id for the '<em><b>Filter</b>&lt;/em&gt;' reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int EDGE_TRAIT_CONSTRAINT__FILTER = 2;
 
   /**
-   * The number of structural features of the '<em>Edge Trait Constraint</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The number of structural features of the '<em>Edge Trait Constraint&lt;/em&gt;' class.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    * @ordered
    */
   int EDGE_TRAIT_CONSTRAINT_FEATURE_COUNT = 3;
 
   /**
-   * The meta object id for the '{@link io.github.forsyde.io.meta.VertexTraitPortDirection <em>Vertex Trait Port Direction</em>}' enum.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The meta object id for the '{@link io.github.forsyde.io.meta.VertexTraitPortDirection <em>Vertex Trait Port Direction&lt;/em&gt;}' enum.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see io.github.forsyde.io.meta.VertexTraitPortDirection
    * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitPortDirection()
    * @generated
@@ -551,20 +551,20 @@ public interface MetaPackage extends EPackage
 
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.Model <em>Model</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Model</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.Model <em>Model&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Model&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.Model
    * @generated
    */
   EClass getModel();
 
   /**
-   * Returns the meta object for the containment reference list '{@link io.github.forsyde.io.meta.Model#getTraits <em>Traits</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Traits</em>'.
+   * Returns the meta object for the containment reference list '{@link io.github.forsyde.io.meta.Model#getTraits <em>Traits&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the containment reference list '<em>Traits&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.Model#getTraits()
    * @see #getModel()
    * @generated
@@ -572,20 +572,20 @@ public interface MetaPackage extends EPackage
   EReference getModel_Traits();
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTrait <em>Vertex Trait</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Vertex Trait</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTrait <em>Vertex Trait&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Vertex Trait&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTrait
    * @generated
    */
   EClass getVertexTrait();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTrait#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTrait#getName <em>Name&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Name&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTrait#getName()
    * @see #getVertexTrait()
    * @generated
@@ -593,10 +593,10 @@ public interface MetaPackage extends EPackage
   EAttribute getVertexTrait_Name();
 
   /**
-   * Returns the meta object for the reference list '{@link io.github.forsyde.io.meta.VertexTrait#getRefines <em>Refines</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the reference list '<em>Refines</em>'.
+   * Returns the meta object for the reference list '{@link io.github.forsyde.io.meta.VertexTrait#getRefines <em>Refines&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the reference list '<em>Refines&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTrait#getRefines()
    * @see #getVertexTrait()
    * @generated
@@ -604,10 +604,10 @@ public interface MetaPackage extends EPackage
   EReference getVertexTrait_Refines();
 
   /**
-   * Returns the meta object for the containment reference list '{@link io.github.forsyde.io.meta.VertexTrait#getPorts <em>Ports</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Ports</em>'.
+   * Returns the meta object for the containment reference list '{@link io.github.forsyde.io.meta.VertexTrait#getPorts <em>Ports&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the containment reference list '<em>Ports&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTrait#getPorts()
    * @see #getVertexTrait()
    * @generated
@@ -615,10 +615,10 @@ public interface MetaPackage extends EPackage
   EReference getVertexTrait_Ports();
 
   /**
-   * Returns the meta object for the containment reference list '{@link io.github.forsyde.io.meta.VertexTrait#getProperties <em>Properties</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Properties</em>'.
+   * Returns the meta object for the containment reference list '{@link io.github.forsyde.io.meta.VertexTrait#getProperties <em>Properties&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the containment reference list '<em>Properties&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTrait#getProperties()
    * @see #getVertexTrait()
    * @generated
@@ -626,20 +626,20 @@ public interface MetaPackage extends EPackage
   EReference getVertexTrait_Properties();
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitProperty <em>Vertex Trait Property</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Vertex Trait Property</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitProperty <em>Vertex Trait Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Vertex Trait Property&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitProperty
    * @generated
    */
   EClass getVertexTraitProperty();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitProperty#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitProperty#getName <em>Name&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Name&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitProperty#getName()
    * @see #getVertexTraitProperty()
    * @generated
@@ -647,10 +647,10 @@ public interface MetaPackage extends EPackage
   EAttribute getVertexTraitProperty_Name();
 
   /**
-   * Returns the meta object for the containment reference '{@link io.github.forsyde.io.meta.VertexTraitProperty#getType <em>Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Type</em>'.
+   * Returns the meta object for the containment reference '{@link io.github.forsyde.io.meta.VertexTraitProperty#getType <em>Type&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the containment reference '<em>Type&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitProperty#getType()
    * @see #getVertexTraitProperty()
    * @generated
@@ -658,30 +658,30 @@ public interface MetaPackage extends EPackage
   EReference getVertexTraitProperty_Type();
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitPropertyType <em>Vertex Trait Property Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Vertex Trait Property Type</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitPropertyType <em>Vertex Trait Property Type&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Vertex Trait Property Type&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitPropertyType
    * @generated
    */
   EClass getVertexTraitPropertyType();
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitIntProperty <em>Vertex Trait Int Property</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Vertex Trait Int Property</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitIntProperty <em>Vertex Trait Int Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Vertex Trait Int Property&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitIntProperty
    * @generated
    */
   EClass getVertexTraitIntProperty();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitIntProperty#getDefault <em>Default</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Default</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitIntProperty#getDefault <em>Default&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Default&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitIntProperty#getDefault()
    * @see #getVertexTraitIntProperty()
    * @generated
@@ -689,20 +689,20 @@ public interface MetaPackage extends EPackage
   EAttribute getVertexTraitIntProperty_Default();
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitRealProperty <em>Vertex Trait Real Property</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Vertex Trait Real Property</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitRealProperty <em>Vertex Trait Real Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Vertex Trait Real Property&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitRealProperty
    * @generated
    */
   EClass getVertexTraitRealProperty();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitRealProperty#isDouble <em>Double</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Double</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitRealProperty#isDouble <em>Double&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Double&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitRealProperty#isDouble()
    * @see #getVertexTraitRealProperty()
    * @generated
@@ -710,10 +710,10 @@ public interface MetaPackage extends EPackage
   EAttribute getVertexTraitRealProperty_Double();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitRealProperty#getDefault <em>Default</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Default</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitRealProperty#getDefault <em>Default&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Default&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitRealProperty#getDefault()
    * @see #getVertexTraitRealProperty()
    * @generated
@@ -721,20 +721,20 @@ public interface MetaPackage extends EPackage
   EAttribute getVertexTraitRealProperty_Default();
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitBoolProperty <em>Vertex Trait Bool Property</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Vertex Trait Bool Property</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitBoolProperty <em>Vertex Trait Bool Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Vertex Trait Bool Property&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitBoolProperty
    * @generated
    */
   EClass getVertexTraitBoolProperty();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitBoolProperty#isDefault <em>Default</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Default</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitBoolProperty#isDefault <em>Default&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Default&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitBoolProperty#isDefault()
    * @see #getVertexTraitBoolProperty()
    * @generated
@@ -742,20 +742,20 @@ public interface MetaPackage extends EPackage
   EAttribute getVertexTraitBoolProperty_Default();
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitStringProperty <em>Vertex Trait String Property</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Vertex Trait String Property</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitStringProperty <em>Vertex Trait String Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Vertex Trait String Property&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitStringProperty
    * @generated
    */
   EClass getVertexTraitStringProperty();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitStringProperty#getDefault <em>Default</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Default</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitStringProperty#getDefault <em>Default&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Default&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitStringProperty#getDefault()
    * @see #getVertexTraitStringProperty()
    * @generated
@@ -763,20 +763,20 @@ public interface MetaPackage extends EPackage
   EAttribute getVertexTraitStringProperty_Default();
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitArrayProperty <em>Vertex Trait Array Property</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Vertex Trait Array Property</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitArrayProperty <em>Vertex Trait Array Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Vertex Trait Array Property&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitArrayProperty
    * @generated
    */
   EClass getVertexTraitArrayProperty();
 
   /**
-   * Returns the meta object for the containment reference '{@link io.github.forsyde.io.meta.VertexTraitArrayProperty#getItemType <em>Item Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Item Type</em>'.
+   * Returns the meta object for the containment reference '{@link io.github.forsyde.io.meta.VertexTraitArrayProperty#getItemType <em>Item Type&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the containment reference '<em>Item Type&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitArrayProperty#getItemType()
    * @see #getVertexTraitArrayProperty()
    * @generated
@@ -784,20 +784,20 @@ public interface MetaPackage extends EPackage
   EReference getVertexTraitArrayProperty_ItemType();
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitObjectProperty <em>Vertex Trait Object Property</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Vertex Trait Object Property</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitObjectProperty <em>Vertex Trait Object Property&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Vertex Trait Object Property&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitObjectProperty
    * @generated
    */
   EClass getVertexTraitObjectProperty();
 
   /**
-   * Returns the meta object for the containment reference '{@link io.github.forsyde.io.meta.VertexTraitObjectProperty#getKeyType <em>Key Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Key Type</em>'.
+   * Returns the meta object for the containment reference '{@link io.github.forsyde.io.meta.VertexTraitObjectProperty#getKeyType <em>Key Type&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the containment reference '<em>Key Type&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitObjectProperty#getKeyType()
    * @see #getVertexTraitObjectProperty()
    * @generated
@@ -805,10 +805,10 @@ public interface MetaPackage extends EPackage
   EReference getVertexTraitObjectProperty_KeyType();
 
   /**
-   * Returns the meta object for the containment reference '{@link io.github.forsyde.io.meta.VertexTraitObjectProperty#getValueType <em>Value Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Value Type</em>'.
+   * Returns the meta object for the containment reference '{@link io.github.forsyde.io.meta.VertexTraitObjectProperty#getValueType <em>Value Type&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the containment reference '<em>Value Type&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitObjectProperty#getValueType()
    * @see #getVertexTraitObjectProperty()
    * @generated
@@ -816,20 +816,20 @@ public interface MetaPackage extends EPackage
   EReference getVertexTraitObjectProperty_ValueType();
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitPort <em>Vertex Trait Port</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Vertex Trait Port</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.VertexTraitPort <em>Vertex Trait Port&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Vertex Trait Port&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitPort
    * @generated
    */
   EClass getVertexTraitPort();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitPort#isMultiple <em>Multiple</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Multiple</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitPort#isMultiple <em>Multiple&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Multiple&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitPort#isMultiple()
    * @see #getVertexTraitPort()
    * @generated
@@ -837,10 +837,10 @@ public interface MetaPackage extends EPackage
   EAttribute getVertexTraitPort_Multiple();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitPort#isOrdered <em>Ordered</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Ordered</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitPort#isOrdered <em>Ordered&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Ordered&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitPort#isOrdered()
    * @see #getVertexTraitPort()
    * @generated
@@ -848,10 +848,10 @@ public interface MetaPackage extends EPackage
   EAttribute getVertexTraitPort_Ordered();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitPort#getDirection <em>Direction</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Direction</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitPort#getDirection <em>Direction&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Direction&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitPort#getDirection()
    * @see #getVertexTraitPort()
    * @generated
@@ -859,10 +859,10 @@ public interface MetaPackage extends EPackage
   EAttribute getVertexTraitPort_Direction();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitPort#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.VertexTraitPort#getName <em>Name&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Name&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitPort#getName()
    * @see #getVertexTraitPort()
    * @generated
@@ -870,10 +870,10 @@ public interface MetaPackage extends EPackage
   EAttribute getVertexTraitPort_Name();
 
   /**
-   * Returns the meta object for the reference '{@link io.github.forsyde.io.meta.VertexTraitPort#getTrait <em>Trait</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the reference '<em>Trait</em>'.
+   * Returns the meta object for the reference '{@link io.github.forsyde.io.meta.VertexTraitPort#getTrait <em>Trait&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the reference '<em>Trait&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitPort#getTrait()
    * @see #getVertexTraitPort()
    * @generated
@@ -881,20 +881,20 @@ public interface MetaPackage extends EPackage
   EReference getVertexTraitPort_Trait();
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.EdgeTrait <em>Edge Trait</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Edge Trait</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.EdgeTrait <em>Edge Trait&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Edge Trait&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.EdgeTrait
    * @generated
    */
   EClass getEdgeTrait();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.EdgeTrait#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.EdgeTrait#getName <em>Name&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Name&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.EdgeTrait#getName()
    * @see #getEdgeTrait()
    * @generated
@@ -902,10 +902,10 @@ public interface MetaPackage extends EPackage
   EAttribute getEdgeTrait_Name();
 
   /**
-   * Returns the meta object for the reference list '{@link io.github.forsyde.io.meta.EdgeTrait#getRefines <em>Refines</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the reference list '<em>Refines</em>'.
+   * Returns the meta object for the reference list '{@link io.github.forsyde.io.meta.EdgeTrait#getRefines <em>Refines&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the reference list '<em>Refines&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.EdgeTrait#getRefines()
    * @see #getEdgeTrait()
    * @generated
@@ -913,10 +913,10 @@ public interface MetaPackage extends EPackage
   EReference getEdgeTrait_Refines();
 
   /**
-   * Returns the meta object for the containment reference list '{@link io.github.forsyde.io.meta.EdgeTrait#getSpecs <em>Specs</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Specs</em>'.
+   * Returns the meta object for the containment reference list '{@link io.github.forsyde.io.meta.EdgeTrait#getSpecs <em>Specs&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the containment reference list '<em>Specs&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.EdgeTrait#getSpecs()
    * @see #getEdgeTrait()
    * @generated
@@ -924,20 +924,20 @@ public interface MetaPackage extends EPackage
   EReference getEdgeTrait_Specs();
 
   /**
-   * Returns the meta object for class '{@link io.github.forsyde.io.meta.EdgeTraitConstraint <em>Edge Trait Constraint</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Edge Trait Constraint</em>'.
+   * Returns the meta object for class '{@link io.github.forsyde.io.meta.EdgeTraitConstraint <em>Edge Trait Constraint&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for class '<em>Edge Trait Constraint&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.EdgeTraitConstraint
    * @generated
    */
   EClass getEdgeTraitConstraint();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.EdgeTraitConstraint#isTarget <em>Target</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Target</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.EdgeTraitConstraint#isTarget <em>Target&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Target&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.EdgeTraitConstraint#isTarget()
    * @see #getEdgeTraitConstraint()
    * @generated
@@ -945,10 +945,10 @@ public interface MetaPackage extends EPackage
   EAttribute getEdgeTraitConstraint_Target();
 
   /**
-   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.EdgeTraitConstraint#isSource <em>Source</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Source</em>'.
+   * Returns the meta object for the attribute '{@link io.github.forsyde.io.meta.EdgeTraitConstraint#isSource <em>Source&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the attribute '<em>Source&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.EdgeTraitConstraint#isSource()
    * @see #getEdgeTraitConstraint()
    * @generated
@@ -956,10 +956,10 @@ public interface MetaPackage extends EPackage
   EAttribute getEdgeTraitConstraint_Source();
 
   /**
-   * Returns the meta object for the reference list '{@link io.github.forsyde.io.meta.EdgeTraitConstraint#getFilter <em>Filter</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the reference list '<em>Filter</em>'.
+   * Returns the meta object for the reference list '{@link io.github.forsyde.io.meta.EdgeTraitConstraint#getFilter <em>Filter&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for the reference list '<em>Filter&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.EdgeTraitConstraint#getFilter()
    * @see #getEdgeTraitConstraint()
    * @generated
@@ -967,10 +967,10 @@ public interface MetaPackage extends EPackage
   EReference getEdgeTraitConstraint_Filter();
 
   /**
-   * Returns the meta object for enum '{@link io.github.forsyde.io.meta.VertexTraitPortDirection <em>Vertex Trait Port Direction</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for enum '<em>Vertex Trait Port Direction</em>'.
+   * Returns the meta object for enum '{@link io.github.forsyde.io.meta.VertexTraitPortDirection <em>Vertex Trait Port Direction&lt;/em&gt;}'.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the meta object for enum '<em>Vertex Trait Port Direction&lt;/em&gt;'.
    * @see io.github.forsyde.io.meta.VertexTraitPortDirection
    * @generated
    */
@@ -978,31 +978,31 @@ public interface MetaPackage extends EPackage
 
   /**
    * Returns the factory that creates the instances of the model.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @return the factory that creates the instances of the model.
    * @generated
    */
   MetaFactory getMetaFactory();
 
   /**
-   * <!-- begin-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
    * Defines literals for the meta objects that represent
-   * <ul>
-   *   <li>each class,</li>
-   *   <li>each feature of each class,</li>
-   *   <li>each enum,</li>
-   *   <li>and each data type</li>
-   * </ul>
-   * <!-- end-user-doc -->
+   * &lt; &gt;
+   *   <li>each class,&lt;/li&gt;
+   *   <li>each feature of each class,&lt;/li&gt;
+   *   <li>each enum,&lt;/li&gt;
+   *   <li>and each data type&lt;/li&gt;
+   * &lt;/ul&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   interface Literals
   {
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.ModelImpl <em>Model</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.ModelImpl <em>Model&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.ModelImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getModel()
      * @generated
@@ -1010,17 +1010,17 @@ public interface MetaPackage extends EPackage
     EClass MODEL = eINSTANCE.getModel();
 
     /**
-     * The meta object literal for the '<em><b>Traits</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Traits</b>&lt;/em&gt;' containment reference list feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EReference MODEL__TRAITS = eINSTANCE.getModel_Traits();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitImpl <em>Vertex Trait</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitImpl <em>Vertex Trait&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.VertexTraitImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTrait()
      * @generated
@@ -1028,41 +1028,41 @@ public interface MetaPackage extends EPackage
     EClass VERTEX_TRAIT = eINSTANCE.getVertexTrait();
 
     /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Name</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute VERTEX_TRAIT__NAME = eINSTANCE.getVertexTrait_Name();
 
     /**
-     * The meta object literal for the '<em><b>Refines</b></em>' reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Refines</b>&lt;/em&gt;' reference list feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EReference VERTEX_TRAIT__REFINES = eINSTANCE.getVertexTrait_Refines();
 
     /**
-     * The meta object literal for the '<em><b>Ports</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Ports</b>&lt;/em&gt;' containment reference list feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EReference VERTEX_TRAIT__PORTS = eINSTANCE.getVertexTrait_Ports();
 
     /**
-     * The meta object literal for the '<em><b>Properties</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Properties</b>&lt;/em&gt;' containment reference list feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EReference VERTEX_TRAIT__PROPERTIES = eINSTANCE.getVertexTrait_Properties();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitPropertyImpl <em>Vertex Trait Property</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitPropertyImpl <em>Vertex Trait Property&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.VertexTraitPropertyImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitProperty()
      * @generated
@@ -1070,25 +1070,25 @@ public interface MetaPackage extends EPackage
     EClass VERTEX_TRAIT_PROPERTY = eINSTANCE.getVertexTraitProperty();
 
     /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Name</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute VERTEX_TRAIT_PROPERTY__NAME = eINSTANCE.getVertexTraitProperty_Name();
 
     /**
-     * The meta object literal for the '<em><b>Type</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Type</b>&lt;/em&gt;' containment reference feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EReference VERTEX_TRAIT_PROPERTY__TYPE = eINSTANCE.getVertexTraitProperty_Type();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitPropertyTypeImpl <em>Vertex Trait Property Type</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitPropertyTypeImpl <em>Vertex Trait Property Type&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.VertexTraitPropertyTypeImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitPropertyType()
      * @generated
@@ -1096,9 +1096,9 @@ public interface MetaPackage extends EPackage
     EClass VERTEX_TRAIT_PROPERTY_TYPE = eINSTANCE.getVertexTraitPropertyType();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitIntPropertyImpl <em>Vertex Trait Int Property</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitIntPropertyImpl <em>Vertex Trait Int Property&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.VertexTraitIntPropertyImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitIntProperty()
      * @generated
@@ -1106,17 +1106,17 @@ public interface MetaPackage extends EPackage
     EClass VERTEX_TRAIT_INT_PROPERTY = eINSTANCE.getVertexTraitIntProperty();
 
     /**
-     * The meta object literal for the '<em><b>Default</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Default</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute VERTEX_TRAIT_INT_PROPERTY__DEFAULT = eINSTANCE.getVertexTraitIntProperty_Default();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitRealPropertyImpl <em>Vertex Trait Real Property</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitRealPropertyImpl <em>Vertex Trait Real Property&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.VertexTraitRealPropertyImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitRealProperty()
      * @generated
@@ -1124,25 +1124,25 @@ public interface MetaPackage extends EPackage
     EClass VERTEX_TRAIT_REAL_PROPERTY = eINSTANCE.getVertexTraitRealProperty();
 
     /**
-     * The meta object literal for the '<em><b>Double</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Double</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute VERTEX_TRAIT_REAL_PROPERTY__DOUBLE = eINSTANCE.getVertexTraitRealProperty_Double();
 
     /**
-     * The meta object literal for the '<em><b>Default</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Default</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute VERTEX_TRAIT_REAL_PROPERTY__DEFAULT = eINSTANCE.getVertexTraitRealProperty_Default();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitBoolPropertyImpl <em>Vertex Trait Bool Property</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitBoolPropertyImpl <em>Vertex Trait Bool Property&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.VertexTraitBoolPropertyImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitBoolProperty()
      * @generated
@@ -1150,17 +1150,17 @@ public interface MetaPackage extends EPackage
     EClass VERTEX_TRAIT_BOOL_PROPERTY = eINSTANCE.getVertexTraitBoolProperty();
 
     /**
-     * The meta object literal for the '<em><b>Default</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Default</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute VERTEX_TRAIT_BOOL_PROPERTY__DEFAULT = eINSTANCE.getVertexTraitBoolProperty_Default();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitStringPropertyImpl <em>Vertex Trait String Property</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitStringPropertyImpl <em>Vertex Trait String Property&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.VertexTraitStringPropertyImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitStringProperty()
      * @generated
@@ -1168,17 +1168,17 @@ public interface MetaPackage extends EPackage
     EClass VERTEX_TRAIT_STRING_PROPERTY = eINSTANCE.getVertexTraitStringProperty();
 
     /**
-     * The meta object literal for the '<em><b>Default</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Default</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute VERTEX_TRAIT_STRING_PROPERTY__DEFAULT = eINSTANCE.getVertexTraitStringProperty_Default();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitArrayPropertyImpl <em>Vertex Trait Array Property</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitArrayPropertyImpl <em>Vertex Trait Array Property&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.VertexTraitArrayPropertyImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitArrayProperty()
      * @generated
@@ -1186,17 +1186,17 @@ public interface MetaPackage extends EPackage
     EClass VERTEX_TRAIT_ARRAY_PROPERTY = eINSTANCE.getVertexTraitArrayProperty();
 
     /**
-     * The meta object literal for the '<em><b>Item Type</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Item Type</b>&lt;/em&gt;' containment reference feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EReference VERTEX_TRAIT_ARRAY_PROPERTY__ITEM_TYPE = eINSTANCE.getVertexTraitArrayProperty_ItemType();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitObjectPropertyImpl <em>Vertex Trait Object Property</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitObjectPropertyImpl <em>Vertex Trait Object Property&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.VertexTraitObjectPropertyImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitObjectProperty()
      * @generated
@@ -1204,25 +1204,25 @@ public interface MetaPackage extends EPackage
     EClass VERTEX_TRAIT_OBJECT_PROPERTY = eINSTANCE.getVertexTraitObjectProperty();
 
     /**
-     * The meta object literal for the '<em><b>Key Type</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Key Type</b>&lt;/em&gt;' containment reference feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EReference VERTEX_TRAIT_OBJECT_PROPERTY__KEY_TYPE = eINSTANCE.getVertexTraitObjectProperty_KeyType();
 
     /**
-     * The meta object literal for the '<em><b>Value Type</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Value Type</b>&lt;/em&gt;' containment reference feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EReference VERTEX_TRAIT_OBJECT_PROPERTY__VALUE_TYPE = eINSTANCE.getVertexTraitObjectProperty_ValueType();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl <em>Vertex Trait Port</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl <em>Vertex Trait Port&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.VertexTraitPortImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitPort()
      * @generated
@@ -1230,49 +1230,49 @@ public interface MetaPackage extends EPackage
     EClass VERTEX_TRAIT_PORT = eINSTANCE.getVertexTraitPort();
 
     /**
-     * The meta object literal for the '<em><b>Multiple</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Multiple</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute VERTEX_TRAIT_PORT__MULTIPLE = eINSTANCE.getVertexTraitPort_Multiple();
 
     /**
-     * The meta object literal for the '<em><b>Ordered</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Ordered</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute VERTEX_TRAIT_PORT__ORDERED = eINSTANCE.getVertexTraitPort_Ordered();
 
     /**
-     * The meta object literal for the '<em><b>Direction</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Direction</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute VERTEX_TRAIT_PORT__DIRECTION = eINSTANCE.getVertexTraitPort_Direction();
 
     /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Name</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute VERTEX_TRAIT_PORT__NAME = eINSTANCE.getVertexTraitPort_Name();
 
     /**
-     * The meta object literal for the '<em><b>Trait</b></em>' reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Trait</b>&lt;/em&gt;' reference feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EReference VERTEX_TRAIT_PORT__TRAIT = eINSTANCE.getVertexTraitPort_Trait();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.EdgeTraitImpl <em>Edge Trait</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.EdgeTraitImpl <em>Edge Trait&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.EdgeTraitImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getEdgeTrait()
      * @generated
@@ -1280,33 +1280,33 @@ public interface MetaPackage extends EPackage
     EClass EDGE_TRAIT = eINSTANCE.getEdgeTrait();
 
     /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Name</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute EDGE_TRAIT__NAME = eINSTANCE.getEdgeTrait_Name();
 
     /**
-     * The meta object literal for the '<em><b>Refines</b></em>' reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Refines</b>&lt;/em&gt;' reference list feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EReference EDGE_TRAIT__REFINES = eINSTANCE.getEdgeTrait_Refines();
 
     /**
-     * The meta object literal for the '<em><b>Specs</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Specs</b>&lt;/em&gt;' containment reference list feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EReference EDGE_TRAIT__SPECS = eINSTANCE.getEdgeTrait_Specs();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.EdgeTraitConstraintImpl <em>Edge Trait Constraint</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.impl.EdgeTraitConstraintImpl <em>Edge Trait Constraint&lt;/em&gt;}' class.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.impl.EdgeTraitConstraintImpl
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getEdgeTraitConstraint()
      * @generated
@@ -1314,33 +1314,33 @@ public interface MetaPackage extends EPackage
     EClass EDGE_TRAIT_CONSTRAINT = eINSTANCE.getEdgeTraitConstraint();
 
     /**
-     * The meta object literal for the '<em><b>Target</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Target</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute EDGE_TRAIT_CONSTRAINT__TARGET = eINSTANCE.getEdgeTraitConstraint_Target();
 
     /**
-     * The meta object literal for the '<em><b>Source</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Source</b>&lt;/em&gt;' attribute feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EAttribute EDGE_TRAIT_CONSTRAINT__SOURCE = eINSTANCE.getEdgeTraitConstraint_Source();
 
     /**
-     * The meta object literal for the '<em><b>Filter</b></em>' reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '<em><b>Filter</b>&lt;/em&gt;' reference list feature.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @generated
      */
     EReference EDGE_TRAIT_CONSTRAINT__FILTER = eINSTANCE.getEdgeTraitConstraint_Filter();
 
     /**
-     * The meta object literal for the '{@link io.github.forsyde.io.meta.VertexTraitPortDirection <em>Vertex Trait Port Direction</em>}' enum.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The meta object literal for the '{@link io.github.forsyde.io.meta.VertexTraitPortDirection <em>Vertex Trait Port Direction&lt;/em&gt;}' enum.
+     * &lt;!-- begin-user-doc --&gt;
+     * &lt;!-- end-user-doc --&gt;
      * @see io.github.forsyde.io.meta.VertexTraitPortDirection
      * @see io.github.forsyde.io.meta.impl.MetaPackageImpl#getVertexTraitPortDirection()
      * @generated

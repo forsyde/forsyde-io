@@ -37,7 +37,7 @@ import java.util.Map;
 
 /**
  * An abstraction for an external command
- * <p>
+ * &lt; &gt;
  * This is a wrapper around ProcessBuilder which allows for a more convenient usage in our code base.
  */
 public class LFCommand {
@@ -139,7 +139,7 @@ public class LFCommand {
 
     /**
      * Execute the command while forwarding output and error streams.
-     * <p>
+     * &lt; &gt;
      * Executing a process directly with `processBuiler.start()` could
      * lead to a deadlock as the subprocess blocks when output or error
      * buffers are full. This method ensures that output and error messages
@@ -148,7 +148,7 @@ public class LFCommand {
      * this class.
      *
      * @return the process' return code
-     * @author {Christian Menard <christian.menard@tu-dresden.de}
+     * @author {Christian Menard &lt;christian.menard@tu-dresden.de}
      */
     public int run() {
         assert !didRun;
@@ -226,30 +226,30 @@ public class LFCommand {
 
     /**
      * Create a LFCommand instance from a given command, an argument list and a directory.
-     * <p>
+     * &lt; &gt;
      * This will check first if the command can actually be found and executed. If the command is not found, null is
      * returned. In order to find the command, different methods are applied in the following order:
-     * <p>
+     * &lt; &gt;
      * 1. Check if the given command `cmd` is an executable file within `dir`.
-     * 2. If the above fails 'which <cmd>' (or 'where <cmd>' on Windows) is executed to see if the command is available
+     * 2. If the above fails 'which <cmd>' (or 'where &lt; 2. If the above fails 'which <cmd&gt;' (or 'where &gt;' on Windows) is executed to see if the command is available
      * on the PATH.
      * 3. If both points above fail, a third attempt is started using bash to indirectly execute the command (see below
      * for an explanation).
-     * <p>
+     * &lt; &gt;
      * A bit more context:
      * If the command cannot be found directly, then a second attempt is made using a Bash shell with the --login
      * option, which sources the user's ~/.bash_profile, ~/.bash_login, or ~/.bashrc (whichever is first found) before
      * running the command. This helps to ensure that the user's PATH variable is set according to their usual
      * environment, assuming that they use a bash shell.
-     * <p>
+     * &lt; &gt;
      * More information: Unfortunately, at least on a Mac if you are running within Eclipse, the PATH variable is
      * extremely limited; supposedly, it is given by the default provided in /etc/paths, but at least on my machine, it
      * does not even include directories in that file for some reason. One way to add a directory like /usr/local/bin
      * to
      * the path once-and-for-all is this:
-     * <p>
+     * &lt; &gt;
      * sudo launchctl config user path /usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
-     * <p>
+     * &lt; &gt;
      * But asking users to do that is not ideal. Hence, we try a more hack-y approach of just trying to execute using a
      * bash shell. Also note that while ProcessBuilder can configured to use custom environment variables, these
      * variables do not affect the command that is to be executed but merely the environment in which the command

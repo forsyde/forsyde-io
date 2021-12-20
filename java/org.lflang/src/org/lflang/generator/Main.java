@@ -45,8 +45,8 @@ import com.google.inject.Provider;
 /**
  * Standalone version of the Lingua Franca compiler (lfc).
  * 
- * @author{Marten Lohstroh <marten@berkeley.edu>}
- * @author{Christian Menard <christian.menard@tu-dresden.de>}
+ * @author{Marten Lohstroh &lt;marten@berkeley.edu&gt;}
+ * @author{Christian Menard &lt;christian.menard@tu-dresden.de&gt;}
  */
 public class Main {
     
@@ -192,7 +192,7 @@ public class Main {
      * if required if so specified, and stores whether or not to pass the
      * option to the code generator.
      * 
-     * @author Marten Lohstroh <marten@berkeley.edu>
+     * @author Marten Lohstroh &lt;marten@berkeley.edu&gt;
      */
     enum CLIOption {
         COMPILER(null, "target-compiler", true, false, "Target compiler to invoke.", true),

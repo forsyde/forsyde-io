@@ -6,20 +6,20 @@ package io.github.forsyde.io.meta;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Vertex Trait Port</b></em>'.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * A representation of the model object '<em><b>Vertex Trait Port</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
  *
- * <p>
+ * &lt; &gt;
  * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.VertexTraitPort#isMultiple <em>Multiple</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.VertexTraitPort#isOrdered <em>Ordered</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.VertexTraitPort#getDirection <em>Direction</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.VertexTraitPort#getName <em>Name</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.VertexTraitPort#getTrait <em>Trait</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTraitPort#isMultiple <em>Multiple</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTraitPort#isOrdered <em>Ordered</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTraitPort#getDirection <em>Direction</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTraitPort#getName <em>Name</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTraitPort#getTrait <em>Trait</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitPort()
  * @model
@@ -28,10 +28,10 @@ import org.eclipse.emf.ecore.EObject;
 public interface VertexTraitPort extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Multiple</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Multiple</em>' attribute.
+   * Returns the value of the '<em><b>Multiple</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Multiple&lt;/em&gt;' attribute.
    * @see #setMultiple(boolean)
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitPort_Multiple()
    * @model
@@ -40,20 +40,20 @@ public interface VertexTraitPort extends EObject
   boolean isMultiple();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitPort#isMultiple <em>Multiple</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Multiple</em>' attribute.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitPort#isMultiple <em>Multiple&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Multiple&lt;/em&gt;' attribute.
    * @see #isMultiple()
    * @generated
    */
   void setMultiple(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Ordered</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Ordered</em>' attribute.
+   * Returns the value of the '<em><b>Ordered</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Ordered&lt;/em&gt;' attribute.
    * @see #setOrdered(boolean)
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitPort_Ordered()
    * @model
@@ -62,21 +62,21 @@ public interface VertexTraitPort extends EObject
   boolean isOrdered();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitPort#isOrdered <em>Ordered</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Ordered</em>' attribute.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitPort#isOrdered <em>Ordered&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Ordered&lt;/em&gt;' attribute.
    * @see #isOrdered()
    * @generated
    */
   void setOrdered(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Direction</b></em>' attribute.
+   * Returns the value of the '<em><b>Direction</b>&lt;/em&gt;' attribute.
    * The literals are from the enumeration {@link io.github.forsyde.io.meta.VertexTraitPortDirection}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Direction</em>' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Direction&lt;/em&gt;' attribute.
    * @see io.github.forsyde.io.meta.VertexTraitPortDirection
    * @see #setDirection(VertexTraitPortDirection)
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitPort_Direction()
@@ -86,10 +86,10 @@ public interface VertexTraitPort extends EObject
   VertexTraitPortDirection getDirection();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitPort#getDirection <em>Direction</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Direction</em>' attribute.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitPort#getDirection <em>Direction&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Direction&lt;/em&gt;' attribute.
    * @see io.github.forsyde.io.meta.VertexTraitPortDirection
    * @see #getDirection()
    * @generated
@@ -97,10 +97,10 @@ public interface VertexTraitPort extends EObject
   void setDirection(VertexTraitPortDirection value);
 
   /**
-   * Returns the value of the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Name</em>' attribute.
+   * Returns the value of the '<em><b>Name</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Name&lt;/em&gt;' attribute.
    * @see #setName(String)
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitPort_Name()
    * @model
@@ -109,20 +109,20 @@ public interface VertexTraitPort extends EObject
   String getName();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitPort#getName <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Name</em>' attribute.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitPort#getName <em>Name&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Name&lt;/em&gt;' attribute.
    * @see #getName()
    * @generated
    */
   void setName(String value);
 
   /**
-   * Returns the value of the '<em><b>Trait</b></em>' reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Trait</em>' reference.
+   * Returns the value of the '<em><b>Trait</b>&lt;/em&gt;' reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Trait&lt;/em&gt;' reference.
    * @see #setTrait(VertexTrait)
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitPort_Trait()
    * @model
@@ -131,10 +131,10 @@ public interface VertexTraitPort extends EObject
   VertexTrait getTrait();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitPort#getTrait <em>Trait</em>}' reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Trait</em>' reference.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitPort#getTrait <em>Trait&lt;/em&gt;}' reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Trait&lt;/em&gt;' reference.
    * @see #getTrait()
    * @generated
    */

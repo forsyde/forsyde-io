@@ -42,7 +42,7 @@ import org.lflang.util.LFCommand;
  * Responsible for creating and executing the necessary CMake command to compile code that is generated
  * by the CGenerator. This class uses CMake to compile.
  * 
- * @author Soroush Bateni <soroush@utdallas.edu>
+ * @author Soroush Bateni &lt;soroush@utdallas.edu&gt;
  */
 class CCmakeCompiler extends CCompiler {
 

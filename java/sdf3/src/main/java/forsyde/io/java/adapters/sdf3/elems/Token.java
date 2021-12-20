@@ -11,19 +11,19 @@ import jakarta.xml.bind.annotation.XmlValue;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * &lt; &gt;Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * &lt; &gt;The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * <complexType>
- *   <simpleContent>
- *     <extension base="<http://www.w3.org/2001/XMLSchema>decimal">
- *       <attribute name="number" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *     </extension>
- *   </simpleContent>
- * </complexType>
- * </pre>
+ * &lt; &gt;
+ * &lt; &gt;
+ *   &lt;   &gt;
+ *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;decimal"&gt;
+ *       &lt;attribute name="number" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
+ * &lt;/pre&gt;
  * 
  * 
  */
@@ -41,8 +41,8 @@ public class Token {
 
     /**
      * Gets the value of the value property.
+	 * @return value
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
@@ -65,8 +65,8 @@ public class Token {
 
     /**
      * Gets the value of the number property.
+	 * @return number
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     

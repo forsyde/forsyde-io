@@ -11,17 +11,17 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Vertex Trait Property Type</b></em>'.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * An implementation of the model object '<em><b>Vertex Trait Property Type</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
  *
  * @generated
  */
 public class VertexTraitPropertyTypeImpl extends MinimalEObjectImpl.Container implements VertexTraitPropertyType
 {
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected VertexTraitPropertyTypeImpl()
@@ -30,8 +30,8 @@ public class VertexTraitPropertyTypeImpl extends MinimalEObjectImpl.Container im
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override

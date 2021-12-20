@@ -17,28 +17,28 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Vertex Trait Port</b></em>'.
- * <!-- end-user-doc -->
- * <p>
+ * &lt;!-- begin-user-doc --&gt;
+ * An implementation of the model object '<em><b>Vertex Trait Port</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
+ * &lt; &gt;
  * The following features are implemented:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl#isMultiple <em>Multiple</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl#isOrdered <em>Ordered</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl#getDirection <em>Direction</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl#getName <em>Name</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl#getTrait <em>Trait</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl#isMultiple <em>Multiple</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl#isOrdered <em>Ordered</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl#getDirection <em>Direction</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl#getName <em>Name</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitPortImpl#getTrait <em>Trait</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @generated
  */
 public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements VertexTraitPort
 {
   /**
-   * The default value of the '{@link #isMultiple() <em>Multiple</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #isMultiple() <em>Multiple&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #isMultiple()
    * @generated
    * @ordered
@@ -46,9 +46,9 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   protected static final boolean MULTIPLE_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isMultiple() <em>Multiple</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #isMultiple() <em>Multiple&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #isMultiple()
    * @generated
    * @ordered
@@ -56,9 +56,9 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   protected boolean multiple = MULTIPLE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isOrdered() <em>Ordered</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #isOrdered() <em>Ordered&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #isOrdered()
    * @generated
    * @ordered
@@ -66,9 +66,9 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   protected static final boolean ORDERED_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isOrdered() <em>Ordered</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #isOrdered() <em>Ordered&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #isOrdered()
    * @generated
    * @ordered
@@ -76,9 +76,9 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   protected boolean ordered = ORDERED_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getDirection() <em>Direction</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getDirection() <em>Direction&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getDirection()
    * @generated
    * @ordered
@@ -86,9 +86,9 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   protected static final VertexTraitPortDirection DIRECTION_EDEFAULT = VertexTraitPortDirection.BIDIRECTIONAL;
 
   /**
-   * The cached value of the '{@link #getDirection() <em>Direction</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getDirection() <em>Direction&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getDirection()
    * @generated
    * @ordered
@@ -96,9 +96,9 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   protected VertexTraitPortDirection direction = DIRECTION_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getName() <em>Name&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getName()
    * @generated
    * @ordered
@@ -106,9 +106,9 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   protected static final String NAME_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getName() <em>Name&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getName()
    * @generated
    * @ordered
@@ -116,9 +116,9 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   protected String name = NAME_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getTrait() <em>Trait</em>}' reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getTrait() <em>Trait&lt;/em&gt;}' reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getTrait()
    * @generated
    * @ordered
@@ -126,8 +126,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   protected VertexTrait trait;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected VertexTraitPortImpl()
@@ -136,8 +136,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -147,8 +147,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -158,8 +158,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -172,8 +172,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -183,8 +183,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -197,8 +197,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -208,8 +208,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -222,8 +222,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -233,8 +233,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -247,8 +247,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -268,8 +268,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   public VertexTrait basicGetTrait()
@@ -278,8 +278,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -292,8 +292,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -317,8 +317,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -346,8 +346,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -375,8 +375,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -399,8 +399,8 @@ public class VertexTraitPortImpl extends MinimalEObjectImpl.Container implements
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override

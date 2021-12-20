@@ -44,7 +44,7 @@ java {
     withSourcesJar()
     // taken away javadoc since the authors do not provide any
     // java implementation for it
-    //withJavadocJar()
+    withJavadocJar()
 }
 
 jar {
@@ -81,24 +81,6 @@ publishing {
                 }
             }
         }
-    }
-    repositories {
-        maven {
-            name = 'OSSRH'
-            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-            credentials {
-                username = project.hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('MAVEN_USERNAME') ?: System.getenv('OSSRH_USERNAME') ?: ''
-                password = project.hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('MAVEN_PASSWORD') ?: System.getenv('OSSRH_PASSWORD') ?: ''
-            }
-        }
-        // maven {
-        //   name = "GitHubPackages"
-        //   url = uri("https://maven.pkg.github.com/forsyde/forsyde-io")
-        //   credentials {
-        //     username = System.getenv("GITHUB_ACTOR") ?: ""
-        //     password = System.getenv("GITHUB_TOKEN") ?: ""
-        //   }
-        // }
     }
 }
 

@@ -12,36 +12,36 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * &lt; &gt;Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * &lt; &gt;The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * <complexType>
- *   <complexContent>
- *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <choice>
- *         <sequence>
- *           <element ref="{}executionTime"/>
- *           <element ref="{}memory" minOccurs="0"/>
- *         </sequence>
- *         <sequence>
- *           <element ref="{}arbitration"/>
- *         </sequence>
- *         <sequence>
- *           <element ref="{}actor" maxOccurs="unbounded" minOccurs="0"/>
- *           <element ref="{}schedule" minOccurs="0"/>
- *         </sequence>
- *       </choice>
- *       <attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="timeslice" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="timeSlice" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *     </restriction>
- *   </complexContent>
- * </complexType>
- * </pre>
+ * &lt; &gt;
+ * &lt; &gt;
+ *   &lt;   &gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;       &gt;
+ *         &lt;         &gt;
+ *           &lt;element ref="{}executionTime"/&gt;
+ *           &lt;element ref="{}memory" minOccurs="0"/&gt;
+ *         &lt;/sequence&gt;
+ *         &lt;         &gt;
+ *           &lt;element ref="{}arbitration"/&gt;
+ *         &lt;/sequence&gt;
+ *         &lt;         &gt;
+ *           &lt;element ref="{}actor" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *           &lt;element ref="{}schedule" minOccurs="0"/&gt;
+ *         &lt;/sequence&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="timeslice" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="timeSlice" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * &lt;/pre&gt;
  * 
  * 
  */
@@ -147,22 +147,23 @@ public class Processor {
     /**
      * Gets the value of the actor property.
      * 
-     * <p>
+     * &lt; &gt;
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the actor property.
+     * This is why there is not a set&lt;/CODE&gt; method for the actor property.
      * 
-     * <p>
+     * &lt; &gt;
      * For example, to add a new item, do as follows:
-     * <pre>
+     * &lt; &gt;
      *    getActor().add(newItem);
-     * </pre>
+     * &lt;/pre&gt;
      * 
      * 
-     * <p>
+     * &lt; &gt;
      * Objects of the following type(s) are allowed in the list
      * {@link Actor }
+* @return Actor
      * 
      * 
      */

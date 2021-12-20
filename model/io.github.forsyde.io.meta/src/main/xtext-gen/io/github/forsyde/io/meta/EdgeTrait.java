@@ -8,18 +8,18 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Edge Trait</b></em>'.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * A representation of the model object '<em><b>Edge Trait</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
  *
- * <p>
+ * &lt; &gt;
  * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.EdgeTrait#getName <em>Name</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.EdgeTrait#getRefines <em>Refines</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.EdgeTrait#getSpecs <em>Specs</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.EdgeTrait#getName <em>Name</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.EdgeTrait#getRefines <em>Refines</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.EdgeTrait#getSpecs <em>Specs</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @see io.github.forsyde.io.meta.MetaPackage#getEdgeTrait()
  * @model
@@ -28,10 +28,10 @@ import org.eclipse.emf.ecore.EObject;
 public interface EdgeTrait extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Name</em>' attribute.
+   * Returns the value of the '<em><b>Name</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Name&lt;/em&gt;' attribute.
    * @see #setName(String)
    * @see io.github.forsyde.io.meta.MetaPackage#getEdgeTrait_Name()
    * @model
@@ -40,21 +40,21 @@ public interface EdgeTrait extends EObject
   String getName();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.EdgeTrait#getName <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Name</em>' attribute.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.EdgeTrait#getName <em>Name&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Name&lt;/em&gt;' attribute.
    * @see #getName()
    * @generated
    */
   void setName(String value);
 
   /**
-   * Returns the value of the '<em><b>Refines</b></em>' reference list.
+   * Returns the value of the '<em><b>Refines</b>&lt;/em&gt;' reference list.
    * The list contents are of type {@link io.github.forsyde.io.meta.EdgeTrait}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Refines</em>' reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Refines&lt;/em&gt;' reference list.
    * @see io.github.forsyde.io.meta.MetaPackage#getEdgeTrait_Refines()
    * @model
    * @generated
@@ -62,11 +62,11 @@ public interface EdgeTrait extends EObject
   EList<EdgeTrait> getRefines();
 
   /**
-   * Returns the value of the '<em><b>Specs</b></em>' containment reference list.
+   * Returns the value of the '<em><b>Specs</b>&lt;/em&gt;' containment reference list.
    * The list contents are of type {@link io.github.forsyde.io.meta.EdgeTraitConstraint}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Specs</em>' containment reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Specs&lt;/em&gt;' containment reference list.
    * @see io.github.forsyde.io.meta.MetaPackage#getEdgeTrait_Specs()
    * @model containment="true"
    * @generated

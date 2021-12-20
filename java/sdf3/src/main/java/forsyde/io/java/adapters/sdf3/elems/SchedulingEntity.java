@@ -10,23 +10,23 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * &lt; &gt;Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * &lt; &gt;The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * <complexType>
- *   <complexContent>
- *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <attribute name="msg" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="startTime" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="duration" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" />
- *       <attribute name="route" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       <attribute name="slots" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     </restriction>
- *   </complexContent>
- * </complexType>
- * </pre>
+ * &lt; &gt;
+ * &lt; &gt;
+ *   &lt;   &gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="msg" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="startTime" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="duration" use="required" type="{http://www.w3.org/2001/XMLSchema}decimal" /&gt;
+ *       &lt;attribute name="route" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="slots" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * &lt;/pre&gt;
  * 
  * 
  */
@@ -48,8 +48,8 @@ public class SchedulingEntity {
 
     /**
      * Gets the value of the msg property.
+	 * @return msg
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -72,8 +72,8 @@ public class SchedulingEntity {
 
     /**
      * Gets the value of the startTime property.
+	 * @return startTime
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
@@ -96,8 +96,8 @@ public class SchedulingEntity {
 
     /**
      * Gets the value of the duration property.
+	 * @return duration
      * 
-     * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
@@ -120,8 +120,8 @@ public class SchedulingEntity {
 
     /**
      * Gets the value of the route property.
+	 * @return route
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     
@@ -144,8 +144,8 @@ public class SchedulingEntity {
 
     /**
      * Gets the value of the slots property.
+	 * @return slots
      * 
-     * @return
      *     possible object is
      *     {@link String }
      *     

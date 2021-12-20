@@ -21,26 +21,26 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Edge Trait Constraint</b></em>'.
- * <!-- end-user-doc -->
- * <p>
+ * &lt;!-- begin-user-doc --&gt;
+ * An implementation of the model object '<em><b>Edge Trait Constraint</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
+ * &lt; &gt;
  * The following features are implemented:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.impl.EdgeTraitConstraintImpl#isTarget <em>Target</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.impl.EdgeTraitConstraintImpl#isSource <em>Source</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.impl.EdgeTraitConstraintImpl#getFilter <em>Filter</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.EdgeTraitConstraintImpl#isTarget <em>Target</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.EdgeTraitConstraintImpl#isSource <em>Source</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.EdgeTraitConstraintImpl#getFilter <em>Filter</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @generated
  */
 public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implements EdgeTraitConstraint
 {
   /**
-   * The default value of the '{@link #isTarget() <em>Target</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #isTarget() <em>Target&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #isTarget()
    * @generated
    * @ordered
@@ -48,9 +48,9 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   protected static final boolean TARGET_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isTarget() <em>Target</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #isTarget() <em>Target&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #isTarget()
    * @generated
    * @ordered
@@ -58,9 +58,9 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   protected boolean target = TARGET_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isSource() <em>Source</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #isSource() <em>Source&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #isSource()
    * @generated
    * @ordered
@@ -68,9 +68,9 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   protected static final boolean SOURCE_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isSource() <em>Source</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #isSource() <em>Source&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #isSource()
    * @generated
    * @ordered
@@ -78,9 +78,9 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   protected boolean source = SOURCE_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getFilter() <em>Filter</em>}' reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getFilter() <em>Filter&lt;/em&gt;}' reference list.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getFilter()
    * @generated
    * @ordered
@@ -88,8 +88,8 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   protected EList<VertexTrait> filter;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected EdgeTraitConstraintImpl()
@@ -98,8 +98,8 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -109,8 +109,8 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -120,8 +120,8 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -134,8 +134,8 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -145,8 +145,8 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -159,8 +159,8 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -174,8 +174,8 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -194,8 +194,8 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @SuppressWarnings("unchecked")
@@ -219,8 +219,8 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -242,8 +242,8 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -262,8 +262,8 @@ public class EdgeTraitConstraintImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override

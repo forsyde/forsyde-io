@@ -13,25 +13,25 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Vertex Trait Real Property</b></em>'.
- * <!-- end-user-doc -->
- * <p>
+ * &lt;!-- begin-user-doc --&gt;
+ * An implementation of the model object '<em><b>Vertex Trait Real Property</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
+ * &lt; &gt;
  * The following features are implemented:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitRealPropertyImpl#isDouble <em>Double</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitRealPropertyImpl#getDefault <em>Default</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitRealPropertyImpl#isDouble <em>Double</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitRealPropertyImpl#getDefault <em>Default</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @generated
  */
 public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl implements VertexTraitRealProperty
 {
   /**
-   * The default value of the '{@link #isDouble() <em>Double</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #isDouble() <em>Double&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #isDouble()
    * @generated
    * @ordered
@@ -39,9 +39,9 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   protected static final boolean DOUBLE_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isDouble() <em>Double</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #isDouble() <em>Double&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #isDouble()
    * @generated
    * @ordered
@@ -49,9 +49,9 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   protected boolean double_ = DOUBLE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getDefault() <em>Default</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getDefault() <em>Default&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getDefault()
    * @generated
    * @ordered
@@ -59,9 +59,9 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   protected static final String DEFAULT_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getDefault() <em>Default</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getDefault() <em>Default&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getDefault()
    * @generated
    * @ordered
@@ -69,8 +69,8 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   protected String default_ = DEFAULT_EDEFAULT;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected VertexTraitRealPropertyImpl()
@@ -79,8 +79,8 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -90,8 +90,8 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -101,8 +101,8 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -115,8 +115,8 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -126,8 +126,8 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -140,8 +140,8 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -158,8 +158,8 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -178,8 +178,8 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -198,8 +198,8 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -216,8 +216,8 @@ public class VertexTraitRealPropertyImpl extends VertexTraitPropertyTypeImpl imp
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override

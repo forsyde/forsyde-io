@@ -10,10 +10,10 @@ import java.util.List;
 import org.eclipse.emf.common.util.Enumerator;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Vertex Trait Port Direction</b></em>',
+ * &lt;!-- begin-user-doc --&gt;
+ * A representation of the literals of the enumeration '<em><b>Vertex Trait Port Direction</b>&lt;/em&gt;',
  * and utility methods for working with them.
- * <!-- end-user-doc -->
+ * &lt;!-- end-user-doc --&gt;
  * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitPortDirection()
  * @model
  * @generated
@@ -21,9 +21,9 @@ import org.eclipse.emf.common.util.Enumerator;
 public enum VertexTraitPortDirection implements Enumerator
 {
   /**
-   * The '<em><b>BIDIRECTIONAL</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>BIDIRECTIONAL</b>&lt;/em&gt;' literal object.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #BIDIRECTIONAL_VALUE
    * @generated
    * @ordered
@@ -31,9 +31,9 @@ public enum VertexTraitPortDirection implements Enumerator
   BIDIRECTIONAL(0, "BIDIRECTIONAL", "inout"),
 
   /**
-   * The '<em><b>OUTGOING</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>OUTGOING</b>&lt;/em&gt;' literal object.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #OUTGOING_VALUE
    * @generated
    * @ordered
@@ -41,9 +41,9 @@ public enum VertexTraitPortDirection implements Enumerator
   OUTGOING(1, "OUTGOING", "out"),
 
   /**
-   * The '<em><b>INCOMING</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>INCOMING</b>&lt;/em&gt;' literal object.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #INCOMING_VALUE
    * @generated
    * @ordered
@@ -51,9 +51,9 @@ public enum VertexTraitPortDirection implements Enumerator
   INCOMING(2, "INCOMING", "in");
 
   /**
-   * The '<em><b>BIDIRECTIONAL</b></em>' literal value.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>BIDIRECTIONAL</b>&lt;/em&gt;' literal value.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #BIDIRECTIONAL
    * @model literal="inout"
    * @generated
@@ -62,9 +62,9 @@ public enum VertexTraitPortDirection implements Enumerator
   public static final int BIDIRECTIONAL_VALUE = 0;
 
   /**
-   * The '<em><b>OUTGOING</b></em>' literal value.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>OUTGOING</b>&lt;/em&gt;' literal value.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #OUTGOING
    * @model literal="out"
    * @generated
@@ -73,9 +73,9 @@ public enum VertexTraitPortDirection implements Enumerator
   public static final int OUTGOING_VALUE = 1;
 
   /**
-   * The '<em><b>INCOMING</b></em>' literal value.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>INCOMING</b>&lt;/em&gt;' literal value.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #INCOMING
    * @model literal="in"
    * @generated
@@ -84,9 +84,9 @@ public enum VertexTraitPortDirection implements Enumerator
   public static final int INCOMING_VALUE = 2;
 
   /**
-   * An array of all the '<em><b>Vertex Trait Port Direction</b></em>' enumerators.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * An array of all the '<em><b>Vertex Trait Port Direction</b>&lt;/em&gt;' enumerators.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   private static final VertexTraitPortDirection[] VALUES_ARRAY =
@@ -98,19 +98,19 @@ public enum VertexTraitPortDirection implements Enumerator
     };
 
   /**
-   * A public read-only list of all the '<em><b>Vertex Trait Port Direction</b></em>' enumerators.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * A public read-only list of all the '<em><b>Vertex Trait Port Direction</b>&lt;/em&gt;' enumerators.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   public static final List<VertexTraitPortDirection> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
   /**
-   * Returns the '<em><b>Vertex Trait Port Direction</b></em>' literal with the specified literal value.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * Returns the '<em><b>Vertex Trait Port Direction</b>&lt;/em&gt;' literal with the specified literal value.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @param literal the literal.
-   * @return the matching enumerator or <code>null</code>.
+   * @return the matching enumerator or null&lt;/code&gt;.
    * @generated
    */
   public static VertexTraitPortDirection get(String literal)
@@ -127,11 +127,11 @@ public enum VertexTraitPortDirection implements Enumerator
   }
 
   /**
-   * Returns the '<em><b>Vertex Trait Port Direction</b></em>' literal with the specified name.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * Returns the '<em><b>Vertex Trait Port Direction</b>&lt;/em&gt;' literal with the specified name.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @param name the name.
-   * @return the matching enumerator or <code>null</code>.
+   * @return the matching enumerator or null&lt;/code&gt;.
    * @generated
    */
   public static VertexTraitPortDirection getByName(String name)
@@ -148,11 +148,11 @@ public enum VertexTraitPortDirection implements Enumerator
   }
 
   /**
-   * Returns the '<em><b>Vertex Trait Port Direction</b></em>' literal with the specified integer value.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * Returns the '<em><b>Vertex Trait Port Direction</b>&lt;/em&gt;' literal with the specified integer value.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @param value the integer value.
-   * @return the matching enumerator or <code>null</code>.
+   * @return the matching enumerator or null&lt;/code&gt;.
    * @generated
    */
   public static VertexTraitPortDirection get(int value)
@@ -167,30 +167,30 @@ public enum VertexTraitPortDirection implements Enumerator
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   private final int value;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   private final String name;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   private final String literal;
 
   /**
    * Only this class can construct instances.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   private VertexTraitPortDirection(int value, String name, String literal)
@@ -201,8 +201,8 @@ public enum VertexTraitPortDirection implements Enumerator
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -212,8 +212,8 @@ public enum VertexTraitPortDirection implements Enumerator
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -223,8 +223,8 @@ public enum VertexTraitPortDirection implements Enumerator
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -235,8 +235,8 @@ public enum VertexTraitPortDirection implements Enumerator
 
   /**
    * Returns the literal value of the enumerator, which is its string representation.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override

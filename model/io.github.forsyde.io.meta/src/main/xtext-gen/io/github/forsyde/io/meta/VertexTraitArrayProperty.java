@@ -5,16 +5,16 @@ package io.github.forsyde.io.meta;
 
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Vertex Trait Array Property</b></em>'.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * A representation of the model object '<em><b>Vertex Trait Array Property</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
  *
- * <p>
+ * &lt; &gt;
  * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.VertexTraitArrayProperty#getItemType <em>Item Type</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTraitArrayProperty#getItemType <em>Item Type</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitArrayProperty()
  * @model
@@ -23,10 +23,10 @@ package io.github.forsyde.io.meta;
 public interface VertexTraitArrayProperty extends VertexTraitPropertyType
 {
   /**
-   * Returns the value of the '<em><b>Item Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Item Type</em>' containment reference.
+   * Returns the value of the '<em><b>Item Type</b>&lt;/em&gt;' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Item Type&lt;/em&gt;' containment reference.
    * @see #setItemType(VertexTraitPropertyType)
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitArrayProperty_ItemType()
    * @model containment="true"
@@ -35,10 +35,10 @@ public interface VertexTraitArrayProperty extends VertexTraitPropertyType
   VertexTraitPropertyType getItemType();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitArrayProperty#getItemType <em>Item Type</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Item Type</em>' containment reference.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitArrayProperty#getItemType <em>Item Type&lt;/em&gt;}' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Item Type&lt;/em&gt;' containment reference.
    * @see #getItemType()
    * @generated
    */

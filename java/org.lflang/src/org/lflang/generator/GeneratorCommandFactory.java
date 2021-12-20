@@ -35,7 +35,7 @@ import org.lflang.util.LFCommand;
 
 /**
  * A factory class responsible for creating commands for use by the LF code generators.
- * <p>
+ * &lt; &gt;
  * In addition to the basic functionality of LFCommand, this class additionally ensures that error messages (or
  * optionally warnings) are shown when a command is not found and that certain environment variables are set (see
  * {@link #createCommand(String, List, Path, boolean) createCommand}).
@@ -58,7 +58,7 @@ public class GeneratorCommandFactory {
 
     /**
      * Create a LFCommand instance from a given command and an argument list.
-     * <p>
+     * &lt; &gt;
      * The command will be executed in the CWD and if the command cannot be found an error message is shown.
      *
      * @param cmd  the command to look up
@@ -88,7 +88,7 @@ public class GeneratorCommandFactory {
 
     /**
      * Create a LFCommand instance from a given command, an argument list and a directory.
-     * <p>
+     * &lt; &gt;
      * The command will be executed in the CWD and if the command cannot be found an error message is shown.
      *
      * @param cmd  the command to look up
@@ -104,7 +104,7 @@ public class GeneratorCommandFactory {
 
     /**
      * Create a LFCommand instance from a given command, an argument list and a directory.
-     * <p>
+     * &lt; &gt;
      * This will check first if the command can actually be found and executed. If the command is not found, null is
      * returned. In addition, an error message will be shown if failOnError is true. Otherwise, a warning will be
      * displayed.

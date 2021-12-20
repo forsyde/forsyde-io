@@ -16,25 +16,25 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Vertex Trait Object Property</b></em>'.
- * <!-- end-user-doc -->
- * <p>
+ * &lt;!-- begin-user-doc --&gt;
+ * An implementation of the model object '<em><b>Vertex Trait Object Property</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
+ * &lt; &gt;
  * The following features are implemented:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitObjectPropertyImpl#getKeyType <em>Key Type</em>}</li>
- *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitObjectPropertyImpl#getValueType <em>Value Type</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitObjectPropertyImpl#getKeyType <em>Key Type</em>}&lt;/li&gt;
+ *   <li>{@link io.github.forsyde.io.meta.impl.VertexTraitObjectPropertyImpl#getValueType <em>Value Type</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @generated
  */
 public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl implements VertexTraitObjectProperty
 {
   /**
-   * The cached value of the '{@link #getKeyType() <em>Key Type</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getKeyType() <em>Key Type&lt;/em&gt;}' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getKeyType()
    * @generated
    * @ordered
@@ -42,9 +42,9 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   protected VertexTraitPropertyType keyType;
 
   /**
-   * The cached value of the '{@link #getValueType() <em>Value Type</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getValueType() <em>Value Type&lt;/em&gt;}' containment reference.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @see #getValueType()
    * @generated
    * @ordered
@@ -52,8 +52,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   protected VertexTraitPropertyType valueType;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   protected VertexTraitObjectPropertyImpl()
@@ -62,8 +62,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -73,8 +73,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -84,8 +84,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   public NotificationChain basicSetKeyType(VertexTraitPropertyType newKeyType, NotificationChain msgs)
@@ -101,8 +101,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -123,8 +123,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -134,8 +134,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   public NotificationChain basicSetValueType(VertexTraitPropertyType newValueType, NotificationChain msgs)
@@ -151,8 +151,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -173,8 +173,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -191,8 +191,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -209,8 +209,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -229,8 +229,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override
@@ -249,8 +249,8 @@ public class VertexTraitObjectPropertyImpl extends VertexTraitPropertyTypeImpl i
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
    * @generated
    */
   @Override

@@ -5,16 +5,16 @@ package io.github.forsyde.io.meta;
 
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Vertex Trait Bool Property</b></em>'.
- * <!-- end-user-doc -->
+ * &lt;!-- begin-user-doc --&gt;
+ * A representation of the model object '<em><b>Vertex Trait Bool Property</b>&lt;/em&gt;'.
+ * &lt;!-- end-user-doc --&gt;
  *
- * <p>
+ * &lt; &gt;
  * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link io.github.forsyde.io.meta.VertexTraitBoolProperty#isDefault <em>Default</em>}</li>
- * </ul>
+ * &lt;/p&gt;
+ * &lt; &gt;
+ *   <li>{@link io.github.forsyde.io.meta.VertexTraitBoolProperty#isDefault <em>Default</em>}&lt;/li&gt;
+ * &lt;/ul&gt;
  *
  * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitBoolProperty()
  * @model
@@ -23,10 +23,10 @@ package io.github.forsyde.io.meta;
 public interface VertexTraitBoolProperty extends VertexTraitPropertyType
 {
   /**
-   * Returns the value of the '<em><b>Default</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Default</em>' attribute.
+   * Returns the value of the '<em><b>Default</b>&lt;/em&gt;' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @return the value of the '<em>Default&lt;/em&gt;' attribute.
    * @see #setDefault(boolean)
    * @see io.github.forsyde.io.meta.MetaPackage#getVertexTraitBoolProperty_Default()
    * @model
@@ -35,10 +35,10 @@ public interface VertexTraitBoolProperty extends VertexTraitPropertyType
   boolean isDefault();
 
   /**
-   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitBoolProperty#isDefault <em>Default</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Default</em>' attribute.
+   * Sets the value of the '{@link io.github.forsyde.io.meta.VertexTraitBoolProperty#isDefault <em>Default&lt;/em&gt;}' attribute.
+   * &lt;!-- begin-user-doc --&gt;
+   * &lt;!-- end-user-doc --&gt;
+   * @param value the new value of the '<em>Default&lt;/em&gt;' attribute.
    * @see #isDefault()
    * @generated
    */
