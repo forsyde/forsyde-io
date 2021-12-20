@@ -30,7 +30,7 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
     - name: Retrieve lib version
       run: |
-        cd ${{ github.workspace }}
+        cd ${{ github.workspace }}/java/core
         echo "localVersion=$(./gradlew getVersion)" >> $GITHUB_ENV
       id: localVersion
     - name: Build and publish with Gradle
@@ -53,7 +53,7 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
     - name: Retrieve lib version
       run: |
-        cd ${{ github.workspace }}
+        cd ${{ github.workspace }}/java/amalthea
         echo "localVersion=$(./gradlew getVersion)" >> $GITHUB_ENV
       id: localVersion
     - name: Build and publish with Gradle
