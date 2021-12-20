@@ -38,7 +38,7 @@ jobs:
         cd ${{ github.workspace }}/python
         python generate.py
     - name: Build and publish core and generated code
-      if: ${{ steps.get_version.outputs..version-without-v == env.localVersion }}
+      if: ${{ steps.get_version.outputs.version-without-v == env.localVersion }}
       run: |
         cd ${{ github.workspace }}/python
         poetry update
