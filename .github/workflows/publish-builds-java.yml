@@ -34,7 +34,7 @@ jobs:
         echo "localVersion=$(./gradlew getVersion)" >> $GITHUB_ENV
       id: localVersion
     - name: Build and publish with Gradle
-      if: ${{ steps.get_version.outputs.version-without-v == env.localVersion }}
+      if: ${{ steps.get_version.outputs.version-without-v == jobs.localVersion.env.localVersion }}
       run: |
         cd ${{ github.workspace }}/java/core
         ./gradlew build publish closeAndReleaseSonatypeStagingRepository
@@ -57,7 +57,7 @@ jobs:
         echo "localVersion=$(./gradlew getVersion)" >> $GITHUB_ENV
       id: localVersion
     - name: Build and publish with Gradle
-      if: ${{ steps.get_version.outputs.version-without-v == env.localVersion }}
+      if: ${{ steps.get_version.outputs.version-without-v == jobs.localVersion.env.localVersion }}
       run: |
         cd ${{ github.workspace }}/java/amalthea
         ./gradlew build publish closeAndReleaseSonatypeStagingRepository
@@ -80,7 +80,7 @@ jobs:
         echo "localVersion=$(./gradlew getVersion)" >> $GITHUB_ENV
       id: localVersion
     - name: Build and publish with Gradle
-      if: ${{ steps.get_version.outputs.version-without-v == env.localVersion }}
+      if: ${{ steps.get_version.outputs.version-without-v == jobs.localVersion.env.localVersion }}
       run: |
         cd ${{ github.workspace }}/java/sdf3
         ./gradlew build publish closeAndReleaseSonatypeStagingRepository

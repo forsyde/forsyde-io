@@ -29,16 +29,17 @@ jobs:
       with:
         poetry-version: '1.1.5'
     - name: Get local version
+      id: localVersion
       run: |
         cd ${{ github.workspace }}/python
         poetry version | echo "localVersion=$(awk '{print $2}')" >> $GITHUB_ENV
     - name: Generate lib
-      if: ${{ steps.get_version.outputs.version-without-v == env.localVersion }}
+      if: ${{ steps.get_version.outputs.version-without-v == jobs.localVersion.env.localVersion }}
       run: |
         cd ${{ github.workspace }}/python
         python generate.py
     - name: Build and publish core and generated code
-      if: ${{ steps.get_version.outputs.version-without-v == env.localVersion }}
+      if: ${{ steps.get_version.outputs.version-without-v == jobs.localVersion.env.localVersion }}
       run: |
         cd ${{ github.workspace }}/python
         poetry update
