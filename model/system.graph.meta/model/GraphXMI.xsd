@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:graph="forsyde.io.system.graph" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="forsyde.io.system.graph">
+    
+  <xsd:import namespace="http://www.omg.org/XMI" schemaLocation="platform:/plugin/org.eclipse.emf.ecore/model/XMI.xsd"/>
+    
+  <xsd:simpleType name="VertexPropertyType">
+        
+    <xsd:restriction base="xsd:NCName">
+            
+      <xsd:enumeration value="BOOL"/>
+            
+      <xsd:enumeration value="BOOLEAN"/>
+            
+      <xsd:enumeration value="INT"/>
+            
+      <xsd:enumeration value="INTEGER"/>
+            
+      <xsd:enumeration value="LONG"/>
+            
+      <xsd:enumeration value="FLOAT"/>
+            
+      <xsd:enumeration value="DOUBLE"/>
+            
+      <xsd:enumeration value="ARRAY"/>
+            
+      <xsd:enumeration value="STRINGMAP"/>
+            
+      <xsd:enumeration value="INTMAP"/>
+            
+      <xsd:enumeration value="STRING"/>
+            
+      <xsd:enumeration value="STR"/>
+          
+    </xsd:restriction>
+      
+  </xsd:simpleType>
+    
+  <xsd:complexType abstract="true" name="VertexProperty">
+        
+    <xsd:choice maxOccurs="unbounded" minOccurs="0">
+            
+      <xsd:element ref="xmi:Extension"/>
+          
+    </xsd:choice>
+        
+    <xsd:attribute ref="xmi:id"/>
+        
+    <xsd:attributeGroup ref="xmi:ObjectAttribs"/>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="VertexProperty" type="graph:VertexProperty"/>
+    
+  <xsd:complexType name="StringVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="graph:VertexProperty">
+                
+        <xsd:attribute name="string" type="xsd:string"/>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="StringVertexProperty" type="graph:StringVertexProperty"/>
+    
+  <xsd:complexType name="IntVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="graph:VertexProperty">
+                
+        <xsd:attribute name="intValue" type="xsd:int"/>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="IntVertexProperty" type="graph:IntVertexProperty"/>
+    
+  <xsd:complexType name="BooleanVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="graph:VertexProperty">
+                
+        <xsd:attribute name="booleanValue" type="xsd:boolean"/>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="BooleanVertexProperty" type="graph:BooleanVertexProperty"/>
+    
+  <xsd:complexType name="FloatVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="graph:VertexProperty">
+                
+        <xsd:attribute name="floatValue" type="xsd:float"/>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="FloatVertexProperty" type="graph:FloatVertexProperty"/>
+    
+  <xsd:complexType name="DoubleVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="graph:VertexProperty">
+                
+        <xsd:attribute name="doubleValue" type="xsd:double"/>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="DoubleVertexProperty" type="graph:DoubleVertexProperty"/>
+    
+  <xsd:complexType name="LongVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="graph:VertexProperty">
+                
+        <xsd:attribute name="longValue" type="xsd:long"/>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="LongVertexProperty" type="graph:LongVertexProperty"/>
+    
+  <xsd:complexType name="ArrayVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="graph:VertexProperty">
+                
+        <xsd:choice maxOccurs="unbounded" minOccurs="0">
+                    
+          <xsd:element name="values" type="graph:VertexProperty"/>
+                  
+        </xsd:choice>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="ArrayVertexProperty" type="graph:ArrayVertexProperty"/>
+    
+  <xsd:complexType name="IntMapVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="graph:VertexProperty">
+                
+        <xsd:choice maxOccurs="unbounded" minOccurs="0">
+                    
+          <xsd:element name="indexes" type="xsd:int"/>
+                    
+          <xsd:element name="values" type="graph:VertexProperty"/>
+                  
+        </xsd:choice>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="IntMapVertexProperty" type="graph:IntMapVertexProperty"/>
+    
+  <xsd:complexType name="StringMapVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="graph:IntVertexProperty">
+                
+        <xsd:choice maxOccurs="unbounded" minOccurs="0">
+                    
+          <xsd:element name="indexes" nillable="true" type="xsd:string"/>
+                    
+          <xsd:element name="values" type="graph:IntVertexProperty"/>
+                  
+        </xsd:choice>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="StringMapVertexProperty" type="graph:StringMapVertexProperty"/>
+    
+  <xsd:complexType name="Vertex">
+        
+    <xsd:choice maxOccurs="unbounded" minOccurs="0">
+            
+      <xsd:element name="traits" nillable="true" type="xsd:string"/>
+            
+      <xsd:element name="ports" nillable="true" type="xsd:string"/>
+            
+      <xsd:element name="propertiesNames" nillable="true" type="xsd:string"/>
+            
+      <xsd:element name="propertiesValues" type="graph:VertexProperty"/>
+            
+      <xsd:element ref="xmi:Extension"/>
+          
+    </xsd:choice>
+        
+    <xsd:attribute ref="xmi:id"/>
+        
+    <xsd:attributeGroup ref="xmi:ObjectAttribs"/>
+        
+    <xsd:attribute name="identifier" type="xsd:string"/>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="Vertex" type="graph:Vertex"/>
+    
+  <xsd:complexType name="Edge">
+        
+    <xsd:choice maxOccurs="unbounded" minOccurs="0">
+            
+      <xsd:element name="traits" nillable="true" type="xsd:string"/>
+            
+      <xsd:element name="source" type="graph:Vertex"/>
+            
+      <xsd:element name="target" type="graph:Vertex"/>
+            
+      <xsd:element ref="xmi:Extension"/>
+          
+    </xsd:choice>
+        
+    <xsd:attribute ref="xmi:id"/>
+        
+    <xsd:attributeGroup ref="xmi:ObjectAttribs"/>
+        
+    <xsd:attribute name="sourceport" type="xsd:string"/>
+        
+    <xsd:attribute name="targetport" type="xsd:string"/>
+        
+    <xsd:attribute name="source" type="xsd:string"/>
+        
+    <xsd:attribute name="target" type="xsd:string"/>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="Edge" type="graph:Edge"/>
+    
+  <xsd:complexType name="ForSyDeSystemGraph">
+        
+    <xsd:choice maxOccurs="unbounded" minOccurs="0">
+            
+      <xsd:element name="nodes" type="graph:Vertex"/>
+            
+      <xsd:element name="edges" type="graph:Edge"/>
+            
+      <xsd:element ref="xmi:Extension"/>
+          
+    </xsd:choice>
+        
+    <xsd:attribute ref="xmi:id"/>
+        
+    <xsd:attributeGroup ref="xmi:ObjectAttribs"/>
+      
+  </xsd:complexType>
+    
+  <xsd:element name="ForSyDeSystemGraph" type="graph:ForSyDeSystemGraph"/>
+  
+</xsd:schema>

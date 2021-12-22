@@ -1,0 +1,82 @@
+@GenModel(suppressEMFMetaData="true", suppressInterfaces="true", suppressNotification="true", suppressEMFModelTags="true", operationReflection="false", minimalReflectiveMethods="false", fileExtensions="forsyde.xml", generateSchema="true", suppressEMFTypes="true", codeFormatting="true", modelPluginID="system.graph.meta", modelDirectory="/system.graph.meta/src-gen", resource="XML")
+package forsyde.io.system.graph
+
+enum VertexPropertyType {
+	BOOL,
+    BOOLEAN,
+    INT,
+    INTEGER,
+    LONG,
+    FLOAT,
+    DOUBLE,
+    ARRAY,
+    STRINGMAP,
+    INTMAP,
+    STRING,
+    STR
+}
+
+interface VertexProperty {
+	
+}
+
+class StringVertexProperty extends VertexProperty {
+	String string
+}
+
+class IntVertexProperty extends VertexProperty {
+	int intValue
+}
+
+class BooleanVertexProperty extends VertexProperty {
+	boolean booleanValue
+}
+
+class FloatVertexProperty extends VertexProperty {
+	float floatValue
+}
+
+class DoubleVertexProperty extends VertexProperty {
+	double doubleValue
+}
+
+class LongVertexProperty extends VertexProperty {
+	long longValue
+}
+
+class ArrayVertexProperty extends VertexProperty {
+	contains VertexProperty[] values
+}
+
+class IntMapVertexProperty extends VertexProperty {
+	contains VertexProperty[] values
+	int[] indexes
+}
+
+class StringMapVertexProperty extends IntVertexProperty {
+	contains IntVertexProperty[] values
+	String[] indexes
+}
+
+class Vertex {
+	id String identifier
+	String[] traits
+	String[] ports
+	contains VertexProperty[] propertiesValues
+	String[] propertiesNames
+
+}
+
+class Edge {
+	String sourceport
+	String targetport
+	String[] traits
+	
+	refers Vertex source
+	refers Vertex target
+}
+
+class ForSyDeSystemGraph {
+	contains Vertex[] nodes
+	contains Edge[] edges
+}

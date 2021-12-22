@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graph:ForSyDeSystemGraph
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:graph="forsyde.io.system.graph"
+    xsi:schemaLocation="forsyde.io.system.graph systemgraph.xcore#/EPackage">
+  <nodes>
+    <propertiesValues
+        xsi:type="graph:BooleanVertexProperty"/>
+    <propertiesValues
+        xsi:type="graph:IntMapVertexProperty"/>
+  </nodes>
+</graph:ForSyDeSystemGraph>

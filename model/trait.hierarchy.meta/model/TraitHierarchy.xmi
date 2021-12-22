@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hierarchy:TraitHierarchy
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:hierarchy="forsyde.io.trait.hierarchy"
+    xsi:schemaLocation="forsyde.io.trait.hierarchy traithierarchy.xcore#/EPackage">
+  <scopedHierarchy
+      namespace="ModelOfComputation">
+    <vertexTraits
+        name="SDFElem"/>
+  </scopedHierarchy>
+</hierarchy:TraitHierarchy>
