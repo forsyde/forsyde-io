@@ -155,7 +155,7 @@
     <xsd:complexContent>
       <xsd:extension base="hierarchy:IntVertexPropertyDefault">
         <xsd:sequence>
-          <xsd:element maxOccurs="unbounded" minOccurs="0" name="indexes"  type="xsd:string"/>
+          <xsd:element maxOccurs="unbounded" minOccurs="0" name="indexes" nillable="true" type="xsd:string"/>
           <xsd:element maxOccurs="unbounded" minOccurs="0" name="values" type="hierarchy:IntVertexPropertyDefault"/>
         </xsd:sequence>
       </xsd:extension>

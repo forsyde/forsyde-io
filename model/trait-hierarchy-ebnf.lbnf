@@ -1,0 +1,16 @@
+EmptyVertex.     VertexSpec  ::=  "vertex" Ident "{" [VertexBodySpec] "}";
+SpecifiedVertex. VertexSpec  ::=  "vertex" Ident "refines" [VertexRefinement] "{" [VertexBodySpec] "}";
+terminator VertexBodySpec ";" ;
+
+-- identification of refinements
+NameVertexRefinement. VertexRefinement ::= Ident ;
+terminator VertexRefinement "," ;
+
+PortVertexBody.   VertexBodySpec ::= [PortModifier] Ident ":" Ident;
+terminator PortModifier "" ;
+
+InputPortModifier.  PortModifier ::= "input";
+OutputPortModifier.  PortModifier ::= "output";
+MultiplePortModifier.  PortModifier ::= "multiple";
+OrderedPortModifier.  PortModifier ::= "ordered";
+
