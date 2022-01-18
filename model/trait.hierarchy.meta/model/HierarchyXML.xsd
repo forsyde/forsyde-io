@@ -9,7 +9,9 @@
   </xsd:simpleType>
   <xsd:complexType name="PortSpec">
     <xsd:attribute name="name" type="xsd:string"/>
-    <xsd:attribute name="direction" type="hierarchy:PortDirectionEnum"/>
+    <xsd:attribute default="true" name="multiple" type="xsd:boolean"/>
+    <xsd:attribute default="false" name="ordered" type="xsd:boolean"/>
+    <xsd:attribute default="BIDIRECTIONAL" name="direction" type="hierarchy:PortDirectionEnum"/>
     <xsd:attribute name="connectedVertexTrait" type="xsd:string"/>
     <xsd:attribute name="connectedEdgeTrait" type="xsd:string"/>
   </xsd:complexType>

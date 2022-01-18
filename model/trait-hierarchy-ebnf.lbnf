@@ -1,16 +1,81 @@
-EmptyVertex.     VertexSpec  ::=  "vertex" Ident "{" [VertexBodySpec] "}";
-SpecifiedVertex. VertexSpec  ::=  "vertex" Ident "refines" [VertexRefinement] "{" [VertexBodySpec] "}";
+SimpleTraitHierarchy. TraitHierarchy ::= [TraitBody] ;
+--NestedTraitHierarchy. TraitHierarchy ::=  "{" [TraitBody] "}";
+
+VertexTraitBody. TraitBody ::= VertexSpec ;
+EdgeTraitBody. TraitBody ::= EdgeSpec ;
+NestedTraitBody. TraitBody ::= "namespace" Ident "{" TraitHierarchy "}" ;
+terminator TraitBody "" ;
+
+
+SimpleVertexNoBody.     VertexSpec  ::=  "vertex" Ident;
+SimpleVertex.     VertexSpec  ::=  "vertex" Ident "{" [VertexBodySpec] "}";
+RefinedVertexNoBody.    VertexSpec  ::=  "vertex" Ident "refines" [VertexRefinement];
+RefinedVertex.    VertexSpec  ::=  "vertex" Ident "refines" [VertexRefinement] "{" [VertexBodySpec] "}";
 terminator VertexBodySpec ";" ;
 
 -- identification of refinements
 NameVertexRefinement. VertexRefinement ::= Ident ;
-terminator VertexRefinement "," ;
+terminator VertexRefinement "" ;
 
-PortVertexBody.   VertexBodySpec ::= [PortModifier] Ident ":" Ident;
-terminator PortModifier "" ;
+-- port body
+PortVertexBody.   VertexBodySpec ::= "port" Ident ":" [PortModifier] Ident;
+terminator PortModifier " " ;
 
-InputPortModifier.  PortModifier ::= "input";
-OutputPortModifier.  PortModifier ::= "output";
+InputPortModifier.  PortModifier ::= "in";
+OutputPortModifier.  PortModifier ::= "out";
+BiDirPortModifier.  PortModifier ::= "inout";
 MultiplePortModifier.  PortModifier ::= "multiple";
 OrderedPortModifier.  PortModifier ::= "ordered";
 
+-- property body
+PropertyVertexBody.   VertexBodySpec ::= "prop" Ident ":" VertexPropertyType;
+
+rules VertexPropertyType ::= 
+    "int" |
+    "integer" |
+    "float" |
+    "double" |
+    "bool" |
+    "boolean" |
+    "str" |
+    "string" |
+    "array" "<" VertexPropertyType ">" |
+    "intmap" "<" VertexPropertyType ">" |
+    "intMap" "<" VertexPropertyType ">" |
+    "integermap" "<" VertexPropertyType ">" |
+    "integerMap" "<" VertexPropertyType ">" |
+    "strmap" "<" VertexPropertyType ">" |
+    "strMap" "<" VertexPropertyType ">" |
+    "stringmap" "<" VertexPropertyType ">" |
+    "stringMap" "<" VertexPropertyType ">" ;
+    
+
+-- IntVertexPropertyType. VertexPropertyType ::= "int" ;
+-- IntegerVertexPropertyType. VertexPropertyType ::= "integer" ;
+-- FloatVertexPropertyType. VertexPropertyType ::=	 "float" ;
+-- BoolVertexPropertyType. VertexPropertyType ::= "bool" ;
+-- BooleanVertexPropertyType. VertexPropertyType ::= "boolean" ;
+-- LongVertexPropertyType. VertexPropertyType ::= "long" ;
+-- DoubleVertexPropertyType. VertexPropertyType ::= "double" ;
+-- StrVertexPropertyType. VertexPropertyType ::= "str" ;
+-- StringVertexPropertyType. VertexPropertyType ::= "string" ;
+-- ArrayVertexPropertyType. VertexPropertyType ::=	"array" "<" VertexPropertyType ">" ;
+-- IntMapVertexPropertyType. VertexPropertyType ::= ""	|
+-- StrMapVertexPropertyType. VertexPropertyType ::=	;
+
+
+-- Edges
+
+SimpleEdgeNoBody.     EdgeSpec  ::=  "edge" Ident;
+SimpleEdge.     EdgeSpec  ::=  "edge" Ident "{" [EdgeBodySpec] "}";
+RefinedEdgeNoBody.    EdgeSpec  ::=  "edge" Ident "refines" [EdgeRefinement];
+RefinedEdge.    EdgeSpec  ::=  "edge" Ident "refines" [EdgeRefinement] "{" [EdgeBodySpec] "}";
+terminator EdgeBodySpec ";" ;
+
+-- identification of refinements
+NameEdgeRefinement. EdgeRefinement ::= Ident ;
+terminator EdgeRefinement "," ;
+
+SrcEdgeBody. EdgeBodySpec ::= "source" ":" Ident ;
+DstEdgeBody. EdgeBodySpec ::= "target" ":" Ident ;
+terminator EdgeBodySpec "" ;

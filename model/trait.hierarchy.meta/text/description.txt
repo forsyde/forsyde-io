@@ -9,6 +9,8 @@ Package hierarchy <forsyde.io.trait.hierarchy>
 
   Class PortSpec
     Attribute name : EString
+    Attribute multiple : EBoolean
+    Attribute ordered : EBoolean
     Attribute direction : PortDirectionEnum
     Reference connectedVertexTrait : VertexTraitSpec
     Reference connectedEdgeTrait : EdgeTraitSpec

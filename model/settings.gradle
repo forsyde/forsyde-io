@@ -1,2 +1,4 @@
-// include 'io.github.forsyde.io.meta'
-// include 'io.github.forsyde.io.meta.ide'
+include 'system.graph.meta'
+include 'trait.hierarchy.meta'
+include 'trait.hierarchy.meta.dsl'
+include 'trait.hierarchy.meta.dsl.ide'

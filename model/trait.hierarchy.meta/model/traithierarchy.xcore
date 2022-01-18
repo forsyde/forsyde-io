@@ -9,7 +9,9 @@ enum PortDirectionEnum {
 
 class PortSpec {
 	String name
-	PortDirectionEnum direction
+	boolean multiple = "true"
+	boolean ordered = "false"
+	PortDirectionEnum direction = "BIDIRECTIONAL"
 	refers VertexTraitSpec connectedVertexTrait
 	refers EdgeTraitSpec connectedEdgeTrait
 }

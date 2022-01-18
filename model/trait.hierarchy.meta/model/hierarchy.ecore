@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="hierarchy" nsURI="forsyde.io.trait.hierarchy" nsPrefix="hierarchy">
+  <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+    <details key="generateSchema" value="true"/>
+    <details key="minimalReflectiveMethods" value="false"/>
+    <details key="literalsInterface" value="false"/>
+    <details key="operationReflection" value="false"/>
+    <details key="resource" value="XML"/>
+    <details key="suppressGenModelAnnotations" value="false"/>
+    <details key="adapterFactory" value="false"/>
+    <details key="containmentProxies" value="false"/>
+    <details key="suppressEMFMetaData" value="true"/>
+    <details key="suppressNotification" value="true"/>
+    <details key="basePackage" value="forsyde.io.trait"/>
+  </eAnnotations>
+  <eClassifiers xsi:type="ecore:EEnum" name="PortDirectionEnum">
+    <eLiterals name="FORWARD"/>
+    <eLiterals name="BACKWARD"/>
+    <eLiterals name="BIDIRECTIONAL"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PortSpec">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="multiple" unique="false"
+        eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EBoolean"
+        defaultValueLiteral="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ordered" unique="false"
+        eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EBoolean"
+        defaultValueLiteral="false"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" unique="false"
+        eType="#//PortDirectionEnum" defaultValueLiteral="BIDIRECTIONAL"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="connectedVertexTrait" eType="#//VertexTraitSpec"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="connectedEdgeTrait" eType="#//EdgeTraitSpec"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="VertexPropertyType" abstract="true"
+      interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StringVertexPropertyType" eSuperTypes="#//VertexPropertyType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="IntVertexPropertyType" eSuperTypes="#//VertexPropertyType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BooleanVertexPropertyType" eSuperTypes="#//VertexPropertyType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="FloatVertexPropertyType" eSuperTypes="#//VertexPropertyType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DoubleVertexPropertyType" eSuperTypes="#//VertexPropertyType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="LongVertexPropertyType" eSuperTypes="#//VertexPropertyType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ArrayVertexPropertyType" eSuperTypes="#//VertexPropertyType">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="valueTypes" eType="#//VertexPropertyType"
+        containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IntMapVertexPropertyType" eSuperTypes="#//VertexPropertyType">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="valueType" eType="#//VertexPropertyType"
+        containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringMapVertexPropertyType" eSuperTypes="#//IntVertexPropertyType">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="valueType" eType="#//IntVertexPropertyType"
+        containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="VertexPropertyDefault" abstract="true"
+      interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StringVertexPropertyDefault" eSuperTypes="#//VertexPropertyDefault">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="string" unique="false"
+        eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IntVertexPropertyDefault" eSuperTypes="#//VertexPropertyDefault">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="intValue" unique="false"
+        eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BooleanVertexPropertyDefault" eSuperTypes="#//VertexPropertyDefault">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="booleanValue" unique="false"
+        eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FloatVertexPropertyDefault" eSuperTypes="#//VertexPropertyDefault">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="floatValue" unique="false"
+        eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EFloat"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DoubleVertexPropertyDefault" eSuperTypes="#//VertexPropertyDefault">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="doubleValue" unique="false"
+        eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EDouble"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LongVertexPropertyDefault" eSuperTypes="#//VertexPropertyDefault">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="longValue" unique="false"
+        eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//ELong"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ArrayVertexPropertyDefault" eSuperTypes="#//VertexPropertyDefault">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
+        eType="#//VertexPropertyDefault" containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IntMapVertexPropertyDefault" eSuperTypes="#//VertexPropertyDefault">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
+        eType="#//VertexPropertyDefault" containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="indexes" unique="false"
+        upperBound="-1" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringMapVertexPropertyDefault" eSuperTypes="#//IntVertexPropertyDefault">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
+        eType="#//IntVertexPropertyDefault" containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="indexes" unique="false"
+        upperBound="-1" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="VertexPropertySpec">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="propertyType" eType="#//VertexPropertyType"
+        containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="propertyDefault" eType="#//VertexPropertyDefault"
+        containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="VertexTraitSpec">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
+        iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refinedTraits" upperBound="-1"
+        eType="#//VertexTraitSpec"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="requiredPorts" upperBound="-1"
+        eType="#//PortSpec" containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="requiredProperties" upperBound="-1"
+        eType="#//VertexPropertySpec" containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EdgeTraitSpec">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
+        iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refinedTraits" upperBound="-1"
+        eType="#//EdgeTraitSpec"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TraitHierarchy">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="namespace" unique="false"
+        eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
+        defaultValueLiteral=""/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="scopedHierarchy" upperBound="-1"
+        eType="#//TraitHierarchy" containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="vertexTraits" upperBound="-1"
+        eType="#//VertexTraitSpec" containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="edgeTraits" upperBound="-1"
+        eType="#//EdgeTraitSpec" containment="true" resolveProxies="false"/>
+  </eClassifiers>
+</ecore:EPackage>

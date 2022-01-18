@@ -1,0 +1,59 @@
+grammar trait.hierarchy.meta.dsl.ForSyDeTraitDSL with org.eclipse.xtext.common.Terminals
+
+// generate forSyDeTraitDSL "http://www.hierarchy.trait/meta/dsl/ForSyDeTraitDSL"
+
+import 'forsyde.io.trait.hierarchy'
+
+RootTraitHierarchy returns TraitHierarchy:
+	("vertex" vertexTraits+=VertexTrait & "edge" edgeTraits+=EdgeTrait & scopedHierarchy+=TraitHierarchy)*
+;
+
+TraitHierarchy returns TraitHierarchy:
+	"namespace" namespace=ID "{"
+	("vertex" vertexTraits+=VertexTrait & "edge" edgeTraits+=EdgeTrait)*
+	"}"
+	;
+
+VertexTrait returns VertexTraitSpec:
+	name=ID ("refines" refinedTraits+=[VertexTraitSpec] ("," refinedTraits+=[VertexTraitSpec])?)? 
+	("{" (requiredPorts+=VertexPort & requiredProperties+=VertexProperty)* "}")?
+;
+
+VertexPort returns PortSpec:
+	"port" name=ID ":" (ordered?='ordered') connectedVertexTrait=[VertexTraitSpec] 
+;
+
+VertexProperty returns VertexPropertySpec:
+	"prop" name=ID ":" propertyType=VertexPropertyType
+;
+
+VertexPropertyType returns VertexPropertyType:
+	{IntVertexPropertyType} ("int" | "integer") |
+	{FloatVertexPropertyType} "float" |
+	{BooleanVertexPropertyType} ("bool" | "boolean") |
+	{LongVertexPropertyType} "long" |
+	{DoubleVertexPropertyType} ("double" | "real") |
+	{StringVertexPropertyType} ("str" | "string") |
+	ArrayVertexPropertyType |
+	IntMapVertexPropertyType |
+	StrMapVertexPropertyType
+;
+
+ArrayVertexPropertyType returns ArrayVertexPropertyType:
+	"array" "<" valueTypes= VertexPropertyType ">"
+;
+
+IntMapVertexPropertyType returns ArrayVertexPropertyType:
+	("intmap" | "intMap" | "integermap" | "integerMap") "<" valueTypes=VertexPropertyType ">"
+; 
+
+
+StrMapVertexPropertyType returns ArrayVertexPropertyType:
+	("srtmap" | "strMap" | "stringmap" | "stringMap") "<" valueTypes= VertexPropertyType ">"
+; 
+ 
+
+EdgeTrait returns EdgeTraitSpec:
+	name=ID ("refines" refinedTraits+=[EdgeTraitSpec] ("," refinedTraits+=[EdgeTraitSpec])?)?
+	("{" "}")?
+;
