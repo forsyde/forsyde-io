@@ -8,7 +8,6 @@ plugins {
     id 'java'
     id 'idea'
     id 'eclipse'
-    id 'maven'
     // id 'io.github.forsyde.generator'
     // id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
 }

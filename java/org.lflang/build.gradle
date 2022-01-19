@@ -3,6 +3,8 @@ plugins {
 	id 'java'
 	id 'idea'
 	id 'eclipse'
+	id "org.xtext.xtend" version "3.0.0"
+	id 'org.xtext.builder' version '3.0.0'
 }
 
 ext.xtextVersion = '2.25.0'
