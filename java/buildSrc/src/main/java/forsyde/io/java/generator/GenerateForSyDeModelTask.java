@@ -43,15 +43,15 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         ObjectMapper objectMapper = new ObjectMapper()
                 .registerModule(new Jdk8Module());
         try {
-            MetaModel metaModel = objectMapper.readValue(inputModelJson, MetaModel.class);
-            generateFiles(metaModel);
+            TraitHierarchy traitHierarchy = objectMapper.readValue(inputModelJson, TraitHierarchy.class);
+            generateFiles(traitHierarchy);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
-    public void generateFiles(MetaModel model) throws IOException {
+    public void generateFiles(TraitHierarchy model) throws IOException {
         Path root = rootOutDir.toPath();
         Path generatedDir = root.resolve(Paths.get("src-gen/main/java"));
         Path enumsPath = root.resolve(Paths.get("src-gen/main/java/forsyde/io/java/core/"));
@@ -85,6 +85,20 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
     }
 
     public TypeName metaToJavaType(PropertyTypeSpec prop) {
+        return PropertyTypeSpecs.cases()
+                .StringVertexProperty(() -> (TypeName) ClassName.get(String.class))
+                .IntVertexProperty(() -> ClassName.get(Integer.class))
+                .BooleanVertexProperty(() -> ClassName.get(Boolean.class))
+                .FloatVertexProperty(() -> ClassName.get(Float.class))
+                .DoubleVertexProperty(() -> ClassName.get(Double.class))
+                .LongVertexProperty(() -> ClassName.get(Long.class))
+                .ArrayVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(ArrayList.class), metaToJavaType(p)))
+                .IntMapVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(Integer.class),
+                        metaToJavaType(p)))
+                .StringMapVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(String.class),
+                        metaToJavaType(p)))
+                .apply(prop);
+        /*
         switch (prop.name) {
             case INTMAP:
                 return ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(Integer.class),
@@ -107,6 +121,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
             default:
                 return ClassName.get(String.class);
         }
+        */
     }
 
     public MethodSpec generatePropertyGetter(PropertySpec prop) {
@@ -263,7 +278,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         return getPortMethod.build();
     }
 
-    public TypeSpec generateVertexTraitEnum(MetaModel model) {
+    public TypeSpec generateVertexTraitEnum(TraitHierarchy model) {
         ClassName generalTraitClass = ClassName.get("forsyde.io.java.core", "Trait");
         TypeSpec.Builder vertexTraitEnumBuilder = TypeSpec.enumBuilder("VertexTrait")
                 .addSuperinterface(generalTraitClass).addModifiers(Modifier.PUBLIC);
@@ -304,7 +319,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         return vertexTraitEnumBuilder.build();
     }
 
-    public TypeSpec generateEdgeTraits(MetaModel model) {
+    public TypeSpec generateEdgeTraits(TraitHierarchy model) {
         ClassName traitClass = ClassName.get("forsyde.io.java.core", "Trait");
         TypeSpec.Builder edgeEnumBuilder = TypeSpec.enumBuilder("EdgeTrait").addSuperinterface(traitClass)
                 .addModifiers(Modifier.PUBLIC);
@@ -340,7 +355,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         return edgeEnumBuilder.build();
     }
 
-    public List<TypeSpec> generateVertexInterfaces(MetaModel model) {
+    public List<TypeSpec> generateVertexInterfaces(TraitHierarchy model) {
         List<VertexTraitSpec> traits = model.vertexTraits.stream().collect(Collectors.toList());
         List<TypeSpec> traitList = new ArrayList<>(traits.size());
         for (VertexTraitSpec trait : traits) {
@@ -411,7 +426,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         return traitList;
     }
 
-    public List<TypeSpec> generateVertexViewers(MetaModel model) {
+    public List<TypeSpec> generateVertexViewers(TraitHierarchy model) {
         List<VertexTraitSpec> traits = model.vertexTraits.stream().collect(Collectors.toList());
         List<TypeSpec> traitList = new ArrayList<>(traits.size());
         for (VertexTraitSpec trait : traits) {

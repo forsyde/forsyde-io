@@ -2,6 +2,7 @@ plugins {
   id 'java'
   id 'idea'
   id 'eclipse'
+  id 'antlr'
 }
 
 repositories {
@@ -17,4 +18,30 @@ dependencies {
   implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.0-rc1'
   implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
   implementation 'com.squareup:javapoet:1.13.0'
+  antlr "org.antlr:antlr4:4.7"
+  implementation "org.antlr:antlr4-runtime:4.7"
+  compileOnly "org.derive4j:derive4j-annotation:1.1.1"
+  annotationProcessor "org.derive4j:derive4j:1.1.1"
+}
+
+generateGrammarSource {
+  maxHeapSize = "512m"
+  arguments += ['-package', 'forsyde.io.java.generator.dsl', '-visitor']
+  outputDirectory file("src-gen/main/java/forsyde/io/java/generator/dsl")
+}
+
+sourceSets {
+  main {
+    java.srcDir "src-gen/main/java"
+  }
+}
+
+clean{
+  delete "src-gen"
+}
+
+idea {
+  module {
+    sourceDirs += file("src-gen/main/java/")
+  }
 }
