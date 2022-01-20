@@ -1,20 +1,23 @@
 grammar ForSyDeTraitDSL;
 
-ID
+QUALIFIED_ID
     :   ('::'|[A-Za-z])('::'|[A-Za-z0-9])*
 ;
 
 WS : [ \t\r\n]+ -> skip ;
 
 
+
 edgeTrait:
-	name=ID ('refines' refinedTraits+=ID (',' refinedTraits+=ID)?)?
-	('{' '}')?
+	name=QUALIFIED_ID ('refines' refinedTraits+=QUALIFIED_ID (',' refinedTraits+=QUALIFIED_ID)?)?
+	('{'
+        ('source' sourceVertexes+=QUALIFIED_ID | 'target' targetVertexes+=QUALIFIED_ID )*
+	 '}')?
 ;
 
 
 vertexPort:
-	name=ID 'is' (modifiers+=ID)* connectedVertexTrait=ID
+	name=QUALIFIED_ID 'is' (modifiers+=QUALIFIED_ID)* connectedVertexTrait=QUALIFIED_ID
 ;
 
 vertexPropertyType:
@@ -41,19 +44,19 @@ vertexPropertyType:
 
 
 vertexProperty:
-	name=ID 'is' propertyType=vertexPropertyType
+	name=QUALIFIED_ID 'is' propertyType=vertexPropertyType
 ;
 
 vertexTrait:
-	name=ID
-	('refines' refinedTraits+=ID (',' refinedTraits+=ID)?)?
+	name=QUALIFIED_ID
+	('refines' refinedTraits+=QUALIFIED_ID (',' refinedTraits+=QUALIFIED_ID)?)?
 	('{'
 	('port' requiredPorts+=vertexPort | 'prop' requiredProperties+=vertexProperty | 'property' requiredProperties+=vertexProperty)*
 	'}')?
 ;
 
 traitHierarchy:
-	namespace=ID '{'
+	namespace=QUALIFIED_ID '{'
 	('vertex' vertexTrait | 'edge' edgeTrait | 'namespace' traitHierarchy)*
 	'}'
 	;

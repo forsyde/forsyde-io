@@ -17,6 +17,7 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
 
     TraitHierarchy traitHierarchy = new TraitHierarchy();
     String namespace = "";
+    Map<ForSyDeTraitDSLParser.EdgeTraitContext, EdgeTraitSpec> edgeTraitSpecMap = new HashMap<>();
     Map<ForSyDeTraitDSLParser.VertexTraitContext, VertexTraitSpec> vertexTraitSpecMap = new HashMap<>();
     Map<ForSyDeTraitDSLParser.VertexPortContext, PortSpec> portSpecMap = new HashMap<>();
     Map<ForSyDeTraitDSLParser.VertexPropertyTypeContext, PropertyTypeSpec> propertyTypeSpecMap = new HashMap<>();
@@ -24,7 +25,28 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
 
     @Override
     public void enterEdgeTrait(ForSyDeTraitDSLParser.EdgeTraitContext ctx) {
-
+        final EdgeTraitSpec edgeTraitSpec = new EdgeTraitSpec();
+        edgeTraitSpecMap.put(ctx, edgeTraitSpec);
+        edgeTraitSpec.name = namespace + "::" + ctx.name.getText();
+        for (final Token token : ctx.refinedTraits) {
+            edgeTraitSpec.refinedTraitNames.add(token.getText());
+            // absolute reference or local reference
+            if (token.getText().contains("::")) {
+                edgeTraitSpec.refinedTraitNames.add(token.getText());
+                //vertexRefinedParent.add(token.getText())
+            } else {
+                // add the namespace in a local reference
+                edgeTraitSpec.refinedTraitNames.add(namespace + "::" + token.getText());
+                //vertexRefinedParent.add(namespace + "::" + token.getText());
+            }
+        }
+        for (final Token token : ctx.sourceVertexes) {
+            edgeTraitSpec.sourceTraitNames.add(token.getText());
+        }
+        for (final Token token : ctx.targetVertexes) {
+            edgeTraitSpec.targetTraitNames.add(token.getText());
+        }
+        traitHierarchy.edgeTraits.add(edgeTraitSpec);
     }
 
     @Override
@@ -36,8 +58,8 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
     public void enterVertexPort(ForSyDeTraitDSLParser.VertexPortContext ctx) {
         final PortSpec portSpec = new PortSpec();
         portSpecMap.put(ctx, portSpec);
-        portSpec.name = ctx.name.toString();
-        final List<String> modifiers = ctx.modifiers.stream().map(Token::toString).collect(Collectors.toList());
+        portSpec.name = ctx.name.getText();
+        final List<String> modifiers = ctx.modifiers.stream().map(Token::getText).collect(Collectors.toList());
         if (modifiers.contains("ordered")) {
             portSpec.ordered = Optional.of(true);
         } else if (modifiers.contains("unordered")) {
@@ -56,11 +78,12 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
             portSpec.direction = PortDirection.BIDIRECTIONAL;
         }
         // absolute reference or local reference for vertex trait
-        if (ctx.connectedVertexTrait.toString().contains("::")) {
-            portSpec.vertexTraitName = ctx.connectedVertexTrait.toString();
+        if (ctx.connectedVertexTrait.getText().contains("::")) {
+            portSpec.vertexTraitName = ctx.connectedVertexTrait.getText();
         } else {
             // add the namespace in a local reference
-            portSpec.vertexTraitName = namespace + "::" + ctx.connectedVertexTrait.toString();
+            portSpec.vertexTraitName = namespace.isBlank() ? ctx.connectedVertexTrait.getText() :
+                    namespace + "::" + ctx.connectedVertexTrait.getText();
         }
     }
 
@@ -70,49 +93,48 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
     }
 
     protected PropertyTypeSpec buildFromContext(ForSyDeTraitDSLParser.VertexPropertyTypeContext ctx) {
-        return ctx.typeName.toString().equals("int") ? PropertyTypeSpecs.IntVertexProperty() :
-                ctx.typeName.toString().equals("integer") ? PropertyTypeSpecs.IntVertexProperty() :
-                ctx.typeName.toString().equals("float") ? PropertyTypeSpecs.FloatVertexProperty() :
-                ctx.typeName.toString().equals("bool") ? PropertyTypeSpecs.BooleanVertexProperty() :
-                ctx.typeName.toString().equals("boolean") ? PropertyTypeSpecs.BooleanVertexProperty() :
-                ctx.typeName.toString().equals("long") ? PropertyTypeSpecs.LongVertexProperty() :
-                ctx.typeName.toString().equals("double") ? PropertyTypeSpecs.DoubleVertexProperty() :
-                ctx.typeName.toString().equals("real") ? PropertyTypeSpecs.DoubleVertexProperty() :
-                ctx.typeName.toString().equals("str") ? PropertyTypeSpecs.StringVertexProperty() :
-                ctx.typeName.toString().equals("string") ? PropertyTypeSpecs.StringVertexProperty() :
-                ctx.typeName.toString().equals("array") ? PropertyTypeSpecs.ArrayVertexProperty(buildFromContext(ctx.arrayType)) :
-                ctx.typeName.toString().equals("intmap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
-                ctx.typeName.toString().equals("integermap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
-                ctx.typeName.toString().equals("intMap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
-                ctx.typeName.toString().equals("integerMap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
-                ctx.typeName.toString().equals("strmap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
-                ctx.typeName.toString().equals("stringmap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
-                ctx.typeName.toString().equals("strMap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
-                ctx.typeName.toString().equals("stringMap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
+        return ctx.typeName.getText().equals("int") ? PropertyTypeSpecs.IntVertexProperty() :
+                ctx.typeName.getText().equals("integer") ? PropertyTypeSpecs.IntVertexProperty() :
+                ctx.typeName.getText().equals("float") ? PropertyTypeSpecs.FloatVertexProperty() :
+                ctx.typeName.getText().equals("bool") ? PropertyTypeSpecs.BooleanVertexProperty() :
+                ctx.typeName.getText().equals("boolean") ? PropertyTypeSpecs.BooleanVertexProperty() :
+                ctx.typeName.getText().equals("long") ? PropertyTypeSpecs.LongVertexProperty() :
+                ctx.typeName.getText().equals("double") ? PropertyTypeSpecs.DoubleVertexProperty() :
+                ctx.typeName.getText().equals("real") ? PropertyTypeSpecs.DoubleVertexProperty() :
+                ctx.typeName.getText().equals("str") ? PropertyTypeSpecs.StringVertexProperty() :
+                ctx.typeName.getText().equals("string") ? PropertyTypeSpecs.StringVertexProperty() :
+                ctx.typeName.getText().equals("array") ? PropertyTypeSpecs.ArrayVertexProperty(buildFromContext(ctx.arrayType)) :
+                ctx.typeName.getText().equals("intmap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
+                ctx.typeName.getText().equals("integermap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
+                ctx.typeName.getText().equals("intMap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
+                ctx.typeName.getText().equals("integerMap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
+                ctx.typeName.getText().equals("strmap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
+                ctx.typeName.getText().equals("stringmap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
+                ctx.typeName.getText().equals("strMap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
+                ctx.typeName.getText().equals("stringMap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
                 PropertyTypeSpecs.StringVertexProperty();
     }
 
     @Override
     public void enterVertexPropertyType(ForSyDeTraitDSLParser.VertexPropertyTypeContext ctx) {
+    }
+
+    @Override
+    public void exitVertexPropertyType(ForSyDeTraitDSLParser.VertexPropertyTypeContext ctx) {
         final PropertyTypeSpec propertyTypeSpec = buildFromContext(ctx);
         propertyTypeSpecMap.put(ctx, propertyTypeSpec);
     }
 
     @Override
-    public void exitVertexPropertyType(ForSyDeTraitDSLParser.VertexPropertyTypeContext ctx) {
-
-    }
-
-    @Override
     public void enterVertexProperty(ForSyDeTraitDSLParser.VertexPropertyContext ctx) {
-        final PropertySpec propertySpec = new PropertySpec();
-        propertySpecMap.put(ctx, propertySpec);
-        propertySpec.name = ctx.name.toString();
+
     }
 
     @Override
     public void exitVertexProperty(ForSyDeTraitDSLParser.VertexPropertyContext ctx) {
-        final PropertySpec propertySpec = propertySpecMap.get(ctx);
+        final PropertySpec propertySpec = new PropertySpec();
+        propertySpecMap.put(ctx, propertySpec);
+        propertySpec.name = ctx.name.getText();
         for (final ParseTree parseTree : ctx.children) {
             if (parseTree instanceof ForSyDeTraitDSLParser.VertexPropertyTypeContext) {
                 propertySpec.type = propertyTypeSpecMap.get(parseTree);
@@ -122,27 +144,31 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
 
     @Override
     public void enterVertexTrait(ForSyDeTraitDSLParser.VertexTraitContext ctx) {
+        /*
         final VertexTraitSpec vertexTraitSpec = new VertexTraitSpec();
         vertexTraitSpecMap.put(ctx, vertexTraitSpec);
-        vertexTraitSpec.name = namespace + "::" + ctx.name;
+        vertexTraitSpec.name = namespace.isBlank() ? ctx.name.getText() : namespace + "::" + ctx.name;
         for (final Token token : ctx.refinedTraits) {
-            vertexTraitSpec.refinedTraitNames.add(token.toString());
+            vertexTraitSpec.refinedTraitNames.add(token.getText());
             // absolute reference or local reference
-            if (token.toString().contains("::")) {
-                vertexTraitSpec.refinedTraitNames.add(token.toString());
-                //vertexRefinedParent.add(token.toString())
+            if (token.getText().contains("::")) {
+                vertexTraitSpec.refinedTraitNames.add(token.getText());
+                //vertexRefinedParent.add(token.getText())
             } else {
                 // add the namespace in a local reference
-                vertexTraitSpec.refinedTraitNames.add(namespace + "::" + token.toString());
-                //vertexRefinedParent.add(namespace + "::" + token.toString());
+                vertexTraitSpec.refinedTraitNames.add(namespace + "::" + token.getText());
+                //vertexRefinedParent.add(namespace + "::" + token.getText());
             }
         }
         traitHierarchy.vertexTraits.add(vertexTraitSpec);
+        */
     }
 
     @Override
     public void exitVertexTrait(ForSyDeTraitDSLParser.VertexTraitContext ctx) {
-        final VertexTraitSpec vertexTraitSpec = vertexTraitSpecMap.get(ctx);
+        final VertexTraitSpec vertexTraitSpec = new VertexTraitSpec();
+        //final VertexTraitSpec vertexTraitSpec = vertexTraitSpecMap.get(ctx);
+        vertexTraitSpec.name = namespace.isBlank() ? ctx.name.getText() : namespace + "::" + ctx.name.getText();
         for (final ParseTree parseTree : ctx.children) {
             if (parseTree instanceof ForSyDeTraitDSLParser.VertexPortContext) {
                 vertexTraitSpec.requiredPorts.add(portSpecMap.get(parseTree));
@@ -150,16 +176,30 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
                 vertexTraitSpec.requiredProperties.add(propertySpecMap.get(parseTree));
             }
         }
+        for (final Token token : ctx.refinedTraits) {
+            vertexTraitSpec.refinedTraitNames.add(token.getText());
+            // absolute reference or local reference
+            if (token.getText().contains("::")) {
+                vertexTraitSpec.refinedTraitNames.add(token.getText());
+                //vertexRefinedParent.add(token.getText())
+            } else {
+                // add the namespace in a local reference
+                vertexTraitSpec.refinedTraitNames.add(namespace + "::" + token.getText());
+                //vertexRefinedParent.add(namespace + "::" + token.getText());
+            }
+        }
+        traitHierarchy.vertexTraits.add(vertexTraitSpec);
     }
 
     @Override
     public void enterTraitHierarchy(ForSyDeTraitDSLParser.TraitHierarchyContext ctx) {
-        namespace = namespace + "::" + ctx.namespace;
+        namespace = namespace.isBlank() ? ctx.namespace.getText() : namespace + "::" + ctx.namespace.getText();
     }
 
     @Override
     public void exitTraitHierarchy(ForSyDeTraitDSLParser.TraitHierarchyContext ctx) {
-        namespace = namespace.replaceAll("::" + ctx.namespace, "");
+        namespace = namespace.contains("::") ? namespace.replaceAll("::" + ctx.namespace.getText(), "") :
+                namespace.replaceAll(ctx.namespace.getText(), "");
     }
 
     @Override
@@ -211,6 +251,24 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
             }
         }
 
+        // edges
+        for (final EdgeTraitSpec edgeTraitSpec : traitHierarchy.edgeTraits) {
+            // refinements
+            for (final EdgeTraitSpec edgeTraitSpecOther : traitHierarchy.edgeTraits) {
+                if (edgeTraitSpec.refinedTraitNames.contains(edgeTraitSpecOther.name)) {
+                    edgeTraitSpec.refinedTraits.add(edgeTraitSpecOther);
+                }
+            }
+            // vertexes contraints
+            for (final VertexTraitSpec vertexTraitSpec : traitHierarchy.vertexTraits) {
+                if (edgeTraitSpec.sourceTraitNames.contains(vertexTraitSpec.name)) {
+                    edgeTraitSpec.sourceTraits.add(vertexTraitSpec);
+                }
+                if (edgeTraitSpec.targetTraitNames.contains(vertexTraitSpec.name)) {
+                    edgeTraitSpec.targetTraits.add(vertexTraitSpec);
+                }
+            }
+        }
     }
 
 }

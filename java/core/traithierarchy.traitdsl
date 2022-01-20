@@ -1,0 +1,117 @@
+namespace impl {
+    vertex Executable
+
+    vertex InstrumentedExecutable refines Executable {
+        prop operationRequirements is strmap<strmap<long>>
+    }
+}
+
+namespace moc {
+
+    namespace sdf {
+
+        vertex SDFElem
+
+        vertex SDFComb refines SDFElem {
+            prop consumption is strmap<int>
+            prop production is strmap<int>
+
+            port combFunction is single impl::Executable
+        }
+
+        vertex SDFDelay refines SDFElem {
+            prop delayedTokens is int
+
+            port delayFunction is single impl::Executable
+        }
+
+        vertex SDFChannel refines SDFElem {
+            port producer is single in SDFElem
+            port consumer is single out SDFElem
+        }
+
+        edge SDFDataEdge {
+            source SDFElem
+            target SDFElem
+        }
+
+    }
+
+}
+
+namespace execution {
+    vertex Stimulus
+
+    vertex PeriodicStimulus refines Stimulus {
+        prop periodNumerator is long
+        prop periodDenominator is long
+        prop offsetNumerator is long
+        prop offsetDenominator is long
+
+        port stimulated is multiple unordered Task
+    }
+
+    vertex Task
+
+    vertex PeriodicTask refines Task {
+        port stimulus is single in PeriodicStimulus
+    }
+
+    vertex Channel refines ::ModelOfExecution {
+        prop maxElems is int
+
+        prop elemSizeInBits is int
+    }
+
+    vertex Constraint
+
+    vertex PrecedenceConstraint {
+        port predecessor is Task
+        port sucessor is Task
+    }
+
+    vertex ExtendedPrecedenceConstraint {
+        prop predecessorInstance is array<int>
+        prop sucessorInstance is array<int>
+
+        port predecessor is Task
+        port sucessor is Task
+    }
+
+    edge ConstraintEdge
+
+    edge CommunicationEdge
+
+    edge EventEdge
+
+}
+
+namespace platform {
+
+    vertex PlatformElem
+
+    vertex Structure refines PlatformElem {
+        port children is multiple PlatformElem
+    }
+
+    vertex DigitalModule refines PlatformElem {
+        prop operatingFrequencyInHertz is long
+    }
+
+    vertex ProcessingModule refines DigitalModule {
+
+    }
+
+    vertex InstrumentedProcessingModule refines ProcessingModule {
+        prop operationDurationInCycles is strmap<strmap<long>>
+    }
+
+    vertex CommunicationModule refines DigitalModule {
+        prop minBitsPerSecNumerator is long
+        prop minBitsPerSecDenominator is long
+    }
+
+    vertex StorageModule refines DigitalModule {
+        prop spaceInBits is long
+    }
+}

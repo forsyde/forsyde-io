@@ -364,30 +364,30 @@
 //
 //    for (vertexTrait in model['vertexTraits']) {
 //		def className = vertexTrait.key
-//        def traitInterface = TypeSpec.interfaceBuilder(className)
+//        def viewerClass = TypeSpec.interfaceBuilder(className)
 //            .addModifiers(Modifier.PUBLIC)
 //        if (vertexTrait.value) {
 //            if (vertexTrait.value['superTraits'] != null && vertexTrait.value['superTraits'].size() > 0) {
 //                for (traitName in vertexTrait.value['superTraits']) {
-//                    traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", traitName))
+//                    viewerClass.addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", traitName))
 //                }
 //            } else {
-//                traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"))
+//                viewerClass.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"))
 //            }
 //            for(vertexProp in vertexTrait.value['required_properties']) {
-//                traitInterface.addMethod(generatePropertyGetter(vertexProp.key, vertexProp.value).build())
+//                viewerClass.addMethod(generatePropertyGetter(vertexProp.key, vertexProp.value).build())
 //            }
 //            // port acessors are generated depending in the multiplicity of their connections and possible directions
 //            for(vertexPort in vertexTrait.value['required_ports']) {
 //                // accessGenerated.add(vertexPort.key)
 //                if (vertexPort.value['class'] != null) {
-//                    traitInterface.addMethod(generatePortGetter(vertexPort.key, vertexPort.value).build())
+//                    viewerClass.addMethod(generatePortGetter(vertexPort.key, vertexPort.value).build())
 //                } else {
-//                    traitInterface.addMethod(generatePortGetterVertex(vertexPort.key, vertexPort.value).build())
+//                    viewerClass.addMethod(generatePortGetterVertex(vertexPort.key, vertexPort.value).build())
 //                }
 //            }
 //        } else {
-//            traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"))
+//            viewerClass.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"))
 //        }
 //        def conformsMethod = MethodSpec
 //			.methodBuilder('conforms')
@@ -398,7 +398,7 @@
 //        conformsMethod.addStatement("if(t.refines(\$T.${className})) return true", ClassName.get('forsyde.io.java.core', "VertexTrait"))
 //        conformsMethod.endControlFlow()
 //        conformsMethod.addStatement('return false')
-//        traitInterface.addMethod(conformsMethod.build())
+//        viewerClass.addMethod(conformsMethod.build())
 //        def conformsMethodViewer = MethodSpec
 //			.methodBuilder('conforms')
 //			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -408,7 +408,7 @@
 //        conformsMethodViewer.addStatement("if(t.refines(\$T.${className})) return true", ClassName.get('forsyde.io.java.core', "VertexTrait"))
 //        conformsMethodViewer.endControlFlow()
 //        conformsMethodViewer.addStatement('return false')
-//        traitInterface.addMethod(conformsMethodViewer.build())
+//        viewerClass.addMethod(conformsMethodViewer.build())
 //        def safeCast = MethodSpec
 //			.methodBuilder('safeCast')
 //			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -419,7 +419,7 @@
 //            ClassName.get(Optional.class),
 //            ClassName.get("forsyde.io.java.typed.viewers",className + 'Viewer')
 //            )
-//        traitInterface.addMethod(safeCast.build())
+//        viewerClass.addMethod(safeCast.build())
 //        def safeCastViewer = MethodSpec
 //			.methodBuilder('safeCast')
 //			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -430,8 +430,8 @@
 //            ClassName.get(Optional.class),
 //            ClassName.get("forsyde.io.java.typed.viewers",className + 'Viewer')
 //            )
-//        traitInterface.addMethod(safeCastViewer.build())
-//        def fileStr = JavaFile.builder('forsyde.io.java.typed.viewers', traitInterface.build())
+//        viewerClass.addMethod(safeCastViewer.build())
+//        def fileStr = JavaFile.builder('forsyde.io.java.typed.viewers', viewerClass.build())
 //        file('src-gen/main/java/forsyde/io/java/typed/viewers').mkdirs()
 //        file('src-gen/main/java/forsyde/io/java/typed/viewers/' + className + '.java').text = fileStr.build()
 //    }
@@ -445,26 +445,26 @@
 //
 //    for (vertexTrait in model['vertexTraits']) {
 //		def className = vertexTrait.key + 'Viewer'
-//        def traitInterface = TypeSpec.classBuilder(className)
+//        def viewerClass = TypeSpec.classBuilder(className)
 //            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 //            .addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", vertexTrait.key))
 //        def constructorMethod = MethodSpec.constructorBuilder()
 //            .addParameter(ClassName.get('forsyde.io.java.core', 'Vertex'), 'vertex')
 //            .addModifiers(Modifier.PUBLIC)
-//        traitInterface.addField(ClassName.get('forsyde.io.java.core', 'Vertex'), "viewedVertex", Modifier.PUBLIC, Modifier.FINAL)
+//        viewerClass.addField(ClassName.get('forsyde.io.java.core', 'Vertex'), "viewedVertex", Modifier.PUBLIC, Modifier.FINAL)
 //        constructorMethod.addStatement("viewedVertex = vertex")
 //        // constructorMethod.addStatement("identifier = vertex.getIdentifier()")
 //        // constructorMethod.addStatement("properties = vertex.getProperties()")
 //        // constructorMethod.addStatement("ports = vertex.getPorts()")
 //        // constructorMethod.addStatement("vertexTraits = vertex.getTraits()")
-//        traitInterface.addMethod(constructorMethod.build())
-//        traitInterface.addMethod(MethodSpec
+//        viewerClass.addMethod(constructorMethod.build())
+//        viewerClass.addMethod(MethodSpec
 //			.methodBuilder('getViewedVertex')
 //			.addModifiers(Modifier.PUBLIC)
 //			.returns(ClassName.get('forsyde.io.java.core', 'Vertex'))
 //            .addStatement("return viewedVertex")
 //            .build())
-//        def fileStr = JavaFile.builder('forsyde.io.java.typed.viewers', traitInterface.build())
+//        def fileStr = JavaFile.builder('forsyde.io.java.typed.viewers', viewerClass.build())
 //        file('src-gen/main/java/forsyde/io/java/typed/viewers').mkdirs()
 //        file('src-gen/main/java/forsyde/io/java/typed/viewers/' + className + '.java').text = fileStr.build()
 //    }

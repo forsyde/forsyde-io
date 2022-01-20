@@ -3,7 +3,12 @@ package forsyde.io.java.generator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.squareup.javapoet.*;
+import forsyde.io.java.generator.dsl.ForSyDeTraitDSLLexer;
+import forsyde.io.java.generator.dsl.ForSyDeTraitDSLParser;
 import forsyde.io.java.generator.specs.*;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.commons.text.WordUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Task;
@@ -44,10 +49,16 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
     @TaskAction
     public void execute() {
-        ObjectMapper objectMapper = new ObjectMapper()
+        final ObjectMapper objectMapper = new ObjectMapper()
                 .registerModule(new Jdk8Module());
         try {
-            TraitHierarchy traitHierarchy = objectMapper.readValue(inputModelJson, TraitHierarchy.class);
+            final ForSyDeTraitDSLLexer forSyDeTraitDSLLexer = new ForSyDeTraitDSLLexer(CharStreams.fromPath(inputModelDSL.toPath()));
+            final CommonTokenStream commonTokenStream = new CommonTokenStream(forSyDeTraitDSLLexer);
+            final ForSyDeTraitDSLParser forSyDeTraitDSLParser = new ForSyDeTraitDSLParser(commonTokenStream);
+            final ForSyDeIOTraitDSLListener forSyDeTraitDSLListener = new ForSyDeIOTraitDSLListener();
+            final ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
+            parseTreeWalker.walk(forSyDeTraitDSLListener, forSyDeTraitDSLParser.rootTraitHierarchy());
+            final TraitHierarchy traitHierarchy = forSyDeTraitDSLListener.traitHierarchy;//objectMapper.readValue(inputModelJson, TraitHierarchy.class);
             generateFiles(traitHierarchy);
         } catch (IOException e) {
             e.printStackTrace();
@@ -63,28 +74,37 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         Files.createDirectories(enumsPath) ;
         Files.createDirectories(viewersPath);
 
-        outFiles.add(JavaFile.builder("forsyde.io.java.core", generateEdgeTraits(model)).build().writeToFile(generatedDir.toFile()));
+        outFiles.add(JavaFile.builder("forsyde.io.java.core", generateEdgeTraitsEnum(model)).build().writeToFile(generatedDir.toFile()));
         outFiles.add(JavaFile.builder("forsyde.io.java.core", generateVertexTraitEnum(model)).build().writeToFile(generatedDir.toFile()));
 
 //		Files.writeString(edgePath, edgeStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
 //		Files.writeString(vertexPath, vertexStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
 
-        for (TypeSpec interfaceSpec : generateVertexViewers(model)) {
+
+        for (VertexTraitSpec trait : model.vertexTraits) {
 //			Path interfacePath = root
 //					.resolve("src-gen/main/java/forsyde/io/java/typed/viewers/" + interfaceSpec.name + ".java");
-            outFiles.add(JavaFile.builder("forsyde.io.java.typed.viewers", interfaceSpec).build().writeToFile(generatedDir.toFile()));
+            final TypeSpec interfaceSpec = generateVertexInterface(trait);
+            final String extraPackages = trait.getNamespaces().isEmpty() ?
+                    "" : "." + String.join(".", trait.getNamespaces());
+            outFiles.add(JavaFile.builder("forsyde.io.java.typed.viewers" + extraPackages, interfaceSpec)
+                    .build().writeToFile(generatedDir.toFile()));
             // Files.writeString(interfacePath, interfaceStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         }
 
-        for (TypeSpec viewerSpec : generateVertexInterfaces(model)) {
-//			Path interfacePath = root
-//					.resolve("src-gen/main/java/forsyde/io/java/typed/viewers/" + viewerSpec.name + ".java");
-            outFiles.add(JavaFile.builder("forsyde.io.java.typed.viewers", viewerSpec).build().writeToFile(generatedDir.toFile()));
+        for (VertexTraitSpec trait : model.vertexTraits) {
+            final TypeSpec viewerSpec = generateVertexViewer(trait);
+            final String extraPackages = trait.getNamespaces().isEmpty() ?
+                    "" : "." + String.join(".", trait.getNamespaces());
+            outFiles.add(JavaFile.builder("forsyde.io.java.typed.viewers" + extraPackages, viewerSpec)
+                    .build().writeToFile(generatedDir.toFile()));
             // Files.writeString(interfacePath, interfaceStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         }
+
     }
 
     protected String toCamelCase(String word) {
+        return WordUtils.capitalize(word);
         return WordUtils.capitalizeFully(word, '_').replace("_", "");
     }
 
@@ -199,8 +219,10 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
     }
 
     public MethodSpec generatePortGetter(PortSpec port) {
-        TypeName vertexEnumClass = ClassName.get("forsyde.io.java.core", "VertexTrait");
-        TypeName vertexClass = ClassName.get("forsyde.io.java.typed.viewers", port.vertexTrait.name);
+        final String traitName = port.vertexTrait.name.replace("::", "_").toUpperCase();
+        final String extraPackages = port.vertexTrait.getNamespaces().isEmpty() ?
+                "" : "." + String.join(".", port.vertexTrait.getNamespaces());
+        TypeName vertexClass = ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, port.vertexTrait.getTraitLocalName());
         ParameterizedTypeName optionalOut = ParameterizedTypeName.get(ClassName.get(Optional.class), vertexClass);
         ParameterizedTypeName listOut = ParameterizedTypeName.get(ClassName.get(List.class), vertexClass);
         ParameterizedTypeName setOut = ParameterizedTypeName.get(ClassName.get(Set.class), vertexClass);
@@ -217,7 +239,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 getPortMethod.addStatement(statement,
                         ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                         port.name,
-                        port.vertexTrait.name,
+                        port.vertexTrait.getTraitLocalName(),
                         port.direction.toString().toLowerCase(),
                         vertexClass,
                         Collectors.class);
@@ -228,7 +250,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 getPortMethod.addStatement(statement,
                         ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                         port.name,
-                        port.vertexTrait.name,
+                        port.vertexTrait.getTraitLocalName(),
                         port.direction.toString().toLowerCase(),
                         vertexClass,
                         Collectors.class);
@@ -239,46 +261,10 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
             getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), \"$L\", \"$L\", \"$L\").map(v -> $T.safeCast(v).get())",
                     ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                     port.name,
-                    port.vertexTrait.name,
+                    port.vertexTrait.getTraitLocalName(),
                     port.direction.toString().toLowerCase(),
                     vertexClass);
         }
-        // // decide if a collection needs to be generated
-        // // generate the iteration to collect or find vertexes
-//		if (port.direction == PortDirection.OUTGOING
-//				|| port.direction == PortDirection.BIDIRECTIONAL) {
-//			getPortMethod.beginControlFlow("for ($T e: model.outgoingEdgesOf(getViewedVertex()))",
-//					ClassName.get("forsyde.io.java.core", "Edge"));
-//			getPortMethod.beginControlFlow("if (e.getSourcePort().orElse(\"\").equals(\"" + port.name
-//					+ "\") && $T.conforms(e.getTarget()))", vertexClass);
-//			// this decides for every iteration if first found is good or if a list is being
-//			// built.
-//			if (port.multiple.orElse(true))
-//				getPortMethod.addStatement("outList.add($T.safeCast(e.getTarget()).get())", vertexClass);
-//			else
-//				getPortMethod.addStatement("return $T.safeCast(e.getTarget())", vertexClass);
-//			getPortMethod.endControlFlow();
-//			getPortMethod.endControlFlow();
-//		}
-//		if (port.direction == PortDirection.INCOMING
-//				|| port.direction == PortDirection.BIDIRECTIONAL) {
-//			getPortMethod.beginControlFlow("for ($T e: model.incomingEdgesOf(getViewedVertex()))",
-//					ClassName.get("forsyde.io.java.core", "Edge"));
-//			getPortMethod.beginControlFlow("if (e.getTargetPort().orElse(\"\").equals(\"" + port.name
-//					+ "\") && $T.conforms(e.getSource()))", vertexClass);
-//			// this decides for every iteration if first found is good or if a list is being
-//			// built.
-//			if (port.multiple.orElse(true))
-//				getPortMethod.addStatement("outList.add($T.safeCast(e.getSource()).get())", vertexClass);
-//			else
-//				getPortMethod.addStatement("return $T.safeCast(e.getSource())", vertexClass);
-//			getPortMethod.endControlFlow();
-//			getPortMethod.endControlFlow();
-//		}
-//		if (port.multiple.orElse(true))
-//			getPortMethod.addStatement("return outList");
-//		else
-//			getPortMethod.addStatement("return Optional.empty()");
         return getPortMethod.build();
     }
 
@@ -294,15 +280,17 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 .beginControlFlow("switch (one)");
         List<VertexTraitSpec> traits = model.vertexTraits.stream().collect(Collectors.toList());
         for (VertexTraitSpec trait : traits) {
-            vertexTraitEnumBuilder.addEnumConstant(trait.name);
-            refinesMethod.addCode("case " + trait.name + ":\n");
+            final String enumTraitName = trait.name.replace("::", "_").toUpperCase();
+            vertexTraitEnumBuilder.addEnumConstant(enumTraitName);
+            refinesMethod.addCode("case " + enumTraitName + ":\n");
             refinesMethod.beginControlFlow("switch (other)");
             // def superIterator = new DepthFirstIterator<String, DefaultEdge>(traitGraph,
             // vertexTrait.key)
             Queue<VertexTraitSpec> refinedTraits = new LinkedList<>(List.of(trait));
             while (!refinedTraits.isEmpty()) {
                 VertexTraitSpec refinedTrait = refinedTraits.poll();
-                refinesMethod.addCode("case " + refinedTrait.name + ": ");
+                final String refinedEnumTraitName = refinedTrait.name.replace("::", "_").toUpperCase();
+                refinesMethod.addCode("case " + refinedEnumTraitName + ": ");
                 refinesMethod.addStatement("return true");
                 refinedTraits.addAll(refinedTrait.refinedTraits);
             }
@@ -323,7 +311,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         return vertexTraitEnumBuilder.build();
     }
 
-    public TypeSpec generateEdgeTraits(TraitHierarchy model) {
+    public TypeSpec generateEdgeTraitsEnum(TraitHierarchy model) {
         ClassName traitClass = ClassName.get("forsyde.io.java.core", "Trait");
         TypeSpec.Builder edgeEnumBuilder = TypeSpec.enumBuilder("EdgeTrait").addSuperinterface(traitClass)
                 .addModifiers(Modifier.PUBLIC);
@@ -334,13 +322,15 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 .beginControlFlow("switch (one)");
         List<EdgeTraitSpec> traits = model.edgeTraits.stream().collect(Collectors.toList());
         for (EdgeTraitSpec trait : traits) {
-            edgeEnumBuilder.addEnumConstant(trait.name);
-            refinesMethod.addCode("case " + trait.name + ":\n");
+            final String enumTraitName = trait.name.replace("::", "_").toUpperCase();
+            edgeEnumBuilder.addEnumConstant(enumTraitName);
+            refinesMethod.addCode("case " + enumTraitName + ":\n");
             refinesMethod.beginControlFlow("switch (other)");
             Queue<EdgeTraitSpec> refinedTraits = new LinkedList<>(List.of(trait));
             while (!refinedTraits.isEmpty()) {
                 EdgeTraitSpec refinedTrait = refinedTraits.poll();
-                refinesMethod.addCode("case " + refinedTrait.name + ": ");
+                final String refinedEnumTraitName = refinedTrait.name.replace("::", "_").toUpperCase();
+                refinesMethod.addCode("case " + refinedEnumTraitName + ": ");
                 refinesMethod.addStatement("return true");
                 refinedTraits.addAll(refinedTrait.refinedTraits);
             }
@@ -359,122 +349,141 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         return edgeEnumBuilder.build();
     }
 
-    public List<TypeSpec> generateVertexInterfaces(TraitHierarchy model) {
+    public TypeSpec generateVertexInterface(VertexTraitSpec trait) {
+        /*
         List<VertexTraitSpec> traits = model.vertexTraits.stream().collect(Collectors.toList());
         List<TypeSpec> traitList = new ArrayList<>(traits.size());
         for (VertexTraitSpec trait : traits) {
-            TypeSpec.Builder traitInterface = TypeSpec.interfaceBuilder(trait.name).addModifiers(Modifier.PUBLIC)
-                    .addJavadoc(trait.comment);
-            for (VertexTraitSpec refinedTrait : trait.refinedTraits) {
-                traitInterface
-                        .addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", refinedTrait.name));
-            }
-            traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"));
-			/*
-			if (trait.refinedTraits.isEmpty()) {
-				traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"));
-			} else {
+        */
+        final String enumTraitName = trait.name.replace("::", "_").toUpperCase();
+        final String extraPackages = trait.getNamespaces().isEmpty() ?
+                "" : "." + String.join(".", trait.getNamespaces());
+        TypeSpec.Builder traitInterface = TypeSpec.interfaceBuilder(ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, trait.getTraitLocalName()))
+                .addModifiers(Modifier.PUBLIC)
+                .addJavadoc(trait.comment);
+        for (VertexTraitSpec refinedTrait : trait.refinedTraits) {
+            final String refinedExtraPackages = refinedTrait.getNamespaces().isEmpty() ?
+                    "" : "." + String.join(".", refinedTrait.getNamespaces());
+            traitInterface
+                    .addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers" + refinedExtraPackages, refinedTrait.getTraitLocalName()));
+        }
+        traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"));
 
-			}
-			*/
-            for (PropertySpec prop : trait.requiredProperties) {
-                traitInterface.addMethod(generatePropertyGetter(prop));
-                traitInterface.addMethod(generatePropertySetter(prop));
-            }
-            for (PortSpec port : trait.requiredPorts) {
-                traitInterface.addMethod(generatePortGetter(port));
-            }
-            MethodSpec.Builder conformsMethod = MethodSpec.methodBuilder("conforms")
-                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                    .addParameter(ClassName.get("forsyde.io.java.core", "Vertex"), "vertex")
-                    .returns(ClassName.get(Boolean.class));
-            conformsMethod.beginControlFlow("for ($T t : vertex.getTraits())",
-                    ClassName.get("forsyde.io.java.core", "Trait"));
-            conformsMethod.addStatement("if(t.refines($T.$L)) return true",
-                    ClassName.get("forsyde.io.java.core", "VertexTrait"), trait.name);
-            conformsMethod.endControlFlow();
-            conformsMethod.addStatement("return false");
-            traitInterface.addMethod(conformsMethod.build());
-            MethodSpec.Builder conformsMethodViewer = MethodSpec.methodBuilder("conforms")
-                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                    .addParameter(ClassName.get("forsyde.io.java.core", "VertexViewer"), "viewer")
-                    .returns(ClassName.get(Boolean.class));
-            conformsMethodViewer.beginControlFlow("for ($T t : viewer.getViewedVertex().getTraits())",
-                    ClassName.get("forsyde.io.java.core", "Trait"));
-            conformsMethodViewer.addStatement("if(t.refines($T.$L)) return true",
-                    ClassName.get("forsyde.io.java.core", "VertexTrait"), trait.name);
-            conformsMethodViewer.endControlFlow();
-            conformsMethodViewer.addStatement("return false");
-            traitInterface.addMethod(conformsMethodViewer.build());
-            MethodSpec.Builder safeCast = MethodSpec.methodBuilder("safeCast")
-                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                    .addParameter(ClassName.get("forsyde.io.java.core", "Vertex"), "vertex")
-                    .returns(ParameterizedTypeName.get(ClassName.get(Optional.class),
-                            ClassName.get("forsyde.io.java.typed.viewers", trait.name)));
-            safeCast.addStatement("return conforms(vertex) ? $T.of(new $T(vertex)) : Optional.empty()",
-                    ClassName.get(Optional.class),
-                    ClassName.get("forsyde.io.java.typed.viewers", trait.name + "Viewer"));
-            traitInterface.addMethod(safeCast.build());
-            MethodSpec.Builder safeCastViewer = MethodSpec.methodBuilder("safeCast")
-                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                    .addParameter(ClassName.get("forsyde.io.java.core", "VertexViewer"), "viewer")
-                    .returns(ParameterizedTypeName.get(ClassName.get(Optional.class),
-                            ClassName.get("forsyde.io.java.typed.viewers", trait.name)));
-            safeCastViewer.addStatement(
-                    "return conforms(viewer.getViewedVertex()) ? $T.of(new $T(viewer.getViewedVertex())) : Optional.empty()",
-                    ClassName.get(Optional.class),
-                    ClassName.get("forsyde.io.java.typed.viewers", trait.name + "Viewer"));
-            traitInterface.addMethod(safeCastViewer.build());
+        for (PropertySpec prop : trait.requiredProperties) {
+            traitInterface.addMethod(generatePropertyGetter(prop));
+            traitInterface.addMethod(generatePropertySetter(prop));
+        }
+        for (PortSpec port : trait.requiredPorts) {
+            traitInterface.addMethod(generatePortGetter(port));
+        }
+        MethodSpec.Builder conformsMethod = MethodSpec.methodBuilder("conforms")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(ClassName.get("forsyde.io.java.core", "Vertex"), "vertex")
+                .returns(ClassName.get(Boolean.class));
+        conformsMethod.beginControlFlow("for ($T t : vertex.getTraits())",
+                ClassName.get("forsyde.io.java.core", "Trait"));
+        conformsMethod.addStatement("if(t.refines($T.$L)) return true",
+                ClassName.get("forsyde.io.java.core", "VertexTrait"), enumTraitName);
+        conformsMethod.endControlFlow();
+        conformsMethod.addStatement("return false");
+        traitInterface.addMethod(conformsMethod.build());
+
+        MethodSpec.Builder conformsMethodViewer = MethodSpec.methodBuilder("conforms")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(ClassName.get("forsyde.io.java.core", "VertexViewer"), "viewer")
+                .returns(ClassName.get(Boolean.class));
+        conformsMethodViewer.beginControlFlow("for ($T t : viewer.getViewedVertex().getTraits())",
+                ClassName.get("forsyde.io.java.core", "Trait"));
+        conformsMethodViewer.addStatement("if(t.refines($T.$L)) return true",
+                ClassName.get("forsyde.io.java.core", "VertexTrait"), enumTraitName);
+        conformsMethodViewer.endControlFlow();
+        conformsMethodViewer.addStatement("return false");
+        traitInterface.addMethod(conformsMethodViewer.build());
+
+        MethodSpec.Builder safeCast = MethodSpec.methodBuilder("safeCast")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(ClassName.get("forsyde.io.java.core", "Vertex"), "vertex")
+                .returns(ParameterizedTypeName.get(ClassName.get(Optional.class),
+                        ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, trait.getTraitLocalName())));
+        safeCast.addStatement("return conforms(vertex) ? $T.of(new $T(vertex)) : Optional.empty()",
+                ClassName.get(Optional.class),
+                ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, trait.getTraitLocalName() + "Viewer"));
+        traitInterface.addMethod(safeCast.build());
+
+        MethodSpec.Builder safeCastViewer = MethodSpec.methodBuilder("safeCast")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(ClassName.get("forsyde.io.java.core", "VertexViewer"), "viewer")
+                .returns(ParameterizedTypeName.get(ClassName.get(Optional.class),
+                        ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, trait.getTraitLocalName())));
+        safeCastViewer.addStatement(
+                "return conforms(viewer.getViewedVertex()) ? $T.of(new $T(viewer.getViewedVertex())) : Optional.empty()",
+                ClassName.get(Optional.class),
+                ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, trait.getTraitLocalName() + "Viewer"));
+        traitInterface.addMethod(safeCastViewer.build());
+        return traitInterface.build();
+        /*
             traitList.add(traitInterface.build());
         }
         return traitList;
+         */
     }
 
-    public List<TypeSpec> generateVertexViewers(TraitHierarchy model) {
+    public TypeSpec generateVertexViewer(VertexTraitSpec trait) {
+        /*
         List<VertexTraitSpec> traits = model.vertexTraits.stream().collect(Collectors.toList());
-        List<TypeSpec> traitList = new ArrayList<>(traits.size());
+        List<TypeSpec> viewersList = new ArrayList<>(traits.size());
         for (VertexTraitSpec trait : traits) {
-            TypeSpec.Builder traitInterface = TypeSpec.classBuilder(trait.name + "Viewer")
-                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                    .addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers", trait.name))
-                    //.superclass(ClassName.get("forsyde.io.java.core", "VertexViewer"))
-                    .addJavadoc(trait.comment)
-                    .addField(ClassName.get("forsyde.io.java.core", "Vertex"), "viewedVertex", Modifier.PUBLIC,
-                            Modifier.FINAL);
-            MethodSpec.Builder constructorMethod = MethodSpec.constructorBuilder()
-                    .addParameter(ClassName.get("forsyde.io.java.core", "Vertex"), "vertex")
-                    .addModifiers(Modifier.PUBLIC);
-            constructorMethod.addStatement("viewedVertex = vertex");
-            traitInterface.addMethod(constructorMethod.build());
-            traitInterface.addMethod(MethodSpec.methodBuilder("getViewedVertex").addModifiers(Modifier.PUBLIC)
-                    .returns(ClassName.get("forsyde.io.java.core", "Vertex")).addStatement("return viewedVertex")
-                    .build());
-            traitInterface.addMethod(
-                    MethodSpec.methodBuilder("hashCode")
-                            .addAnnotation(Override.class)
-                            .addModifiers(Modifier.PUBLIC)
-                            .addStatement("return getIdentifier().hashCode() + \"$L\".hashCode()", trait.name)
-                            .returns(int.class)
-                            .build());
-            traitInterface.addMethod(
-                    MethodSpec.methodBuilder("equals")
-                            .addAnnotation(Override.class)
-                            .addModifiers(Modifier.PUBLIC)
-                            .addParameter(Object.class, "other")
-                            .addStatement("return other instanceof $L ? (($L) other).getIdentifier().equals(getIdentifier()) : false",
-                                    trait.name + "Viewer", trait.name + "Viewer")
-                            .returns(boolean.class)
-                            .build());
-            traitInterface.addMethod(
-                    MethodSpec.methodBuilder("toString")
-                            .addAnnotation(Override.class)
-                            .addModifiers(Modifier.PUBLIC)
-                            .addStatement("return \"$L{\" + getViewedVertex().toString() + \"}\"", trait.name + "Viewer")
-                            .returns(String.class)
-                            .build());
-            traitList.add(traitInterface.build());
+         */
+        final String enumTraitName = trait.name.replace("::", "_").toUpperCase();
+        final String extraPackages = trait.getNamespaces().isEmpty() ?
+                "" : "." + String.join(".", trait.getNamespaces());
+
+        final TypeSpec.Builder viewerClass = TypeSpec.classBuilder(ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, trait.getTraitLocalName()  + "Viewer"))
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, trait.getTraitLocalName()))
+                //.superclass(ClassName.get("forsyde.io.java.core", "VertexViewer"))
+                .addJavadoc(trait.comment)
+                .addField(ClassName.get("forsyde.io.java.core", "Vertex"), "viewedVertex", Modifier.PUBLIC,
+                        Modifier.FINAL);
+
+        final MethodSpec.Builder constructorMethod = MethodSpec.constructorBuilder()
+                .addParameter(ClassName.get("forsyde.io.java.core", "Vertex"), "vertex")
+                .addModifiers(Modifier.PUBLIC);
+        constructorMethod.addStatement("viewedVertex = vertex");
+        viewerClass.addMethod(constructorMethod.build());
+        viewerClass.addMethod(MethodSpec.methodBuilder("getViewedVertex").addModifiers(Modifier.PUBLIC)
+                .returns(ClassName.get("forsyde.io.java.core", "Vertex")).addStatement("return viewedVertex")
+                .build());
+        viewerClass.addMethod(
+                MethodSpec.methodBuilder("hashCode")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addStatement("return getIdentifier().hashCode() + \"$L\".hashCode()", trait.getTraitLocalName())
+                        .returns(int.class)
+                        .build());
+        viewerClass.addMethod(
+                MethodSpec.methodBuilder("equals")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addParameter(Object.class, "other")
+                        .addStatement("return other instanceof $L ? (($L) other).getIdentifier().equals(getIdentifier()) : false",
+                                trait.getTraitLocalName() + "Viewer", trait.getTraitLocalName() + "Viewer")
+                        .returns(boolean.class)
+                        .build());
+        viewerClass.addMethod(
+                MethodSpec.methodBuilder("toString")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addStatement("return \"$L{\" + getViewedVertex().toString() + \"}\"", trait.getTraitLocalName() + "Viewer")
+                        .returns(String.class)
+                        .build());
+        return viewerClass.build();
+        /*
+            viewersList.add(viewerClass.build());
         }
-        return traitList;
+        return viewersList;
+
+         */
     }
 
     private Integer directionToInt(PortDirection dir) {
@@ -504,6 +513,14 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
     public List<File> getOutFiles() {
         return outFiles;
+    }
+
+    public File getInputModelDSL() {
+        return inputModelDSL;
+    }
+
+    public void setInputModelDSL(File inputModelDSL) {
+        this.inputModelDSL = inputModelDSL;
     }
 
 }

@@ -27,4 +27,11 @@ public class VertexTraitSpec {
                 Arrays.asList(name.split("::"));
         return names.subList(0, names.size()-1);
     }
+
+    public String getTraitLocalName() {
+        final List<String> names = name.startsWith("::") ?
+                Arrays.asList(name.replaceFirst("::", "").split("::")) :
+                Arrays.asList(name.split("::"));
+        return names.get(names.size()-1);
+    }
 }
