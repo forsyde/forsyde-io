@@ -26,11 +26,15 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
     @Incremental
     @InputFile
+    @Deprecated
     File inputModelJson = getProject().file("meta.json");
 
     @InputFile
+    @Deprecated
     File inputModelXml = getProject().file("meta.json");
 
+    @InputFile
+    File inputModelDSL = getProject().file("traithierarchy.traitdsl");
 
     @InputDirectory
     File rootOutDir = getProject().getProjectDir();

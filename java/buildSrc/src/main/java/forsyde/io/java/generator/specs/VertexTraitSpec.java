@@ -15,6 +15,7 @@ public class VertexTraitSpec {
     @JsonIdentityReference(alwaysAsId = true)
     @JsonSerialize(contentAs = VertexTraitSpec.class)
     public List<VertexTraitSpec> refinedTraits = new ArrayList<>();
+    public transient List<String> refinedTraitNames = new ArrayList<>();
     @JsonAlias("required_ports")
     public List<PortSpec> requiredPorts = new ArrayList<>();
     @JsonAlias("required_properties")

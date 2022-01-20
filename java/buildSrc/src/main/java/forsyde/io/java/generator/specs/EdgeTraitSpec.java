@@ -11,4 +11,5 @@ public class EdgeTraitSpec {
 
     public String name;
     public List<EdgeTraitSpec> refinedTraits = new ArrayList<>();
+    public transient List<String> refinedTraitNames = new ArrayList<>();
 }
