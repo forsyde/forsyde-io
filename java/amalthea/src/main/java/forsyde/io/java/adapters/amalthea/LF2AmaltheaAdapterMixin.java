@@ -3,10 +3,10 @@ package forsyde.io.java.adapters.amalthea;
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
-import forsyde.io.java.typed.viewers.LinguaFrancaReaction;
-import forsyde.io.java.typed.viewers.LinguaFrancaReactor;
-import forsyde.io.java.typed.viewers.LinguaFrancaSignal;
-import forsyde.io.java.typed.viewers.LinguaFrancaTimer;
+import forsyde.io.java.typed.viewers.moc.linguafranca.LinguaFrancaReaction;
+import forsyde.io.java.typed.viewers.moc.linguafranca.LinguaFrancaReactor;
+import forsyde.io.java.typed.viewers.moc.linguafranca.LinguaFrancaSignal;
+import forsyde.io.java.typed.viewers.moc.linguafranca.LinguaFrancaTimer;
 import org.eclipse.app4mc.amalthea.model.*;
 import org.eclipse.app4mc.amalthea.model.Runnable;
 

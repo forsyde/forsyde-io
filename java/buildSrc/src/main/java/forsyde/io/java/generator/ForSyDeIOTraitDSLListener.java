@@ -25,6 +25,11 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
 
     @Override
     public void enterEdgeTrait(ForSyDeTraitDSLParser.EdgeTraitContext ctx) {
+
+    }
+
+    @Override
+    public void exitEdgeTrait(ForSyDeTraitDSLParser.EdgeTraitContext ctx) {
         final EdgeTraitSpec edgeTraitSpec = new EdgeTraitSpec();
         edgeTraitSpecMap.put(ctx, edgeTraitSpec);
         edgeTraitSpec.name = namespace + "::" + ctx.name.getText();
@@ -50,12 +55,12 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
     }
 
     @Override
-    public void exitEdgeTrait(ForSyDeTraitDSLParser.EdgeTraitContext ctx) {
+    public void enterVertexPort(ForSyDeTraitDSLParser.VertexPortContext ctx) {
 
     }
 
     @Override
-    public void enterVertexPort(ForSyDeTraitDSLParser.VertexPortContext ctx) {
+    public void exitVertexPort(ForSyDeTraitDSLParser.VertexPortContext ctx) {
         final PortSpec portSpec = new PortSpec();
         portSpecMap.put(ctx, portSpec);
         portSpec.name = ctx.name.getText();
@@ -85,11 +90,6 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
             portSpec.vertexTraitName = namespace.isBlank() ? ctx.connectedVertexTrait.getText() :
                     namespace + "::" + ctx.connectedVertexTrait.getText();
         }
-    }
-
-    @Override
-    public void exitVertexPort(ForSyDeTraitDSLParser.VertexPortContext ctx) {
-
     }
 
     protected PropertyTypeSpec buildFromContext(ForSyDeTraitDSLParser.VertexPropertyTypeContext ctx) {

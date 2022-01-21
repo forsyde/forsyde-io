@@ -2,16 +2,14 @@ package forsyde.io.java.adapters.amalthea;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
-import forsyde.io.java.typed.viewers.*;
+import forsyde.io.java.typed.viewers.platform.*;
 import org.eclipse.app4mc.amalthea.model.*;
 
-import java.lang.System;
 import java.math.BigInteger;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<Vertex, INamed> {
+public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMixin<Vertex, INamed> {
 
     default void fromVertexesToHWModel(ForSyDeSystemGraph model, Amalthea target) {
         target.setHwModel(AmaltheaFactory.eINSTANCE.createHWModel());
@@ -22,15 +20,15 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
 
     default void fromVertexesToModules(ForSyDeSystemGraph model, Amalthea target) {
         model.vertexSet()
-            .stream().filter(AbstractDigitalModule::conforms)
-            .flatMap(v -> AbstractDigitalModule.safeCast(v).stream())
+            .stream().filter(DigitalModule::conforms)
+            .flatMap(v -> DigitalModule.safeCast(v).stream())
             .forEach(p -> {
                 final String newId = p.getViewedVertex().getIdentifier().replace(".", "_");
 
                 final FrequencyDomain freqDef = AmaltheaFactory.eINSTANCE.createFrequencyDomain();
                 freqDef.setName(newId + "Freq");
                 Frequency f = AmaltheaFactory.eINSTANCE.createFrequency();
-                f.setValue(p.getNominalFrequencyInHertz());
+                f.setValue(p.getOperatingFrequencyInHertz());
                 f.setUnit(FrequencyUnit.HZ);
                 freqDef.setDefaultValue(f);
                 if (!target.getHwModel().getDomains().contains(freqDef)) target.getHwModel().getDomains().add(freqDef);
@@ -63,7 +61,7 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
 
                     DataSize dataSize = AmaltheaFactory.eINSTANCE.createDataSize();
                     dataSize.setUnit(DataSizeUnit.BIT);
-                    dataSize.setValue(BigInteger.valueOf(genericMemoryModule.getMaxMemoryInBits()));
+                    dataSize.setValue(BigInteger.valueOf(genericMemoryModule.getSpaceInBits()));
                     memDef.setSize(dataSize);
 
                     // generate element
@@ -74,8 +72,8 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
                     addEquivalence(p.getViewedVertex(), mem);
                     hwModule = mem;
                 }
-                else if (GenericDigitalInterconnect.conforms(p)) {
-                    final GenericDigitalInterconnect genericDigitalInterconnect = GenericDigitalInterconnect.safeCast(p).get();
+                else if (InstrumentedCommunicationModule.conforms(p)) {
+                    final InstrumentedCommunicationModule instrumentedCommunicationModule = InstrumentedCommunicationModule.safeCast(p).get();
 
                     // generate definition
                     ConnectionHandlerDefinition commDef = AmaltheaFactory.eINSTANCE.createConnectionHandlerDefinition();
@@ -84,11 +82,12 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
 
                     DataRate dataRate = AmaltheaFactory.eINSTANCE.createDataRate();
                     dataRate.setUnit(DataRateUnit.BIT_PER_SECOND);
-                    dataRate.setValue(BigInteger.valueOf(genericDigitalInterconnect.getMaxFlitSizeInBits())
-                            .multiply(BigInteger.valueOf(genericDigitalInterconnect.getNominalFrequencyInHertz())));
+                    dataRate.setValue(BigInteger.valueOf(instrumentedCommunicationModule.getFlitSizeInBits())
+                            .multiply(BigInteger.valueOf(instrumentedCommunicationModule.getOperatingFrequencyInHertz()))
+                            .divide(BigInteger.valueOf(instrumentedCommunicationModule.getMaxCyclesPerFlit())));
                     commDef.setDataRate(dataRate);
-                    commDef.setMaxConcurrentTransfers(genericDigitalInterconnect.getMaxConcurrentFlits());
-                    if (RoundRobinInterconnect.conforms(genericDigitalInterconnect))
+                    commDef.setMaxConcurrentTransfers(instrumentedCommunicationModule.getMaxConcurrentFlits());
+                    if (RoundRobinCommunicationModule.conforms(instrumentedCommunicationModule))
                         commDef.setPolicy(SchedPolicy.ROUND_ROBIN);
 
                     ConnectionHandler conn = AmaltheaFactory.eINSTANCE.createConnectionHandler();
@@ -113,9 +112,9 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
                         newPort.setName(portName);
                         hwModule.getPorts().add(newPort);
                         SynthetizableDigitalPorts.safeCast(p).ifPresent(sdp -> {
-                            newPort.setPortInterface(PortInterface.getByName(sdp.getPortProtocolAcronym()));
-                            newPort.setPortType(sdp.getPortIsInitiator() ? PortType.INITIATOR : PortType.RESPONDER);
-                            newPort.setBitWidth(sdp.getPortWidthInBits());
+                            newPort.setPortInterface(PortInterface.getByName(sdp.getPortProtocolAcronym().getOrDefault(portName, "SPI")));
+                            newPort.setPortType(sdp.getPortIsInitiator().getOrDefault(portName, false) ? PortType.INITIATOR : PortType.RESPONDER);
+                            newPort.setBitWidth(sdp.getPortWidthInBits().getOrDefault(portName, 1));
                         });
                     }
                 }
@@ -130,7 +129,7 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
                 .collect(Collectors.toSet());
         final Set<AbstractStructure> topPlatform = model.vertexSet()
                 .stream().filter(AbstractStructure::conforms)
-                .filter(v -> model.incomingEdgesOf(v).stream().noneMatch(e -> e.edgeTraits.contains(EdgeTrait.AbstractStructuralConnection)))
+                .filter(v -> model.incomingEdgesOf(v).stream().noneMatch(e -> e.edgeTraits.contains(EdgeTrait.PLATFORM_STRUCTURALCONNECTION)))
                 .map(v -> AbstractStructure.safeCast(v).get())
                 .collect(Collectors.toSet());
         for (AbstractStructure p : platforms) {
@@ -147,7 +146,7 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
             // get the generated equivalent
             equivalent(parent.getViewedVertex()).map(e -> (HwStructure) e).ifPresent(parentHwStructure -> {
                 // get only the sub structures
-                parent.getSubmodulesPort(model).stream().filter(AbstractStructure::conforms).forEach(child -> {
+                parent.getChildrenPort(model).stream().filter(AbstractStructure::conforms).forEach(child -> {
                     // get their equivalents
                     equivalent(child.getViewedVertex()).map(e -> (HwStructure) e).ifPresent(childHwStructure -> {
                         // do the deed
@@ -163,7 +162,7 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
                         }
                     });
                 });
-                parent.getSubmodulesPort(model).stream().filter(AbstractDigitalModule::conforms).forEach(module -> {
+                parent.getChildrenPort(model).stream().filter(DigitalModule::conforms).forEach(module -> {
                     equivalent(module.getViewedVertex()).map(e -> (HwModule) e).ifPresent(hwModule -> {
 
                         // remove the 'namespace' from the child identifier
@@ -186,9 +185,9 @@ public interface ForSyDe2AmaltheaHWAdapter extends EquivalenceModel2ModelMixin<V
         for (EdgeInfo e: model.edgeSet()) {
             final Vertex sourceV = model.getEdgeSource(e);
             final Vertex targetV = model.getEdgeTarget(e);
-            if (e.edgeTraits.contains(EdgeTrait.AbstractPhysicalConnection) &&
-                (AbstractStructure.conforms(sourceV) || AbstractDigitalModule.conforms(sourceV)) &&
-                (AbstractStructure.conforms(targetV) || AbstractDigitalModule.conforms(targetV)) &&
+            if (e.edgeTraits.contains(EdgeTrait.PLATFORM_PHYSICALCONNECTION) &&
+                (AbstractStructure.conforms(sourceV) || DigitalModule.conforms(sourceV)) &&
+                (AbstractStructure.conforms(targetV) || DigitalModule.conforms(targetV)) &&
                 e.sourcePort.isPresent() && e.targetPort.isPresent()) {
                 // the vertices are supposed to be generated
                 final INamed source = equivalent(sourceV).get();

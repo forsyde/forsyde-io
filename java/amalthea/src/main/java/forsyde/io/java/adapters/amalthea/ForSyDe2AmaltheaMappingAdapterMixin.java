@@ -3,21 +3,22 @@ package forsyde.io.java.adapters.amalthea;
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
 import forsyde.io.java.typed.viewers.*;
+import forsyde.io.java.typed.viewers.platform.GenericProcessingModule;
+import forsyde.io.java.typed.viewers.platform.runtime.FixedPriorityScheduler;
+import forsyde.io.java.typed.viewers.platform.runtime.RoundRobinScheduler;
+import forsyde.io.java.typed.viewers.platform.runtime.TimeTriggeredScheduler;
 import org.eclipse.app4mc.amalthea.model.*;
 
 public interface ForSyDe2AmaltheaMappingAdapterMixin extends EquivalenceModel2ModelMixin<Vertex, INamed> {
 
     default void fromEdgesToMappings(ForSyDeSystemGraph model, Amalthea amalthea) {
         amalthea.setMappingModel(AmaltheaFactory.eINSTANCE.createMappingModel());
-//        fromVertexesToModules(model, target, cache);
-//        fromVertexesToStructures(model, target, cache);
-//        fromEdgesToConnections(model, target, cache);
         for (EdgeInfo e : model.edgeSet()) {
             final Vertex sourceV = model.getEdgeSource(e);
             final Vertex targetV = model.getEdgeTarget(e);
-            if (e.edgeTraits.contains(EdgeTrait.AbstractAllocation)) {
+            if (e.edgeTraits.contains(EdgeTrait.DECISION_ABSTRACTALLOCATION)) {
                 fromAllocationToMapping(model, amalthea, e);
-            } else if (e.edgeTraits.contains(EdgeTrait.AbstractScheduling)) {
+            } else if (e.edgeTraits.contains(EdgeTrait.DECISION_ABSTRACTSCHEDULING)) {
                 // try to make scheduling between task adn task scheduler
                 //Optional.ofNullable(cache.get(e.getSource()))
                 equivalents(sourceV)
@@ -50,7 +51,7 @@ public interface ForSyDe2AmaltheaMappingAdapterMixin extends EquivalenceModel2Mo
                     });
                 });
 
-            } else if (e.edgeTraits.contains(EdgeTrait.AbstractMapping)) {
+            } else if (e.edgeTraits.contains(EdgeTrait.DECISION_ABSTRACTMAPPING)) {
                 // try to make mapping between elements and memory
                 equivalents(sourceV)
                         .filter(v -> v instanceof AbstractMemoryElement)

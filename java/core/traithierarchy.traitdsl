@@ -8,9 +8,35 @@ namespace impl {
 
 namespace moc {
 
+    vertex MoCElem
+
+    namespace linguafranca {
+        vertex LinguaFrancaElem refines moc::MoCElem
+
+        vertex LinguaFrancaTimer refines LinguaFrancaElem {
+            prop periodNumeratorPerSec is int
+            prop periodDenominatorPerSec is int
+        }
+
+        vertex LinguaFrancaReaction refines LinguaFrancaElem {
+
+        }
+
+        vertex LinguaFrancaReactor refines LinguaFrancaElem {
+
+            port reactions is multiple ordered LinguaFrancaReaction
+            port timers is multiple unordered LinguaFrancaTimer
+        }
+
+        vertex LinguaFrancaSignal refines LinguaFrancaElem {
+            prop sizeInBits is long
+
+        }
+    }
+
     namespace sdf {
 
-        vertex SDFElem
+        vertex SDFElem refines moc::MoCElem
 
         vertex SDFComb refines SDFElem {
             prop consumption is strmap<int>
@@ -23,6 +49,8 @@ namespace moc {
             prop delayedTokens is int
 
             port delayFunction is single impl::Executable
+            port notDelayedChannel is single in SDFChannel
+            port delayedChannel is single out SDFChannel
         }
 
         vertex SDFChannel refines SDFElem {
@@ -51,13 +79,15 @@ namespace execution {
         port stimulated is multiple unordered Task
     }
 
-    vertex Task
-
-    vertex PeriodicTask refines Task {
-        port stimulus is single in PeriodicStimulus
+    vertex Task {
+        port callSequence is multiple ordered out impl::Executable
     }
 
-    vertex Channel refines ::ModelOfExecution {
+    vertex PeriodicTask refines Task {
+        port periodicStimulus is single in PeriodicStimulus
+    }
+
+    vertex Channel {
         prop maxElems is int
 
         prop elemSizeInBits is int
@@ -78,6 +108,8 @@ namespace execution {
         port sucessor is Task
     }
 
+    edge ContainmentEdge
+
     edge ConstraintEdge
 
     edge CommunicationEdge
@@ -90,7 +122,7 @@ namespace platform {
 
     vertex PlatformElem
 
-    vertex Structure refines PlatformElem {
+    vertex AbstractStructure refines PlatformElem {
         port children is multiple PlatformElem
     }
 
@@ -98,7 +130,21 @@ namespace platform {
         prop operatingFrequencyInHertz is long
     }
 
-    vertex ProcessingModule refines DigitalModule {
+    vertex SynthetizableDigitalPorts refines DigitalModule {
+        prop portProtocolAcronym is strmap<string>
+        prop portIsInitiator is strmap<bool>
+        prop portWidthInBits is strmap<int>
+    }
+
+    vertex GenericProcessingModule refines DigitalModule
+
+    vertex GenericCommunicationModule refines DigitalModule
+
+    vertex GenericMemoryModule refines DigitalModule {
+        prop spaceInBits is long
+    }
+
+    vertex GenericCacheModule refines DigitalModule {
 
     }
 
@@ -106,12 +152,42 @@ namespace platform {
         prop operationDurationInCycles is strmap<strmap<long>>
     }
 
-    vertex CommunicationModule refines DigitalModule {
-        prop minBitsPerSecNumerator is long
-        prop minBitsPerSecDenominator is long
+    vertex InstrumentedCommunicationModule refines GenericCommunicationModule {
+        prop flitSizeInBits is int
+        prop maxCyclesPerFlit is int
+        prop maxConcurrentFlits is int
+        prop initialLatency is int
     }
 
-    vertex StorageModule refines DigitalModule {
-        prop spaceInBits is long
+    vertex RoundRobinCommunicationModule refines InstrumentedCommunicationModule {
+        prop allocatedWeights is strmap<int>
+        prop totalWeights is int
     }
+
+    edge StructuralConnection
+
+    edge PhysicalConnection
+
+    namespace runtime {
+        vertex FixedPriorityScheduler {
+            prop preemptive is boolean
+        }
+
+        vertex RoundRobinScheduler {
+
+        }
+
+        vertex TimeTriggeredScheduler {
+
+        }
+    }
+
+}
+
+namespace decision {
+    edge AbstractMapping
+
+    edge AbstractAllocation
+
+    edge AbstractScheduling
 }

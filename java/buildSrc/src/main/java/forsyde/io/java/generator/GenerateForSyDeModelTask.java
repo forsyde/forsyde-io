@@ -49,8 +49,10 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
     @TaskAction
     public void execute() {
+        /*
         final ObjectMapper objectMapper = new ObjectMapper()
                 .registerModule(new Jdk8Module());
+         */
         try {
             final ForSyDeTraitDSLLexer forSyDeTraitDSLLexer = new ForSyDeTraitDSLLexer(CharStreams.fromPath(inputModelDSL.toPath()));
             final CommonTokenStream commonTokenStream = new CommonTokenStream(forSyDeTraitDSLLexer);
@@ -105,7 +107,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
     protected String toCamelCase(String word) {
         return WordUtils.capitalize(word);
-        return WordUtils.capitalizeFully(word, '_').replace("_", "");
+        //return WordUtils.capitalizeFully(word, '_').replace("_", "");
     }
 
     public TypeName metaToJavaType(PropertyTypeSpec prop) {
@@ -116,10 +118,10 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 .FloatVertexProperty(() -> ClassName.get(Float.class))
                 .DoubleVertexProperty(() -> ClassName.get(Double.class))
                 .LongVertexProperty(() -> ClassName.get(Long.class))
-                .ArrayVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(ArrayList.class), metaToJavaType(p)))
-                .IntMapVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(Integer.class),
+                .ArrayVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(List.class), metaToJavaType(p)))
+                .IntMapVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(Integer.class),
                         metaToJavaType(p)))
-                .StringMapVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(String.class),
+                .StringMapVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class),
                         metaToJavaType(p)))
                 .apply(prop);
         /*
@@ -158,19 +160,8 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 .addJavadoc("@return \"$L\".\n\" property", prop.name)
                 .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT).returns(typeOut);
         prop.comment.ifPresent(comment -> getPropMethod.addJavadoc("$L", comment));
-        // if (propInfo['default'] != null) {
-        // getPropMethod.beginControlFlow("if
-        // (getViewedVertex().getProperties().containsKey(\"${propName}\"))")
-        // getPropMethod.addStatement("return (\$T)
-        // getViewedVertex().getProperties().get(\"${propName}\").unwrap()", typeOut)
-        // getPropMethod.nextControlFlow("else")
-        // getPropMethod.addStatement("return new \$T(\$L)", typeOut,
-        // generatePropertyDefault(propInfo).build())
-        // getPropMethod.endControlFlow()
-        // } else {
         getPropMethod.addStatement("return ($T) getViewedVertex().getProperties().get(\"$L\").unwrap()", typeOut,
                 prop.name);
-        // }
         return getPropMethod.build();
     }
 
@@ -184,34 +175,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 .addJavadoc("setter for named required property \"$L\".\n", prop.name)
                 .addJavadoc("@param $L value for required property \"$L\".\n", WordUtils.uncapitalize(toCamelCase(prop.name)), prop.name)
                 .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT);
-        // if (propInfo['default'] != null) {
-        // getPropMethod.beginControlFlow("if
-        // (getViewedVertex().getProperties().containsKey(\"${propName}\"))")
-        // getPropMethod.addStatement("return (\$T)
-        // getViewedVertex().getProperties().get(\"${propName}\").unwrap()", typeOut)
-        // getPropMethod.nextControlFlow("else")
-        // getPropMethod.addStatement("return new \$T(\$L)", typeOut,
-        // generatePropertyDefault(propInfo).build())
-        // getPropMethod.endControlFlow()
-        // } else {
         TypeName propClass = ClassName.get("forsyde.io.java.core", "VertexProperty");
-//		TypeName mapClass = ClassName.get("forsyde.io.java.core", "MapVertexProperty");
-//		if (prop.getType() instanceof VertexTraitObjectProperty) {
-//			getPropMethod.addStatement("getViewedVertex().getProperties().put(\"$L\", $T.fromConformingMapObject($L))",
-//					prop.getName(), mapClass, toCamelCase(prop.getName()));
-//		} else if (prop.getType() instanceof VertexTraitArrayProperty) {
-//			getPropMethod.addStatement("getViewedVertex().getProperties().put(\"$L\", $T.fromConformingList($L))",
-//					prop.getName(), arrayClass, toCamelCase(prop.getName()));
-//		} else if (prop.getType() instanceof VertexTraitIntProperty) {
-//			getPropMethod.addStatement("getViewedVertex().getProperties().put(\"$L\", new $T($L))", prop.getName(),
-//					ClassName.get("forsyde.io.java.core", "IntegerVertexProperty"), toCamelCase(prop.getName()));
-//		} else if (prop.getType() instanceof VertexTraitRealProperty) {
-//			getPropMethod.addStatement("getViewedVertex().getProperties().put(\"$L\", new $T($L))", prop.getName(),
-//					ClassName.get("forsyde.io.java.core", "DoubleVertexProperty"), toCamelCase(prop.getName()));
-//		} else if (prop.getType() instanceof VertexTraitBoolProperty) {
-//			getPropMethod.addStatement("getViewedVertex().getProperties().put(\"$L\", new $T($L))", prop.getName(),
-//					ClassName.get("forsyde.io.java.core", "BooleanVertexProperty"), toCamelCase(prop.getName()));
-//		} else {
         getPropMethod.addStatement("getViewedVertex().getProperties().put(\"$L\", $T.create($L))", prop.name,
                 propClass, WordUtils.uncapitalize(toCamelCase(prop.name)));
 //		}

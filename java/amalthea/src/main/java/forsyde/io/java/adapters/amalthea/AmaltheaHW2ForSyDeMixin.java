@@ -1,20 +1,22 @@
 package forsyde.io.java.adapters.amalthea;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.core.Vertex;
-import forsyde.io.java.core.VertexTrait;
-import forsyde.io.java.typed.viewers.*;
+import forsyde.io.java.core.*;
 import forsyde.io.java.typed.viewers.platform.*;
 import org.eclipse.app4mc.amalthea.model.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public interface Amalthea2ForSyDeAdapterMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
+public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
+
+    default void fromHWtoForSyDe(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+        amalthea.getHwModel().getStructures().forEach(hwStructure -> {
+            fromStructureToVertex(forSyDeSystemGraph, hwStructure);
+            fromStructureToEdges(forSyDeSystemGraph, hwStructure);
+        });
+        connectModulesBetweenContainers(amalthea, forSyDeSystemGraph);
+    }
 
     default void fromPUIntoVertex(ProcessingUnit pu, Vertex v) {
         ProcessingUnitDefinition puDef = pu.getDefinition();
@@ -48,27 +50,28 @@ public interface Amalthea2ForSyDeAdapterMixin extends EquivalenceModel2ModelMixi
         }
     }
 
-    default Map<INamed, Vertex> fromStructureToVertex(ForSyDeSystemGraph model, HwStructure structure) {
-        return fromStructureToVertex(model, structure, "");
+    default void fromStructureToVertex(ForSyDeSystemGraph model, HwStructure structure) {
+        fromStructureToVertex(model, structure, "");
     }
 
-    default Map<INamed, Vertex> fromStructureToVertex(ForSyDeSystemGraph model, HwStructure structure,
+    default void fromStructureToVertex(ForSyDeSystemGraph model, HwStructure structure,
                                                       String prefix) {
         final Vertex structureVertex = new Vertex(prefix + structure.getName(), VertexTrait.PLATFORM_ABSTRACTSTRUCTURE);
-        final HashMap<INamed, Vertex> transformed = new HashMap<>();
+        addEquivalence(structure, structureVertex);
         model.addVertex(structureVertex);
-        transformed.put(structure, structureVertex);
         structureVertex.ports.add("submodules");
         for (HwStructure childStructure : structure.getStructures()) {
-            transformed.putAll(fromStructureToVertex(model, childStructure, prefix + structure.getName() + "."));
-            model.connect(structureVertex, transformed.get(childStructure), "submodules",
-                    EdgeTrait.PLATFORM_STRUCTURALCONNECTION);
+            fromStructureToVertex(model, childStructure, prefix + structure.getName() + ".");
+            equivalent(childStructure).ifPresent(childStructureVertex -> {
+                model.connect(structureVertex, childStructureVertex, "submodules",
+                        EdgeTrait.PLATFORM_STRUCTURALCONNECTION);
+            });
         }
         for (HwModule module : structure.getModules()) {
             final Vertex moduleVertex = new Vertex(prefix + structure.getName() + "." + module.getName());
             moduleVertex.putProperty("nominal_frequency_in_hertz",
                     fromFrequencyToLong(module.getFrequencyDomain().getDefaultValue()));
-            transformed.put(module, moduleVertex);
+            addEquivalence(module, moduleVertex);
             for (HwPort port : module.getPorts()) {
                 moduleVertex.ports.add(port.getName());
             }
@@ -101,17 +104,15 @@ public interface Amalthea2ForSyDeAdapterMixin extends EquivalenceModel2ModelMixi
         for (HwPort port : structure.getPorts()) {
             structureVertex.ports.add(port.getName());
         }
-        return transformed;
     }
 
-    default void fromStructureToEdges(ForSyDeSystemGraph model, HwStructure structure,
-                                      Map<INamed, Vertex> transformed) {
+    default void fromStructureToEdges(ForSyDeSystemGraph model, HwStructure structure) {
         for (HwStructure childStructure : structure.getStructures()) {
-            fromStructureToEdges(model, childStructure, transformed);
+            fromStructureToEdges(model, childStructure);
         }
         for (HwConnection connection : structure.getConnections()) {
-            final Vertex sourceVertex = transformed.get(connection.getPort1().getNamedContainer());
-            final Vertex targetVertex = transformed.get(connection.getPort2().getNamedContainer());
+            final Vertex sourceVertex = equivalent(connection.getPort1().getNamedContainer()).get();
+            final Vertex targetVertex = equivalent(connection.getPort2().getNamedContainer()).get();
             model.connect(sourceVertex, targetVertex, connection.getPort1().getName(), connection.getPort2().getName(), EdgeTrait.PLATFORM_PHYSICALCONNECTION);
             // add the port information
             if (!SynthetizableDigitalPorts.conforms(sourceVertex)) {
@@ -157,24 +158,25 @@ public interface Amalthea2ForSyDeAdapterMixin extends EquivalenceModel2ModelMixi
         }
     }
 
-    default void oSModelToBinding(Amalthea amalthea, ForSyDeSystemGraph model, Map<INamed, Vertex> transformed) {
-        for (OperatingSystem os: amalthea.getOsModel().getOperatingSystems()) {
-            for(TaskScheduler taskScheduler : os.getTaskSchedulers()) {
-                final Vertex platformVertex = new Vertex(os.getName() + "." + taskScheduler.getName(), VertexTrait.PLATFORM_PLATFORMELEM);
-                if (taskScheduler.getSchedulingAlgorithm() instanceof FixedPriorityPreemptive) {
-                    platformVertex.addTraits(VertexTrait.PLATFORM_RUNTIME_FIXEDPRIORITYSCHEDULER);
-                }
-                transformed.put(os, platformVertex);
-                transformed.put(taskScheduler, platformVertex);
-                model.addVertex(platformVertex);
-                for (SchedulerAllocation allocation : amalthea.getMappingModel().getSchedulerAllocation()) {
-                    if (allocation.getScheduler().equals(taskScheduler)) {
-                        final Vertex puVertex = transformed.get(allocation.getExecutingPU());
-                        model.connect(platformVertex, puVertex, EdgeTrait.DECISION_ABSTRACTALLOCATION);
+    default void connectModulesBetweenContainers(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+        forSyDeSystemGraph.vertexSet().stream()
+        .filter(AbstractStructure::conforms)
+        .map(v -> AbstractStructure.safeCast(v).get())
+        .forEach(abstractStructure -> {
+            for (EdgeInfo inInfo : forSyDeSystemGraph.incomingEdgesOf(abstractStructure.getViewedVertex())) {
+                final Vertex inVertex = forSyDeSystemGraph.getEdgeSource(inInfo);
+                for (EdgeInfo outInfo : forSyDeSystemGraph.outgoingEdgesOf(abstractStructure.getViewedVertex())) {
+                    final Vertex outVertex = forSyDeSystemGraph.getEdgeTarget(outInfo);
+                    if (inInfo.targetPort.equals(outInfo.sourcePort) && !AbstractStructure.conforms(inVertex)
+                            && !AbstractStructure.conforms(outVertex)) {
+                        final EdgeInfo edgeInfo = new EdgeInfo(inVertex.identifier, outVertex.identifier, inInfo.targetPort, outInfo.sourcePort);
+                        edgeInfo.edgeTraits.addAll(inInfo.edgeTraits);
+                        edgeInfo.edgeTraits.addAll(outInfo.edgeTraits);
+                        forSyDeSystemGraph.addEdge(inVertex, outVertex, edgeInfo);
                     }
                 }
             }
-        }
+        });
     }
 
     default Long fromFrequencyToLong(Frequency freq) {
@@ -197,4 +199,5 @@ public interface Amalthea2ForSyDeAdapterMixin extends EquivalenceModel2ModelMixi
         }
         return Double.valueOf(freq.getValue() * multiplier).longValue();
     }
+
 }

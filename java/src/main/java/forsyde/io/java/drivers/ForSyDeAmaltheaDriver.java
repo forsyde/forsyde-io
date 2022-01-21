@@ -1,6 +1,5 @@
 package forsyde.io.java.drivers;
 
-import forsyde.io.java.adapters.AmaltheaAdapter;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import org.eclipse.app4mc.amalthea.model.Amalthea;
 import org.eclipse.app4mc.amalthea.model.emf.AmaltheaResourceFactory;
