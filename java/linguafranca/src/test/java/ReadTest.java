@@ -1,7 +1,7 @@
+import forsyde.io.java.drivers.ForSyDeModelHandler;
 import org.junit.Test;
 
 import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.drivers.ForSyDeModelHandler;
 
 public class ReadTest {
 

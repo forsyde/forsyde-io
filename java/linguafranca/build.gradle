@@ -25,6 +25,8 @@ dependencies {
     implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.resources', version: '3.15.0'
     // https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.mwe2.launch
     implementation group: 'org.eclipse.emf', name: 'org.eclipse.emf.mwe2.launch', version: '2.12.1'
+
+    testImplementation 'junit:junit:4.12'
 }
 configurations {
     mwe2 {

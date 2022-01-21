@@ -2,7 +2,6 @@ package forsyde.io.java.adapters.amalthea;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
-import forsyde.io.java.typed.viewers.*;
 import forsyde.io.java.typed.viewers.platform.GenericProcessingModule;
 import forsyde.io.java.typed.viewers.platform.runtime.FixedPriorityScheduler;
 import forsyde.io.java.typed.viewers.platform.runtime.RoundRobinScheduler;

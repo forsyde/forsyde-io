@@ -5,7 +5,6 @@ import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
-import forsyde.io.java.typed.viewers.*;
 import forsyde.io.java.typed.viewers.platform.*;
 import org.eclipse.app4mc.amalthea.model.*;
 
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Deprecated
 public interface Amalthea2ForSyDeAdapterMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
     default void fromPUIntoVertex(ProcessingUnit pu, Vertex v) {
