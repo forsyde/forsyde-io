@@ -4,8 +4,8 @@ import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
-import forsyde.io.java.typed.viewers.LinguaFrancaSignal;
-import forsyde.io.java.typed.viewers.LinguaFrancaSignalViewer;
+import forsyde.io.java.typed.viewers.moc.linguafranca.LinguaFrancaSignal;
+import forsyde.io.java.typed.viewers.moc.linguafranca.LinguaFrancaSignalViewer;
 import org.lflang.lf.*;
 
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
     }
 
     protected Vertex fromLFTimerToForsyDeTimer(ForSyDeSystemGraph model, Timer timer, String prefix, String suffix) {
-        Vertex timerVertex = new Vertex(prefix +  timer.getName() + suffix, VertexTrait.LinguaFrancaTimer);
+        Vertex timerVertex = new Vertex(prefix +  timer.getName() + suffix, VertexTrait.MOC_LINGUAFRANCA_LINGUAFRANCATIMER);
         model.addVertex(timerVertex);
         if (timer.getPeriod().getTime() != null) {
             timerVertex.putProperty("period_numerator_per_sec", timer.getPeriod().getTime().getInterval());
@@ -78,7 +78,7 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
     }
 
     protected Vertex processLFReactionToForSyDeReaction(ForSyDeSystemGraph model, Reaction reaction, String prefix, String suffix) {
-        Vertex reactionVertex = new Vertex(prefix + "reaction" + suffix, VertexTrait.LinguaFrancaReaction);
+        Vertex reactionVertex = new Vertex(prefix + "reaction" + suffix, VertexTrait.MOC_LINGUAFRANCA_LINGUAFRANCAREACTION);
         model.addVertex(reactionVertex);
         for (TriggerRef triggerRef : reaction.getTriggers()) {
             if (triggerRef instanceof VarRef) {
@@ -100,7 +100,7 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
         final Map<Timer, Vertex> timerToVertex = new HashMap<>();
         final Map<Instantiation, Vertex> childInstancesToVertex = new HashMap<>();
         final String instantiationName = prefix + instantiation.getName();
-        final Vertex instantiationVertex = new Vertex(instantiationName, VertexTrait.LinguaFrancaReactor);
+        final Vertex instantiationVertex = new Vertex(instantiationName, VertexTrait.MOC_LINGUAFRANCA_LINGUAFRANCAREACTOR);
         instantiationVertex.ports.add("timers");
         instantiationVertex.ports.add("reactions");
         instantiationVertex.ports.add("children_reactors");
@@ -120,27 +120,27 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
             for (final Instantiation childInstantiation : reactor.getInstantiations()) {
                 Vertex childInstanceVertex = processLFInstanceToForSyDeReactor(model, childInstantiation, instantiationName + ".");
                 model.addVertex(childInstanceVertex);
-                model.connect(instantiationVertex, childInstanceVertex, "children_reactors", EdgeTrait.LinguaFrancaContainment);
+                model.connect(instantiationVertex, childInstanceVertex, "children_reactors", EdgeTrait.MOC_LINGUAFRANCA_CONTAINMENTEDGE);
                 childrenReactorsOrdering.put(childInstanceVertex.identifier, childIdx);
                 childInstancesToVertex.put(childInstantiation, childInstanceVertex);
                 childIdx += 1;
             }
             for (final Timer timer : reactor.getTimers()) {
                 final Vertex timerVertex = fromLFTimerToForsyDeTimer(model, timer, instantiationName + ".");
-                model.connect(instantiationVertex, timerVertex, "timers", EdgeTrait.LinguaFrancaContainment);
+                model.connect(instantiationVertex, timerVertex, "timers", EdgeTrait.MOC_LINGUAFRANCA_CONTAINMENTEDGE);
                 timerToVertex.put(timer, timerVertex);
             }
             Map<String, Integer> reactionsOrdering = new HashMap<>();
             for (int i = 0; i < reactor.getReactions().size(); i++) {
                 final Reaction reaction = reactor.getReactions().get(i);
                 final Vertex reactionVertex = processLFReactionToForSyDeReaction(model, reaction, instantiationName + ".", String.valueOf(i));
-                model.connect(instantiationVertex, reactionVertex, "reactions", EdgeTrait.LinguaFrancaConnection);
+                model.connect(instantiationVertex, reactionVertex, "reactions", EdgeTrait.MOC_LINGUAFRANCA_EVENTEDGE);
                 reactionsOrdering.put(reactionVertex.identifier, i);
                 reactionVertex.putProperty("size_in_bits", 0L);
                 reactionVertex.ports.add("implementation");
-                final Vertex functionVertex = new Vertex(reactionVertex.identifier + ".body", VertexTrait.InlineFunction);
+                final Vertex functionVertex = new Vertex(reactionVertex.identifier + ".body", VertexTrait.IMPL_EXECUTABLE);
                 model.addVertex(functionVertex);
-                model.connect(reactionVertex, functionVertex, "implementation", EdgeTrait.LinguaFrancaContainment);
+                model.connect(reactionVertex, functionVertex, "implementation", EdgeTrait.MOC_LINGUAFRANCA_CONTAINMENTEDGE);
                 functionVertex.putProperty("source_code", reaction.getCode().getBody() == null ? "" : reaction.getCode().getBody());
                 for (final TriggerRef triggerRef : reaction.getTriggers()) {
                     if (triggerRef instanceof VarRef) {
@@ -149,12 +149,12 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                             final Port triggerPort = (Port) varRef.getVariable();
                             String triggerName = triggerPort.getName();
                             reactionVertex.ports.add(triggerName);
-                            model.connect(instantiationVertex, reactionVertex, triggerName, triggerName, EdgeTrait.LinguaFrancaTrigger);
+                            model.connect(instantiationVertex, reactionVertex, triggerName, triggerName, EdgeTrait.MOC_LINGUAFRANCA_EVENTEDGE);
                         } else if (varRef.getVariable() instanceof Timer) {
                             final Timer triggerTimer = (Timer) varRef.getVariable();
                             Vertex timerVertex = timerToVertex.get(triggerTimer);
                             reactionVertex.ports.add(triggerTimer.getName());
-                            model.connect(timerVertex, reactionVertex, null, triggerTimer.getName(), EdgeTrait.LinguaFrancaTrigger);
+                            model.connect(timerVertex, reactionVertex, null, triggerTimer.getName(), EdgeTrait.MOC_LINGUAFRANCA_EVENTEDGE);
                         }
                     }
                 }
@@ -163,12 +163,12 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                         final Port triggerPort = (Port) varRef.getVariable();
                         String triggerName = triggerPort.getName();
                         reactionVertex.ports.add(triggerName);
-                        model.connect(reactionVertex, instantiationVertex, triggerName, triggerName, EdgeTrait.LinguaFrancaTrigger);
+                        model.connect(reactionVertex, instantiationVertex, triggerName, triggerName, EdgeTrait.MOC_LINGUAFRANCA_EVENTEDGE);
                     } else if (varRef.getVariable() instanceof Timer) {
                         final Timer triggerTimer = (Timer) varRef.getVariable();
                         Vertex timerVertex = timerToVertex.get(triggerTimer);
                         reactionVertex.ports.add(triggerTimer.getName());
-                        model.connect(reactionVertex, timerVertex, null, triggerTimer.getName(), EdgeTrait.LinguaFrancaTrigger);
+                        model.connect(reactionVertex, timerVertex, null, triggerTimer.getName(), EdgeTrait.MOC_LINGUAFRANCA_EVENTEDGE);
                     }
                 }
             }
@@ -187,7 +187,7 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                         final String inPort = inVarRef.getVariable() instanceof Port ? ((Port) inVarRef.getVariable()).getName() : "";
                         final String outPort = outVarRef.getVariable() instanceof Port ? ((Port) outVarRef.getVariable()).getName() : "";
                         final Vertex signal = new Vertex(connectionSrc.identifier
-                                + "." + inPort +  "-" + connectionDst.identifier + "." + outPort, VertexTrait.LinguaFrancaSignal);
+                                + "." + inPort +  "-" + connectionDst.identifier + "." + outPort, VertexTrait.MOC_LINGUAFRANCA_LINGUAFRANCASIGNAL);
                         final LinguaFrancaSignal linguaFrancaSignal = new LinguaFrancaSignalViewer(signal);
                         final Long signalSize = inVarRef.getVariable() instanceof Port ? varTypeToSize(((Port) inVarRef.getVariable()).getType()) : 0L;
                         model.addVertex(signal);
@@ -201,8 +201,8 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
                                 connection.getDelay() != null ? (long) fromLFTimeUnitToSecondsDenominator(connection.getDelay().getUnit()) : 1L
                         );
                         // signal.putProperty("size_in_bits", signalSize);
-                        model.connect(connectionSrc, signal, inPort, "source_reaction", EdgeTrait.LinguaFrancaConnection);
-                        model.connect(signal, connectionDst, "target_reaction", outPort, EdgeTrait.LinguaFrancaConnection);
+                        model.connect(connectionSrc, signal, inPort, "source_reaction", EdgeTrait.MOC_LINGUAFRANCA_EVENTEDGE);
+                        model.connect(signal, connectionDst, "target_reaction", outPort, EdgeTrait.MOC_LINGUAFRANCA_EVENTEDGE);
                     }
                 }
             }

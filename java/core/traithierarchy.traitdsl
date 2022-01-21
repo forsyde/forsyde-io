@@ -30,8 +30,13 @@ namespace moc {
 
         vertex LinguaFrancaSignal refines LinguaFrancaElem {
             prop sizeInBits is long
-
+            prop propagationDelayInSecsNumerator is long
+            prop propagationDelayInSecsDenominator is long
         }
+
+        edge ContainmentEdge
+
+        edge EventEdge
     }
 
     namespace sdf {

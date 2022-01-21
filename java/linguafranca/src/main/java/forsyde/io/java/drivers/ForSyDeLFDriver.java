@@ -2,6 +2,7 @@ package forsyde.io.java.drivers;
 
 
 import com.google.inject.Injector;
+import forsyde.io.java.adapters.LinguaFrancaAdapter;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;

@@ -8,8 +8,8 @@ plugins {
   id 'idea'
   id 'eclipse'
   id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
-  id "org.xtext.builder" version "2.0.8"
-  id "org.xtext.xtend" version "2.0.8"
+  //id "org.xtext.builder" version "2.0.8"
+  //id "org.xtext.xtend" version "2.0.8"
   id "com.github.mrsarm.jshell.plugin" version "1.1.0"
 }
 
@@ -47,7 +47,7 @@ repositories {
 //  }
 //}
 
-apply from: "lflang-build.gradle"
+//apply from: "build.gradle"
 
 // In this section you declare the dependencies for your production and test code
 dependencies {

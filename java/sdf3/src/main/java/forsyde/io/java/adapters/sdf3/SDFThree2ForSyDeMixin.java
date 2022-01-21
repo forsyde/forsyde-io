@@ -6,8 +6,8 @@ import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
-import forsyde.io.java.typed.viewers.SDFComb;
-import forsyde.io.java.typed.viewers.SDFSignal;
+import forsyde.io.java.typed.viewers.moc.sdf.SDFChannel;
+import forsyde.io.java.typed.viewers.moc.sdf.SDFComb;
 
 import java.util.HashMap;
 
@@ -16,7 +16,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
     default void fromActorsToVertexes(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getActor().forEach(a -> {
             final Vertex v = new Vertex(a.getName());
-            v.addTraits(VertexTrait.SDFComb);
+            v.addTraits(VertexTrait.MOC_SDF_SDFCOMB);
             final SDFComb sdfComb = SDFComb.safeCast(v).get();
             final HashMap<String, Integer> consumption = new HashMap<>();
             final HashMap<String, Integer> production = new HashMap<>();
@@ -37,28 +37,28 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
         sdf3.getApplicationGraph().getSdf().getChannel().forEach(channel -> {
             // initial channel if no initial token exists
             final Vertex v = new Vertex(channel.getName());
-            v.addTraits(VertexTrait.SDFSignal);
+            v.addTraits(VertexTrait.MOC_SDF_SDFCHANNEL);
             v.ports.add(channel.getSrcPort());
-            final SDFSignal sdfSignal = SDFSignal.safeCast(v).get();
+            final SDFChannel sdfChannel = SDFChannel.safeCast(v).get();
             addEquivalence(channel, v);
             // additional tokens and prefixes until the prefixing chain is over
             Vertex endV = v;
             for (int i = 1; i < channel.getInitialTokens().intValueExact(); i++) {
                 endV.ports.add(channel.getDstPort() + "_delay_" + (i - 1));
                 final Vertex extraPrefix = new Vertex(channel.getName() + "_prefix_" + i);
-                extraPrefix.addTraits(VertexTrait.SDFPrefix);
+                extraPrefix.addTraits(VertexTrait.MOC_SDF_SDFDELAY);
                 extraPrefix.ports.add(channel.getDstPort() + "_delay_" + (i + -1));
                 extraPrefix.ports.add(channel.getDstPort() + "_delay_" + i);
                 addEquivalence(channel, extraPrefix);
                 // connect signal and prefix
-                systemGraph.connect(endV, extraPrefix, channel.getDstPort() + "_delay_" + (i + -1), channel.getDstPort() + "_delay_" + i, EdgeTrait.ModelOfComputationEdge);
+                systemGraph.connect(endV, extraPrefix, channel.getDstPort() + "_delay_" + (i + -1), channel.getDstPort() + "_delay_" + i, EdgeTrait.MOC_SDF_SDFDATAEDGE);
 
                 // new signal
                 final Vertex extraV = new Vertex(channel.getName() + "_delay_" + i);
-                extraV.addTraits(VertexTrait.SDFSignal);
+                extraV.addTraits(VertexTrait.MOC_SDF_SDFCHANNEL);
                 extraV.ports.add(channel.getDstPort() + "_delay_" + i);
                 //connect again
-                systemGraph.connect(extraPrefix, extraV, channel.getDstPort() + "_delay_" + i, channel.getDstPort() + "_delay_" + i, EdgeTrait.ModelOfComputationEdge);
+                systemGraph.connect(extraPrefix, extraV, channel.getDstPort() + "_delay_" + i, channel.getDstPort() + "_delay_" + i, EdgeTrait.MOC_SDF_SDFDATAEDGE);
                 addEquivalence(channel, extraV);
 
             }
@@ -75,7 +75,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                 equivalents(channel).filter(sig -> sig.ports.contains(channel.getSrcPort())).forEach(sigV -> {
                     // and the equivalent vertex
                     equivalent(srcActor).ifPresent(srcV -> {
-                        systemGraph.connect(srcV, sigV, channel.getSrcPort(), channel.getSrcPort(), EdgeTrait.ModelOfComputationEdge);
+                        systemGraph.connect(srcV, sigV, channel.getSrcPort(), channel.getSrcPort(), EdgeTrait.MOC_SDF_SDFDATAEDGE);
                     });
                 });
             });
@@ -86,7 +86,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                 equivalents(channel).filter(sig -> sig.ports.contains(channel.getSrcPort())).forEach(sigV -> {
                     // and the equivalent vertex
                     equivalent(dstActor).ifPresent(dstV -> {
-                        systemGraph.connect(sigV, dstV, channel.getDstPort(), channel.getDstPort(), EdgeTrait.ModelOfComputationEdge);
+                        systemGraph.connect(sigV, dstV, channel.getDstPort(), channel.getDstPort(), EdgeTrait.MOC_SDF_SDFDATAEDGE);
                     });
                 });
             });

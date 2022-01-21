@@ -26,7 +26,6 @@ package org.lflang
 
 import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.ecore.resource.Resource
-import org.lflang.generator.cpp.name
 import org.lflang.lf.*
 
 /**
@@ -35,7 +34,7 @@ import org.lflang.lf.*
  * Otherwise, just return the argument.
  */
 fun ReactorDecl.toDefinition(): Reactor = when (this) {
-    is Reactor         -> this
+    is Reactor -> this
     is ImportedReactor -> this.reactorClass
     else               -> throw AssertionError("Unknown reactor type: $this")
 }

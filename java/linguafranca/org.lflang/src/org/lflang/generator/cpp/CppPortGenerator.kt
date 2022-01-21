@@ -45,7 +45,7 @@ class CppPortGenerator(private val reactor: Reactor) {
     val Port.cppType: String
         get() {
             val portType = when (this) {
-                is Input  -> "reactor::Input"
+                is Input -> "reactor::Input"
                 is Output -> "reactor::Output"
                 else      -> throw AssertionError()
             }

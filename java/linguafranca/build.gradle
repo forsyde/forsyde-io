@@ -1,4 +1,13 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id "org.xtext.builder" version "2.0.8"
+    id "org.xtext.xtend" version "2.0.8"
+}
+
 ext.xtextVersion = '2.25.0'
+
+
 
 repositories {
     // Use 'jcenter' for resolving your dependencies.
@@ -27,6 +36,7 @@ dependencies {
     mwe2 'org.eclipse.emf:org.eclipse.emf.mwe2.launch'
     mwe2 "org.eclipse.xtext:org.eclipse.xtext.common.types:${xtextVersion}"
     mwe2 "org.eclipse.xtext:org.eclipse.xtext.xtext.generator:${xtextVersion}"
+    implementation project(":core")
 }
 
 task generateXtextLanguage(type: JavaExec) {

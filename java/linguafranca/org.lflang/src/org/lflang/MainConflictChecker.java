@@ -2,7 +2,6 @@ package org.lflang;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;

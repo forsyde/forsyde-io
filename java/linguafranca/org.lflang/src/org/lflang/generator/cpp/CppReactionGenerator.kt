@@ -63,9 +63,9 @@ class CppReactionGenerator(
     private val VarRef.cppType
         get() =
             when (val variable = this.variable) {
-                is Timer  -> "reactor::Timer"
+                is Timer -> "reactor::Timer"
                 is Action -> with(CppActionGenerator) { variable.cppType }
-                is Port   -> with(portGenerator) { variable.cppType }
+                is Port -> with(portGenerator) { variable.cppType }
                 else      -> AssertionError("Unexpected variable type")
             }
 
@@ -73,7 +73,7 @@ class CppReactionGenerator(
         get() = when {
             this.isStartup  -> "reactor::StartupAction"
             this.isShutdown -> "reactor::ShutdownAction"
-            this is VarRef  -> cppType
+            this is VarRef -> cppType
             else            -> AssertionError("Unexpected trigger type")
         }
 
