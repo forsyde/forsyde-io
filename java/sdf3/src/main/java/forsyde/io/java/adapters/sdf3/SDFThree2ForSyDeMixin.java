@@ -6,8 +6,7 @@ import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
-import forsyde.io.java.typed.viewers.moc.sdf.SDFChannel;
-import forsyde.io.java.typed.viewers.moc.sdf.SDFComb;
+import forsyde.io.java.typed.viewers.moc.sdf.*;
 
 import java.util.HashMap;
 
@@ -16,7 +15,9 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
     default void fromActorsToVertexes(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getActor().forEach(a -> {
             final Vertex v = new Vertex(a.getName());
+            systemGraph.addVertex(v);
             v.addTraits(VertexTrait.MOC_SDF_SDFCOMB);
+            v.ports.add("combFunction");
             final SDFComb sdfComb = SDFComb.safeCast(v).get();
             final HashMap<String, Integer> consumption = new HashMap<>();
             final HashMap<String, Integer> production = new HashMap<>();
@@ -36,17 +37,37 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
     default void fromChannelstoSignalsAndPrefix(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getChannel().forEach(channel -> {
             // initial channel if no initial token exists
-            final Vertex v = new Vertex(channel.getName());
-            v.addTraits(VertexTrait.MOC_SDF_SDFCHANNEL);
-            v.ports.add(channel.getSrcPort());
-            final SDFChannel sdfChannel = SDFChannel.safeCast(v).get();
-            addEquivalence(channel, v);
+            final Vertex channelVertex = new Vertex(channel.getName(), VertexTrait.MOC_SDF_SDFCHANNEL);
+            systemGraph.addVertex(channelVertex);
+            channelVertex.ports.add("producer");
+            channelVertex.ports.add("consumer");
+            addEquivalence(channel, channelVertex);
             // additional tokens and prefixes until the prefixing chain is over
-            Vertex endV = v;
+            if (channel.getInitialTokens() != null && channel.getInitialTokens().intValueExact() > 0) {
+                final Vertex extraPrefix = new Vertex(channel.getName() + "Prefix", VertexTrait.MOC_SDF_SDFDELAY);
+                final Vertex delayedChannel = new Vertex(channel.getName() + "Delayed", VertexTrait.MOC_SDF_SDFCHANNEL);
+                final SDFDelay sdfDelay = new SDFDelayViewer(extraPrefix);
+                systemGraph.addVertex(extraPrefix);
+                systemGraph.addVertex(delayedChannel);
+                delayedChannel.ports.add("producer");
+                delayedChannel.ports.add("consumer");
+                extraPrefix.ports.add("delayFunction");
+                extraPrefix.ports.add("notDelayedChannel");
+                extraPrefix.ports.add("delayedChannel");
+                sdfDelay.setDelayedTokens(channel.getInitialTokens().intValueExact());
+                systemGraph.connect(channelVertex, extraPrefix, "consumer", "notDelayedChannel", EdgeTrait.MOC_SDF_SDFDATAEDGE);
+                systemGraph.connect(extraPrefix, delayedChannel, "delayedChannel", "producer", EdgeTrait.MOC_SDF_SDFDATAEDGE);
+                addEquivalence(channel, extraPrefix);
+                addEquivalence(channel, delayedChannel);
+            }
+            /*
             for (int i = 1; i < channel.getInitialTokens().intValueExact(); i++) {
                 endV.ports.add(channel.getDstPort() + "_delay_" + (i - 1));
                 final Vertex extraPrefix = new Vertex(channel.getName() + "_prefix_" + i);
                 extraPrefix.addTraits(VertexTrait.MOC_SDF_SDFDELAY);
+                extraPrefix.ports.add("delayFunction");
+                extraPrefix.ports.add("notDelayedChannel");
+                extraPrefix.ports.add("delayedChannel");
                 extraPrefix.ports.add(channel.getDstPort() + "_delay_" + (i + -1));
                 extraPrefix.ports.add(channel.getDstPort() + "_delay_" + i);
                 addEquivalence(channel, extraPrefix);
@@ -63,31 +84,37 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
 
             }
             endV.ports.add(channel.getDstPort());
+            */
         });
     }
 
     default void fromChannelsToEdges(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
         // equivalent of 3 for loops
-        sdf3.getApplicationGraph().getSdf().getChannel().forEach(channel -> {
-            sdf3.getApplicationGraph().getSdf().getActor().stream().filter(srcActor -> srcActor.getName().equals(channel.getSrcActor()))
-            .forEach(srcActor -> {
-                // find the equivalent signal to connect
-                equivalents(channel).filter(sig -> sig.ports.contains(channel.getSrcPort())).forEach(sigV -> {
-                    // and the equivalent vertex
-                    equivalent(srcActor).ifPresent(srcV -> {
-                        systemGraph.connect(srcV, sigV, channel.getSrcPort(), channel.getSrcPort(), EdgeTrait.MOC_SDF_SDFDATAEDGE);
-                    });
+        sdf3.getApplicationGraph().getSdf().getChannel()
+        .forEach(channel -> {
+            equivalents(channel)
+            .filter(SDFChannel::conforms)
+            .map(SDFChannelViewer::new)
+            .forEach(sdfChannel -> {
+                sdf3.getApplicationGraph().getSdf().getActor().stream()
+                .filter(srcActor -> srcActor.getName().equals(channel.getSrcActor()))
+                .flatMap(srcActor -> equivalents(srcActor))
+                .forEach(srcActorV -> {
+                    // find the one without consumer, as it could be expanded with delays beforehand.
+                    // find the equivalent signal to connect. Should not NPE.
+                    if (sdfChannel.getConsumerPort(systemGraph).isEmpty()) {
+                        systemGraph.connect(srcActorV, sdfChannel.getViewedVertex(), channel.getSrcPort(), "producer", EdgeTrait.MOC_SDF_SDFDATAEDGE);
+                    }
                 });
-            });
-            // now the target
-            sdf3.getApplicationGraph().getSdf().getActor().stream().filter(dstActor -> dstActor.getName().equals(channel.getDstActor()))
-            .forEach(dstActor -> {
-                // find the equivalent signal to connect
-                equivalents(channel).filter(sig -> sig.ports.contains(channel.getSrcPort())).forEach(sigV -> {
-                    // and the equivalent vertex
-                    equivalent(dstActor).ifPresent(dstV -> {
-                        systemGraph.connect(sigV, dstV, channel.getDstPort(), channel.getDstPort(), EdgeTrait.MOC_SDF_SDFDATAEDGE);
-                    });
+                sdf3.getApplicationGraph().getSdf().getActor().stream()
+                .filter(dstActor -> dstActor.getName().equals(channel.getDstActor()))
+                .flatMap(dstActor -> equivalents(dstActor))
+                .forEach(dstActorV -> {
+                    // find the one without consumer, as it could be expanded with delays beforehand.
+                    // find the equivalent signal to connect. Should not NPE.
+                    if (sdfChannel.getConsumerPort(systemGraph).isEmpty()) {
+                        systemGraph.connect(sdfChannel.getViewedVertex(), dstActorV, "consumer", channel.getDstPort(), EdgeTrait.MOC_SDF_SDFDATAEDGE);
+                    }
                 });
             });
         });

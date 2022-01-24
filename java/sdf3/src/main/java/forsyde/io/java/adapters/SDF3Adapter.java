@@ -18,7 +18,7 @@ public class SDF3Adapter implements ModelAdapter<Sdf3>, SDFThree2ForSyDeMixin {
     public ForSyDeSystemGraph convert(Sdf3 inputModel) {
         final ForSyDeSystemGraph forSyDeSystemGraph = new ForSyDeSystemGraph();
         fromActorsToVertexes(inputModel, forSyDeSystemGraph);
-        fromChannelsToEdges(inputModel, forSyDeSystemGraph);
+        fromChannelstoSignalsAndPrefix(inputModel, forSyDeSystemGraph);
         fromChannelsToEdges(inputModel, forSyDeSystemGraph);
         return forSyDeSystemGraph;
     }
