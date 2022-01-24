@@ -37,8 +37,11 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
 
-    api 'org.eclipse.app4mc:org.eclipse.app4mc.amalthea.model:1.2.0'
-    api project(':core')
+    implementation 'org.eclipse.app4mc:org.eclipse.app4mc.amalthea.model:2.0.0'
+    //implementation 'org.eclipse.app4mc.migration:org.eclipse.app4mc.amalthea.converters.common:2.0.0'
+    //implementation 'org.eclipse.app4mc.migration:parent:2.0.0'
+    //implementation 'org.eclipse.app4mc.migration:org.eclipse.app4mc.amalthea.converters.082:2.0.0'
+    implementation project(':core')
 }
 
 

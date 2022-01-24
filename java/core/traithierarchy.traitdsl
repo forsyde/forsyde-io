@@ -88,6 +88,11 @@ namespace execution {
         port callSequence is multiple ordered out impl::Executable
     }
 
+    vertex ConstrainedTask {
+        prop relativeDeadlineNumerator is long
+        prop relativeDeadlineDenominator is long
+    }
+
     vertex PeriodicTask refines Task {
         port periodicStimulus is single in PeriodicStimulus
     }
@@ -174,15 +179,17 @@ namespace platform {
     edge PhysicalConnection
 
     namespace runtime {
-        vertex FixedPriorityScheduler {
+        vertex AbstractScheduler
+
+        vertex FixedPriorityScheduler refines AbstractScheduler {
             prop preemptive is boolean
         }
 
-        vertex RoundRobinScheduler {
+        vertex RoundRobinScheduler refines AbstractScheduler {
 
         }
 
-        vertex TimeTriggeredScheduler {
+        vertex TimeTriggeredScheduler refines AbstractScheduler {
 
         }
     }
@@ -195,4 +202,16 @@ namespace decision {
     edge AbstractAllocation
 
     edge AbstractScheduling
+
+    vertex Allocated {
+        port allocationHost is out platform::DigitalModule
+    }
+
+    vertex MemoryMapped refines Allocated {
+        port mappingHost is out platform::DigitalModule
+    }
+
+    vertex Scheduled {
+        port scheduler is out platform::runtime::AbstractScheduler
+    }
 }

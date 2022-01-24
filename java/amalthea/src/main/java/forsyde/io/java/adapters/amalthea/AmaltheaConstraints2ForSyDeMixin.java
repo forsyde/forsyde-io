@@ -1,0 +1,50 @@
+package forsyde.io.java.adapters.amalthea;
+
+import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
+import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.core.Vertex;
+import forsyde.io.java.core.VertexTrait;
+import forsyde.io.java.typed.viewers.execution.ConstrainedTask;
+import org.eclipse.app4mc.amalthea.model.*;
+
+public interface AmaltheaConstraints2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
+
+    default void fromConstraintsToForSyDe(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+        amalthea.getConstraintsModel().getRequirements().forEach(req -> {
+            if (req instanceof ProcessRequirement) {
+                final ProcessRequirement processRequirement = (ProcessRequirement) req;
+                equivalent(processRequirement.getProcess()).ifPresent(processVertex -> {
+                    // now look inside all contents of the req to figure out
+                    // if they are deadlines or others stuff
+                    processRequirement.eAllContents().forEachRemaining(item -> {
+                        if (item instanceof TimeRequirementLimit) {
+                            final TimeRequirementLimit timeRequirementLimit = (TimeRequirementLimit) item;
+                            processVertex.addTraits(VertexTrait.EXECUTION_CONSTRAINEDTASK);
+                            ConstrainedTask.safeCast(processVertex).ifPresent(taskVertex -> {
+                                taskVertex.setRelativeDeadlineDenominator(
+                                        timeRequirementLimit.getLimitValue() != null ?
+                                        fromTimeUnitToLong(timeRequirementLimit.getLimitValue().getUnit())
+                                        : 1L);
+                                taskVertex.setRelativeDeadlineNumerator(
+                                        timeRequirementLimit.getLimitValue() != null ?
+                                        timeRequirementLimit.getLimitValue().getValue().longValue()
+                                        : 1L);
+                            });
+                        }
+                    });
+                });
+            }
+        });
+    }
+
+    private long fromTimeUnitToLong(TimeUnit timeUnit) {
+        switch (timeUnit) {
+            case S: return 1L;
+            case MS: return 1000L;
+            case US: return 1000000L;
+            case NS: return 1000000000L;
+            //case 1000000000000: return TimeUnit.PS;
+            default: return 1000000000000L;
+        }
+    }
+}

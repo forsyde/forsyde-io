@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-public class SDF3Driver implements ForSyDeModelDriver {
+public class ForSyDeSDF3Driver implements ForSyDeModelDriver {
 
 
     @Override

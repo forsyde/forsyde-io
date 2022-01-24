@@ -12,11 +12,12 @@ import org.eclipse.app4mc.amalthea.model.TimeUnit;
 
 public interface AmaltheaStimulus2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
-    default void stimulusToVertexes(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void fromStimulusToForSyDe(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
         amalthea.getStimuliModel().getStimuli().forEach((stimulus) -> {
             if (stimulus instanceof PeriodicStimulus) {
                 final PeriodicStimulus periodicStimulus = (PeriodicStimulus) stimulus;
                 final Vertex timerVertex = new Vertex(stimulus.getName(), VertexTrait.EXECUTION_PERIODICSTIMULUS);
+                timerVertex.ports.add("stimulated");
                 forSyDeSystemGraph.addVertex(timerVertex);
                 final forsyde.io.java.typed.viewers.execution.PeriodicStimulus periodicStimulusVertex = new PeriodicStimulusViewer(timerVertex);
                 if (periodicStimulus.getRecurrence() != null) {

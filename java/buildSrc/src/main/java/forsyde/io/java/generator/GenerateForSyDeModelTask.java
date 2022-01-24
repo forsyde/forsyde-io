@@ -160,7 +160,11 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 .addJavadoc("@return \"$L\".\n\" property", prop.name)
                 .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT).returns(typeOut);
         prop.comment.ifPresent(comment -> getPropMethod.addJavadoc("$L", comment));
-        getPropMethod.addStatement("return ($T) getViewedVertex().getProperties().get(\"$L\").unwrap()", typeOut,
+        getPropMethod.addStatement("return getViewedVertex().getProperties().containsKey(\"$L\") ?\n" +
+                        "            ($T) getViewedVertex().getProperties().get(\"$L\").unwrap() :\n" +
+                        "            null",
+                prop.name,
+                typeOut,
                 prop.name);
         return getPropMethod.build();
     }

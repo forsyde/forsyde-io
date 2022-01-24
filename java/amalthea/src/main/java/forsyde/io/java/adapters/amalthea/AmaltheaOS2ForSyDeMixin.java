@@ -19,7 +19,19 @@ public interface AmaltheaOS2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         for (OperatingSystem os: amalthea.getOsModel().getOperatingSystems()) {
             for(TaskScheduler taskScheduler : os.getTaskSchedulers()) {
                 final Vertex platformVertex = new Vertex(os.getName() + "." + taskScheduler.getName(), VertexTrait.PLATFORM_PLATFORMELEM);
-                if (taskScheduler.getSchedulingAlgorithm() instanceof FixedPriorityPreemptive) {
+                // this is very messy, but it is required as app4mc encapsualted everything
+                // delightfully in a Value type that apparently does not play nice with Java types.
+                final Boolean isPreemptive = taskScheduler.getSchedulingParameters()
+                        .stream().anyMatch(p ->
+                                p.getKey() != null && p.getKey().getName().equals("preemptive") &&
+                                p.getValue() != null && p.getValue() instanceof BooleanObject && ((BooleanObject) p.getValue()).isValue() ||
+                                (p.getKey().getDefaultValue() != null && p.getKey().getDefaultValue() instanceof BooleanObject &&
+                                        ((BooleanObject) p.getKey().getDefaultValue()).isValue()));
+                // simply check if any parameter is named 'priority'.
+                final Boolean hasPriority = taskScheduler.getDefinition().getProcessParameters()
+                        .stream().anyMatch(p ->
+                                p.getName().equals("priority"));
+                if (isPreemptive && hasPriority) {
                     platformVertex.addTraits(VertexTrait.PLATFORM_RUNTIME_FIXEDPRIORITYSCHEDULER);
                 }
                 addEquivalence(os, platformVertex);

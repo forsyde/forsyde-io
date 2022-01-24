@@ -27,3 +27,5 @@ include 'amalthea'
 include 'core'
 include 'sdf3'
 include 'linguafranca'
+include 'conversyde'
+

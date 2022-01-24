@@ -1,7 +1,5 @@
 package forsyde.io.java.adapters.amalthea;
 
-import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.adapters.ModelAdapter;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import org.apache.commons.lang3.tuple.Pair;
@@ -13,15 +11,17 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public class AmaltheaToForSyDeAdapter implements AmaltheaOS2ForSyDeMixin, AmaltheaHW2ForSyDeMixin,
-        AmaltheaSW2ForSyDeMixin, AmaltheaStimulus2ForSyDeMixin {
+        AmaltheaSW2ForSyDeMixin, AmaltheaStimulus2ForSyDeMixin, AmaltheaConstraints2ForSyDeMixin, AmaltheaMapping2ForSyDeMixin {
 
     protected Set<Pair<INamed, Vertex>> equivalences = new HashSet<>();
 
     public void convert(Amalthea input, ForSyDeSystemGraph output) {
-        stimulusToVertexes(input, output);
+        fromStimulusToForSyDe(input, output);
         fromHWtoForSyDe(input, output);
-        fromSWToVertex(input, output);
+        fromSWToForSyDe(input, output);
         fromOSToForSyDe(input, output);
+        fromConstraintsToForSyDe(input, output);
+        fromMappingToForSyDe(input, output);
     }
 
     @Override

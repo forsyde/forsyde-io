@@ -157,6 +157,7 @@ public interface Amalthea2ForSyDeAdapterMixin extends EquivalenceModel2ModelMixi
         }
     }
 
+    /*
     default void oSModelToBinding(Amalthea amalthea, ForSyDeSystemGraph model, Map<INamed, Vertex> transformed) {
         for (OperatingSystem os: amalthea.getOsModel().getOperatingSystems()) {
             for(TaskScheduler taskScheduler : os.getTaskSchedulers()) {
@@ -176,6 +177,7 @@ public interface Amalthea2ForSyDeAdapterMixin extends EquivalenceModel2ModelMixi
             }
         }
     }
+         */
 
     default Long fromFrequencyToLong(Frequency freq) {
         double multiplier = 1.0;

@@ -30,6 +30,7 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             }
         }
         provisions.put(puDef.getName(), provisionsInner);
+        provisions.put("default", Map.of("tick", 1L));
         profPu.setOperationDurationInCycles(provisions);
     }
 
@@ -119,30 +120,18 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 sourceVertex.addTraits(VertexTrait.PLATFORM_SYNTHETIZABLEDIGITALPORTS);
                 // add the properties if they dont exist.
                 SynthetizableDigitalPorts.safeCast(sourceVertex).ifPresent(source -> {
-                    if (source.getPortProtocolAcronym() == null) {
-                        source.setPortProtocolAcronym(new HashMap<>());
-                    }
-                    if (source.getPortIsInitiator() == null) {
-                        source.setPortIsInitiator(new HashMap<>());
-                    }
-                    if (source.getPortWidthInBits() == null) {
-                        source.setPortWidthInBits(new HashMap<>());
-                    }
+                    source.setPortProtocolAcronym(new HashMap<>());
+                    source.setPortIsInitiator(new HashMap<>());
+                    source.setPortWidthInBits(new HashMap<>());
                 });
             }
             if (!SynthetizableDigitalPorts.conforms(targetVertex)) {
                 targetVertex.addTraits(VertexTrait.PLATFORM_SYNTHETIZABLEDIGITALPORTS);
                 // add the properties if they dont exist.
                 SynthetizableDigitalPorts.safeCast(targetVertex).ifPresent(target -> {
-                    if (target.getPortProtocolAcronym() == null) {
-                        target.setPortProtocolAcronym(new HashMap<>());
-                    }
-                    if (target.getPortIsInitiator() == null) {
-                        target.setPortIsInitiator(new HashMap<>());
-                    }
-                    if (target.getPortWidthInBits() == null) {
-                        target.setPortWidthInBits(new HashMap<>());
-                    }
+                    target.setPortProtocolAcronym(new HashMap<>());
+                    target.setPortIsInitiator(new HashMap<>());
+                    target.setPortWidthInBits(new HashMap<>());
                 });
             }
             SynthetizableDigitalPorts.safeCast(sourceVertex).ifPresent(source -> {

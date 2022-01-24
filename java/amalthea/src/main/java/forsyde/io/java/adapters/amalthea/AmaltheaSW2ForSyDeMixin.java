@@ -8,20 +8,17 @@ import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.typed.viewers.execution.*;
 import forsyde.io.java.typed.viewers.execution.Channel;
 import forsyde.io.java.typed.viewers.execution.Task;
-import forsyde.io.java.typed.viewers.impl.Executable;
-import forsyde.io.java.typed.viewers.impl.ExecutableViewer;
 import forsyde.io.java.typed.viewers.impl.InstrumentedExecutable;
 import forsyde.io.java.typed.viewers.impl.InstrumentedExecutableViewer;
 import org.eclipse.app4mc.amalthea.model.*;
 import org.eclipse.app4mc.amalthea.model.PeriodicStimulus;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
-    default void fromSWToVertex(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void fromSWToForSyDe(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
         fromLabelToVertex(amalthea, forSyDeSystemGraph);
         fromRunnableToVertex(amalthea, forSyDeSystemGraph);
         fromTaskToVertex(amalthea, forSyDeSystemGraph);
@@ -38,6 +35,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final LabelAccess labelAccess = (LabelAccess) item;
                         // assume that the label creation is completed
                         equivalent(((LabelAccess) item).getData()).ifPresent(labelVertex -> {
+                            runnableVertex.ports.add(((LabelAccess) item).getData().getName());
                             switch (labelAccess.getAccess()) {
                                 case READ:
                                     forSyDeSystemGraph.connect(
@@ -101,11 +99,13 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         amalthea.getSwModel().getTasks().forEach(task -> {
             final Vertex taskVertex = new Vertex(task.getName(), VertexTrait.EXECUTION_TASK);
             forSyDeSystemGraph.addVertex(taskVertex);
+            taskVertex.ports.add("callSequence");
             final Task fTask = new TaskViewer(taskVertex);
             if (task.getStimuli() != null) {
                 task.getStimuli().forEach(stimulus -> {
                     if (stimulus instanceof PeriodicStimulus) {
                         taskVertex.addTraits(VertexTrait.EXECUTION_PERIODICTASK);
+                        taskVertex.ports.add("periodicStimulus");
                         equivalent(stimulus).ifPresent(stimulusVertex -> {
                             forSyDeSystemGraph.connect(stimulusVertex, taskVertex, "stimulated", "periodicStimulus", EdgeTrait.EXECUTION_EVENTEDGE);
                         });

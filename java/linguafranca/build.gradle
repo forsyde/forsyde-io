@@ -13,7 +13,6 @@ repositories {
     // Use 'jcenter' for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
@@ -26,7 +25,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.mwe2.launch
     implementation group: 'org.eclipse.emf', name: 'org.eclipse.emf.mwe2.launch', version: '2.12.1'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
 }
 configurations {
     mwe2 {
