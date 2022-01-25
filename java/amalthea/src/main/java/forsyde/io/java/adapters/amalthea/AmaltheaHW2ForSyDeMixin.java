@@ -22,16 +22,19 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         ProcessingUnitDefinition puDef = pu.getDefinition();
         v.addTraits(VertexTrait.PLATFORM_INSTRUMENTEDPROCESSINGMODULE);
         InstrumentedProcessingModule profPu = InstrumentedProcessingModule.safeCast(v).get();
-        Map<String, Map<String, Long>> provisions = new HashMap<>();
-        Map<String, Long> provisionsInner = new HashMap<>();
+        Map<String, Map<String, Double>> provisions = new HashMap<>();
+        Map<String, Double> provisionsInner = new HashMap<>();
         for (HwFeature feature : puDef.getFeatures()) {
-            if (feature.getContainingCategory().getName().startsWith("operationDurationInCycles")) {
-                provisionsInner.put(feature.getName(), Math.round(feature.getValue()));
+            final HwFeatureCategory hwFeatureCategory = feature.getContainingCategory();
+            if (feature.getName().contains("instructionsPerCycle")
+                    || feature.getName().contains("InstructionsPerCycle")
+                    || feature.getName().contains("IPC")) {
+                provisionsInner.put(hwFeatureCategory.getName(), feature.getValue());
             }
         }
-        provisions.put(puDef.getName(), provisionsInner);
-        provisions.put("default", Map.of("tick", 1L));
-        profPu.setOperationDurationInCycles(provisions);
+        provisions.put("defaultNeeds", provisionsInner);
+        provisions.put("defaultTicks", Map.of("tick", 1.0));
+        profPu.setModalInstructionsPerCycle(provisions);
     }
 
     default void fromCUIntoVertex(ConnectionHandler connectionHandler, Vertex v) {

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<am:Amalthea xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:am="http://app4mc.eclipse.org/amalthea/2.0.0">
+  <swModel>
+    <tasks xmi:id="T1?type=Task" name="T1" preemption="preemptive" multipleTaskActivationLimit="0"/>
+    <tasks xmi:id="T2?type=Task" name="T2" preemption="preemptive" multipleTaskActivationLimit="0"/>
+    <tasks xmi:id="T3?type=Task" name="T3" preemption="preemptive" multipleTaskActivationLimit="0"/>
+    <tasks xmi:id="T4?type=Task" name="T4" preemption="preemptive" multipleTaskActivationLimit="0"/>
+    <tasks xmi:id="T5?type=Task" name="T5" preemption="preemptive" multipleTaskActivationLimit="0"/>
+    <runnables xmi:id="R1?type=Runnable" name="R1" callback="false" service="false">
+      <activityGraph>
+        <items xsi:type="am:LabelAccess" data="C2?type=Label" access="read"/>
+        <items xsi:type="am:ExecutionNeed">
+          <needs key="FloatOp">
+            <value xsi:type="am:DiscreteValueConstant" value="200"/>
+          </needs>
+        </items>
+        <items xsi:type="am:LabelAccess" data="C4?type=Label" access="write"/>
+        <items xsi:type="am:LabelAccess" data="C3?type=Label" access="write"/>
+      </activityGraph>
+    </runnables>
+    <runnables xmi:id="R2?type=Runnable" name="R2" callback="false" service="false">
+      <activityGraph>
+        <items xsi:type="am:LabelAccess" data="C1?type=Label" access="read"/>
+        <items xsi:type="am:ExecutionNeed">
+          <needs key="FloatOp">
+            <value xsi:type="am:DiscreteValueConstant" value="450"/>
+          </needs>
+        </items>
+        <items xsi:type="am:LabelAccess" data="C6?type=Label" access="write"/>
+      </activityGraph>
+    </runnables>
+    <runnables xmi:id="R3?type=Runnable" name="R3" callback="false" service="false"/>
+    <runnables xmi:id="R4?type=Runnable" name="R4" callback="false" service="false"/>
+    <runnables xmi:id="R5?type=Runnable" name="R5" callback="false" service="false"/>
+    <labels xmi:id="C1?type=Label" name="C1" constant="false" bVolatile="false"/>
+    <labels xmi:id="C2?type=Label" name="C2" constant="false" bVolatile="false"/>
+    <labels xmi:id="C3?type=Label" name="C3" constant="false" bVolatile="false"/>
+    <labels xmi:id="C4?type=Label" name="C4" constant="false" bVolatile="false"/>
+    <labels xmi:id="C5?type=Label" name="C5" constant="false" bVolatile="false"/>
+    <labels xmi:id="C6?type=Label" name="C6" constant="false" bVolatile="false"/>
+    <labels xmi:id="C7?type=Label" name="C7" constant="false" bVolatile="false"/>
+    <labels xmi:id="C8?type=Label" name="C8" constant="false" bVolatile="false"/>
+  </swModel>
+  <hwModel>
+    <definitions xsi:type="am:ProcessingUnitDefinition" xmi:id="CPMDef?type=ProcessingUnitDefinition" name="CPMDef" puType="CPU" features="FloatOp/IPC_1?type=HwFeature NonFloatOp/IPC_1?type=HwFeature"/>
+    <definitions xsi:type="am:MemoryDefinition" xmi:id="OCMDef?type=MemoryDefinition" name="OCMDef" memoryType="FLASH">
+      <size value="2" unit="MB"/>
+    </definitions>
+    <definitions xsi:type="am:ConnectionHandlerDefinition" xmi:id="AXIBus?type=ConnectionHandlerDefinition" name="AXIBus" policy="RoundRobin" maxBurstSize="1" maxConcurrentTransfers="1">
+      <dataRate value="70" unit="GBPerSecond"/>
+    </definitions>
+    <definitions xsi:type="am:MemoryDefinition" xmi:id="MainSDRAM?type=MemoryDefinition" name="MainSDRAM" memoryType="DRAM">
+      <size value="4" unit="GB"/>
+    </definitions>
+    <definitions xsi:type="am:ConnectionHandlerDefinition" xmi:id="PCIBus?type=ConnectionHandlerDefinition" name="PCIBus" policy="RoundRobin" maxBurstSize="1" maxConcurrentTransfers="1">
+      <dataRate value="500" unit="MBPerSecond"/>
+    </definitions>
+    <featureCategories xmi:id="FloatOp?type=HwFeatureCategory" name="FloatOp" featureType="performance">
+      <features xmi:id="FloatOp/IPC_1?type=HwFeature" name="IPC_1" value="1.0"/>
+    </featureCategories>
+    <featureCategories xmi:id="NonFloatOp?type=HwFeatureCategory" name="NonFloatOp" featureType="performance">
+      <features xmi:id="NonFloatOp/IPC_1?type=HwFeature" name="IPC_1" value="1.0"/>
+    </featureCategories>
+    <structures xmi:id="Platform?type=HwStructure" name="Platform" structureType="System">
+      <structures xmi:id="CPM1?type=HwStructure" name="CPM1" structureType="SoC">
+        <modules xsi:type="am:ProcessingUnit" xmi:id="core1?type=ProcessingUnit" name="core1">
+          <ports xmi:id="core1/core1P1?type=HwPort" name="core1P1" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
+        </modules>
+        <modules xsi:type="am:ProcessingUnit" xmi:id="core2?type=ProcessingUnit" name="core2" powerDomain="DefaultPoewr?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMDef?type=ProcessingUnitDefinition">
+          <ports xmi:id="core2/core2P1?type=HwPort" name="core2P1" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
+        </modules>
+        <modules xsi:type="am:Memory" xmi:id="OCM1?type=Memory" name="OCM1" definition="OCMDef?type=MemoryDefinition">
+          <ports xmi:id="OCM1/OCM1P1?type=HwPort" name="OCM1P1" bitWidth="128" priority="0" portType="responder" portInterface="AXI"/>
+        </modules>
+        <modules xsi:type="am:ConnectionHandler" xmi:id="CPM1AXI?type=ConnectionHandler" name="CPM1AXI" powerDomain="DefaultPoewr?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="AXIBus?type=ConnectionHandlerDefinition">
+          <ports xmi:id="CPM1AXI/CPM1AXIP1?type=HwPort" name="CPM1AXIP1" bitWidth="128" priority="0" portType="responder" portInterface="AXI"/>
+          <ports xmi:id="CPM1AXI/CPM1AXIP2?type=HwPort" name="CPM1AXIP2" bitWidth="128" priority="0" portType="responder" portInterface="AXI"/>
+          <ports xmi:id="CPM1AXI/CPM1AXIP3?type=HwPort" name="CPM1AXIP3" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
+          <ports xmi:id="CPM1AXI/CPM1AXIP4?type=HwPort" name="CPM1AXIP4" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
+        </modules>
+        <connections xmi:id="CPM1/con1?type=HwConnection" name="con1" port1="core1/core1P1?type=HwPort" port2="CPM1AXI/CPM1AXIP1?type=HwPort"/>
+        <connections xmi:id="CPM1/con2?type=HwConnection" name="con2" port1="core2/core2P1?type=HwPort" port2="CPM1AXI/CPM1AXIP2?type=HwPort"/>
+        <connections xmi:id="CPM1/con3?type=HwConnection" name="con3" port1="CPM1AXI/CPM1AXIP3?type=HwPort" port2="OCM1/OCM1P1?type=HwPort"/>
+      </structures>
+      <structures xmi:id="CPM2?type=HwStructure" name="CPM2" structureType="SoC">
+        <modules xsi:type="am:ProcessingUnit" xmi:id="core3?type=ProcessingUnit" name="core3">
+          <ports xmi:id="core3/core3P1?type=HwPort" name="core3P1" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
+        </modules>
+        <modules xsi:type="am:ProcessingUnit" xmi:id="core4?type=ProcessingUnit" name="core4" powerDomain="DefaultPoewr?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMDef?type=ProcessingUnitDefinition">
+          <ports xmi:id="core4/core4P1?type=HwPort" name="core4P1" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
+        </modules>
+        <modules xsi:type="am:Memory" xmi:id="OCM2?type=Memory" name="OCM2" definition="OCMDef?type=MemoryDefinition">
+          <ports xmi:id="OCM2/OCM2P1?type=HwPort" name="OCM2P1" bitWidth="128" priority="0" portType="responder" portInterface="AXI"/>
+        </modules>
+        <modules xsi:type="am:ConnectionHandler" xmi:id="CPM2AXI?type=ConnectionHandler" name="CPM2AXI" powerDomain="DefaultPoewr?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="AXIBus?type=ConnectionHandlerDefinition">
+          <ports xmi:id="CPM2AXI/CPM1AXIP1?type=HwPort" name="CPM1AXIP1" bitWidth="128" priority="0" portType="responder" portInterface="AXI"/>
+          <ports xmi:id="CPM2AXI/CPM1AXIP2?type=HwPort" name="CPM1AXIP2" bitWidth="128" priority="0" portType="responder" portInterface="AXI"/>
+          <ports xmi:id="CPM2AXI/CPM1AXIP3?type=HwPort" name="CPM1AXIP3" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
+          <ports xmi:id="CPM2AXI/CPM1AXIP4?type=HwPort" name="CPM1AXIP4" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
+        </modules>
+        <connections xmi:id="CPM2/con4?type=HwConnection" name="con4" port1="core3/core3P1?type=HwPort" port2="CPM2AXI/CPM1AXIP1?type=HwPort"/>
+        <connections xmi:id="CPM2/con5?type=HwConnection" name="con5" port1="core4/core4P1?type=HwPort" port2="CPM2AXI/CPM1AXIP2?type=HwPort"/>
+        <connections xmi:id="CPM2/con6?type=HwConnection" name="con6" port1="CPM2AXI/CPM1AXIP3?type=HwPort" port2="OCM2/OCM2P1?type=HwPort"/>
+      </structures>
+      <modules xsi:type="am:ConnectionHandler" xmi:id="MainBus?type=ConnectionHandler" name="MainBus" powerDomain="DefaultPoewr?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="AXIBus?type=ConnectionHandlerDefinition">
+        <ports xmi:id="MainBus/MainBusP1?type=HwPort" name="MainBusP1" bitWidth="128" priority="0" portType="responder" portInterface="AXI"/>
+        <ports xmi:id="MainBus/MainBusP2?type=HwPort" name="MainBusP2" bitWidth="128" priority="0" portType="responder" portInterface="AXI"/>
+        <ports xmi:id="MainBus/MainBusP3?type=HwPort" name="MainBusP3" bitWidth="0" priority="0" portType="initiator" portInterface="AXI"/>
+      </modules>
+      <modules xsi:type="am:Memory" xmi:id="SDRAM?type=Memory" name="SDRAM" powerDomain="DefaultPoewr?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="MainSDRAM?type=MemoryDefinition">
+        <ports xmi:id="SDRAM/MainSDRAMP1?type=HwPort" name="MainSDRAMP1" bitWidth="0" priority="0" portType="responder" portInterface="AXI"/>
+      </modules>
+      <connections xmi:id="Platform/con7?type=HwConnection" name="con7" port1="CPM1AXI/CPM1AXIP4?type=HwPort" port2="MainBus/MainBusP1?type=HwPort"/>
+      <connections xmi:id="Platform/con8?type=HwConnection" name="con8" port1="CPM2AXI/CPM1AXIP4?type=HwPort" port2="MainBus/MainBusP2?type=HwPort"/>
+      <connections xmi:id="Platform/con9?type=HwConnection" name="con9" port1="MainBus/MainBusP3?type=HwPort" port2="SDRAM/MainSDRAMP1?type=HwPort"/>
+    </structures>
+    <domains xsi:type="am:PowerDomain" xmi:id="DefaultPoewr?type=PowerDomain" name="DefaultPoewr" powerGating="false">
+      <defaultValue value="1.0" unit="mV"/>
+    </domains>
+    <domains xsi:type="am:FrequencyDomain" xmi:id="CPMFreq?type=FrequencyDomain" name="CPMFreq" clockGating="false">
+      <defaultValue value="600.0" unit="MHz"/>
+    </domains>
+  </hwModel>
+  <stimuliModel>
+    <stimuli xsi:type="am:PeriodicStimulus" xmi:id="60Hz?type=PeriodicStimulus" name="60Hz">
+      <recurrence value="16" unit="ms"/>
+    </stimuli>
+  </stimuliModel>
+</am:Amalthea>

@@ -158,7 +158,7 @@ namespace platform {
     }
 
     vertex InstrumentedProcessingModule refines ProcessingModule {
-        prop operationDurationInCycles is strmap<strmap<long>>
+        prop modalInstructionsPerCycle is strmap<strmap<double>>
     }
 
     vertex InstrumentedCommunicationModule refines GenericCommunicationModule {

@@ -62,7 +62,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final InstrumentedExecutable instrumentedExecutable = new InstrumentedExecutableViewer(runnableVertex);
                         if (ticks.getDefault() != null) {
                             instrumentedExecutable.setOperationRequirements(
-                                    Map.of("default", Map.of("tick", ticks.getDefault().getUpperBound()))
+                                    Map.of("defaultTicks", Map.of("tick", ticks.getDefault().getUpperBound()))
                             );
                         } else if (ticks.getExtended() != null) {
                             instrumentedExecutable.setOperationRequirements(
@@ -80,7 +80,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final ExecutionNeed executionNeed = (ExecutionNeed) item;
                         if (executionNeed.getNeeds() != null) {
                             instrumentedExecutable.setOperationRequirements(
-                                Map.of("default",
+                                Map.of("defaultNeeds",
                                     executionNeed.getNeeds().stream().collect(Collectors.toMap(
                                             entry -> entry.getKey(),
                                             entry -> entry.getValue().getUpperBound()

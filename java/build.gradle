@@ -13,11 +13,6 @@ plugins {
   id "com.github.mrsarm.jshell.plugin" version "1.1.0"
 }
 
-tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
-//  inputs.property('inputModelJson',file('./meta.json'))
-//  inputs.property('rootOutDir', file('.'))
-}
-
 // due to how maven central works, the groupId must be the same as the
 // website which we host
 group = 'io.github.forsyde'
@@ -45,6 +40,7 @@ repositories {
 // In this section you declare the dependencies for your production and test code
 dependencies {
   // The production code uses the SLF4J logging API at compile time
+  /*
   implementation 'org.slf4j:slf4j-api:1.7.32'
   implementation group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.1'
   implementation group: 'org.jgrapht', name: 'jgrapht-io', version: '1.5.1'
@@ -63,19 +59,12 @@ dependencies {
   // implementation('org.lflang:org.lflang')
   // AMALTHEA connection
   implementation 'org.eclipse.app4mc:org.eclipse.app4mc.amalthea.model:1.1.0'
+   */
 
   testImplementation 'junit:junit:4.12'
 }
 
 sourceCompatibility = 1.11
-
-sourceSets {
-  main {
-    java {
-      srcDirs += ['src-gen/main/java']
-    }
-  }
-}
 
 java {
   withSourcesJar()
