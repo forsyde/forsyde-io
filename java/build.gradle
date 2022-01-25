@@ -13,17 +13,10 @@ plugins {
   id "com.github.mrsarm.jshell.plugin" version "1.1.0"
 }
 
-task clearForSyDeModel(type: Delete) {
-  delete 'src-gen/main/java/forsyde/io/java/core', 'src-gen/main/java/forsyde/io/java/typed/viewers'
-}
-
 tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
 //  inputs.property('inputModelJson',file('./meta.json'))
 //  inputs.property('rootOutDir', file('.'))
 }
-
-tasks.generateForSyDeModel.dependsOn clearForSyDeModel
-tasks.compileJava.dependsOn generateForSyDeModel
 
 // due to how maven central works, the groupId must be the same as the
 // website which we host
