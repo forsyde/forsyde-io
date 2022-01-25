@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:systemgraph="systemgraph" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="systemgraph" ecore:package="forsyde.io.eclipse.systemgraph" targetNamespace="systemgraph">
+    
+  <xsd:import namespace="http://www.eclipse.org/emf/2002/Ecore" schemaLocation="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.xsd"/>
+    
+  <xsd:element ecore:ignore="true" name="VertexProperty" type="systemgraph:VertexProperty"/>
+    
+  <xsd:element ecore:ignore="true" name="StringVertexProperty" type="systemgraph:StringVertexProperty"/>
+    
+  <xsd:element ecore:ignore="true" name="IntVertexProperty" type="systemgraph:IntVertexProperty"/>
+    
+  <xsd:element ecore:ignore="true" name="BooleanVertexProperty" type="systemgraph:BooleanVertexProperty"/>
+    
+  <xsd:element ecore:ignore="true" name="FloatVertexProperty" type="systemgraph:FloatVertexProperty"/>
+    
+  <xsd:element ecore:ignore="true" name="DoubleVertexProperty" type="systemgraph:DoubleVertexProperty"/>
+    
+  <xsd:element ecore:ignore="true" name="LongVertexProperty" type="systemgraph:LongVertexProperty"/>
+    
+  <xsd:element ecore:ignore="true" name="ArrayVertexProperty" type="systemgraph:ArrayVertexProperty"/>
+    
+  <xsd:element ecore:ignore="true" name="IntMapVertexProperty" type="systemgraph:IntMapVertexProperty"/>
+    
+  <xsd:element ecore:ignore="true" name="StringMapVertexProperty" type="systemgraph:StringMapVertexProperty"/>
+    
+  <xsd:element ecore:ignore="true" name="Vertex" type="systemgraph:Vertex"/>
+    
+  <xsd:element ecore:ignore="true" name="Edge" type="systemgraph:Edge"/>
+    
+  <xsd:element ecore:ignore="true" name="ForSyDeSystemGraph" type="systemgraph:ForSyDeSystemGraph"/>
+    
+  <xsd:complexType abstract="true" ecore:interface="true" name="VertexProperty"/>
+    
+  <xsd:complexType name="StringVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="systemgraph:VertexProperty">
+                
+        <xsd:attribute name="string" type="ecore:EString"/>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:complexType name="IntVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="systemgraph:VertexProperty">
+                
+        <xsd:attribute ecore:unsettable="false" name="intValue" type="ecore:EInt"/>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:complexType name="BooleanVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="systemgraph:VertexProperty">
+                
+        <xsd:attribute ecore:unsettable="false" name="booleanValue" type="ecore:EBoolean"/>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:complexType name="FloatVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="systemgraph:VertexProperty">
+                
+        <xsd:attribute ecore:unsettable="false" name="floatValue" type="ecore:EFloat"/>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:complexType name="DoubleVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="systemgraph:VertexProperty">
+                
+        <xsd:attribute ecore:unsettable="false" name="doubleValue" type="ecore:EDouble"/>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:complexType name="LongVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="systemgraph:VertexProperty">
+                
+        <xsd:attribute ecore:unsettable="false" name="longValue" type="ecore:ELong"/>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:complexType name="ArrayVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="systemgraph:VertexProperty">
+                
+        <xsd:sequence>
+                    
+          <xsd:element maxOccurs="unbounded" minOccurs="0" name="values" type="systemgraph:VertexProperty"/>
+                  
+        </xsd:sequence>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:complexType name="IntMapVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="systemgraph:VertexProperty">
+                
+        <xsd:sequence>
+                    
+          <xsd:element maxOccurs="unbounded" minOccurs="0" name="values" type="systemgraph:VertexProperty"/>
+                    
+          <xsd:element maxOccurs="unbounded" minOccurs="0" name="indexes" type="ecore:EInt"/>
+                  
+        </xsd:sequence>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:complexType name="StringMapVertexProperty">
+        
+    <xsd:complexContent>
+            
+      <xsd:extension base="systemgraph:IntVertexProperty">
+                
+        <xsd:sequence>
+                    
+          <xsd:element maxOccurs="unbounded" minOccurs="0" name="values" type="systemgraph:IntVertexProperty"/>
+                    
+          <xsd:element maxOccurs="unbounded" minOccurs="0" name="indexes" nillable="true" type="ecore:EString"/>
+                  
+        </xsd:sequence>
+              
+      </xsd:extension>
+          
+    </xsd:complexContent>
+      
+  </xsd:complexType>
+    
+  <xsd:complexType name="Vertex">
+        
+    <xsd:sequence>
+            
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="traits" nillable="true" type="ecore:EString"/>
+            
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ports" nillable="true" type="ecore:EString"/>
+            
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="propertiesValues" type="systemgraph:VertexProperty"/>
+            
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="propertiesNames" nillable="true" type="ecore:EString"/>
+          
+    </xsd:sequence>
+        
+    <xsd:attribute ecore:id="true" name="identifier" type="ecore:EString"/>
+      
+  </xsd:complexType>
+    
+  <xsd:complexType name="Edge">
+        
+    <xsd:sequence>
+            
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="traits" nillable="true" type="ecore:EString"/>
+          
+    </xsd:sequence>
+        
+    <xsd:attribute name="sourceport" type="ecore:EString"/>
+        
+    <xsd:attribute name="targetport" type="ecore:EString"/>
+        
+    <xsd:attribute ecore:reference="systemgraph:Vertex" name="source" type="xsd:anyURI"/>
+        
+    <xsd:attribute ecore:reference="systemgraph:Vertex" name="target" type="xsd:anyURI"/>
+      
+  </xsd:complexType>
+    
+  <xsd:complexType name="ForSyDeSystemGraph">
+        
+    <xsd:sequence>
+            
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="nodes" type="systemgraph:Vertex"/>
+            
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="edges" type="systemgraph:Edge"/>
+          
+    </xsd:sequence>
+      
+  </xsd:complexType>
+  
+</xsd:schema>

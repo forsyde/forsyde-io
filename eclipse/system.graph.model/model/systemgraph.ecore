@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="forsyde" nsURI="forsyde" nsPrefix="forsyde">
+  <eSubpackages name="io" nsURI="forsyde.io" nsPrefix="forsyde.io">
+    <eSubpackages name="eclipse" nsURI="forsyde.io.eclipse" nsPrefix="forsyde.io.eclipse">
+      <eSubpackages name="systemgraph" nsURI="forsyde.io.eclipse.systemgraph" nsPrefix="forsyde.io.eclipse.systemgraph">
+        <eClassifiers xsi:type="ecore:EClass" name="VertexProperty" abstract="true"
+            interface="true"/>
+        <eClassifiers xsi:type="ecore:EClass" name="StringVertexProperty" eSuperTypes="#//io/eclipse/systemgraph/VertexProperty">
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="string" unique="false"
+              eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="IntVertexProperty" eSuperTypes="#//io/eclipse/systemgraph/VertexProperty">
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="intValue" unique="false"
+              eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="BooleanVertexProperty" eSuperTypes="#//io/eclipse/systemgraph/VertexProperty">
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="booleanValue" unique="false"
+              eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="FloatVertexProperty" eSuperTypes="#//io/eclipse/systemgraph/VertexProperty">
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="floatValue" unique="false"
+              eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="DoubleVertexProperty" eSuperTypes="#//io/eclipse/systemgraph/VertexProperty">
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="doubleValue" unique="false"
+              eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="LongVertexProperty" eSuperTypes="#//io/eclipse/systemgraph/VertexProperty">
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="longValue" unique="false"
+              eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="ArrayVertexProperty" eSuperTypes="#//io/eclipse/systemgraph/VertexProperty">
+          <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
+              eType="#//io/eclipse/systemgraph/VertexProperty" containment="true"
+              resolveProxies="false"/>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="IntMapVertexProperty" eSuperTypes="#//io/eclipse/systemgraph/VertexProperty">
+          <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
+              eType="#//io/eclipse/systemgraph/VertexProperty" containment="true"
+              resolveProxies="false"/>
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="indexes" unique="false"
+              upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="StringMapVertexProperty" eSuperTypes="#//io/eclipse/systemgraph/IntVertexProperty">
+          <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
+              eType="#//io/eclipse/systemgraph/IntVertexProperty" containment="true"
+              resolveProxies="false"/>
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="indexes" unique="false"
+              upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="Vertex">
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="identifier" unique="false"
+              eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+              iD="true"/>
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="traits" unique="false"
+              upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="ports" unique="false"
+              upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          <eStructuralFeatures xsi:type="ecore:EReference" name="propertiesValues"
+              upperBound="-1" eType="#//io/eclipse/systemgraph/VertexProperty" containment="true"
+              resolveProxies="false"/>
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="propertiesNames"
+              unique="false" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="Edge">
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceport" unique="false"
+              eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetport" unique="false"
+              eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          <eStructuralFeatures xsi:type="ecore:EAttribute" name="traits" unique="false"
+              upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//io/eclipse/systemgraph/Vertex"/>
+          <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//io/eclipse/systemgraph/Vertex"/>
+        </eClassifiers>
+        <eClassifiers xsi:type="ecore:EClass" name="ForSyDeSystemGraph">
+          <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
+              eType="#//io/eclipse/systemgraph/Vertex" containment="true" resolveProxies="false"/>
+          <eStructuralFeatures xsi:type="ecore:EReference" name="edges" upperBound="-1"
+              eType="#//io/eclipse/systemgraph/Edge" containment="true" resolveProxies="false"/>
+        </eClassifiers>
+      </eSubpackages>
+    </eSubpackages>
+  </eSubpackages>
+</ecore:EPackage>

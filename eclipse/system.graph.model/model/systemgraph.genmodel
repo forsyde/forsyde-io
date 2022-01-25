@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/system.graph.model/src-gen" modelPluginID="system.graph.model"
+    modelName="SystemGraph" generateSchema="true" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    suppressEMFTypes="true" codeFormatting="true" importerID="org.eclipse.emf.importer.ecore"
+    minimalReflectiveMethods="false" suppressUnsettable="true" complianceLevel="5.0"
+    copyrightFields="false" usedGenPackages="../../org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore"
+    operationReflection="true" importOrganizing="true" oSGiCompatible="true">
+  <foreignModel>systemgraph.ecore</foreignModel>
+  <genPackages prefix="Forsyde" disposableProviderFactory="true" ecorePackage="systemgraph.ecore#/">
+    <nestedGenPackages prefix="Io" disposableProviderFactory="true" ecorePackage="systemgraph.ecore#//io">
+      <nestedGenPackages prefix="Eclipse" disposableProviderFactory="true" ecorePackage="systemgraph.ecore#//io/eclipse">
+        <nestedGenPackages prefix="SystemGraph" disposableProviderFactory="true" ecorePackage="systemgraph.ecore#//io/eclipse/systemgraph">
+          <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel/exporter/org.eclipse.xsd.ecore.exporter">
+            <genAnnotations source="forsyde.io.eclipse.systemgraph.xsd"/>
+            <genAnnotations source="file:/home/rjordao/ForSyDe/tools/forsyde-io/eclipse/system.graph.model/model/systemgraph.xsd">
+              <details key="http://www.eclipse.org/emf/2002/Ecore" value="file:/home/rjordao/ForSyDe/tools/forsyde-io/eclipse/system.graph.model/model/Ecore.xsd"/>
+            </genAnnotations>
+          </genAnnotations>
+          <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel/exporter/org.eclipse.xsd.ecore.exporter.xmi">
+            <genAnnotations source="forsyde.io.eclipse.systemgraphXMI.xsd">
+              <details key="http://www.eclipse.org/emf/2002/Ecore" value="EcoreXMI.xsd"/>
+            </genAnnotations>
+          </genAnnotations>
+          <genClasses image="false" ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/VertexProperty"/>
+          <genClasses ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/StringVertexProperty">
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/StringVertexProperty/string"/>
+          </genClasses>
+          <genClasses ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/IntVertexProperty">
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/IntVertexProperty/intValue"/>
+          </genClasses>
+          <genClasses ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/BooleanVertexProperty">
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/BooleanVertexProperty/booleanValue"/>
+          </genClasses>
+          <genClasses ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/FloatVertexProperty">
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/FloatVertexProperty/floatValue"/>
+          </genClasses>
+          <genClasses ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/DoubleVertexProperty">
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/DoubleVertexProperty/doubleValue"/>
+          </genClasses>
+          <genClasses ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/LongVertexProperty">
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/LongVertexProperty/longValue"/>
+          </genClasses>
+          <genClasses ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/ArrayVertexProperty">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference systemgraph.ecore#//io/eclipse/systemgraph/ArrayVertexProperty/values"/>
+          </genClasses>
+          <genClasses ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/IntMapVertexProperty">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference systemgraph.ecore#//io/eclipse/systemgraph/IntMapVertexProperty/values"/>
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/IntMapVertexProperty/indexes"/>
+          </genClasses>
+          <genClasses ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/StringMapVertexProperty">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference systemgraph.ecore#//io/eclipse/systemgraph/StringMapVertexProperty/values"/>
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/StringMapVertexProperty/indexes"/>
+          </genClasses>
+          <genClasses ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/Vertex">
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/Vertex/identifier"/>
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/Vertex/traits"/>
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/Vertex/ports"/>
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference systemgraph.ecore#//io/eclipse/systemgraph/Vertex/propertiesValues"/>
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/Vertex/propertiesNames"/>
+          </genClasses>
+          <genClasses ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/Edge">
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/Edge/sourceport"/>
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/Edge/targetport"/>
+            <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemgraph.ecore#//io/eclipse/systemgraph/Edge/traits"/>
+            <genFeatures notify="false" createChild="false" propertySortChoices="true"
+                ecoreFeature="ecore:EReference systemgraph.ecore#//io/eclipse/systemgraph/Edge/source"/>
+            <genFeatures notify="false" createChild="false" propertySortChoices="true"
+                ecoreFeature="ecore:EReference systemgraph.ecore#//io/eclipse/systemgraph/Edge/target"/>
+          </genClasses>
+          <genClasses ecoreClass="systemgraph.ecore#//io/eclipse/systemgraph/ForSyDeSystemGraph">
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference systemgraph.ecore#//io/eclipse/systemgraph/ForSyDeSystemGraph/nodes"/>
+            <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference systemgraph.ecore#//io/eclipse/systemgraph/ForSyDeSystemGraph/edges"/>
+          </genClasses>
+        </nestedGenPackages>
+      </nestedGenPackages>
+    </nestedGenPackages>
+  </genPackages>
+</genmodel:GenModel>

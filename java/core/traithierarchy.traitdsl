@@ -99,7 +99,6 @@ namespace execution {
 
     vertex Channel {
         prop maxElems is int
-
         prop elemSizeInBits is int
     }
 

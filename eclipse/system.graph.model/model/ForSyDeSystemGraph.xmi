@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forsyde.io.eclipse.systemgraph:ForSyDeSystemGraph
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:forsyde.io.eclipse.systemgraph="forsyde.io.eclipse.systemgraph"
+    xsi:schemaLocation="forsyde.io.eclipse.systemgraph systemgraph.ecore#//io/eclipse/systemgraph">
+  <nodes identifier="aa"/>
+</forsyde.io.eclipse.systemgraph:ForSyDeSystemGraph>
