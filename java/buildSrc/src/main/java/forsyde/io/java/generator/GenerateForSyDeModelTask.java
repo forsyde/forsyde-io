@@ -1,7 +1,5 @@
 package forsyde.io.java.generator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.squareup.javapoet.*;
 import forsyde.io.java.generator.dsl.ForSyDeTraitDSLLexer;
 import forsyde.io.java.generator.dsl.ForSyDeTraitDSLParser;
@@ -167,6 +165,66 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 typeOut,
                 prop.name);
         return getPropMethod.build();
+    }
+
+    public MethodSpec generateRequiredPortGetter(VertexTraitSpec vertexTraitSpec) {
+        final String portsString = vertexTraitSpec.requiredPorts.stream()
+                .map(p -> p.name)
+                .collect(Collectors.joining(", "));
+        final MethodSpec.Builder getRequiredPortGetter = MethodSpec.methodBuilder("getRequiredPorts")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(ParameterizedTypeName.get(Set.class, String.class))
+                .addStatement("return $T.of(\"$L\")", Set.class, portsString);
+        return getRequiredPortGetter.build();
+    }
+
+    public MethodSpec generateRequiredPropertyGetter(VertexTraitSpec vertexTraitSpec) {
+        final TypeName propClass = ClassName.get("forsyde.io.java.core", "VertexProperty");
+        final String portsString = vertexTraitSpec.requiredProperties.stream()
+                .map(p -> p.name)
+                .collect(Collectors.joining(", "));
+        final MethodSpec.Builder getRequiredPropGetter = MethodSpec.methodBuilder("getRequiredProperties")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class), propClass))
+                .addStatement("return $T.of()", Map.class);
+        return getRequiredPropGetter.build();
+    }
+
+    public MethodSpec generateEnforce(VertexTraitSpec vertexTraitSpec) {
+        final TypeName traitEnum = ClassName.get("forsyde.io.java.core", "VertexTrait");
+        final TypeName vertexClass = ClassName.get("forsyde.io.java.core", "Vertex");
+        final String enumTraitName = vertexTraitSpec.name.replace("::", "_").toUpperCase();
+        final String extraPackages = vertexTraitSpec.getNamespaces().isEmpty() ?
+                "" : "." + String.join(".", vertexTraitSpec.getNamespaces());
+        final TypeName traitInterface = ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, vertexTraitSpec.getTraitLocalName());
+        final TypeName viewerClass = ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, vertexTraitSpec.getTraitLocalName()  + "Viewer");
+        final CodeBlock propertyBlock = CodeBlock.builder()
+                .beginControlFlow("for(String key : $T.getRequiredProperties().keySet())", traitInterface)
+                .addStatement("vertex.properties.putIfAbsent(key, $T.getRequiredProperties().get(key))", traitInterface)
+                .endControlFlow()
+                .build();
+        return MethodSpec.methodBuilder("enforce")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(vertexClass, "vertex")
+                .addStatement("vertex.addTraits($T.$L)", traitEnum, enumTraitName)
+                .addStatement("vertex.ports.addAll($T.getRequiredPorts())", traitInterface)
+                .addCode(propertyBlock)
+                .addStatement("return new $T(vertex)", viewerClass)
+                .returns(traitInterface)
+                .build();
+    }
+
+    public MethodSpec generateEnforceFromViewer(VertexTraitSpec vertexTraitSpec) {
+        final TypeName vertexViewerClass = ClassName.get("forsyde.io.java.core", "VertexViewer");
+        final String extraPackages = vertexTraitSpec.getNamespaces().isEmpty() ?
+                "" : "." + String.join(".", vertexTraitSpec.getNamespaces());
+        final TypeName traitInterface = ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, vertexTraitSpec.getTraitLocalName());
+        return MethodSpec.methodBuilder("enforce")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(vertexViewerClass, "viewer")
+                .addStatement("return $T.enforce(viewer.getViewedVertex())", traitInterface)
+                .returns(traitInterface)
+                .build();
     }
 
     public MethodSpec generatePropertySetter(PropertySpec prop) {
@@ -388,6 +446,15 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 ClassName.get(Optional.class),
                 ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, trait.getTraitLocalName() + "Viewer"));
         traitInterface.addMethod(safeCastViewer.build());
+
+        traitInterface.addMethod(generateRequiredPortGetter(trait));
+
+        traitInterface.addMethod(generateRequiredPropertyGetter(trait));
+
+        traitInterface.addMethod(generateEnforce(trait));
+
+        traitInterface.addMethod(generateEnforceFromViewer(trait));
+
         return traitInterface.build();
         /*
             traitList.add(traitInterface.build());
@@ -422,6 +489,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         viewerClass.addMethod(MethodSpec.methodBuilder("getViewedVertex").addModifiers(Modifier.PUBLIC)
                 .returns(ClassName.get("forsyde.io.java.core", "Vertex")).addStatement("return viewedVertex")
                 .build());
+
         viewerClass.addMethod(
                 MethodSpec.methodBuilder("hashCode")
                         .addAnnotation(Override.class)
@@ -429,6 +497,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                         .addStatement("return getIdentifier().hashCode() + \"$L\".hashCode()", trait.getTraitLocalName())
                         .returns(int.class)
                         .build());
+
         viewerClass.addMethod(
                 MethodSpec.methodBuilder("equals")
                         .addAnnotation(Override.class)
@@ -438,6 +507,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                                 trait.getTraitLocalName() + "Viewer", trait.getTraitLocalName() + "Viewer")
                         .returns(boolean.class)
                         .build());
+
         viewerClass.addMethod(
                 MethodSpec.methodBuilder("toString")
                         .addAnnotation(Override.class)
@@ -445,6 +515,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                         .addStatement("return \"$L{\" + getViewedVertex().toString() + \"}\"", trait.getTraitLocalName() + "Viewer")
                         .returns(String.class)
                         .build());
+
         return viewerClass.build();
         /*
             viewersList.add(viewerClass.build());

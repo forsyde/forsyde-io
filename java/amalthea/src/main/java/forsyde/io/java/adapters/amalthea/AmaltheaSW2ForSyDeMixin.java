@@ -91,6 +91,17 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                     }
                 });
             }
+            if (runnable.getSize() != null) {
+                runnableVertex.addTraits(VertexTrait.IMPL_INSTRUMENTEDEXECUTABLE);
+                final InstrumentedExecutable instrumentedExecutable = new InstrumentedExecutableViewer(runnableVertex);
+                instrumentedExecutable.setSizeInBits(runnable.getSize().getNumberBits());
+            }
+            // make sure that if its instrumented, it has some default value until
+            // ForSyDe IO uses defaults values properly
+            else if (InstrumentedExecutable.conforms(runnableVertex)) {
+                final InstrumentedExecutable instrumentedExecutable = new InstrumentedExecutableViewer(runnableVertex);
+                instrumentedExecutable.setSizeInBits(0L);
+            }
             addEquivalence(runnable, runnableVertex);
         });
     }

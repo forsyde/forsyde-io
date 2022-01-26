@@ -3,6 +3,7 @@ namespace impl {
 
     vertex InstrumentedExecutable refines Executable {
         prop operationRequirements is strmap<strmap<long>>
+        prop sizeInBits is long
     }
 }
 
