@@ -57,7 +57,7 @@ public class ConverSyDeStandalone implements Callable<Integer> {
                         return a;
                     });
             // finally do the writing
-            if (outputFiles.size() == 0) outputFiles.add(new File("converted-model.forxmi"));
+            if (outputFiles.size() == 0) outputFiles.add(new File("converted-model.forsyde.xmi"));
             for (File output : outputFiles) {
                 forSyDeModelHandler.writeModel(merged, output);
             }

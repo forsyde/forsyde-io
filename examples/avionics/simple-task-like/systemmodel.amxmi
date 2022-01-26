@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <am:Amalthea xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:am="http://app4mc.eclipse.org/amalthea/2.0.0">
   <swModel>
-    <tasks xmi:id="T1?type=Task" name="T1" preemption="preemptive" multipleTaskActivationLimit="0">
+    <tasks xmi:id="T1?type=Task" name="T1" stimuli="Timer60Hz?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:RunnableCall" runnable="R1?type=Runnable"/>
       </activityGraph>
     </tasks>
-    <tasks xmi:id="T2?type=Task" name="T2" preemption="preemptive" multipleTaskActivationLimit="0">
+    <tasks xmi:id="T2?type=Task" name="T2" stimuli="Timer60Hz?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:RunnableCall" runnable="R2?type=Runnable"/>
       </activityGraph>
     </tasks>
-    <tasks xmi:id="T3?type=Task" name="T3" preemption="preemptive" multipleTaskActivationLimit="0">
+    <tasks xmi:id="T3?type=Task" name="T3" stimuli="Timer60Hz?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:RunnableCall" runnable="R3?type=Runnable"/>
       </activityGraph>
     </tasks>
-    <tasks xmi:id="T4?type=Task" name="T4" preemption="preemptive" multipleTaskActivationLimit="0">
+    <tasks xmi:id="T4?type=Task" name="T4" stimuli="Timer60Hz?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:RunnableCall" runnable="R4?type=Runnable"/>
       </activityGraph>
     </tasks>
-    <tasks xmi:id="T5?type=Task" name="T5" preemption="preemptive" multipleTaskActivationLimit="0">
+    <tasks xmi:id="T5?type=Task" name="T5" stimuli="Timer60Hz?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:RunnableCall" runnable="R5?type=Runnable"/>
       </activityGraph>
@@ -127,6 +127,16 @@
     <labels xmi:id="C8?type=Label" name="C8" constant="false" bVolatile="false">
       <size value="2000" unit="B"/>
     </labels>
+    <processPrototypes xmi:id="Func1?type=ProcessPrototype" name="Func1" preemption="preemptive" firstRunnable="R1?type=Runnable" lastRunnable="R5?type=Runnable" activation="Period60Hz?type=PeriodicActivation">
+      <orderPrecedenceSpec origin="R1?type=Runnable" target="R2?type=Runnable" orderType="order"/>
+      <orderPrecedenceSpec origin="R1?type=Runnable" target="R3?type=Runnable" orderType="order"/>
+      <orderPrecedenceSpec origin="R2?type=Runnable" target="R5?type=Runnable" orderType="order"/>
+      <orderPrecedenceSpec origin="R3?type=Runnable" target="R4?type=Runnable" orderType="order"/>
+      <orderPrecedenceSpec origin="R4?type=Runnable" target="R5?type=Runnable" orderType="order"/>
+    </processPrototypes>
+    <activations xsi:type="am:PeriodicActivation" xmi:id="Period60Hz?type=PeriodicActivation" name="Period60Hz">
+      <recurrence value="16" unit="ms"/>
+    </activations>
   </swModel>
   <hwModel>
     <definitions xsi:type="am:ProcessingUnitDefinition" xmi:id="CPMDef?type=ProcessingUnitDefinition" name="CPMDef" puType="CPU" features="FloatOp/IPC_1?type=HwFeature NonFloatOp/IPC_1?type=HwFeature"/>
@@ -150,13 +160,13 @@
     </featureCategories>
     <structures xmi:id="Platform?type=HwStructure" name="Platform" structureType="System">
       <structures xmi:id="CPM1?type=HwStructure" name="CPM1" structureType="SoC">
-        <modules xsi:type="am:ProcessingUnit" xmi:id="core1?type=ProcessingUnit" name="core1">
+        <modules xsi:type="am:ProcessingUnit" xmi:id="core1?type=ProcessingUnit" name="core1" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMDef?type=ProcessingUnitDefinition">
           <ports xmi:id="core1/core1P1?type=HwPort" name="core1P1" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
         </modules>
         <modules xsi:type="am:ProcessingUnit" xmi:id="core2?type=ProcessingUnit" name="core2" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMDef?type=ProcessingUnitDefinition">
           <ports xmi:id="core2/core2P1?type=HwPort" name="core2P1" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
         </modules>
-        <modules xsi:type="am:Memory" xmi:id="OCM1?type=Memory" name="OCM1" definition="OCMDef?type=MemoryDefinition">
+        <modules xsi:type="am:Memory" xmi:id="OCM1?type=Memory" name="OCM1" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="OCMDef?type=MemoryDefinition">
           <ports xmi:id="OCM1/OCM1P1?type=HwPort" name="OCM1P1" bitWidth="128" priority="0" portType="responder" portInterface="AXI"/>
         </modules>
         <modules xsi:type="am:ConnectionHandler" xmi:id="CPM1AXI?type=ConnectionHandler" name="CPM1AXI" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="AXIBus?type=ConnectionHandlerDefinition">
@@ -170,13 +180,13 @@
         <connections xmi:id="CPM1/con3?type=HwConnection" name="con3" port1="CPM1AXI/CPM1AXIP3?type=HwPort" port2="OCM1/OCM1P1?type=HwPort"/>
       </structures>
       <structures xmi:id="CPM2?type=HwStructure" name="CPM2" structureType="SoC">
-        <modules xsi:type="am:ProcessingUnit" xmi:id="core3?type=ProcessingUnit" name="core3">
+        <modules xsi:type="am:ProcessingUnit" xmi:id="core3?type=ProcessingUnit" name="core3" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMDef?type=ProcessingUnitDefinition">
           <ports xmi:id="core3/core3P1?type=HwPort" name="core3P1" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
         </modules>
         <modules xsi:type="am:ProcessingUnit" xmi:id="core4?type=ProcessingUnit" name="core4" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMDef?type=ProcessingUnitDefinition">
           <ports xmi:id="core4/core4P1?type=HwPort" name="core4P1" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
         </modules>
-        <modules xsi:type="am:Memory" xmi:id="OCM2?type=Memory" name="OCM2" definition="OCMDef?type=MemoryDefinition">
+        <modules xsi:type="am:Memory" xmi:id="OCM2?type=Memory" name="OCM2" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="OCMDef?type=MemoryDefinition">
           <ports xmi:id="OCM2/OCM2P1?type=HwPort" name="OCM2P1" bitWidth="128" priority="0" portType="responder" portInterface="AXI"/>
         </modules>
         <modules xsi:type="am:ConnectionHandler" xmi:id="CPM2AXI?type=ConnectionHandler" name="CPM2AXI" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="AXIBus?type=ConnectionHandlerDefinition">
@@ -209,8 +219,15 @@
     </domains>
   </hwModel>
   <stimuliModel>
-    <stimuli xsi:type="am:PeriodicStimulus" xmi:id="60Hz?type=PeriodicStimulus" name="60Hz">
+    <stimuli xsi:type="am:PeriodicStimulus" xmi:id="Timer60Hz?type=PeriodicStimulus" name="Timer60Hz">
       <recurrence value="16" unit="ms"/>
     </stimuli>
   </stimuliModel>
+  <constraintsModel>
+    <requirements xsi:type="am:ProcessRequirement" name="latency50ms" process="Func1?type=ProcessPrototype">
+      <limit xsi:type="am:TimeRequirementLimit" limitType="UpperLimit" metric="ResponseTime">
+        <limitValue value="50" unit="ms"/>
+      </limit>
+    </requirements>
+  </constraintsModel>
 </am:Amalthea>

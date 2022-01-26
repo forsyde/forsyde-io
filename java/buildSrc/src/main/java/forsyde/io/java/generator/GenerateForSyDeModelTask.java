@@ -169,12 +169,12 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
     public MethodSpec generateRequiredPortGetter(VertexTraitSpec vertexTraitSpec) {
         final String portsString = vertexTraitSpec.requiredPorts.stream()
-                .map(p -> p.name)
+                .map(p -> "\"" + p.name + "\"")
                 .collect(Collectors.joining(", "));
         final MethodSpec.Builder getRequiredPortGetter = MethodSpec.methodBuilder("getRequiredPorts")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(Set.class, String.class))
-                .addStatement("return $T.of(\"$L\")", Set.class, portsString);
+                .addStatement("return $T.of($L)", Set.class, portsString);
         return getRequiredPortGetter.build();
     }
 

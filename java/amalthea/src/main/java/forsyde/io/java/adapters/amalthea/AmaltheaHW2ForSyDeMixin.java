@@ -3,6 +3,7 @@ package forsyde.io.java.adapters.amalthea;
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
 import forsyde.io.java.typed.viewers.platform.*;
+import forsyde.io.java.typed.viewers.visualization.GreyBox;
 import org.eclipse.app4mc.amalthea.model.*;
 
 import java.util.*;
@@ -11,11 +12,13 @@ import java.util.stream.Collectors;
 public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
     default void fromHWtoForSyDe(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
-        amalthea.getHwModel().getStructures().forEach(hwStructure -> {
-            fromStructureToVertex(forSyDeSystemGraph, hwStructure);
-            fromStructureToEdges(forSyDeSystemGraph, hwStructure);
-        });
-        connectModulesBetweenContainers(amalthea, forSyDeSystemGraph);
+        if (amalthea.getHwModel() != null) {
+            amalthea.getHwModel().getStructures().forEach(hwStructure -> {
+                fromStructureToVertex(forSyDeSystemGraph, hwStructure);
+                fromStructureToEdges(forSyDeSystemGraph, hwStructure);
+            });
+            connectModulesBetweenContainers(amalthea, forSyDeSystemGraph);
+        }
     }
 
     default void fromPUIntoVertex(ProcessingUnit pu, Vertex v) {
@@ -61,6 +64,7 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
     default void fromStructureToVertex(ForSyDeSystemGraph model, HwStructure structure,
                                                       String prefix) {
         final Vertex structureVertex = new Vertex(prefix + structure.getName(), VertexTrait.PLATFORM_ABSTRACTSTRUCTURE);
+        final GreyBox structureGreyBox = GreyBox.enforce(structureVertex);
         addEquivalence(structure, structureVertex);
         model.addVertex(structureVertex);
         structureVertex.ports.add("submodules");
@@ -69,12 +73,13 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             equivalent(childStructure).ifPresent(childStructureVertex -> {
                 model.connect(structureVertex, childStructureVertex, "submodules",
                         EdgeTrait.PLATFORM_STRUCTURALCONNECTION);
+                model.connect(structureVertex, childStructureVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
             });
         }
         for (HwModule module : structure.getModules()) {
             final Vertex moduleVertex = new Vertex(prefix + structure.getName() + "." + module.getName());
-            moduleVertex.putProperty("nominal_frequency_in_hertz",
-                    fromFrequencyToLong(module.getFrequencyDomain().getDefaultValue()));
+            final DigitalModule digitalModule = DigitalModule.enforce(moduleVertex);
+            digitalModule.setOperatingFrequencyInHertz(fromFrequencyToLong(module.getFrequencyDomain().getDefaultValue()));
             addEquivalence(module, moduleVertex);
             for (HwPort port : module.getPorts()) {
                 moduleVertex.ports.add(port.getName());
@@ -98,12 +103,16 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 interconnectVertex.setMaxConcurrentFlits(connectionHandler.getDefinition().getMaxConcurrentTransfers());
                 // burst size is always in B, it seems
                 interconnectVertex
-                        .setFlitSizeInBits(connectionHandler.getDefinition().getMaxBurstSize() * 8);
-                interconnectVertex.setInitialLatency(connectionHandler.getDefinition().getReadLatency().getLowerBound().intValue());
+                        .setFlitSizeInBits((long) connectionHandler.getDefinition().getMaxBurstSize() * 8L);
+                interconnectVertex.setInitialLatency(
+                        connectionHandler.getDefinition().getReadLatency() != null ?
+                        connectionHandler.getDefinition().getReadLatency().getUpperBound() :
+                        0L);
                 fromCUIntoVertex(connectionHandler, moduleVertex);
             }
             model.addVertex(moduleVertex);
             model.connect(structureVertex, moduleVertex, "submodules", EdgeTrait.PLATFORM_STRUCTURALCONNECTION);
+            model.connect(structureVertex, moduleVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
         }
         for (HwPort port : structure.getPorts()) {
             structureVertex.ports.add(port.getName());
@@ -118,6 +127,7 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             final Vertex sourceVertex = equivalent(connection.getPort1().getNamedContainer()).get();
             final Vertex targetVertex = equivalent(connection.getPort2().getNamedContainer()).get();
             model.connect(sourceVertex, targetVertex, connection.getPort1().getName(), connection.getPort2().getName(), EdgeTrait.PLATFORM_PHYSICALCONNECTION);
+            model.connect(sourceVertex, targetVertex, connection.getPort1().getName(), connection.getPort2().getName(), EdgeTrait.VISUALIZATION_VISUALCONNECTION);
             // add the port information
             if (!SynthetizableDigitalPorts.conforms(sourceVertex)) {
                 sourceVertex.addTraits(VertexTrait.PLATFORM_SYNTHETIZABLEDIGITALPORTS);

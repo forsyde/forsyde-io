@@ -163,10 +163,10 @@ namespace platform {
     }
 
     vertex InstrumentedCommunicationModule refines GenericCommunicationModule {
-        prop flitSizeInBits is int
+        prop flitSizeInBits is long
         prop maxCyclesPerFlit is int
         prop maxConcurrentFlits is int
-        prop initialLatency is int
+        prop initialLatency is long
     }
 
     vertex RoundRobinCommunicationModule refines InstrumentedCommunicationModule {
@@ -214,4 +214,23 @@ namespace decision {
     vertex Scheduled {
         port scheduler is out platform::runtime::AbstractScheduler
     }
+}
+
+namespace visualization {
+
+    edge VisualContainment
+
+    edge VisualConnection
+
+    vertex Visualizable
+
+    vertex Positioned refines Visualizable {
+        prop positionX is int
+        prop positionY is int
+    }
+
+    vertex GreyBox refines Visualizable {
+        port contained is multiple Visualizable
+    }
+
 }

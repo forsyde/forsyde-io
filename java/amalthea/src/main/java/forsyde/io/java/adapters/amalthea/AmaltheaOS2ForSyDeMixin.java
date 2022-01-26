@@ -12,7 +12,9 @@ import java.util.Map;
 public interface AmaltheaOS2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
     default void fromOSToForSyDe(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
-        fromOSModelToBinding(amalthea, forSyDeSystemGraph);
+        if (amalthea.getOsModel() != null) {
+            fromOSModelToBinding(amalthea, forSyDeSystemGraph);
+        }
     }
 
     default void fromOSModelToBinding(Amalthea amalthea, ForSyDeSystemGraph model) {

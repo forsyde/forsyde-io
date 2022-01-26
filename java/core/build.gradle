@@ -12,18 +12,21 @@ plugins {
     // id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
 }
 
-
+/*
 task clearForSyDeModel(type: Delete) {
     delete 'src-gen/main/java/forsyde/io/java/core', 'src-gen/main/java/forsyde/io/java/typed/viewers'
 }
+*/
+
 
 tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
 //  inputs.property('inputModelJson',file('./meta.json'))
 //  inputs.property('rootOutDir', file('.'))
 }
 
-tasks.generateForSyDeModel.dependsOn clearForSyDeModel
+//tasks.generateForSyDeModel.dependsOn clearForSyDeModel
 tasks.compileJava.dependsOn generateForSyDeModel
+//tasks.sourcesJar.dependsOn generateForSyDeModel
 
 
 tasks.register('getVersion') {
