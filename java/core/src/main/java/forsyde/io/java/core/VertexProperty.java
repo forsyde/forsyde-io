@@ -22,6 +22,26 @@ public abstract class VertexProperty {
 
     public abstract <R> R match(Cases<R> cases);
 
+    public static VertexProperty create(float f) {
+        return VertexProperties.FloatVertexProperty(f);
+    }
+
+    public static VertexProperty create(double d) {
+        return VertexProperties.DoubleVertexProperty(d);
+    }
+
+    public static VertexProperty create(long l) {
+        return VertexProperties.LongVertexProperty(l);
+    }
+
+    public static VertexProperty create(int l) {
+        return VertexProperties.IntVertexProperty(l);
+    }
+
+    public static VertexProperty create(boolean b) {
+        return VertexProperties.BooleanVertexProperty(b);
+    }
+
     public static VertexProperty create(Object obj) {
         if (obj instanceof VertexProperty) {
             return (VertexProperty) obj;

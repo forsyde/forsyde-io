@@ -145,8 +145,11 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             final Channel channel = new ChannelViewer(channelVertex);
             channel.setMaxElems(1);
             // if the number of bits is not gigantic, it should be OK.
-            // TODO: maybe think of a arbitrary size way to store this?
-            channel.setElemSizeInBits((int) label.getSize().getNumberBits());
+            if (label.getSize() != null) {
+                channel.setElemSizeInBits(label.getSize().getNumberBits());
+            } else {
+                channel.setElemSizeInBits(0L);
+            }
             addEquivalence(label, channelVertex);
         });
     }
