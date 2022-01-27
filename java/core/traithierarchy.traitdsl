@@ -230,7 +230,7 @@ namespace visualization {
     }
 
     vertex GreyBox refines Visualizable {
-        port contained is multiple Visualizable
+        port contained is multiple out Visualizable
     }
 
 }

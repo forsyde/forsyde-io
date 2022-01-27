@@ -28,4 +28,5 @@ include 'core'
 include 'sdf3'
 include 'linguafranca'
 include 'conversyde'
+include 'graphviz'
 

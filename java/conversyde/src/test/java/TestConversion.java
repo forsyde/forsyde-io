@@ -14,6 +14,10 @@ public class TestConversion {
                 //new File("h263decoder.sdf3.xml")
                 new File("systemmodel.amxmi")
         ));
+        converSyDeStandalone.setOutputFiles(List.of(
+                new File("converted-output.forsyde.xmi"),
+                new File("converted-output.gv")
+        ));
         converSyDeStandalone.call();
     }
 }

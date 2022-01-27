@@ -5,6 +5,7 @@ import forsyde.io.java.drivers.ForSyDeAmaltheaDriver;
 import forsyde.io.java.drivers.ForSyDeLFDriver;
 import forsyde.io.java.drivers.ForSyDeModelHandler;
 import forsyde.io.java.drivers.ForSyDeSDF3Driver;
+import forsyde.io.java.graphviz.ForSyDeGraphVizDriver;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -31,6 +32,8 @@ public class ConverSyDeStandalone implements Callable<Integer> {
         forSyDeModelHandler.registerDriver(new ForSyDeAmaltheaDriver());
         forSyDeModelHandler.registerDriver(new ForSyDeLFDriver());
         forSyDeModelHandler.registerDriver(new ForSyDeSDF3Driver());
+        // put it at high priority to override the core graphviz driver
+        forSyDeModelHandler.registerDriver(new ForSyDeGraphVizDriver(), 0);
     }
 
     @Override

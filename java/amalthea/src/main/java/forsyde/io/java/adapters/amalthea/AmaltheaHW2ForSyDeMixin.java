@@ -4,6 +4,7 @@ import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
 import forsyde.io.java.typed.viewers.platform.*;
 import forsyde.io.java.typed.viewers.visualization.GreyBox;
+import forsyde.io.java.typed.viewers.visualization.Visualizable;
 import org.eclipse.app4mc.amalthea.model.*;
 
 import java.util.*;
@@ -79,6 +80,7 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         for (HwModule module : structure.getModules()) {
             final Vertex moduleVertex = new Vertex(prefix + structure.getName() + "." + module.getName());
             final DigitalModule digitalModule = DigitalModule.enforce(moduleVertex);
+            final Visualizable visualizableModule = Visualizable.enforce(moduleVertex);
             digitalModule.setOperatingFrequencyInHertz(fromFrequencyToLong(module.getFrequencyDomain().getDefaultValue()));
             addEquivalence(module, moduleVertex);
             for (HwPort port : module.getPorts()) {

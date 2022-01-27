@@ -261,22 +261,24 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         if (port.multiple.orElse(true)) {
             if (port.ordered.orElse(false)) {
                 getPortMethod.returns(listOut);
-                String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), \"$L\", \"$L\", \"$L\").stream().map(v -> $T.safeCast(v).get()).collect($T.toList())";
+                String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), \"$L\", $T.$L, \"$L\").stream().map(v -> $T.safeCast(v).get()).collect($T.toList())";
                 getPortMethod.addStatement(statement,
                         ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                         port.name,
-                        port.vertexTrait.getTraitLocalName(),
+                        ClassName.get("forsyde.io.java.core", "VertexTrait"),
+                        traitName,
                         port.direction.toString().toLowerCase(),
                         vertexClass,
                         Collectors.class);
 //				getPortMethod.addStatement("$T outList = new $T()", arrayType, arrayType);
             } else {
                 getPortMethod.returns(setOut);
-                String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), \"$L\", \"$L\", \"$L\").stream().map(v -> $T.safeCast(v).get()).collect($T.toSet())";
+                String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), \"$L\", $T.$L, \"$L\").stream().map(v -> $T.safeCast(v).get()).collect($T.toSet())";
                 getPortMethod.addStatement(statement,
                         ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                         port.name,
-                        port.vertexTrait.getTraitLocalName(),
+                        ClassName.get("forsyde.io.java.core", "VertexTrait"),
+                        traitName,
                         port.direction.toString().toLowerCase(),
                         vertexClass,
                         Collectors.class);
@@ -284,10 +286,11 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
             }
         } else {
             getPortMethod.returns(optionalOut);
-            getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), \"$L\", \"$L\", \"$L\").map(v -> $T.safeCast(v).get())",
+            getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), \"$L\", $T.$L, \"$L\").map(v -> $T.safeCast(v).get())",
                     ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                     port.name,
-                    port.vertexTrait.getTraitLocalName(),
+                    ClassName.get("forsyde.io.java.core", "VertexTrait"),
+                    traitName,
                     port.direction.toString().toLowerCase(),
                     vertexClass);
         }

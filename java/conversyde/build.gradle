@@ -25,6 +25,7 @@ dependencies {
     implementation project(":amalthea")
     implementation project(":linguafranca")
     implementation project(":sdf3")
+    implementation project(":graphviz")
 }
 
 test {

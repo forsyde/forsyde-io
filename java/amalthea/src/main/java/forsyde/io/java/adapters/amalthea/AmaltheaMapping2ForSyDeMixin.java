@@ -19,6 +19,9 @@ public interface AmaltheaMapping2ForSyDeMixin extends EquivalenceModel2ModelMixi
                         schedulerVertex.addTraits(VertexTrait.DECISION_ALLOCATED);
                         schedulerVertex.ports.add("allocationHost");
                         forSyDeSystemGraph.connect(schedulerVertex, puVertex, "allocationHost", EdgeTrait.DECISION_ABSTRACTALLOCATION);
+                        puVertex.addTraits(VertexTrait.VISUALIZATION_GREYBOX);
+                        puVertex.ports.add("contained");
+                        forSyDeSystemGraph.connect(puVertex, schedulerVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                     });
                 });
             });
@@ -29,6 +32,9 @@ public interface AmaltheaMapping2ForSyDeMixin extends EquivalenceModel2ModelMixi
                         taskVertex.addTraits(VertexTrait.DECISION_SCHEDULED);
                         taskVertex.ports.add("scheduler");
                         forSyDeSystemGraph.connect(taskVertex, schedulerVertex, "scheduler", EdgeTrait.DECISION_ABSTRACTSCHEDULING);
+                        schedulerVertex.addTraits(VertexTrait.VISUALIZATION_GREYBOX);
+                        schedulerVertex.ports.add("contained");
+                        forSyDeSystemGraph.connect(schedulerVertex, taskVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                     });
                 });
             });
@@ -42,6 +48,9 @@ public interface AmaltheaMapping2ForSyDeMixin extends EquivalenceModel2ModelMixi
                         elementVertex.ports.add("allocationHost");
                         forSyDeSystemGraph.connect(elementVertex, memoryVertex, "mappingHost", EdgeTrait.DECISION_ABSTRACTMAPPING);
                         forSyDeSystemGraph.connect(elementVertex, memoryVertex, "allocationHost", EdgeTrait.DECISION_ABSTRACTALLOCATION);
+                        memoryVertex.addTraits(VertexTrait.VISUALIZATION_GREYBOX);
+                        memoryVertex.ports.add("contained");
+                        forSyDeSystemGraph.connect(memoryVertex, elementVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                     });
                 });
             });

@@ -32,7 +32,7 @@ public class ForSyDeDOTDriver implements ForSyDeModelDriver {
 
     @Override
     public List<String> outputExtensions() {
-        return List.of("dot", "gv", "graphviz");
+        return List.of("dot", "gv", "graphviz", "plain.gv", "plain.graphviz");
     }
 
     @Override

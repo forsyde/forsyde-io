@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -131,9 +132,19 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
 	 */
 	public boolean connect(Vertex src, Vertex dst, String portSrc, EdgeTrait... traits) {
 		if (portSrc != null && !portSrc.isEmpty() && src.ports.contains(portSrc)) {
-			EdgeInfo e = new EdgeInfo(src.getIdentifier(), dst.getIdentifier(), Optional.of(portSrc), Optional.empty());
-			e.edgeTraits.addAll(Arrays.asList(traits.clone()));
-			return addEdge(src, dst, e);
+			// check if some connection already exists
+			final Set<EdgeInfo> present = getAllEdges(src, dst).stream()
+					.filter(edgeInfo ->
+							edgeInfo.getSourcePort().equals(Optional.of(portSrc)))
+					.collect(Collectors.toSet());
+			if (present.isEmpty()) {
+				EdgeInfo e = new EdgeInfo(src.getIdentifier(), dst.getIdentifier(), portSrc != null && !portSrc.isEmpty() ? Optional.of(portSrc) : Optional.empty(), Optional.empty());
+				e.edgeTraits.addAll(Arrays.asList(traits.clone()));
+				return addEdge(src, dst, e);
+			} else {
+				present.forEach(e -> e.edgeTraits.addAll(Arrays.asList(traits.clone())));
+				return true;
+			}
 		} else {
 			return false;
 		}
@@ -175,9 +186,20 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
 	public boolean connect(Vertex src, Vertex dst, String portSrc, String portDst, EdgeTrait... traits) {
 		// portDst must not be null and 'if' portSrc is not null, it must be in src's ports
 		if (portDst != null && !portDst.isEmpty() && dst.ports.contains(portDst) && (portSrc == null || portSrc.isEmpty() || src.ports.contains(portSrc))) {
-			EdgeInfo e = new EdgeInfo(src.getIdentifier(), dst.getIdentifier(), portSrc != null && !portSrc.isEmpty() ? Optional.of(portSrc) : Optional.empty(), Optional.of(portDst));
-			e.edgeTraits.addAll(Arrays.asList(traits.clone()));
-			return addEdge(src, dst, e);
+			// check if some connection already exists
+			final Set<EdgeInfo> present = getAllEdges(src, dst).stream()
+					.filter(edgeInfo ->
+							edgeInfo.getSourcePort().equals(Optional.ofNullable(portSrc)) &&
+							edgeInfo.getTargetPort().equals(Optional.of(portDst)))
+					.collect(Collectors.toSet());
+			if (present.isEmpty()) {
+				EdgeInfo e = new EdgeInfo(src.getIdentifier(), dst.getIdentifier(), portSrc != null && !portSrc.isEmpty() ? Optional.of(portSrc) : Optional.empty(), Optional.of(portDst));
+				e.edgeTraits.addAll(Arrays.asList(traits.clone()));
+				return addEdge(src, dst, e);
+			} else {
+				present.forEach(e -> e.edgeTraits.addAll(Arrays.asList(traits.clone())));
+				return true;
+			}
 		} else {
 			return false;
 		}
@@ -213,6 +235,26 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
 	 */
 	public boolean hasConnection(VertexViewer src, VertexViewer dst) {
 		return containsEdge(src.getViewedVertex(), dst.getViewedVertex());
+	}
+
+	/**
+	 * Convenience method to check existence of an edge connecting two vertexes,
+	 * through the viewer that are wrapping them. This method ignores ports and
+	 * returns true if both port-to-port and vertex-to-vertex connections exist
+	 * filtering by edge traits.
+	 *
+	 * @param src The viewer for the source vertex.
+	 * @param dst The viewer for the target vertex.
+	 * @param traits the required traits.
+	 * @return whether the edge exists or not (with or without ports)
+	 */
+	public boolean hasConnection(VertexViewer src, VertexViewer dst, EdgeTrait... traits) {
+		final Set<EdgeInfo> edgeInfoSet = getAllEdges(src.getViewedVertex(), dst.getViewedVertex());
+		for (EdgeTrait trait : traits) {
+			if (edgeInfoSet.stream().noneMatch(e -> e.hasTrait(trait)))
+				return false;
+		}
+		return true;
 	}
 	
 	/**

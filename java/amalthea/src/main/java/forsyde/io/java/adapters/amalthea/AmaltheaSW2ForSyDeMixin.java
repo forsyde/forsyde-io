@@ -10,6 +10,7 @@ import forsyde.io.java.typed.viewers.execution.Channel;
 import forsyde.io.java.typed.viewers.execution.Task;
 import forsyde.io.java.typed.viewers.impl.InstrumentedExecutable;
 import forsyde.io.java.typed.viewers.impl.InstrumentedExecutableViewer;
+import forsyde.io.java.typed.viewers.visualization.GreyBox;
 import org.eclipse.app4mc.amalthea.model.*;
 import org.eclipse.app4mc.amalthea.model.PeriodicStimulus;
 
@@ -31,7 +32,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
 
     default void fromRunnableToVertex(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
         amalthea.getSwModel().getRunnables().forEach(runnable -> {
-            final Vertex runnableVertex = new Vertex(runnable.getName(), VertexTrait.IMPL_EXECUTABLE);
+            final Vertex runnableVertex = new Vertex(runnable.getName(), VertexTrait.IMPL_EXECUTABLE, VertexTrait.VISUALIZATION_VISUALIZABLE);
             forSyDeSystemGraph.addVertex(runnableVertex);
             if (runnable.getRunnableItems() != null) {
                 runnable.getRunnableItems().forEach(item -> {
@@ -48,7 +49,8 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                                             runnableVertex,
                                             null,
                                             ((LabelAccess) item).getData().getName(),
-                                            EdgeTrait.EXECUTION_COMMUNICATIONEDGE
+                                            EdgeTrait.EXECUTION_COMMUNICATIONEDGE,
+                                            EdgeTrait.VISUALIZATION_VISUALCONNECTION
                                     );
                                     break;
                                 case WRITE:
@@ -56,7 +58,8 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                                             runnableVertex,
                                             labelVertex,
                                             ((LabelAccess) item).getData().getName(),
-                                            EdgeTrait.EXECUTION_COMMUNICATIONEDGE
+                                            EdgeTrait.EXECUTION_COMMUNICATIONEDGE,
+                                            EdgeTrait.VISUALIZATION_VISUALCONNECTION
                                     );
                                     break;
                             }
@@ -116,6 +119,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
     default void fromTaskToVertex(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
         amalthea.getSwModel().getTasks().forEach(task -> {
             final Vertex taskVertex = new Vertex(task.getName(), VertexTrait.EXECUTION_TASK);
+            final GreyBox taskGreyBox = GreyBox.enforce(taskVertex);
             forSyDeSystemGraph.addVertex(taskVertex);
             taskVertex.ports.add("callSequence");
             final Task fTask = new TaskViewer(taskVertex);
@@ -137,6 +141,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final RunnableCall runnableCall = (RunnableCall) item;
                         equivalent(runnableCall.getRunnable()).ifPresent(runnableVertex -> {
                             forSyDeSystemGraph.connect(taskVertex, runnableVertex, "callSequence", EdgeTrait.EXECUTION_CONTAINMENTEDGE);
+                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                         });
                     }
                 });
@@ -147,7 +152,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
 
     default void fromLabelToVertex(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
         amalthea.getSwModel().getLabels().forEach(label -> {
-            final Vertex channelVertex = new Vertex(label.getName(), VertexTrait.EXECUTION_CHANNEL);
+            final Vertex channelVertex = new Vertex(label.getName(), VertexTrait.EXECUTION_CHANNEL, VertexTrait.VISUALIZATION_VISUALIZABLE);
             forSyDeSystemGraph.addVertex(channelVertex);
             final Channel channel = new ChannelViewer(channelVertex);
             channel.setMaxElems(1);

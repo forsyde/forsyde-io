@@ -45,6 +45,7 @@
     <runnables xmi:id="R2?type=Runnable" name="R2" callback="false" service="false">
       <size value="1000" unit="B"/>
       <activityGraph>
+        <items xsi:type="am:LabelAccess" data="C3?type=Label" access="read"/>
         <items xsi:type="am:LabelAccess" data="C1?type=Label" access="read"/>
         <items xsi:type="am:ExecutionNeed">
           <needs key="FloatOp">
@@ -230,4 +231,9 @@
       </limit>
     </requirements>
   </constraintsModel>
+  <mappingModel addressMappingType="offset">
+    <memoryMapping abstractElement="C1?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
+    <memoryMapping abstractElement="C2?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
+    <memoryMapping abstractElement="C8?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
+  </mappingModel>
 </am:Amalthea>
