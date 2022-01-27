@@ -90,7 +90,7 @@ public class ForSyDeGraphVizAdapter implements ModelAdapter<Graph> {
                             })
                         .collect(Collectors.toList()))
                 .graphAttr()
-                .with(Rank.dir(Rank.RankDir.TOP_TO_BOTTOM));
+                .with(Rank.dir(Rank.RankDir.LEFT_TO_RIGHT));
         //return rootGraph.toImmutable();
     }
 
@@ -119,7 +119,7 @@ public class ForSyDeGraphVizAdapter implements ModelAdapter<Graph> {
                                 .collect(Collectors.toList())
                 )
                 .graphAttr().with(Label.of(greyBox.getViewedVertex().getIdentifier()))
-                .graphAttr().with(Rank.dir(Rank.RankDir.TOP_TO_BOTTOM));
+                .graphAttr().with(Rank.dir(Rank.RankDir.LEFT_TO_RIGHT));
     }
 
     protected Node buildNodeFromVertex(final Vertex vertex) {
