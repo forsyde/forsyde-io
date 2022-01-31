@@ -33,7 +33,7 @@ public class ConverSyDeStandalone implements Callable<Integer> {
         forSyDeModelHandler.registerDriver(new ForSyDeLFDriver());
         forSyDeModelHandler.registerDriver(new ForSyDeSDF3Driver());
         // put it at high priority to override the core graphviz driver
-        forSyDeModelHandler.registerDriver(new ForSyDeGraphVizDriver(), 0);
+        forSyDeModelHandler.registerDriver(new ForSyDeGraphVizDriver(), 5);
     }
 
     @Override

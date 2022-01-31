@@ -20,11 +20,16 @@ namespace moc {
         }
 
         vertex LinguaFrancaReaction refines LinguaFrancaElem {
+            prop sizeInBits is long
 
+            port implementation is single impl::Executable
         }
 
         vertex LinguaFrancaReactor refines LinguaFrancaElem {
+            prop stateSizesInBits is array<long>
+            prop stateNames is array<str>
 
+            port childrenReactors is multiple ordered LinguaFrancaReactor
             port reactions is multiple ordered LinguaFrancaReaction
             port timers is multiple unordered LinguaFrancaTimer
         }
@@ -114,8 +119,8 @@ namespace execution {
         prop predecessorInstance is array<int>
         prop sucessorInstance is array<int>
 
-        port predecessor is Task
-        port sucessor is Task
+        port predecessor is single Task
+        port sucessor is single Task
     }
 
     edge ContainmentEdge
@@ -186,7 +191,8 @@ namespace platform {
         }
 
         vertex RoundRobinScheduler refines AbstractScheduler {
-
+            prop maximumTimeSliceInCycles is long
+            prop minimumTimeSliceInCycles is long
         }
 
         vertex TimeTriggeredScheduler refines AbstractScheduler {
