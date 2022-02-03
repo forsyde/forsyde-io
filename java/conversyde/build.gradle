@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'io.github.fvarrui:javapackager:1.6.2'
+    }
+}
+
 plugins {
     id 'java'
     id 'application'
@@ -5,6 +14,8 @@ plugins {
     id 'eclipse'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
+
+apply plugin: 'io.github.fvarrui.javapackager.plugin'
 
 group 'io.github.forsyde'
 version '0.5.0'
@@ -33,3 +44,39 @@ test {
 }
 
 mainClassName = 'io.github.forsyde.conversyde.ConverSyDeStandalone'
+
+javapackager {
+    mainClass = "io.github.forsyde.conversyde.ConverSyDeStandalone"
+    generateInstaller = false
+    administratorRequired = false
+    name = "conversyde"
+}
+
+launch4j {
+    headerType = "console"
+}
+
+tasks.launch4j.dependsOn(jar)
+
+/*
+task packageConverSyDe(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: build) {
+    // mandatory
+    mainClass = 'io.github.forsyde.conversyde.ConverSyDeStandalone'
+    // optional
+    bundleJre = true
+    generateInstaller = false
+    administratorRequired = false
+    platform = "auto"
+//    additionalResources = [ file('file path'), file('folder path'), ... ]
+//    linuxConfig {
+//        ...
+//    }
+//    macConfig {
+//        ...
+//    }
+//    winConfig {
+//        ...
+//    }
+//    ...
+}
+*/

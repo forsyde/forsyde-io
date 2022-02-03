@@ -219,6 +219,12 @@
       <defaultValue value="600.0" unit="MHz"/>
     </domains>
   </hwModel>
+  <osModel>
+    <schedulerDefinitions xmi:id="PriorityBased?type=SchedulerDefinition" name="PriorityBased" description="???&#xA;&#xA;Algorithm parameters&#xA; -&#xA;&#xA;Process parameters&#xA; - priority [1] Integer&#xA;      The priority of the process (a higher value means a higher priority).&#xA;&#xA;Options:&#xA; -&#xA;&#xA;Reference:&#xA; - TODO" processParameters="priority?type=SchedulingParameterDefinition" requiresParentScheduler="false" passesParametersUpwards="false" hasExactlyOneChild="false"/>
+    <schedulerDefinitions xmi:id="StaticCyclic?type=SchedulerDefinition" name="StaticCyclic" processParameters="cycleOrder?type=SchedulingParameterDefinition" requiresParentScheduler="false" passesParametersUpwards="false" hasExactlyOneChild="false"/>
+    <schedulingParameterDefinitions xmi:id="priority?type=SchedulingParameterDefinition" name="priority" type="Integer" many="false" mandatory="true"/>
+    <schedulingParameterDefinitions xmi:id="cycleOrder?type=SchedulingParameterDefinition" name="cycleOrder" type="Integer" many="false" mandatory="true"/>
+  </osModel>
   <stimuliModel>
     <stimuli xsi:type="am:PeriodicStimulus" xmi:id="Timer60Hz?type=PeriodicStimulus" name="Timer60Hz">
       <recurrence value="16" unit="ms"/>

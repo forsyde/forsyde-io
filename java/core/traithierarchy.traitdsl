@@ -108,19 +108,22 @@ namespace execution {
         prop elemSizeInBits is long
     }
 
-    vertex Constraint
+    vertex RuntimeConstraint
 
-    vertex PrecedenceConstraint {
+    vertex PrecedenceConstraint refines RuntimeConstraint {
         port predecessor is Task
         port sucessor is Task
     }
 
-    vertex ExtendedPrecedenceConstraint {
+    vertex ExtendedPrecedenceConstraint refines PrecedenceConstraint {
         prop predecessorInstance is array<int>
         prop sucessorInstance is array<int>
+    }
 
-        port predecessor is single Task
-        port sucessor is single Task
+
+    vertex ColocationConstraint refines RuntimeConstraint {
+         port cocolated is multiple Task
+         port dislocated is multiple Task
     }
 
     edge ContainmentEdge
@@ -220,6 +223,7 @@ namespace decision {
     vertex Scheduled {
         port scheduler is out platform::runtime::AbstractScheduler
     }
+
 }
 
 namespace visualization {

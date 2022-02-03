@@ -10,7 +10,6 @@ import picocli.CommandLine;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -33,7 +32,7 @@ public class ConverSyDeStandalone implements Callable<Integer> {
         forSyDeModelHandler.registerDriver(new ForSyDeLFDriver());
         forSyDeModelHandler.registerDriver(new ForSyDeSDF3Driver());
         // put it at high priority to override the core graphviz driver
-        forSyDeModelHandler.registerDriver(new ForSyDeGraphVizDriver(), 5);
+        forSyDeModelHandler.registerDriver(new ForSyDeGraphVizDriver(), 0);
     }
 
     @Override
