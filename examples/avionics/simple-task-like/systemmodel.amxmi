@@ -220,8 +220,20 @@
     </domains>
   </hwModel>
   <osModel>
-    <schedulerDefinitions xmi:id="PriorityBased?type=SchedulerDefinition" name="PriorityBased" description="???&#xA;&#xA;Algorithm parameters&#xA; -&#xA;&#xA;Process parameters&#xA; - priority [1] Integer&#xA;      The priority of the process (a higher value means a higher priority).&#xA;&#xA;Options:&#xA; -&#xA;&#xA;Reference:&#xA; - TODO" processParameters="priority?type=SchedulingParameterDefinition" requiresParentScheduler="false" passesParametersUpwards="false" hasExactlyOneChild="false"/>
+    <operatingSystems name="CPM1_Core1_Runtime">
+      <taskSchedulers xmi:id="CMP1_Core1_Runtime_Scheduler?type=TaskScheduler" name="CMP1_Core1_Runtime_Scheduler" definition="StaticCyclic?type=SchedulerDefinition"/>
+    </operatingSystems>
+    <operatingSystems name="CPM1_Core2_Runtime">
+      <taskSchedulers xmi:id="CMP1_Core2_Runtime_Scheduler?type=TaskScheduler" name="CMP1_Core2_Runtime_Scheduler" definition="StaticCyclic?type=SchedulerDefinition"/>
+    </operatingSystems>
+    <operatingSystems name="CPM2_Core3_Runtime">
+      <taskSchedulers xmi:id="CMP2_Core3_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core3_Runtime_Scheduler" definition="FixedPriorityPreemptive?type=SchedulerDefinition"/>
+    </operatingSystems>
+    <operatingSystems name="CPM2_Core4_Runtime">
+      <taskSchedulers xmi:id="CMP2_Core4_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core4_Runtime_Scheduler" definition="FixedPriorityPreemptive?type=SchedulerDefinition"/>
+    </operatingSystems>
     <schedulerDefinitions xmi:id="StaticCyclic?type=SchedulerDefinition" name="StaticCyclic" processParameters="cycleOrder?type=SchedulingParameterDefinition" requiresParentScheduler="false" passesParametersUpwards="false" hasExactlyOneChild="false"/>
+    <schedulerDefinitions xmi:id="FixedPriorityPreemptive?type=SchedulerDefinition" name="FixedPriorityPreemptive" description="Fixed Priority Preemptive Scheduling (e.g. AUTOSAR),&#xA;same as OSEK but without task groups.&#xA;&#xA;Algorithm parameters&#xA; -&#xA;&#xA;Process parameters&#xA; - priority [1] Integer&#xA;      The priority of the process (a higher value means a higher priority).&#xA;&#xA;Options:&#xA; -&#xA;&#xA;Reference:&#xA; - TODO" processParameters="priority?type=SchedulingParameterDefinition" requiresParentScheduler="false" passesParametersUpwards="false" hasExactlyOneChild="false"/>
     <schedulingParameterDefinitions xmi:id="priority?type=SchedulingParameterDefinition" name="priority" type="Integer" many="false" mandatory="true"/>
     <schedulingParameterDefinitions xmi:id="cycleOrder?type=SchedulingParameterDefinition" name="cycleOrder" type="Integer" many="false" mandatory="true"/>
   </osModel>
@@ -238,6 +250,10 @@
     </requirements>
   </constraintsModel>
   <mappingModel addressMappingType="offset">
+    <schedulerAllocation scheduler="CMP1_Core1_Runtime_Scheduler?type=TaskScheduler" responsibility="core1?type=ProcessingUnit" executingPU="core1?type=ProcessingUnit"/>
+    <schedulerAllocation scheduler="CMP1_Core2_Runtime_Scheduler?type=TaskScheduler" responsibility="core2?type=ProcessingUnit" executingPU="core2?type=ProcessingUnit"/>
+    <schedulerAllocation scheduler="CMP2_Core3_Runtime_Scheduler?type=TaskScheduler" responsibility="core3?type=ProcessingUnit" executingPU="core3?type=ProcessingUnit"/>
+    <schedulerAllocation scheduler="CMP2_Core4_Runtime_Scheduler?type=TaskScheduler" responsibility="core4?type=ProcessingUnit" executingPU="core4?type=ProcessingUnit"/>
     <memoryMapping abstractElement="C1?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
     <memoryMapping abstractElement="C2?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
     <memoryMapping abstractElement="C8?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>

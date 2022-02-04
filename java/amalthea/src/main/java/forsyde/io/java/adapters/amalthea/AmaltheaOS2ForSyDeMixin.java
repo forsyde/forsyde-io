@@ -5,6 +5,10 @@ import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
+import forsyde.io.java.typed.viewers.platform.runtime.FixedPriorityScheduler;
+import forsyde.io.java.typed.viewers.platform.runtime.StaticCyclicScheduler;
+import forsyde.io.java.typed.viewers.visualization.GreyBox;
+import forsyde.io.java.typed.viewers.visualization.Visualizable;
 import org.eclipse.app4mc.amalthea.model.*;
 
 import java.util.Map;
@@ -20,7 +24,8 @@ public interface AmaltheaOS2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
     default void fromOSModelToBinding(Amalthea amalthea, ForSyDeSystemGraph model) {
         for (OperatingSystem os: amalthea.getOsModel().getOperatingSystems()) {
             for(TaskScheduler taskScheduler : os.getTaskSchedulers()) {
-                final Vertex platformVertex = new Vertex(os.getName() + "." + taskScheduler.getName(), VertexTrait.PLATFORM_PLATFORMELEM);
+                final Vertex runtimeVertex = new Vertex(os.getName() + "." + taskScheduler.getName(), VertexTrait.PLATFORM_PLATFORMELEM);
+                final Visualizable runtimeVisualizable = Visualizable.enforce(runtimeVertex);
                 // this is very messy, but it is required as app4mc encapsualted everything
                 // delightfully in a Value type that apparently does not play nice with Java types.
                 final Boolean isPreemptive = taskScheduler.getSchedulingParameters()
@@ -33,16 +38,23 @@ public interface AmaltheaOS2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 final Boolean hasPriority = taskScheduler.getDefinition().getProcessParameters()
                         .stream().anyMatch(p ->
                                 p.getName().equals("priority"));
-                if (isPreemptive && hasPriority) {
-                    platformVertex.addTraits(VertexTrait.PLATFORM_RUNTIME_FIXEDPRIORITYSCHEDULER);
+                final Boolean isNamedStaticCyclic = taskScheduler.getName().contains("StaticCyclic");
+                final Boolean isNamedFixedPriority = taskScheduler.getName().contains("FixedPriority");
+                if (isNamedFixedPriority && hasPriority) {
+                    final FixedPriorityScheduler fixedPriorityScheduler = FixedPriorityScheduler.enforce(runtimeVertex);
+                    fixedPriorityScheduler.setPreemptive(isPreemptive);
+                } else if (isNamedStaticCyclic) {
+                    final StaticCyclicScheduler staticCyclicScheduler = StaticCyclicScheduler.enforce(runtimeVertex);
                 }
-                addEquivalence(os, platformVertex);
-                addEquivalence(taskScheduler, platformVertex);
-                model.addVertex(platformVertex);
+                addEquivalence(os, runtimeVertex);
+                addEquivalence(taskScheduler, runtimeVertex);
+                model.addVertex(runtimeVertex);
                 for (SchedulerAllocation allocation : amalthea.getMappingModel().getSchedulerAllocation()) {
                     if (allocation.getScheduler().equals(taskScheduler)) {
                         equivalent(allocation.getExecutingPU()).ifPresent(puVertex -> {
-                            model.connect(platformVertex, puVertex, EdgeTrait.DECISION_ABSTRACTALLOCATION);
+                            model.connect(runtimeVertex, puVertex, EdgeTrait.DECISION_ABSTRACTALLOCATION);
+                            GreyBox.enforce(puVertex);
+                            model.connect(puVertex, runtimeVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                         });
                     }
                 }

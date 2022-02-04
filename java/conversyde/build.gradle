@@ -18,7 +18,7 @@ plugins {
 apply plugin: 'io.github.fvarrui.javapackager.plugin'
 
 group 'io.github.forsyde'
-version '0.5.0'
+version '0.5.1'
 archivesBaseName = 'conversyde'
 
 repositories {

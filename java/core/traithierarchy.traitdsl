@@ -189,6 +189,10 @@ namespace platform {
     namespace runtime {
         vertex AbstractScheduler
 
+        vertex StaticCyclicScheduler refines AbstractScheduler {
+
+        }
+
         vertex FixedPriorityScheduler refines AbstractScheduler {
             prop preemptive is boolean
         }
