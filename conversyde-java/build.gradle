@@ -32,11 +32,11 @@ dependencies {
     implementation 'info.picocli:picocli:4.6.2'
     annotationProcessor 'info.picocli:picocli-codegen:4.6.2'
 
-    implementation project(":core")
-    implementation project(":amalthea")
-    implementation project(":linguafranca")
-    implementation project(":sdf3")
-    implementation project(":graphviz")
+    implementation project(":common-java")
+    implementation project(":amalthea-java")
+    implementation project(":linguafranca-java")
+    implementation project(":sdf3-java")
+    implementation project(":graphviz-java")
 }
 
 test {

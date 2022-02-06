@@ -37,7 +37,7 @@ dependencies {
     implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
     implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
 
-    api project(':core')
+    api project(':common-java')
 }
 
 

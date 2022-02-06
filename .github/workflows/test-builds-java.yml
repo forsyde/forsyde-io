@@ -15,7 +15,7 @@ env:
     GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
     GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
 jobs:
-  test-core-build:
+  test-builds:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -32,60 +32,61 @@ jobs:
     - name: Build with Gradle (Unix)
       if: ${{ matrix.os != 'windows-latest' }}
       run: |
-        cd ${{ github.workspace }}/java/core
+        cd ${{ github.workspace }}
         ./gradlew build
     - name: Build with Gradle (Windows)
       if: ${{ matrix.os == 'windows-latest' }}
       run: |
-        cd ${{ github.workspace }}\java\core
+        cd ${{ github.workspace }}
         .\gradlew.bat jar
-  test-amalthea-build:
-      strategy:
-        matrix:
-          os: [ubuntu-latest, macos-latest, windows-latest]
-          java: [1.11, 1.15]
-      runs-on: ${{ matrix.os }}
-      steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v1.4.3
-        with:
-          java-version: ${{ matrix.java }}
-          server-id: io.github.forsyde # Value of the distributionManagement/repository/id field of the pom.xml
-          settings-path: ${{ github.workspace }} # location for the settings.xml file
-      - name: Build with Gradle (Unix)
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          cd ${{ github.workspace }}/java/amalthea
-          ./gradlew build
-      - name: Build with Gradle (Windows)
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          cd ${{ github.workspace }}\java\amalthea
-          .\gradlew.bat jar
-  test-sdf3-build:
-      strategy:
-        matrix:
-          os: [ubuntu-latest, macos-latest, windows-latest]
-          java: [1.11, 1.15]
-      runs-on: ${{ matrix.os }}
-      steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v1.4.3
-        with:
-          java-version: ${{ matrix.java }}
-          server-id: io.github.forsyde # Value of the distributionManagement/repository/id field of the pom.xml
-          settings-path: ${{ github.workspace }} # location for the settings.xml file
-      - name: Build with Gradle (Unix)
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          cd ${{ github.workspace }}/java/sdf3
-          ./gradlew build
-      - name: Build with Gradle (Windows)
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          cd ${{ github.workspace }}\java\sdf3
-          .\gradlew.bat build
+#
+#  test-amalthea-build:
+#      strategy:
+#        matrix:
+#          os: [ubuntu-latest, macos-latest, windows-latest]
+#          java: [1.11, 1.15]
+#      runs-on: ${{ matrix.os }}
+#      steps:
+#      - uses: actions/checkout@v2
+#      - name: Set up JDK ${{ matrix.java }}
+#        uses: actions/setup-java@v1.4.3
+#        with:
+#          java-version: ${{ matrix.java }}
+#          server-id: io.github.forsyde # Value of the distributionManagement/repository/id field of the pom.xml
+#          settings-path: ${{ github.workspace }} # location for the settings.xml file
+#      - name: Build with Gradle (Unix)
+#        if: ${{ matrix.os != 'windows-latest' }}
+#        run: |
+#          cd ${{ github.workspace }}/java/amalthea
+#          ./gradlew build
+#      - name: Build with Gradle (Windows)
+#        if: ${{ matrix.os == 'windows-latest' }}
+#        run: |
+#          cd ${{ github.workspace }}\java\amalthea
+#          .\gradlew.bat jar
+#  test-sdf3-build:
+#      strategy:
+#        matrix:
+#          os: [ubuntu-latest, macos-latest, windows-latest]
+#          java: [1.11, 1.15]
+#      runs-on: ${{ matrix.os }}
+#      steps:
+#      - uses: actions/checkout@v2
+#      - name: Set up JDK ${{ matrix.java }}
+#        uses: actions/setup-java@v1.4.3
+#        with:
+#          java-version: ${{ matrix.java }}
+#          server-id: io.github.forsyde # Value of the distributionManagement/repository/id field of the pom.xml
+#          settings-path: ${{ github.workspace }} # location for the settings.xml file
+#      - name: Build with Gradle (Unix)
+#        if: ${{ matrix.os != 'windows-latest' }}
+#        run: |
+#          cd ${{ github.workspace }}/java/sdf3
+#          ./gradlew build
+#      - name: Build with Gradle (Windows)
+#        if: ${{ matrix.os == 'windows-latest' }}
+#        run: |
+#          cd ${{ github.workspace }}\java\sdf3
+#          .\gradlew.bat build
 
 
