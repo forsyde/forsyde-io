@@ -23,10 +23,10 @@ include 'services:webservice'
 
 rootProject.name = 'forsyde-io-java'
 
-include 'amalthea'
-include 'core'
-include 'sdf3'
-include 'linguafranca'
-include 'conversyde'
-include 'graphviz'
+include 'amalthea-java'
+include 'common-java'
+include 'sdf3-java'
+include 'linguafranca-java'
+include 'conversyde-java'
+include 'graphviz-java'
 
