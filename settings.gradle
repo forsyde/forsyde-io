@@ -21,12 +21,12 @@ include 'services:webservice'
 //    }
 //}
 
-rootProject.name = 'forsyde-io-java'
+rootProject.name = 'forsyde-io'
 
-include 'amalthea-java'
-include 'common-java'
-include 'sdf3-java'
-include 'linguafranca-java'
-include 'conversyde-java'
-include 'graphviz-java'
+include 'java-amalthea'
+include 'java-core'
+include 'java-sdf3'
+include 'java-linguafranca'
+include 'java-conversyde'
+include 'java-graphviz'
 
