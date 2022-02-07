@@ -3,7 +3,7 @@ package forsyde.io.java.core;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class VertexAcessor {
+public final class VertexAcessor {
 
     static public Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, String traitName) {
         return getNamedPort(model, v, portName, traitName, "BIDIRECTIONAL");

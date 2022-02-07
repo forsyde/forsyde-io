@@ -25,7 +25,7 @@ repositories {
 // due to how maven central works, the groupId must be the same as the
 // website which we host
 group = 'io.github.forsyde'
-archivesBaseName = rootProject.name + '-amalthea'
+archivesBaseName = rootProject.name + '-' + project.name
 version = rootProject.version
 
 dependencies {
@@ -41,7 +41,7 @@ dependencies {
     //implementation 'org.eclipse.app4mc.migration:org.eclipse.app4mc.amalthea.converters.common:2.0.0'
     //implementation 'org.eclipse.app4mc.migration:parent:2.0.0'
     //implementation 'org.eclipse.app4mc.migration:org.eclipse.app4mc.amalthea.converters.082:2.0.0'
-    implementation project(':common-java')
+    implementation project(':java-core')
 }
 
 

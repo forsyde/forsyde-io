@@ -299,18 +299,29 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
     public TypeSpec generateVertexTraitEnum(TraitHierarchy model) {
         ClassName generalTraitClass = ClassName.get("forsyde.io.java.core", "Trait");
-        TypeSpec.Builder vertexTraitEnumBuilder = TypeSpec.enumBuilder("VertexTrait")
+        final TypeSpec.Builder vertexTraitEnumBuilder = TypeSpec.enumBuilder("VertexTrait")
                 .addSuperinterface(generalTraitClass).addModifiers(Modifier.PUBLIC);
         // // refinement method
-        MethodSpec.Builder refinesMethod = MethodSpec.methodBuilder("refines").returns(TypeName.BOOLEAN)
+        final MethodSpec.Builder refinesMethod = MethodSpec.methodBuilder("refines")
+                .returns(TypeName.BOOLEAN)
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(ClassName.get("forsyde.io.java.core", "VertexTrait"), "one")
                 .addParameter(ClassName.get("forsyde.io.java.core", "VertexTrait"), "other")
                 .beginControlFlow("switch (one)");
+        final MethodSpec.Builder fromNameMethod = MethodSpec.methodBuilder("fromName")
+                .returns(ClassName.get("forsyde.io.java.core", "Trait"))
+                .addParameter(String.class, "traitName")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .beginControlFlow("switch (traitName)");
+        final MethodSpec.Builder getNameMethod = MethodSpec.methodBuilder("getName")
+                .returns(String.class)
+                .addModifiers(Modifier.PUBLIC)
+                .beginControlFlow("switch (this)");
         List<VertexTraitSpec> traits = model.vertexTraits.stream().collect(Collectors.toList());
         for (VertexTraitSpec trait : traits) {
             final String enumTraitName = trait.name.replace("::", "_").toUpperCase();
             vertexTraitEnumBuilder.addEnumConstant(enumTraitName);
+
             refinesMethod.addCode("case " + enumTraitName + ":\n");
             refinesMethod.beginControlFlow("switch (other)");
             // def superIterator = new DepthFirstIterator<String, DefaultEdge>(traitGraph,
@@ -325,18 +336,28 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
             }
             refinesMethod.addStatement("default: return false");
             refinesMethod.endControlFlow();
+
+            getNameMethod.addStatement("case " + enumTraitName + ": return \"" + trait.name + "\"");
+
+            fromNameMethod.addStatement("case \"" + trait.name + "\": return VertexTrait." + enumTraitName);
         }
         refinesMethod.addStatement("default: return false");
         refinesMethod.endControlFlow();
+
+        getNameMethod.addStatement("default: return \"\"");
+        getNameMethod.endControlFlow();
+
+        fromNameMethod.addStatement("default: return new $T($L)", ClassName.get("forsyde.io.java.core", "OpaqueTrait"), "traitName");
+        fromNameMethod.endControlFlow();
+
         vertexTraitEnumBuilder.addMethod(refinesMethod.build());
         vertexTraitEnumBuilder.addMethod(MethodSpec.methodBuilder("refines").returns(TypeName.BOOLEAN)
                 .addModifiers(Modifier.PUBLIC).addParameter(ClassName.get("forsyde.io.java.core", "Trait"), "other")
                 .addStatement(
                         "return other instanceof VertexTrait ? VertexTrait.refines(this, (VertexTrait) other) : false")
                 .build());
-        vertexTraitEnumBuilder
-                .addMethod(MethodSpec.methodBuilder("getName").returns(ClassName.bestGuess("java.lang.String"))
-                        .addModifiers(Modifier.PUBLIC).addStatement("return this.toString()").build());
+        vertexTraitEnumBuilder.addMethod(fromNameMethod.build());
+        vertexTraitEnumBuilder.addMethod(getNameMethod.build());
         return vertexTraitEnumBuilder.build();
     }
 
@@ -349,10 +370,20 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 .addParameter(ClassName.get("forsyde.io.java.core", "EdgeTrait"), "one")
                 .addParameter(ClassName.get("forsyde.io.java.core", "EdgeTrait"), "other")
                 .beginControlFlow("switch (one)");
+        final MethodSpec.Builder fromNameMethod = MethodSpec.methodBuilder("fromName")
+                .returns(ClassName.get("forsyde.io.java.core", "Trait"))
+                .addParameter(String.class, "traitName")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .beginControlFlow("switch (traitName)");
+        final MethodSpec.Builder getNameMethod = MethodSpec.methodBuilder("getName")
+                .returns(String.class)
+                .addModifiers(Modifier.PUBLIC)
+                .beginControlFlow("switch (this)");
         List<EdgeTraitSpec> traits = model.edgeTraits.stream().collect(Collectors.toList());
         for (EdgeTraitSpec trait : traits) {
             final String enumTraitName = trait.name.replace("::", "_").toUpperCase();
             edgeEnumBuilder.addEnumConstant(enumTraitName);
+
             refinesMethod.addCode("case " + enumTraitName + ":\n");
             refinesMethod.beginControlFlow("switch (other)");
             Queue<EdgeTraitSpec> refinedTraits = new LinkedList<>(List.of(trait));
@@ -365,16 +396,27 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
             }
             refinesMethod.addStatement("default: return false");
             refinesMethod.endControlFlow();
+
+            getNameMethod.addStatement("case " + enumTraitName + ": return \"" + trait.name + "\"");
+
+            fromNameMethod.addStatement("case \"" + trait.name + "\": return EdgeTrait." + enumTraitName);
         }
         refinesMethod.addStatement("default: return false");
         refinesMethod.endControlFlow();
+
+        getNameMethod.addStatement("default: return \"\"");
+        getNameMethod.endControlFlow();
+
+        fromNameMethod.addStatement("default: return new $T($L)", ClassName.get("forsyde.io.java.core", "OpaqueTrait"), "traitName");
+        fromNameMethod.endControlFlow();
+
         edgeEnumBuilder.addMethod(refinesMethod.build());
         edgeEnumBuilder.addMethod(MethodSpec.methodBuilder("refines").returns(TypeName.BOOLEAN)
                 .addModifiers(Modifier.PUBLIC).addParameter(ClassName.get("forsyde.io.java.core", "Trait"), "other")
                 .addStatement("return other instanceof EdgeTrait ? EdgeTrait.refines(this, (EdgeTrait) other) : false")
                 .build());
-        edgeEnumBuilder.addMethod(MethodSpec.methodBuilder("getName").returns(ClassName.bestGuess("java.lang.String"))
-                .addModifiers(Modifier.PUBLIC).addStatement("return this.toString()").build());
+        edgeEnumBuilder.addMethod(fromNameMethod.build());
+        edgeEnumBuilder.addMethod(getNameMethod.build());
         return edgeEnumBuilder.build();
     }
 

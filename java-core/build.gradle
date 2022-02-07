@@ -38,7 +38,7 @@ tasks.register('getVersion') {
 // due to how maven central works, the groupId must be the same as the
 // website which we host
 group = 'io.github.forsyde'
-archivesBaseName = rootProject.name + '-common'
+archivesBaseName = rootProject.name + '-' + project.name
 version = rootProject.version
 
 

@@ -38,7 +38,7 @@ dependencies {
     mwe2 "org.eclipse.xtext:org.eclipse.xtext.common.types:${xtextVersion}"
     mwe2 "org.eclipse.xtext:org.eclipse.xtext.xtext.generator:${xtextVersion}"
     implementation 'commons-cli:commons-cli:1.5.0'
-    implementation project(":common-java")
+    implementation project(":java-core")
 }
 
 task generateXtextLanguage(type: JavaExec) {
