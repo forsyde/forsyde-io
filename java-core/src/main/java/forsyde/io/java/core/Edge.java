@@ -15,7 +15,10 @@ import java.util.stream.Collectors;
  *         {@link Vertex}es as well as the {@link Port}s being connect on both
  *         ends, in case they exist. The edges also have types associated with
  *         them so that extra deductions can be made along the EDA flow.
+ *
+ *         Deprecated in favor of {@link EdgeInfo}
  */
+@Deprecated
 final public class Edge {
 
 	public Vertex source;

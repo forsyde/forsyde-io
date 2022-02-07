@@ -9,7 +9,7 @@ import java.util.Objects;
  * In a sense, OpaqueTrait's are custom Traits which are not part of the source
  * code yet.
  */
-public class OpaqueTrait implements Trait, CharSequence {
+public final class OpaqueTrait implements Trait, CharSequence {
 
     private final String opaqueTraitName;
 

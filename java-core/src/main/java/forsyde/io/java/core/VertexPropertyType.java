@@ -1,5 +1,6 @@
 package forsyde.io.java.core;
 
+@Deprecated
 public enum VertexPropertyType {
     BOOLEAN,
     INTEGER,
