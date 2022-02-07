@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <forsyde.io.eclipse.systemgraph:ForSyDeSystemGraph xmlns:forsyde.io.eclipse.systemgraph="forsyde.io.eclipse.systemgraph" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmi:version="2.0" xsi:schemaLocation="forsyde.io.eclipse.systemgraph systemgraph.ecore#//io/eclipse/systemgraph">
     <nodes identifier="getPxCons">
-        <traits>SDFComb</traits>
+        <traits>moc::sdf::SDFComb</traits>
         <ports>output</ports>
         <ports>combinator</ports>
         <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
@@ -13,7 +13,7 @@
         <propertiesNames>production</propertiesNames>
     </nodes>
     <nodes identifier="GxCons">
-        <traits>SDFComb</traits>
+        <traits>moc::sdf::SDFComb</traits>
         <ports>output</ports>
         <ports>combinator</ports>
         <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
@@ -28,7 +28,7 @@
         <propertiesNames>consumption</propertiesNames>
     </nodes>
     <nodes identifier="GyCons">
-        <traits>SDFComb</traits>
+        <traits>moc::sdf::SDFComb</traits>
         <ports>output</ports>
         <ports>combinator</ports>
         <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
@@ -43,7 +43,7 @@
         <propertiesNames>consumption</propertiesNames>
     </nodes>
     <nodes identifier="AbsCons">
-        <traits>SDFComb</traits>
+        <traits>moc::sdf::SDFComb</traits>
         <ports>output</ports>
         <ports>combinator</ports>
         <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
@@ -77,30 +77,30 @@
         <ports>resx</ports>
     </nodes>
     <nodes identifier="gxsig">
-        <traits>Signal</traits>
-        <ports>fifoIn</ports>
-        <ports>fifoOut</ports>
+        <traits>moc::sdf::SDFChannel</traits>
+        <ports>producer</ports>
+        <ports>consumer</ports>
         <propertiesValues string="8" xsi:type="forsyde.io.eclipse.systemgraph:StringVertexProperty"/>
         <propertiesNames>size</propertiesNames>
     </nodes>
     <nodes identifier="gysig">
-        <traits>Signal</traits>
-        <ports>fifoIn</ports>
-        <ports>fifoOut</ports>
+        <traits>moc::sdf::SDFChannel</traits>
+        <ports>producer</ports>
+        <ports>consumer</ports>
         <propertiesValues string="8" xsi:type="forsyde.io.eclipse.systemgraph:StringVertexProperty"/>
         <propertiesNames>size</propertiesNames>
     </nodes>
     <nodes identifier="absxsig">
-        <traits>Signal</traits>
-        <ports>fifoIn</ports>
-        <ports>fifoOut</ports>
+        <traits>moc::sdf::SDFChannel</traits>
+        <ports>producer</ports>
+        <ports>consumer</ports>
         <propertiesValues string="8" xsi:type="forsyde.io.eclipse.systemgraph:StringVertexProperty"/>
         <propertiesNames>size</propertiesNames>
     </nodes>
     <nodes identifier="absysig">
-        <traits>Signal</traits>
-        <ports>fifoIn</ports>
-        <ports>fifoOut</ports>
+        <traits>moc::sdf::SDFChannel</traits>
+        <ports>producer</ports>
+        <ports>consumer</ports>
         <propertiesValues string="8" xsi:type="forsyde.io.eclipse.systemgraph:StringVertexProperty"/>
         <propertiesNames>size</propertiesNames>
     </nodes>
@@ -204,7 +204,7 @@
         <traits>WCCT</traits>
         <ports>reciever</ports>
         <ports>sender</ports>
-        <ports>signal</ports>
+        <ports>moc::sdf::SDFChannel</ports>
         <propertiesValues intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
         <propertiesNames>time</propertiesNames>
     </nodes>
@@ -212,7 +212,7 @@
         <traits>WCCT</traits>
         <ports>reciever</ports>
         <ports>sender</ports>
-        <ports>signal</ports>
+        <ports>moc::sdf::SDFChannel</ports>
         <propertiesValues intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
         <propertiesNames>time</propertiesNames>
     </nodes>
@@ -220,7 +220,7 @@
         <traits>WCCT</traits>
         <ports>reciever</ports>
         <ports>sender</ports>
-        <ports>signal</ports>
+        <ports>moc::sdf::SDFChannel</ports>
         <propertiesValues intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
         <propertiesNames>time</propertiesNames>
     </nodes>
@@ -228,7 +228,7 @@
         <traits>WCCT</traits>
         <ports>reciever</ports>
         <ports>sender</ports>
-        <ports>signal</ports>
+        <ports>moc::sdf::SDFChannel</ports>
         <propertiesValues intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
         <propertiesNames>time</propertiesNames>
     </nodes>
@@ -249,28 +249,28 @@
     <edges source="AbsCons" sourceport="output" target="Abs">
         <traits>Output</traits>
     </edges>
-    <edges source="getPx" sourceport="gx" target="gxsig" targetport="fifoIn">
+    <edges source="getPx" sourceport="gx" target="gxsig" targetport="producer">
         <traits>Output</traits>
     </edges>
-    <edges source="getPx" sourceport="gy" target="gysig" targetport="fifoIn">
+    <edges source="getPx" sourceport="gy" target="gysig" targetport="producer">
         <traits>Output</traits>
     </edges>
-    <edges source="Gx" sourceport="resx" target="absxsig" targetport="fifoIn">
+    <edges source="Gx" sourceport="resx" target="absxsig" targetport="producer">
         <traits>Output</traits>
     </edges>
-    <edges source="Gy" sourceport="resy" target="absysig" targetport="fifoIn">
+    <edges source="Gy" sourceport="resy" target="absysig" targetport="producer">
         <traits>Output</traits>
     </edges>
-    <edges source="gxsig" sourceport="fifoOut" target="Gx" targetport="gx">
+    <edges source="gxsig" sourceport="consumer" target="Gx" targetport="gx">
         <traits>Output</traits>
     </edges>
-    <edges source="gysig" sourceport="fifoOut" target="Gy" targetport="gy">
+    <edges source="gysig" sourceport="consumer" target="Gy" targetport="gy">
         <traits>Output</traits>
     </edges>
-    <edges source="absxsig" sourceport="fifoOut" target="Abs" targetport="resx">
+    <edges source="absxsig" sourceport="consumer" target="Abs" targetport="resx">
         <traits>Output</traits>
     </edges>
-    <edges source="absysig" sourceport="fifoOut" target="Abs" targetport="resy">
+    <edges source="absysig" sourceport="consumer" target="Abs" targetport="resy">
         <traits>Output</traits>
     </edges>
     <edges source="sobel" sourceport="imgInput" target="getPx" targetport="imgInput">

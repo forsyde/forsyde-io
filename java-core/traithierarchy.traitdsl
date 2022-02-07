@@ -228,6 +228,13 @@ namespace decision {
         port scheduler is out platform::runtime::AbstractScheduler
     }
 
+    namespace sdf {
+        vertex SDFIsPASSed {
+            prop firingSlots is array<int>
+            prop totalFirings is int
+        }
+    }
+
 }
 
 namespace visualization {
