@@ -7,7 +7,7 @@
       <port name="imgInput"/>
       <port name="gx"/>
       <port name="gy"/>
-      <data attr.name="production" attr.type="object">
+      <data attr.name="production" attr.type="stringMap">
         <data attr.name="gx" attr.type="integer">6</data>
         <data attr.name="gy" attr.type="integer">6</data>
       </data>
@@ -16,10 +16,10 @@
       <port name="combinator"/>
       <port name="resx"/>
       <port name="gx"/>
-      <data attr.name="consumption" attr.type="object">
+      <data attr.name="consumption" attr.type="stringMap">
         <data attr.name="gx" attr.type="integer">6</data>
       </data>
-      <data attr.name="production" attr.type="object">
+      <data attr.name="production" attr.type="stringMap">
         <data attr.name="resx" attr.type="integer">1</data>
       </data>
     </node>
@@ -27,10 +27,10 @@
       <port name="combinator"/>
       <port name="gy"/>
       <port name="resy"/>
-      <data attr.name="consumption" attr.type="object">
+      <data attr.name="consumption" attr.type="stringMap">
         <data attr.name="gy" attr.type="integer">6</data>
       </data>
-      <data attr.name="production" attr.type="object">
+      <data attr.name="production" attr.type="stringMap">
         <data attr.name="resy" attr.type="integer">1</data>
       </data>
     </node>
@@ -39,7 +39,7 @@
       <port name="resx"/>
       <port name="imgOutput"/>
       <port name="resy"/>
-      <data attr.name="consumption" attr.type="object">
+      <data attr.name="consumption" attr.type="stringMap">
         <data attr.name="resx" attr.type="integer">1</data>
         <data attr.name="resy" attr.type="integer">1</data>
       </data>
