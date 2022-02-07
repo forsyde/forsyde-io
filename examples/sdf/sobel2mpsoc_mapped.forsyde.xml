@@ -4,7 +4,7 @@
     <ns0:node id="getPxCons" type="SDFComb">
       <ns0:port name="combinator"/>
       <ns0:port name="output"/>
-      <ns0:data attr.name="production" attr.type="object">
+      <ns0:data attr.name="production" attr.type="stringMap">
         <ns0:data attr.name="gx" attr.type="string">6</ns0:data>
         <ns0:data attr.name="gy" attr.type="string">6</ns0:data>
       </ns0:data>
@@ -12,27 +12,27 @@
     <ns0:node id="GxCons" type="SDFComb">
       <ns0:port name="combinator"/>
       <ns0:port name="output"/>
-      <ns0:data attr.name="consumption" attr.type="object">
+      <ns0:data attr.name="consumption" attr.type="stringMap">
         <ns0:data attr.name="gx" attr.type="string">6</ns0:data>
       </ns0:data>
-      <ns0:data attr.name="production" attr.type="object">
+      <ns0:data attr.name="production" attr.type="stringMap">
         <ns0:data attr.name="resx" attr.type="string">1</ns0:data>
       </ns0:data>
     </ns0:node>
     <ns0:node id="GyCons" type="SDFComb">
       <ns0:port name="combinator"/>
       <ns0:port name="output"/>
-      <ns0:data attr.name="consumption" attr.type="object">
+      <ns0:data attr.name="consumption" attr.type="stringMap">
         <ns0:data attr.name="gy" attr.type="string">6</ns0:data>
       </ns0:data>
-      <ns0:data attr.name="production" attr.type="object">
+      <ns0:data attr.name="production" attr.type="stringMap">
         <ns0:data attr.name="resy" attr.type="string">1</ns0:data>
       </ns0:data>
     </ns0:node>
     <ns0:node id="AbsCons" type="SDFComb">
       <ns0:port name="combinator"/>
       <ns0:port name="output"/>
-      <ns0:data attr.name="consumption" attr.type="object">
+      <ns0:data attr.name="consumption" attr.type="stringMap">
         <ns0:data attr.name="resx" attr.type="string">1</ns0:data>
         <ns0:data attr.name="resy" attr.type="string">1</ns0:data>
       </ns0:data>
@@ -99,62 +99,62 @@
     <ns0:node id="tdmabus1" type="TimeDivisionMultiplexer">
       <ns0:port name="requester"/>
       <ns0:port name="communication"/>
-      <ns0:data attr.name="slots" attr.type="string">4</ns0:data>
+      <ns0:data attr.name="slots" attr.type="integer">4</ns0:data>
     </ns0:node>
     <ns0:node id="getPxWCET" type="WCET">
       <ns0:port name="processor"/>
       <ns0:port name="application"/>
       <ns0:port name="process"/>
       <ns0:port name="platform"/>
-      <ns0:data attr.name="time" attr.type="string">4356</ns0:data>
+      <ns0:data attr.name="time" attr.type="integer">4356</ns0:data>
     </ns0:node>
     <ns0:node id="gxWCET" type="WCET">
       <ns0:port name="processor"/>
       <ns0:port name="application"/>
       <ns0:port name="process"/>
       <ns0:port name="platform"/>
-      <ns0:data attr.name="time" attr.type="string">4147</ns0:data>
+      <ns0:data attr.name="time" attr.type="integer">4147</ns0:data>
     </ns0:node>
     <ns0:node id="gyWCET" type="WCET">
       <ns0:port name="processor"/>
       <ns0:port name="application"/>
       <ns0:port name="process"/>
       <ns0:port name="platform"/>
-      <ns0:data attr.name="time" attr.type="string">4146</ns0:data>
+      <ns0:data attr.name="time" attr.type="integer">4146</ns0:data>
     </ns0:node>
     <ns0:node id="absWCET" type="WCET">
       <ns0:port name="processor"/>
       <ns0:port name="application"/>
       <ns0:port name="process"/>
       <ns0:port name="platform"/>
-      <ns0:data attr.name="time" attr.type="string">1411</ns0:data>
+      <ns0:data attr.name="time" attr.type="integer">1411</ns0:data>
     </ns0:node>
     <ns0:node id="gxsigWCCT" type="WCCT">
       <ns0:port name="reciever"/>
       <ns0:port name="signal"/>
       <ns0:port name="sender"/>
-      <ns0:data attr.name="time" attr.type="string">1</ns0:data>
+      <ns0:data attr.name="time" attr.type="integer">1</ns0:data>
     </ns0:node>
     <ns0:node id="gysigWCCT" type="WCCT">
       <ns0:port name="reciever"/>
       <ns0:port name="signal"/>
       <ns0:port name="sender"/>
-      <ns0:data attr.name="time" attr.type="string">1</ns0:data>
+      <ns0:data attr.name="time" attr.type="integer">1</ns0:data>
     </ns0:node>
     <ns0:node id="absxsigWCCT" type="WCCT">
       <ns0:port name="reciever"/>
       <ns0:port name="signal"/>
       <ns0:port name="sender"/>
-      <ns0:data attr.name="time" attr.type="string">1</ns0:data>
+      <ns0:data attr.name="time" attr.type="integer">1</ns0:data>
     </ns0:node>
     <ns0:node id="absysigWCCT" type="WCCT">
       <ns0:port name="reciever"/>
       <ns0:port name="signal"/>
       <ns0:port name="sender"/>
-      <ns0:data attr.name="time" attr.type="string">1</ns0:data>
+      <ns0:data attr.name="time" attr.type="integer">1</ns0:data>
     </ns0:node>
     <ns0:node id="min_throughput_obj" type="MinimumThroughput">
-      <ns0:data attr.name="apriori_importance" attr.type="string">1</ns0:data>
+      <ns0:data attr.name="apriori_importance" attr.type="integer">1</ns0:data>
     </ns0:node>
     <ns0:edge source="getPxCons" target="getPx" type="Output" sourceport="output"/>
     <ns0:edge source="GxCons" target="Gx" type="Output" sourceport="output"/>
