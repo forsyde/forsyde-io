@@ -231,7 +231,6 @@ namespace decision {
     namespace sdf {
         vertex SDFIsPASSed {
             prop firingSlots is array<int>
-            prop totalFirings is int
         }
     }
 
