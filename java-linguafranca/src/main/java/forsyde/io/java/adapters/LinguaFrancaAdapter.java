@@ -6,6 +6,7 @@ import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.typed.viewers.moc.linguafranca.LinguaFrancaSignal;
 import forsyde.io.java.typed.viewers.moc.linguafranca.LinguaFrancaSignalViewer;
+import org.lflang.TimeUnit;
 import org.lflang.lf.*;
 
 import java.util.HashMap;
@@ -57,16 +58,11 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
         return timerVertex;
     }
 
-    protected Integer fromLFTimeUnitToSecondsDenominator(TimeUnit timeUnit) {
-        switch (timeUnit) {
-            case MSECS:
-            case MSEC: return 1000;
-            case NSECS:
-            case NSEC: return 1000000000;
-            case USECS:
-            case USEC: return 1000000;
-            default: return 1;
-        }
+    protected Integer fromLFTimeUnitToSecondsDenominator(String timeUnit) {
+        if (timeUnit.equalsIgnoreCase(TimeUnit.MILLI.getCanonicalName())) return 1000;
+        else if (timeUnit.equalsIgnoreCase(TimeUnit.MICRO.getCanonicalName())) return 1000000;
+        else if (timeUnit.equalsIgnoreCase(TimeUnit.NANO.getCanonicalName())) return 1000000000;
+        else return 1;
     }
 
     protected Vertex processLFReactionToForSyDeReaction(ForSyDeSystemGraph model, Reaction reaction) {

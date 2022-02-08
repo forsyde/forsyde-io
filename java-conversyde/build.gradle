@@ -33,7 +33,7 @@ dependencies {
 
     implementation project(":java-core")
     implementation project(":java-amalthea")
-    implementation project(":java-linguafranca")
+    //implementation project(":java-linguafranca")
     implementation project(":java-sdf3")
     implementation project(":java-graphviz")
 }

@@ -1,102 +1,230 @@
-plugins {
-    id 'java'
-    id 'idea'
-    id "org.xtext.builder" version "2.0.8"
-    id "org.xtext.xtend" version "2.0.8"
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.xtext:xtext-gradle-plugin:${xtextGradleVersion}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+    }
 }
 
-ext.xtextVersion = '2.25.0'
+plugins {
+    id "com.github.johnrengelman.shadow" version "${shadowJarVersion}"
+    id 'java'
+    id 'jacoco'
+    id "org.jetbrains.kotlin.jvm" version "1.6.10"
+    id 'eclipse'
+    id "org.xtext.xtend" version "3.0.1"
+}
 
+xtext.version = project.xtextVersion
 
+sourceSets.all {
+	resources.exclude '**/*.g', '**/*.mwe2', '**/*.xtend', '**/*._trace'
+}
+
+jar {
+	from('model') {
+		into('model')
+	}
+	manifest {
+		attributes 'Bundle-SymbolicName': project.name
+	}
+}
+
+plugins.withId('war') {
+	webAppDirName = "WebRoot"
+}
+
+apply from: 'org.lflang/build.gradle'
 
 repositories {
-    // Use 'jcenter' for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
 }
 
 dependencies {
-    implementation "org.eclipse.xtext:org.eclipse.xtext:${xtextVersion}"
-    implementation "org.eclipse.xtext:org.eclipse.xtext.xbase:${xtextVersion}"
-    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.runtime
-    implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.runtime', version: '3.22.0'
-    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.resources
-    implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.resources', version: '3.15.0'
-    // https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.mwe2.launch
-    implementation group: 'org.eclipse.emf', name: 'org.eclipse.emf.mwe2.launch', version: '2.12.1'
-
-    testImplementation 'junit:junit:4.13.2'
+    implementation 'org.eclipse.emf:org.eclipse.emf.ecore:2.25.0'
+    implementation 'org.eclipse.xtext:org.eclipse.xtext:2.26.0.M3'
+    implementation 'org.eclipse.core:resources:3.3.0-v20070604'
+    implementation project(":java-core")
 }
-configurations {
-    mwe2 {
-        extendsFrom implementation
+
+//apply plugin: 'kotlin'
+compileKotlin {
+    destinationDir = compileJava.destinationDir
+    kotlinOptions {
+        jvmTarget = kotlinJvmTarget
     }
 }
 
 dependencies {
-    mwe2 'org.eclipse.emf:org.eclipse.emf.mwe2.launch'
-    mwe2 "org.eclipse.xtext:org.eclipse.xtext.common.types:${xtextVersion}"
-    mwe2 "org.eclipse.xtext:org.eclipse.xtext.xtext.generator:${xtextVersion}"
-    implementation 'commons-cli:commons-cli:1.5.0'
-    implementation project(":java-core")
+    implementation platform("org.eclipse.xtext:xtext-dev-bom:${xtextVersion}")
+    // https://mvnrepository.com/artifact/com.google.inject/guice
+    implementation group: 'com.google.inject', name: 'guice', version: guiceVersion
+    // https://mvnrepository.com/artifact/commons-cli/commons-cli
+    implementation group: 'commons-cli', name: 'commons-cli', version: commonsCliVersion
+}
+dependencies {
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlinVersion
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: kotlinVersion
 }
 
-task generateXtextLanguage(type: JavaExec) {
-    main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
-    classpath = configurations.mwe2
-    inputs.file "org.lflang/src/org/lflang/GenerateLinguaFranca.mwe2"
-    inputs.file "org.lflang/src/org/lflang/LinguaFranca.xtext"
-    outputs.dir "org.lflang/src-gen"
-    args += "org.lflang/src/org/lflang/GenerateLinguaFranca.mwe2"
-    args += "-p"
-    args += "rootPath=/${projectDir}"
 
-    // Currently we don't need to delete any generated files because we use the
-    // Java/Xtend implementations.  However, if we commit to porting such files
-    // to Kotlin, we might to reintroduce the deletion mechanism below.
-    /*doLast {
-        def filesToDelete = [
-                "org.lflang.validation.LFValidator",
-                "org.lflang.LFRuntimeModule",
-                "org.lflang.LFStandaloneSetup",
-                "org.lflang.generator.LFGenerator",
-                "org.lflang.scoping.LFScopeProvider"
-        ]
+//apply plugin: 'org.xtext.xtend'
+//apply from: "${rootDir}/gradle/source-layout.gradle"
+//apply plugin: 'eclipse'
 
-        filesToDelete.each { qname ->
-            def path = qname.replace('.', '/')
-            def ktFile = file("src/${path}.kt")
-            def javaFile = file("src/${path}.java")
-            def xtendFile = file("src/${path}.xtend")
+// generate xtend sources before kotlin compilation
+compileKotlin.dependsOn("generateXtext")
 
-            if (ktFile.exists() || xtendFile.exists()) {
-                def chosenLang = ktFile.exists() ? "Kotlin" : "Xtend"
-                project.logger.info("deleting ${projectDir.relativePath(javaFile)}, the ${chosenLang} file prevails")
-                project.delete(javaFile) // generated by Xtend
-            } else {
-                project.logger.info("no ${projectDir.relativePath(ktFile)}, leaving the Java implementation in")
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+configurations.all {
+    exclude group: 'asm'
+}
+
+// Delete generated sources on `gradle clean`
+clean.doFirst {
+    project.logger.info("Deleting ${projectDir}/xtend-gen, src-gen")
+    delete "$projectDir}/xtend-gen/"
+    delete "${projectDir}/src-gen/"
+}
+
+// copied from source-layout.gradle
+if (name.endsWith(".tests")) {
+    sourceSets {
+        main {
+            java.srcDirs = []
+            kotlin.srcDirs = []
+            resources.srcDirs = []
+        }
+        test {
+            java.srcDirs = ['src', 'src-gen', 'xtend-gen']
+            kotlin.srcDirs = ['src', 'src-gen']
+            resources.srcDirs = ['src', 'src-gen']
+            xtendOutputDir = 'xtend-gen'
+        }
+    }
+} else {
+    sourceSets {
+        main {
+            java.srcDirs = ['src', 'src-gen', 'xtend-gen', 'org.lflang/src', 'org.lflang/src-gen', 'org.lflang/xtend-gen']
+            kotlin.srcDirs = ['src', 'src-gen', 'xtend-gen', 'org.lflang/src', 'org.lflang/src-gen', 'org.lflang/xtend-gen']
+            resources.srcDirs = ['src', 'src-gen', 'org.lflang/src', 'org.lflang/src-gen']
+            xtendOutputDir = 'xtend-gen'
+        }
+        test {
+            java.srcDirs = []
+            resources.srcDirs = []
+        }
+    }
+}
+
+gradle.projectsEvaluated {
+    // Our CI uses --tests filters, which fails if some
+    // subprojects have no matching test.
+    //
+    // https://stackoverflow.com/questions/26147480/how-to-make-gradle-not-to-mark-build-failed-if-no-tests-are-found
+    subprojects {
+        test {
+            filter {
+                setFailOnNoMatchingTests(false)
             }
-        }
-    }*/
-}
-
-generateXtext.dependsOn(generateXtextLanguage)
-compileJava.dependsOn(generateXtext)
-clean.dependsOn(cleanGenerateXtextLanguage)
-eclipse.classpath.plusConfigurations += [configurations.mwe2]
-
-sourceSets {
-    main {
-        java {
-            srcDirs += ['org.lflang/src', 'org.lflang/src-gen']
-        }
-        resources {
-            srcDirs += ['org.lflang/src', 'org.lflang/src-gen']
         }
     }
 }
 
 
-javadoc {
-  exclude "org/lflang/**"
-}
+// plugins {
+//     id "org.xtext.builder" version "2.0.8"
+//     id "org.xtext.xtend" version "2.0.8"
+// }
+
+// ext.xtextVersion = '2.25.0'
+
+
+
+// repositories {
+//     // Use 'jcenter' for resolving your dependencies.
+//     // You can declare any Maven/Ivy/file repository here.
+//     mavenCentral()
+// }
+
+// dependencies {
+//     implementation "org.eclipse.xtext:org.eclipse.xtext:${xtextVersion}"
+//     implementation "org.eclipse.xtext:org.eclipse.xtext.xbase:${xtextVersion}"
+//     // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.runtime
+//     implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.runtime', version: '3.22.0'
+//     // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.resources
+//     implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.resources', version: '3.15.0'
+//     // https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.mwe2.launch
+//     implementation group: 'org.eclipse.emf', name: 'org.eclipse.emf.mwe2.launch', version: '2.12.1'
+
+//     testImplementation 'junit:junit:4.13.2'
+// }
+// configurations {
+//     mwe2 {
+//         extendsFrom implementation
+//     }
+// }
+
+// task generateXtextLanguage(type: JavaExec) {
+//     main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+//     classpath = configurations.mwe2
+//     inputs.file "org.lflang/src/org/lflang/GenerateLinguaFranca.mwe2"
+//     inputs.file "org.lflang/src/org/lflang/LinguaFranca.xtext"
+//     outputs.dir "org.lflang/src-gen"
+//     args += "org.lflang/src/org/lflang/GenerateLinguaFranca.mwe2"
+//     args += "-p"
+//     args += "rootPath=/${projectDir}"
+
+//     // Currently we don't need to delete any generated files because we use the
+//     // Java/Xtend implementations.  However, if we commit to porting such files
+//     // to Kotlin, we might to reintroduce the deletion mechanism below.
+//     /*doLast {
+//         def filesToDelete = [
+//                 "org.lflang.validation.LFValidator",
+//                 "org.lflang.LFRuntimeModule",
+//                 "org.lflang.LFStandaloneSetup",
+//                 "org.lflang.generator.LFGenerator",
+//                 "org.lflang.scoping.LFScopeProvider"
+//         ]
+
+//         filesToDelete.each { qname ->
+//             def path = qname.replace('.', '/')
+//             def ktFile = file("src/${path}.kt")
+//             def javaFile = file("src/${path}.java")
+//             def xtendFile = file("src/${path}.xtend")
+
+//             if (ktFile.exists() || xtendFile.exists()) {
+//                 def chosenLang = ktFile.exists() ? "Kotlin" : "Xtend"
+//                 project.logger.info("deleting ${projectDir.relativePath(javaFile)}, the ${chosenLang} file prevails")
+//                 project.delete(javaFile) // generated by Xtend
+//             } else {
+//                 project.logger.info("no ${projectDir.relativePath(ktFile)}, leaving the Java implementation in")
+//             }
+//         }
+//     }*/
+// }
+
+// generateXtext.dependsOn(generateXtextLanguage)
+// compileJava.dependsOn(generateXtext)
+// clean.dependsOn(cleanGenerateXtextLanguage)
+// eclipse.classpath.plusConfigurations += [configurations.mwe2]
+
+// sourceSets {
+//     main {
+//         java {
+//             srcDirs += []
+//         }
+//         resources {
+//             srcDirs += ['org.lflang/src', 'org.lflang/src-gen', 'org.lflang/xtend-gen']
+//         }
+//     }
+// }
+
+
+// javadoc {
+//   exclude "org/lflang/**"
+// }

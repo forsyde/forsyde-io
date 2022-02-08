@@ -13,14 +13,28 @@ plugins {
     id 'java'
     id 'idea'
     id 'eclipse'
+    id "de.undercouch.download" version "5.0.1"
     // id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
 }
 
 repositories {
     // Use JCenter for resolving dependencies.
-    jcenter()
     mavenCentral()
+//    flatDir {
+//        dirs 'libs'
+//    }
 }
+
+//task downloadMigrationJar(type: Download) {
+//    doFirst {
+//        mkdir "libs"
+//    }
+//    src 'https://download.eclipse.org/app4mc/components/addon/migration/releases/latest/headless/amalthea_migration.jar'
+//    dest 'libs/amalthea_migration.jar'
+//    overwrite false
+//}
+
+//tasks.compileJava.dependsOn += downloadMigrationJar
 
 // due to how maven central works, the groupId must be the same as the
 // website which we host
@@ -41,6 +55,7 @@ dependencies {
     //implementation 'org.eclipse.app4mc.migration:org.eclipse.app4mc.amalthea.converters.common:2.0.0'
     //implementation 'org.eclipse.app4mc.migration:parent:2.0.0'
     //implementation 'org.eclipse.app4mc.migration:org.eclipse.app4mc.amalthea.converters.082:2.0.0'
+    //implementation name: 'amalthea_migration'
     implementation project(':java-core')
 }
 
