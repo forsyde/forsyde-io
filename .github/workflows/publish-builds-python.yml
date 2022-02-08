@@ -31,12 +31,12 @@ jobs:
     - name: Get local version
       id: localVersion
       run: |
-        cd ${{ github.workspace }}/python
+        cd ${{ github.workspace }}/common-python
         poetry version | echo "localVersion=$(awk '{print $2}')" >> $GITHUB_ENV
     - name: Generate lib
       if: ${{ steps.get_version.outputs.version-without-v == jobs.localVersion.env.localVersion }}
       run: |
-        cd ${{ github.workspace }}/python
+        cd ${{ github.workspace }}/common-python
         python generate.py
     - name: Build and publish core and generated code
       if: ${{ steps.get_version.outputs.version-without-v == jobs.localVersion.env.localVersion }}

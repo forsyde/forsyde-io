@@ -1,0 +1,262 @@
+namespace impl {
+    vertex Executable
+
+    vertex InstrumentedExecutable refines Executable {
+        prop operationRequirements is strmap<strmap<long>>
+        prop sizeInBits is long
+    }
+}
+
+namespace moc {
+
+    vertex MoCElem
+
+    namespace linguafranca {
+        vertex LinguaFrancaElem refines moc::MoCElem
+
+        vertex LinguaFrancaTimer refines LinguaFrancaElem {
+            prop periodNumeratorPerSec is int
+            prop periodDenominatorPerSec is int
+        }
+
+        vertex LinguaFrancaReaction refines LinguaFrancaElem {
+            prop sizeInBits is long
+
+            port implementation is single impl::Executable
+        }
+
+        vertex LinguaFrancaReactor refines LinguaFrancaElem {
+            prop stateSizesInBits is array<long>
+            prop stateNames is array<str>
+
+            port childrenReactors is multiple ordered LinguaFrancaReactor
+            port reactions is multiple ordered LinguaFrancaReaction
+            port timers is multiple unordered LinguaFrancaTimer
+        }
+
+        vertex LinguaFrancaSignal refines LinguaFrancaElem {
+            prop sizeInBits is long
+            prop propagationDelayInSecsNumerator is long
+            prop propagationDelayInSecsDenominator is long
+        }
+
+        edge ContainmentEdge
+
+        edge EventEdge
+    }
+
+    namespace sdf {
+
+        vertex SDFElem refines moc::MoCElem
+
+        vertex SDFComb refines SDFElem {
+            prop consumption is strmap<int>
+            prop production is strmap<int>
+
+            port combFunction is single impl::Executable
+        }
+
+        vertex SDFDelay refines SDFElem {
+            prop delayedTokens is int
+
+            port delayFunction is single impl::Executable
+            port notDelayedChannel is single in SDFChannel
+            port delayedChannel is single out SDFChannel
+        }
+
+        vertex SDFChannel refines SDFElem {
+            prop tokenSizeInBits is long
+
+            port producer is single in SDFElem
+            port consumer is single out SDFElem
+        }
+
+        edge SDFDataEdge {
+            source SDFElem
+            target SDFElem
+        }
+
+    }
+
+}
+
+namespace execution {
+    vertex Stimulus
+
+    vertex PeriodicStimulus refines Stimulus {
+        prop periodNumerator is long
+        prop periodDenominator is long
+        prop offsetNumerator is long
+        prop offsetDenominator is long
+
+        port stimulated is multiple unordered Task
+    }
+
+    vertex Task {
+        port callSequence is multiple ordered out impl::Executable
+    }
+
+    vertex ConstrainedTask {
+        prop relativeDeadlineNumerator is long
+        prop relativeDeadlineDenominator is long
+    }
+
+    vertex PeriodicTask refines Task {
+        port periodicStimulus is single in PeriodicStimulus
+    }
+
+    vertex Channel {
+        prop maxElems is int
+        prop elemSizeInBits is long
+    }
+
+    vertex RuntimeConstraint
+
+    vertex PrecedenceConstraint refines RuntimeConstraint {
+        port predecessor is Task
+        port sucessor is Task
+    }
+
+    vertex ExtendedPrecedenceConstraint refines PrecedenceConstraint {
+        prop predecessorInstance is array<int>
+        prop sucessorInstance is array<int>
+    }
+
+
+    vertex ColocationConstraint refines RuntimeConstraint {
+         port cocolated is multiple Task
+         port dislocated is multiple Task
+    }
+
+    edge ContainmentEdge
+
+    edge ConstraintEdge
+
+    edge CommunicationEdge
+
+    edge EventEdge
+
+}
+
+namespace platform {
+
+    vertex PlatformElem
+
+    vertex AbstractStructure refines PlatformElem {
+        port children is multiple PlatformElem
+    }
+
+    vertex DigitalModule refines PlatformElem {
+        prop operatingFrequencyInHertz is long
+    }
+
+    vertex SynthetizableDigitalPorts refines DigitalModule {
+        prop portProtocolAcronym is strmap<string>
+        prop portIsInitiator is strmap<bool>
+        prop portWidthInBits is strmap<int>
+    }
+
+    vertex GenericProcessingModule refines DigitalModule
+
+    vertex GenericCommunicationModule refines DigitalModule
+
+    vertex GenericMemoryModule refines DigitalModule {
+        prop spaceInBits is long
+    }
+
+    vertex GenericCacheModule refines DigitalModule {
+
+    }
+
+    vertex InstrumentedProcessingModule refines ProcessingModule {
+        prop modalInstructionsPerCycle is strmap<strmap<double>>
+    }
+
+    vertex InstrumentedCommunicationModule refines GenericCommunicationModule {
+        prop flitSizeInBits is long
+        prop maxCyclesPerFlit is int
+        prop maxConcurrentFlits is int
+        prop initialLatency is long
+    }
+
+    vertex RoundRobinCommunicationModule refines InstrumentedCommunicationModule {
+        prop allocatedWeights is strmap<int>
+        prop totalWeights is int
+    }
+
+    edge StructuralConnection
+
+    edge PhysicalConnection
+
+    namespace runtime {
+        vertex AbstractScheduler
+
+        vertex StaticCyclicScheduler refines AbstractScheduler {
+
+        }
+
+        vertex FixedPriorityScheduler refines AbstractScheduler {
+            prop preemptive is boolean
+        }
+
+        vertex RoundRobinScheduler refines AbstractScheduler {
+            prop maximumTimeSliceInCycles is long
+            prop minimumTimeSliceInCycles is long
+        }
+
+        vertex TimeTriggeredScheduler refines AbstractScheduler {
+
+        }
+    }
+
+}
+
+namespace decision {
+    edge AbstractMapping
+
+    edge AbstractAllocation
+
+    edge AbstractScheduling
+
+    vertex Allocated {
+        port allocationHost is out platform::DigitalModule
+    }
+
+    vertex MemoryMapped refines Allocated {
+        port mappingHost is out platform::DigitalModule
+    }
+
+    vertex Scheduled {
+        port scheduler is out platform::runtime::AbstractScheduler
+    }
+
+    namespace sdf {
+        vertex SDFIsPASSed {
+            prop firingSlots is array<int>
+        }
+
+        vertex SDFChannelIsBounded {
+            prop maximumTokens is int
+        }
+    }
+
+}
+
+namespace visualization {
+
+    edge VisualContainment
+
+    edge VisualConnection
+
+    vertex Visualizable
+
+    vertex Positioned refines Visualizable {
+        prop positionX is int
+        prop positionY is int
+    }
+
+    vertex GreyBox refines Visualizable {
+        port contained is multiple out Visualizable
+    }
+
+}

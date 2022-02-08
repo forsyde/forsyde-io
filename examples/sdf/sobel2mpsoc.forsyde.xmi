@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<forsyde.io.eclipse.systemgraph:ForSyDeSystemGraph xmlns:forsyde.io.eclipse.systemgraph="forsyde.io.eclipse.systemgraph" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmi:version="2.0" xsi:schemaLocation="forsyde.io.eclipse.systemgraph systemgraph.ecore#//io/eclipse/systemgraph">
+    <nodes identifier="sobel/getPx">
+        <traits>visualization::Visualizable</traits>
+        <traits>moc::sdf::SDFComb</traits>
+        <ports>gx</ports>
+        <ports>combinator</ports>
+        <ports>gy</ports>
+        <ports>imgInput</ports>
+        <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
+            <values intValue="6" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+            <indexes>gx</indexes>
+            <values intValue="6" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+            <indexes>gy</indexes>
+        </propertiesValues>
+        <propertiesNames>production</propertiesNames>
+    </nodes>
+    <nodes identifier="sobel/Gx">
+        <traits>visualization::Visualizable</traits>
+        <traits>moc::sdf::SDFComb</traits>
+        <ports>gx</ports>
+        <ports>combinator</ports>
+        <ports>resx</ports>
+        <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
+            <values intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+            <indexes>resx</indexes>
+        </propertiesValues>
+        <propertiesNames>production</propertiesNames>
+        <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
+            <values intValue="6" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+            <indexes>gx</indexes>
+        </propertiesValues>
+        <propertiesNames>consumption</propertiesNames>
+    </nodes>
+    <nodes identifier="sobel/Gy">
+        <traits>visualization::Visualizable</traits>
+        <traits>moc::sdf::SDFComb</traits>
+        <ports>combinator</ports>
+        <ports>gy</ports>
+        <ports>resy</ports>
+        <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
+            <values intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+            <indexes>resy</indexes>
+        </propertiesValues>
+        <propertiesNames>production</propertiesNames>
+        <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
+            <values intValue="6" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+            <indexes>gy</indexes>
+        </propertiesValues>
+        <propertiesNames>consumption</propertiesNames>
+    </nodes>
+    <nodes identifier="sobel/Abs">
+        <traits>visualization::Visualizable</traits>
+        <traits>moc::sdf::SDFComb</traits>
+        <ports>combinator</ports>
+        <ports>resy</ports>
+        <ports>resx</ports>
+        <ports>imgOutput</ports>
+        <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
+            <values intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+            <indexes>resy</indexes>
+            <values intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+            <indexes>resx</indexes>
+        </propertiesValues>
+        <propertiesNames>consumption</propertiesNames>
+    </nodes>
+    <nodes identifier="gxsig">
+        <traits>visualization::Visualizable</traits>
+        <traits>moc::sdf::SDFChannel</traits>
+        <ports>producer</ports>
+        <ports>consumer</ports>
+        <propertiesValues intValue="8" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>size</propertiesNames>
+    </nodes>
+    <nodes identifier="gysig">
+        <traits>visualization::Visualizable</traits>
+        <traits>moc::sdf::SDFChannel</traits>
+        <ports>producer</ports>
+        <ports>consumer</ports>
+        <propertiesValues intValue="8" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>size</propertiesNames>
+    </nodes>
+    <nodes identifier="absxsig">
+        <traits>visualization::Visualizable</traits>
+        <traits>moc::sdf::SDFChannel</traits>
+        <ports>producer</ports>
+        <ports>consumer</ports>
+        <propertiesValues intValue="8" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>size</propertiesNames>
+    </nodes>
+    <nodes identifier="absysig">
+        <traits>visualization::Visualizable</traits>
+        <traits>moc::sdf::SDFChannel</traits>
+        <ports>producer</ports>
+        <ports>consumer</ports>
+        <propertiesValues intValue="8" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>size</propertiesNames>
+    </nodes>
+    <nodes identifier="order_1">
+        <traits>visualization::Visualizable</traits>
+        <traits>platform::runtime::TimeTriggeredScheduler</traits>
+    </nodes>
+    <nodes identifier="order_2">
+        <traits>visualization::Visualizable</traits>
+        <traits>platform::runtime::TimeTriggeredScheduler</traits>
+    </nodes>
+    <nodes identifier="order_3">
+        <traits>visualization::Visualizable</traits>
+        <traits>platform::runtime::TimeTriggeredScheduler</traits>
+    </nodes>
+    <nodes identifier="order_4">
+        <traits>visualization::Visualizable</traits>
+        <traits>platform::runtime::TimeTriggeredScheduler</traits>
+    </nodes>
+    <nodes identifier="order_5">
+        <traits>visualization::Visualizable</traits>
+        <traits>platform::runtime::TimeTriggeredScheduler</traits>
+    </nodes>
+    <nodes identifier="tile1">
+        <traits>visualization::Visualizable</traits>
+        <traits>visualization::GreyBox</traits>
+        <traits>platform::GenericProcessingModule</traits>
+        <ports>execution</ports>
+        <ports>communication</ports>
+        <ports>contained</ports>
+    </nodes>
+    <nodes identifier="tile2">
+        <traits>visualization::Visualizable</traits>
+        <traits>visualization::GreyBox</traits>
+        <traits>platform::GenericProcessingModule</traits>
+        <ports>execution</ports>
+        <ports>communication</ports>
+        <ports>contained</ports>
+    </nodes>
+    <nodes identifier="tile3">
+        <traits>visualization::Visualizable</traits>
+        <traits>visualization::GreyBox</traits>
+        <traits>platform::GenericProcessingModule</traits>
+        <ports>execution</ports>
+        <ports>communication</ports>
+        <ports>contained</ports>
+    </nodes>
+    <nodes identifier="tile4">
+        <traits>visualization::Visualizable</traits>
+        <traits>visualization::GreyBox</traits>
+        <traits>platform::GenericProcessingModule</traits>
+        <ports>execution</ports>
+        <ports>communication</ports>
+        <ports>contained</ports>
+    </nodes>
+    <nodes identifier="tdmabus1">
+        <traits>visualization::Visualizable</traits>
+        <traits>visualization::GreyBox</traits>
+        <traits>platform::runtime::RoundRobinScheduler</traits>
+        <ports>requester</ports>
+        <ports>communication</ports>
+        <ports>timeslots</ports>
+        <ports>contained</ports>
+        <propertiesValues intValue="4" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>slots</propertiesNames>
+        <propertiesValues longValue="1" xsi:type="forsyde.io.eclipse.systemgraph:LongVertexProperty"/>
+        <propertiesNames>minimumTimeSliceInCycles</propertiesNames>
+        <propertiesValues longValue="-1" xsi:type="forsyde.io.eclipse.systemgraph:LongVertexProperty"/>
+        <propertiesNames>maximumTimeSliceInCycles</propertiesNames>
+    </nodes>
+    <nodes identifier="getPxWCET">
+        <traits>visualization::Visualizable</traits>
+        <traits>WCET</traits>
+        <ports>process</ports>
+        <ports>application</ports>
+        <ports>processor</ports>
+        <ports>platform</ports>
+        <propertiesValues intValue="4356" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>time</propertiesNames>
+    </nodes>
+    <nodes identifier="gxWCET">
+        <traits>visualization::Visualizable</traits>
+        <traits>WCET</traits>
+        <ports>process</ports>
+        <ports>application</ports>
+        <ports>processor</ports>
+        <ports>platform</ports>
+        <propertiesValues intValue="4147" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>time</propertiesNames>
+    </nodes>
+    <nodes identifier="gyWCET">
+        <traits>visualization::Visualizable</traits>
+        <traits>WCET</traits>
+        <ports>process</ports>
+        <ports>application</ports>
+        <ports>processor</ports>
+        <ports>platform</ports>
+        <propertiesValues intValue="4146" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>time</propertiesNames>
+    </nodes>
+    <nodes identifier="absWCET">
+        <traits>visualization::Visualizable</traits>
+        <traits>WCET</traits>
+        <ports>process</ports>
+        <ports>application</ports>
+        <ports>processor</ports>
+        <ports>platform</ports>
+        <propertiesValues intValue="1411" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>time</propertiesNames>
+    </nodes>
+    <nodes identifier="gxsigWCCT">
+        <traits>visualization::Visualizable</traits>
+        <traits>WCCT</traits>
+        <ports>reciever</ports>
+        <ports>sender</ports>
+        <propertiesValues intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>time</propertiesNames>
+    </nodes>
+    <nodes identifier="gysigWCCT">
+        <traits>visualization::Visualizable</traits>
+        <traits>WCCT</traits>
+        <ports>reciever</ports>
+        <ports>sender</ports>
+        <propertiesValues intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>time</propertiesNames>
+    </nodes>
+    <nodes identifier="absxsigWCCT">
+        <traits>visualization::Visualizable</traits>
+        <traits>WCCT</traits>
+        <ports>reciever</ports>
+        <ports>sender</ports>
+        <propertiesValues intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>time</propertiesNames>
+    </nodes>
+    <nodes identifier="absysigWCCT">
+        <traits>visualization::Visualizable</traits>
+        <traits>WCCT</traits>
+        <ports>reciever</ports>
+        <ports>sender</ports>
+        <propertiesValues intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>time</propertiesNames>
+    </nodes>
+    <nodes identifier="min_throughput_obj">
+        <traits>visualization::Visualizable</traits>
+        <traits>MinimumThroughput</traits>
+        <propertiesValues intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+        <propertiesNames>apriori_importance</propertiesNames>
+    </nodes>
+    <edges source="sobel/getPx" sourceport="gx" target="gxsig" targetport="producer">
+        <traits>moc::sdf::SDFDataEdge</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="sobel/getPx" sourceport="gy" target="gysig" targetport="producer">
+        <traits>moc::sdf::SDFDataEdge</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="sobel/Gx" sourceport="resx" target="absxsig" targetport="producer">
+        <traits>moc::sdf::SDFDataEdge</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="sobel/Gy" sourceport="resy" target="absysig" targetport="producer">
+        <traits>moc::sdf::SDFDataEdge</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="gxsig" sourceport="consumer" target="sobel/Gx" targetport="gx">
+        <traits>moc::sdf::SDFDataEdge</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="gysig" sourceport="consumer" target="sobel/Gy" targetport="gy">
+        <traits>moc::sdf::SDFDataEdge</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="absxsig" sourceport="consumer" target="sobel/Abs" targetport="resx">
+        <traits>moc::sdf::SDFDataEdge</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="absysig" sourceport="consumer" target="sobel/Abs" targetport="resy">
+        <traits>moc::sdf::SDFDataEdge</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="tile1" sourceport="execution" target="order_1">
+        <traits>decision::AbstractAllocation</traits>
+    </edges>
+    <edges source="tile1" sourceport="contained" target="order_1">
+        <traits>visualization::VisualContainment</traits>
+    </edges>
+    <edges source="tile2" sourceport="execution" target="order_2">
+        <traits>decision::AbstractAllocation</traits>
+    </edges>
+    <edges source="tile2" sourceport="contained" target="order_2">
+        <traits>visualization::VisualContainment</traits>
+    </edges>
+    <edges source="tile3" sourceport="execution" target="order_3">
+        <traits>decision::AbstractAllocation</traits>
+    </edges>
+    <edges source="tile3" sourceport="contained" target="order_3">
+        <traits>visualization::VisualContainment</traits>
+    </edges>
+    <edges source="tile4" sourceport="execution" target="order_4">
+        <traits>decision::AbstractAllocation</traits>
+    </edges>
+    <edges source="tile4" sourceport="contained" target="order_4">
+        <traits>visualization::VisualContainment</traits>
+    </edges>
+    <edges source="tdmabus1" sourceport="timeslots" target="order_5">
+        <traits>decision::AbstractAllocation</traits>
+    </edges>
+    <edges source="tdmabus1" sourceport="contained" target="order_5">
+        <traits>visualization::VisualContainment</traits>
+    </edges>
+    <edges source="tile1" sourceport="communication" target="tdmabus1">
+        <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="tile2" sourceport="communication" target="tdmabus1">
+        <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="tile3" sourceport="communication" target="tdmabus1">
+        <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="tile4" sourceport="communication" target="tdmabus1">
+        <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="tdmabus1" sourceport="communication" target="tile1">
+        <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="tdmabus1" sourceport="communication" target="tile2">
+        <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="tdmabus1" sourceport="communication" target="tile3">
+        <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="tdmabus1" sourceport="communication" target="tile4">
+        <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
+    </edges>
+    <edges source="getPxWCET" sourceport="application" target="sobel/getPx">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="getPxWCET" sourceport="platform" target="tile1">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="getPxWCET" sourceport="platform" target="tile2">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="getPxWCET" sourceport="platform" target="tile3">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="getPxWCET" sourceport="platform" target="tile4">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gxWCET" sourceport="application" target="sobel/Gx">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gxWCET" sourceport="platform" target="tile1">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gxWCET" sourceport="platform" target="tile2">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gxWCET" sourceport="platform" target="tile3">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gxWCET" sourceport="platform" target="tile4">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gyWCET" sourceport="application" target="sobel/Gy">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gyWCET" sourceport="platform" target="tile1">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gyWCET" sourceport="platform" target="tile2">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gyWCET" sourceport="platform" target="tile3">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gyWCET" sourceport="platform" target="tile4">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="absWCET" sourceport="application" target="sobel/Abs">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="absWCET" sourceport="platform" target="tile1">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="absWCET" sourceport="platform" target="tile2">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="absWCET" sourceport="platform" target="tile3">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="absWCET" sourceport="platform" target="tile4">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gxsigWCCT" target="gxsig">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gxsigWCCT" target="tdmabus1">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gysigWCCT" target="gysig">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="gysigWCCT" target="tdmabus1">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="absxsigWCCT" target="absxsig">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="absxsigWCCT" target="tdmabus1">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="absysigWCCT" target="tdmabus1">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="absysigWCCT" target="absysig">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="min_throughput_obj" target="sobel/getPx">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="min_throughput_obj" target="sobel/Gx">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="min_throughput_obj" target="sobel/Gy">
+        <traits>Annotation</traits>
+    </edges>
+    <edges source="min_throughput_obj" target="sobel/Abs">
+        <traits>Annotation</traits>
+    </edges>
+</forsyde.io.eclipse.systemgraph:ForSyDeSystemGraph>

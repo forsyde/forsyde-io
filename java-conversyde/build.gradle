@@ -1,0 +1,81 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'io.github.fvarrui:javapackager:1.6.2'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'idea'
+    id 'eclipse'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+apply plugin: 'io.github.fvarrui.javapackager.plugin'
+
+group 'io.github.forsyde'
+archivesBaseName = 'conversyde'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+    implementation 'info.picocli:picocli:4.6.2'
+    annotationProcessor 'info.picocli:picocli-codegen:4.6.2'
+
+    implementation project(":java-core")
+    implementation project(":java-amalthea")
+    implementation project(":java-linguafranca")
+    implementation project(":java-sdf3")
+    implementation project(":java-graphviz")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+mainClassName = 'io.github.forsyde.conversyde.ConverSyDeStandalone'
+
+javapackager {
+    mainClass = "io.github.forsyde.conversyde.ConverSyDeStandalone"
+    generateInstaller = false
+    administratorRequired = false
+    name = "conversyde"
+}
+
+launch4j {
+    headerType = "console"
+}
+
+tasks.launch4j.dependsOn(jar)
+
+/*
+task packageConverSyDe(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: build) {
+    // mandatory
+    mainClass = 'io.github.forsyde.conversyde.ConverSyDeStandalone'
+    // optional
+    bundleJre = true
+    generateInstaller = false
+    administratorRequired = false
+    platform = "auto"
+//    additionalResources = [ file('file path'), file('folder path'), ... ]
+//    linuxConfig {
+//        ...
+//    }
+//    macConfig {
+//        ...
+//    }
+//    winConfig {
+//        ...
+//    }
+//    ...
+}
+*/
