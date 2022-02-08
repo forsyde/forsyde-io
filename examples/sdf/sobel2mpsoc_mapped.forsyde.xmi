@@ -3,7 +3,7 @@
     <nodes identifier="sobel/getPx">
         <traits>visualization::Visualizable</traits>
         <traits>moc::sdf::SDFComb</traits>
-        <traits>decision::sdf::SDFIsPASSed</traits>
+        <traits>decision::sdf::PASSedSDFComb</traits>
         <ports>gx</ports>
         <ports>combinator</ports>
         <ports>gy</ports>
@@ -23,7 +23,7 @@
     <nodes identifier="sobel/Gx">
         <traits>visualization::Visualizable</traits>
         <traits>moc::sdf::SDFComb</traits>
-        <traits>decision::sdf::SDFIsPASSed</traits>
+        <traits>decision::sdf::PASSedSDFComb</traits>
         <ports>gx</ports>
         <ports>combinator</ports>
         <ports>resx</ports>
@@ -45,7 +45,7 @@
     <nodes identifier="sobel/Gy">
         <traits>visualization::Visualizable</traits>
         <traits>moc::sdf::SDFComb</traits>
-        <traits>decision::sdf::SDFIsPASSed</traits>
+        <traits>decision::sdf::PASSedSDFComb</traits>
         <ports>combinator</ports>
         <ports>gy</ports>
         <ports>resy</ports>
@@ -67,7 +67,7 @@
     <nodes identifier="sobel/Abs">
         <traits>visualization::Visualizable</traits>
         <traits>moc::sdf::SDFComb</traits>
-        <traits>decision::sdf::SDFIsPASSed</traits>
+        <traits>decision::sdf::PASSedSDFComb</traits>
         <ports>combinator</ports>
         <ports>resy</ports>
         <ports>resx</ports>
@@ -87,7 +87,7 @@
     <nodes identifier="gxsig">
         <traits>visualization::Visualizable</traits>
         <traits>moc::sdf::SDFChannel</traits>
-        <traits>decision::sdf::SDFChannelIsBounded</traits>
+        <traits>decision::sdf::BoundedSDFChannel</traits>
         <ports>producer</ports>
         <ports>consumer</ports>
         <propertiesValues longValue="8" xsi:type="forsyde.io.eclipse.systemgraph:LongVertexProperty"/>
@@ -98,7 +98,7 @@
     <nodes identifier="gysig">
         <traits>visualization::Visualizable</traits>
         <traits>moc::sdf::SDFChannel</traits>
-        <traits>decision::sdf::SDFChannelIsBounded</traits>
+        <traits>decision::sdf::BoundedSDFChannel</traits>
         <ports>producer</ports>
         <ports>consumer</ports>
         <propertiesValues longValue="8" xsi:type="forsyde.io.eclipse.systemgraph:LongVertexProperty"/>
@@ -109,7 +109,7 @@
     <nodes identifier="absxsig">
         <traits>visualization::Visualizable</traits>
         <traits>moc::sdf::SDFChannel</traits>
-        <traits>decision::sdf::SDFChannelIsBounded</traits>
+        <traits>decision::sdf::BoundedSDFChannel</traits>
         <ports>producer</ports>
         <ports>consumer</ports>
         <propertiesValues longValue="8" xsi:type="forsyde.io.eclipse.systemgraph:LongVertexProperty"/>
@@ -120,7 +120,7 @@
     <nodes identifier="absysig">
         <traits>visualization::Visualizable</traits>
         <traits>moc::sdf::SDFChannel</traits>
-        <traits>decision::sdf::SDFChannelIsBounded</traits>
+        <traits>decision::sdf::BoundedSDFChannel</traits>
         <ports>producer</ports>
         <ports>consumer</ports>
         <propertiesValues longValue="8" xsi:type="forsyde.io.eclipse.systemgraph:LongVertexProperty"/>
