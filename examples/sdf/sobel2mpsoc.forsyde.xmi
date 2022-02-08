@@ -305,27 +305,35 @@
     </edges>
     <edges source="tile1" sourceport="communication" target="tdmabus1">
         <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
     </edges>
     <edges source="tile2" sourceport="communication" target="tdmabus1">
         <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
     </edges>
     <edges source="tile3" sourceport="communication" target="tdmabus1">
         <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
     </edges>
     <edges source="tile4" sourceport="communication" target="tdmabus1">
         <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
     </edges>
     <edges source="tdmabus1" sourceport="communication" target="tile1">
         <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
     </edges>
     <edges source="tdmabus1" sourceport="communication" target="tile2">
         <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
     </edges>
     <edges source="tdmabus1" sourceport="communication" target="tile3">
         <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
     </edges>
     <edges source="tdmabus1" sourceport="communication" target="tile4">
         <traits>platform::PhysicalConnection</traits>
+        <traits>visualization::VisualConnection</traits>
     </edges>
     <edges source="getPxWCET" sourceport="application" target="sobel/getPx">
         <traits>Annotation</traits>

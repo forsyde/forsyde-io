@@ -28,15 +28,8 @@ public class ForSyDeGraphVizAdapter implements ModelAdapter<Graph> {
     @Override
     public Graph convert(ForSyDeSystemGraph inputModel) {
         //take only the visualizable subset
-        final Set<Vertex> visuVSet = inputModel.vertexSet().stream().filter(Visualizable::conforms)
-                .collect(Collectors.toSet());
-        final Set<EdgeInfo> visuESet = inputModel.edgeSet().stream()
-                .filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT) ||
-                        e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION))
-                .collect(Collectors.toSet());
         //final AsSubgraph<Vertex, EdgeInfo> visuGSubset = new AsSubgraph<>(inputModel, visuVSet, visuESet);
-        final Graph graphvizG = buildHierarchical(inputModel);
-        return graphvizG;
+        return buildHierarchical(inputModel);
     }
 
     protected Graph buildHierarchical(final ForSyDeSystemGraph inputModel) {
@@ -82,9 +75,9 @@ public class ForSyDeGraphVizAdapter implements ModelAdapter<Graph> {
                             final Node dstNode = nodes.get(dstVertex);
                             return edgeInfo.getSourcePort().isPresent() && edgeInfo.getTargetPort().isPresent() ?
                                        srcNode.link(between(port(edgeInfo.getSourcePort().get()), dstNode.port(edgeInfo.getTargetPort().get()))) :
-                                   edgeInfo.getSourcePort().isPresent() && !edgeInfo.getTargetPort().isPresent() ?
+                                   edgeInfo.getSourcePort().isPresent() ?
                                        srcNode.link(between(port(edgeInfo.getSourcePort().get()), dstNode)) :
-                                   !edgeInfo.getSourcePort().isPresent() && edgeInfo.getTargetPort().isPresent() ?
+                                   edgeInfo.getTargetPort().isPresent() ?
                                        srcNode.link(dstNode.port(edgeInfo.getTargetPort().get())) :
                                        srcNode.link(dstNode);
                             })

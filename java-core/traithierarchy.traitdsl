@@ -65,6 +65,8 @@ namespace moc {
         }
 
         vertex SDFChannel refines SDFElem {
+            prop tokenSizeInBits is long
+
             port producer is single in SDFElem
             port consumer is single out SDFElem
         }
@@ -231,6 +233,10 @@ namespace decision {
     namespace sdf {
         vertex SDFIsPASSed {
             prop firingSlots is array<int>
+        }
+
+        vertex SDFChannelIsBounded {
+            prop maximumTokens is int
         }
     }
 

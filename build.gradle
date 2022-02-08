@@ -17,7 +17,7 @@ plugins {
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = project.name
-version = '0.5.0'
+version = '0.5.1'
 
 
 // In this section you declare where to find the dependencies of your project

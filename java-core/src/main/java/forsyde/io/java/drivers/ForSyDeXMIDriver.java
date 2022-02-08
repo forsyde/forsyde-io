@@ -277,7 +277,7 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 			List<Object> array = new ArrayList<>(children.getLength());
 			for (int i = 0; i < children.getLength(); i++) {
 				Element child = (Element) children.item(i);
-				array.set(i, readData(child));
+				array.add(i, readData(child));
 			}
 			return VertexProperty.create(array);
 		} else {
