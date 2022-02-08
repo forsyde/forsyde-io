@@ -32,11 +32,11 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Generate lib
         run: |
-          cd ${{ github.workspace }}/core-python
+          cd ${{ github.workspace }}/python-core
           python -m pip install jinja2 networkx
           python generate.py
       - name: Build lib
         run: |
-          cd ${{ github.workspace }}/core-python
+          cd ${{ github.workspace }}/python-core
           poetry update
           poetry install
