@@ -60,8 +60,22 @@ dependencies {
   // AMALTHEA connection
   implementation 'org.eclipse.app4mc:org.eclipse.app4mc.amalthea.model:1.1.0'
    */
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
-  testImplementation 'junit:junit:4.12'
+  testImplementation project(":java-core")
+}
+
+test {
+  useJUnitPlatform()
+
+  // Always run tests, even when nothing changed.
+  dependsOn 'cleanTest'
+
+  // Show test results.
+  testLogging {
+    events "passed", "skipped", "failed"
+  }
 }
 
 sourceCompatibility = 1.11
@@ -74,6 +88,14 @@ java {
 jar {
     archiveFileName = "${project.name}" + '-' + "${project.version}" + '.jar'
 }
+
+//sourceSets {
+//  test {
+//    java {
+//      srcDirs += ['java-tests']
+//    }
+//  }
+//}
 
 publishing {
   publications {
@@ -144,16 +166,21 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
-signing {
-  // small hack to work offline or online
-  if (project.hasProperty('signing.keyId')) {
-    useGpgCmd()
-  } else {
-    useInMemoryPgpKeys(
-      System.getenv('GPG_SIGNING_KEY') ?: findProperty('signing.key'),
-      System.getenv('GPG_SIGNING_PASSWORD') ?: findProperty('signing.password') ?: '' //default to an empty password
-    )
-  }
-  sign publishing.publications.mavenJava
-  sign configurations.archives
-}
+
+//signing {
+//  // small hack to work offline or online
+//  if (project.hasProperty('signing.keyId')) {
+//    println "1"
+//    useGpgCmd()
+//    sign publishing.publications.mavenJava
+//    sign configurations.archives
+//  } else if (System.getenv('GPG_SIGNING_KEY') != null || findProperty('signing.key') != null) {
+//    println "2"
+//    useInMemoryPgpKeys(
+//      System.getenv('GPG_SIGNING_KEY') ?: findProperty('signing.key'),
+//      System.getenv('GPG_SIGNING_PASSWORD') ?: findProperty('signing.password') ?: '' //default to an empty password
+//    )
+//    sign publishing.publications.mavenJava
+//    sign configurations.archives
+//  }
+//}

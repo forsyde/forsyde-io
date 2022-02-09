@@ -7,8 +7,9 @@ plugins {
 
 repositories {
   mavenCentral()
-  jcenter()
 }
+
+sourceCompatibility = 1.11
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
