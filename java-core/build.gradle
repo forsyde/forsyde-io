@@ -17,7 +17,6 @@ tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
 tasks.compileJava.dependsOn generateForSyDeModel
 //tasks.sourcesJar.dependsOn generateForSyDeModel
 
-
 tasks.register('getVersion') {
     doFirst {
         println version

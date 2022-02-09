@@ -37,9 +37,6 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
     @InputFile
     File inputModelDSL = getProject().file("traithierarchy.traitdsl");
 
-    @InputDirectory
-    File rootOutDir = getProject().getProjectDir().toPath().resolve(Paths.get("src-gen/main/java")).toFile();
-
     @OutputFiles
     List<File> outFiles = new ArrayList<>();
 
@@ -65,15 +62,15 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
 
     public void generateFiles(TraitHierarchy model) throws IOException {
+        final File rootOutDir = getProject().getProjectDir().toPath().resolve(Paths.get("src-gen/main/java")).toFile();
         Path root = rootOutDir.toPath();
-        Path generatedDir = root;
         Path enumsPath = root.resolve(Paths.get("forsyde/io/java/core/"));
         Path viewersPath = root.resolve("forsyde/io/java/typed/viewers/");
         Files.createDirectories(enumsPath) ;
         Files.createDirectories(viewersPath);
 
-        outFiles.add(JavaFile.builder("forsyde.io.java.core", generateEdgeTraitsEnum(model)).build().writeToFile(generatedDir.toFile()));
-        outFiles.add(JavaFile.builder("forsyde.io.java.core", generateVertexTraitEnum(model)).build().writeToFile(generatedDir.toFile()));
+        outFiles.add(JavaFile.builder("forsyde.io.java.core", generateEdgeTraitsEnum(model)).build().writeToFile(root.toFile()));
+        outFiles.add(JavaFile.builder("forsyde.io.java.core", generateVertexTraitEnum(model)).build().writeToFile(root.toFile()));
 
 //		Files.writeString(edgePath, edgeStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
 //		Files.writeString(vertexPath, vertexStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
@@ -86,7 +83,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
             final String extraPackages = trait.getNamespaces().isEmpty() ?
                     "" : "." + String.join(".", trait.getNamespaces());
             outFiles.add(JavaFile.builder("forsyde.io.java.typed.viewers" + extraPackages, interfaceSpec)
-                    .build().writeToFile(generatedDir.toFile()));
+                    .build().writeToFile(root.toFile()));
             // Files.writeString(interfacePath, interfaceStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         }
 
@@ -95,7 +92,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
             final String extraPackages = trait.getNamespaces().isEmpty() ?
                     "" : "." + String.join(".", trait.getNamespaces());
             outFiles.add(JavaFile.builder("forsyde.io.java.typed.viewers" + extraPackages, viewerSpec)
-                    .build().writeToFile(generatedDir.toFile()));
+                    .build().writeToFile(root.toFile()));
             // Files.writeString(interfacePath, interfaceStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         }
 
@@ -603,10 +600,6 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
     public File getInputModelXml() {
         return inputModelXml;
-    }
-
-    public File getRootOutDir() {
-        return rootOutDir;
     }
 
     public List<File> getOutFiles() {
