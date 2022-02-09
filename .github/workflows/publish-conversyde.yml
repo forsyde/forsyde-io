@@ -30,11 +30,11 @@ jobs:
     - name: Build with sbt (All)
       # if: ${{ matrix.os != 'windows-latest' }}
       run: |
-        cd ${{ github.workspace/java }}
+        cd ${{ github.workspace }}
         \.gradlew.bat jar conversyde-java:launch4j shadowJar
     - uses: montudor/action-zip@v1
       with:
-        args: zip -qq -r conversyde.zip ${{ github.workspace }}/conversyde-java/build/launch4j
+        args: zip -qq -r conversyde.zip ${{ github.workspace }}/java-conversyde/build/launch4j
     - name: Upload CLI Zip to release
       uses: svenstaro/upload-release-action@v2
       with:
@@ -48,7 +48,7 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{ github.workspace }}/conversyde-java/build/libs/conversyde-${{ steps.get_version.outputs.version }}-all.jar
+        file: ${{ github.workspace }}/java-conversyde/build/libs/conversyde-${{ steps.get_version.outputs.version }}-all.jar
         asset_name: conversyde-all-cli-${{ steps.get_version.outputs.version }}.jar
         tag: "${{ github.ref }}"
         overwrite: true

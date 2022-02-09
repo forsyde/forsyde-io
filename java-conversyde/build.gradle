@@ -47,6 +47,7 @@ mainClassName = 'io.github.forsyde.conversyde.ConverSyDeStandalone'
 javapackager {
     mainClass = "io.github.forsyde.conversyde.ConverSyDeStandalone"
     generateInstaller = false
+    bundleJre = true
     administratorRequired = false
     name = "conversyde"
 }
@@ -56,6 +57,8 @@ launch4j {
 }
 
 tasks.launch4j.dependsOn(jar)
+
+project.tasks.publish.enabled = false
 
 /*
 task packageConverSyDe(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: build) {
