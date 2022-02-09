@@ -168,7 +168,7 @@ namespace platform {
 
     }
 
-    vertex InstrumentedProcessingModule refines ProcessingModule {
+    vertex InstrumentedProcessingModule refines GenericProcessingModule {
         prop modalInstructionsPerCycle is strmap<strmap<double>>
     }
 
