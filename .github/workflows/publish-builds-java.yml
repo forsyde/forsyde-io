@@ -28,13 +28,13 @@ jobs:
         java-version: 1.11
         server-id: io.github.forsyde # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
-    - name: Retrieve lib version
+    - id: localVersion
+      name: Retrieve lib version
       run: |
         cd ${{ github.workspace }}
         echo "localVersion=$(./gradlew getVersion)" >> $GITHUB_ENV
-      id: localVersion
     - name: Build and publish with Gradle
-      if: ${{ steps.get_version.outputs.version-without-v == jobs.localVersion.env.localVersion }}
+      if: ${{ steps.get_version.outputs.version-without-v == env.localVersion }}
       run: |
         cd ${{ github.workspace }}
         ./gradlew build publish closeAndReleaseSonatypeStagingRepository

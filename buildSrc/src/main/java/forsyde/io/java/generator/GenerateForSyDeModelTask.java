@@ -10,10 +10,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.commons.text.WordUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Task;
-import org.gradle.api.tasks.InputDirectory;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.OutputFiles;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.*;
 import org.gradle.work.Incremental;
 
 import javax.lang.model.element.Modifier;
@@ -23,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class GenerateForSyDeModelTask extends DefaultTask implements Task {
@@ -40,7 +38,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
     File inputModelDSL = getProject().file("traithierarchy.traitdsl");
 
     @InputDirectory
-    File rootOutDir = getProject().getProjectDir();
+    File rootOutDir = getProject().getProjectDir().toPath().resolve(Paths.get("src-gen/main/java")).toFile();
 
     @OutputFiles
     List<File> outFiles = new ArrayList<>();
@@ -68,9 +66,9 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
     public void generateFiles(TraitHierarchy model) throws IOException {
         Path root = rootOutDir.toPath();
-        Path generatedDir = root.resolve(Paths.get("src-gen/main/java"));
-        Path enumsPath = root.resolve(Paths.get("src-gen/main/java/forsyde/io/java/core/"));
-        Path viewersPath = root.resolve("src-gen/main/java/forsyde/io/java/typed/viewers/");
+        Path generatedDir = root;
+        Path enumsPath = root.resolve(Paths.get("forsyde/io/java/core/"));
+        Path viewersPath = root.resolve("forsyde/io/java/typed/viewers/");
         Files.createDirectories(enumsPath) ;
         Files.createDirectories(viewersPath);
 
@@ -300,7 +298,13 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
     public TypeSpec generateVertexTraitEnum(TraitHierarchy model) {
         ClassName generalTraitClass = ClassName.get("forsyde.io.java.core", "Trait");
         final TypeSpec.Builder vertexTraitEnumBuilder = TypeSpec.enumBuilder("VertexTrait")
-                .addSuperinterface(generalTraitClass).addModifiers(Modifier.PUBLIC);
+                .addSuperinterface(generalTraitClass).addModifiers(Modifier.PUBLIC)
+                .addField(String.class, "canonicalName", Modifier.PRIVATE, Modifier.FINAL)
+                .addMethod(MethodSpec.constructorBuilder()
+                        .addParameter(String.class, "canonicalName")
+                        .addStatement("this.$N = $N", "canonicalName", "canonicalName")
+                        .build());
+
         // // refinement method
         final MethodSpec.Builder refinesMethod = MethodSpec.methodBuilder("refines")
                 .returns(TypeName.BOOLEAN)
@@ -316,11 +320,13 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         final MethodSpec.Builder getNameMethod = MethodSpec.methodBuilder("getName")
                 .returns(String.class)
                 .addModifiers(Modifier.PUBLIC)
-                .beginControlFlow("switch (this)");
+                .addStatement("return canonicalName");
         List<VertexTraitSpec> traits = model.vertexTraits.stream().collect(Collectors.toList());
         for (VertexTraitSpec trait : traits) {
             final String enumTraitName = trait.name.replace("::", "_").toUpperCase();
-            vertexTraitEnumBuilder.addEnumConstant(enumTraitName);
+            vertexTraitEnumBuilder.addEnumConstant(enumTraitName,
+                    TypeSpec.anonymousClassBuilder("$S", trait.name).build());
+
 
             refinesMethod.addCode("case " + enumTraitName + ":\n");
             refinesMethod.beginControlFlow("switch (other)");
@@ -337,15 +343,17 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
             refinesMethod.addStatement("default: return false");
             refinesMethod.endControlFlow();
 
-            getNameMethod.addStatement("case " + enumTraitName + ": return \"" + trait.name + "\"");
+            //getNameMethod.addStatement("case $L: return $S", enumTraitName, trait.name);
+            //getNameMethod.addStatement("case $S: return \"" + trait.name + "\"");
 
-            fromNameMethod.addStatement("case \"" + trait.name + "\": return VertexTrait." + enumTraitName);
+            fromNameMethod.addCode("case $S:\n", trait.name);
+            fromNameMethod.addStatement("case $S: return VertexTrait.$L", enumTraitName, enumTraitName);
         }
         refinesMethod.addStatement("default: return false");
         refinesMethod.endControlFlow();
 
-        getNameMethod.addStatement("default: return \"\"");
-        getNameMethod.endControlFlow();
+        //getNameMethod.addStatement("default: return \"\"");
+        //getNameMethod.endControlFlow();
 
         fromNameMethod.addStatement("default: return new $T($L)", ClassName.get("forsyde.io.java.core", "OpaqueTrait"), "traitName");
         fromNameMethod.endControlFlow();
@@ -364,7 +372,12 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
     public TypeSpec generateEdgeTraitsEnum(TraitHierarchy model) {
         ClassName traitClass = ClassName.get("forsyde.io.java.core", "Trait");
         TypeSpec.Builder edgeEnumBuilder = TypeSpec.enumBuilder("EdgeTrait").addSuperinterface(traitClass)
-                .addModifiers(Modifier.PUBLIC);
+                .addModifiers(Modifier.PUBLIC)
+                .addField(String.class, "canonicalName", Modifier.PRIVATE, Modifier.FINAL)
+                .addMethod(MethodSpec.constructorBuilder()
+                        .addParameter(String.class, "canonicalName")
+                        .addStatement("this.$N = $N", "canonicalName", "canonicalName")
+                        .build());
         MethodSpec.Builder refinesMethod = MethodSpec.methodBuilder("refines").returns(TypeName.BOOLEAN)
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(ClassName.get("forsyde.io.java.core", "EdgeTrait"), "one")
@@ -378,11 +391,11 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         final MethodSpec.Builder getNameMethod = MethodSpec.methodBuilder("getName")
                 .returns(String.class)
                 .addModifiers(Modifier.PUBLIC)
-                .beginControlFlow("switch (this)");
+                .addStatement("return canonicalName");
         List<EdgeTraitSpec> traits = model.edgeTraits.stream().collect(Collectors.toList());
         for (EdgeTraitSpec trait : traits) {
             final String enumTraitName = trait.name.replace("::", "_").toUpperCase();
-            edgeEnumBuilder.addEnumConstant(enumTraitName);
+            edgeEnumBuilder.addEnumConstant(enumTraitName, TypeSpec.anonymousClassBuilder("$S", trait.name).build());
 
             refinesMethod.addCode("case " + enumTraitName + ":\n");
             refinesMethod.beginControlFlow("switch (other)");
@@ -397,15 +410,16 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
             refinesMethod.addStatement("default: return false");
             refinesMethod.endControlFlow();
 
-            getNameMethod.addStatement("case " + enumTraitName + ": return \"" + trait.name + "\"");
+            //getNameMethod.addStatement("case " + enumTraitName + ": return \"" + trait.name + "\"");
 
-            fromNameMethod.addStatement("case \"" + trait.name + "\": return EdgeTrait." + enumTraitName);
+            fromNameMethod.addCode("case $S:\n", trait.name);
+            fromNameMethod.addStatement("case $S: return EdgeTrait.$L", enumTraitName, enumTraitName);
         }
         refinesMethod.addStatement("default: return false");
         refinesMethod.endControlFlow();
 
-        getNameMethod.addStatement("default: return \"\"");
-        getNameMethod.endControlFlow();
+        //getNameMethod.addStatement("default: return \"\"");
+        //getNameMethod.endControlFlow();
 
         fromNameMethod.addStatement("default: return new $T($L)", ClassName.get("forsyde.io.java.core", "OpaqueTrait"), "traitName");
         fromNameMethod.endControlFlow();

@@ -168,7 +168,7 @@ namespace platform {
 
     }
 
-    vertex InstrumentedProcessingModule refines ProcessingModule {
+    vertex InstrumentedProcessingModule refines GenericProcessingModule {
         prop modalInstructionsPerCycle is strmap<strmap<double>>
     }
 
@@ -231,11 +231,11 @@ namespace decision {
     }
 
     namespace sdf {
-        vertex SDFIsPASSed {
+        vertex PASSedSDFComb refines moc::sdf::SDFComb {
             prop firingSlots is array<int>
         }
 
-        vertex SDFChannelIsBounded {
+        vertex BoundedSDFChannel refines moc::sdf::SDFChannel {
             prop maximumTokens is int
         }
     }
