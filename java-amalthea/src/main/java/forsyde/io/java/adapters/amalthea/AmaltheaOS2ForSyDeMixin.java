@@ -11,6 +11,7 @@ import forsyde.io.java.typed.viewers.visualization.GreyBox;
 import forsyde.io.java.typed.viewers.visualization.Visualizable;
 import org.eclipse.app4mc.amalthea.model.*;
 
+import java.lang.System;
 import java.util.Map;
 
 public interface AmaltheaOS2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
@@ -38,8 +39,8 @@ public interface AmaltheaOS2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 final Boolean hasPriority = taskScheduler.getDefinition().getProcessParameters()
                         .stream().anyMatch(p ->
                                 p.getName().equals("priority"));
-                final Boolean isNamedStaticCyclic = taskScheduler.getName().contains("StaticCyclic");
-                final Boolean isNamedFixedPriority = taskScheduler.getName().contains("FixedPriority");
+                final Boolean isNamedStaticCyclic = taskScheduler.getDefinition().getName().contains("StaticCyclic");
+                final Boolean isNamedFixedPriority = taskScheduler.getDefinition().getName().contains("FixedPriority");
                 if (isNamedFixedPriority && hasPriority) {
                     final FixedPriorityScheduler fixedPriorityScheduler = FixedPriorityScheduler.enforce(runtimeVertex);
                     fixedPriorityScheduler.setPreemptive(isPreemptive);

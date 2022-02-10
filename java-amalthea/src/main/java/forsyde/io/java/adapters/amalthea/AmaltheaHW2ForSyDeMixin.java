@@ -92,8 +92,9 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 fromPUIntoVertex(processingUnit, moduleVertex);
             } else if (module instanceof Memory) {
                 Memory memory = (Memory) module;
-                moduleVertex.addTraits(VertexTrait.PLATFORM_GENERICMEMORYMODULE);
-                moduleVertex.putProperty("max_memory_in_bits", memory.getDefinition().getSize().getNumberBits());
+                final GenericMemoryModule genericMemoryModule = GenericMemoryModule.enforce(moduleVertex);
+                genericMemoryModule.setSpaceInBits(memory.getDefinition().getSize().getNumberBits());
+                //moduleVertex.putProperty("max_memory_in_bits", memory.getDefinition().getSize().getNumberBits());
             } else if (module instanceof Cache) {
                 Cache cache = (Cache) module;
                 moduleVertex.addTraits(VertexTrait.PLATFORM_GENERICCACHEMODULE);

@@ -87,6 +87,17 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
             // Files.writeString(interfacePath, interfaceStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         }
 
+        final Set<Path> outPaths = outFiles.stream().map(File::toPath).collect(Collectors.toSet());
+        Files.walk(root).forEach(s -> {
+            if (!outPaths.contains(s) && s.toFile().isFile()) {
+                try {
+                    Files.deleteIfExists(s);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
     protected String toCamelCase(String word) {
