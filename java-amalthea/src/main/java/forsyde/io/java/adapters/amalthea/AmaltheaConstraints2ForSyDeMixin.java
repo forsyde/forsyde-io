@@ -20,17 +20,15 @@ public interface AmaltheaConstraints2ForSyDeMixin extends EquivalenceModel2Model
                         processRequirement.eAllContents().forEachRemaining(item -> {
                             if (item instanceof TimeRequirementLimit) {
                                 final TimeRequirementLimit timeRequirementLimit = (TimeRequirementLimit) item;
-                                processVertex.addTraits(VertexTrait.EXECUTION_CONSTRAINEDTASK);
-                                ConstrainedTask.safeCast(processVertex).ifPresent(taskVertex -> {
-                                    taskVertex.setRelativeDeadlineDenominator(
-                                            timeRequirementLimit.getLimitValue() != null ?
-                                                    fromTimeUnitToLong(timeRequirementLimit.getLimitValue().getUnit())
-                                                    : 1L);
-                                    taskVertex.setRelativeDeadlineNumerator(
-                                            timeRequirementLimit.getLimitValue() != null ?
-                                                    timeRequirementLimit.getLimitValue().getValue().longValue()
-                                                    : 1L);
-                                });
+                                final ConstrainedTask constrainedTask = ConstrainedTask.enforce(processVertex);
+                                constrainedTask.setRelativeDeadlineDenominator(
+                                        timeRequirementLimit.getLimitValue() != null ?
+                                                fromTimeUnitToLong(timeRequirementLimit.getLimitValue().getUnit())
+                                                : 1L);
+                                constrainedTask.setRelativeDeadlineNumerator(
+                                        timeRequirementLimit.getLimitValue() != null ?
+                                                timeRequirementLimit.getLimitValue().getValue().longValue()
+                                                : 1L);
                             }
                         });
                     });

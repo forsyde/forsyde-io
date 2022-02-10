@@ -4,11 +4,10 @@ import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
+import forsyde.io.java.typed.viewers.execution.DownsampleReactiveStimulus;
 import forsyde.io.java.typed.viewers.execution.PeriodicStimulusViewer;
-import org.eclipse.app4mc.amalthea.model.Amalthea;
-import org.eclipse.app4mc.amalthea.model.INamed;
-import org.eclipse.app4mc.amalthea.model.PeriodicStimulus;
-import org.eclipse.app4mc.amalthea.model.TimeUnit;
+import forsyde.io.java.typed.viewers.execution.ReactiveStimulus;
+import org.eclipse.app4mc.amalthea.model.*;
 
 public interface AmaltheaStimulus2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
@@ -35,6 +34,17 @@ public interface AmaltheaStimulus2ForSyDeMixin extends EquivalenceModel2ModelMix
                     periodicStimulusVertex.setOffsetDenominator(1L);
                 }
                 addEquivalence(stimulus, timerVertex);
+            } else if (stimulus instanceof InterProcessStimulus) {
+                final InterProcessStimulus interProcessStimulus = (InterProcessStimulus) stimulus;
+                final Vertex precedenceVertex = new Vertex(stimulus.getName());
+                final ReactiveStimulus reactiveStimulus = ReactiveStimulus.enforce(precedenceVertex);
+                forSyDeSystemGraph.addVertex(precedenceVertex);
+                addEquivalence(interProcessStimulus, precedenceVertex);
+                if (interProcessStimulus.getCounter() != null) {
+                    final DownsampleReactiveStimulus repetitionReactiveStimulus = DownsampleReactiveStimulus.enforce(precedenceVertex);
+                    repetitionReactiveStimulus.setInitialPredecessorSkips(interProcessStimulus.getCounter().getOffset());
+                    repetitionReactiveStimulus.setRepetitivePredecessorSkips(interProcessStimulus.getCounter().getPrescaler());
+                }
             }
         });
     }

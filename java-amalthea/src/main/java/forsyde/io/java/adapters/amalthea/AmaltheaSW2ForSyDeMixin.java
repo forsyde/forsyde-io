@@ -14,6 +14,9 @@ import forsyde.io.java.typed.viewers.visualization.GreyBox;
 import org.eclipse.app4mc.amalthea.model.*;
 import org.eclipse.app4mc.amalthea.model.PeriodicStimulus;
 
+import java.lang.System;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,7 +29,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             fromLabelToVertex(amalthea, forSyDeSystemGraph);
             fromRunnableToVertex(amalthea, forSyDeSystemGraph);
             fromTaskToVertex(amalthea, forSyDeSystemGraph);
-            convertProcessPrototype(amalthea, forSyDeSystemGraph);
+            //convertProcessPrototype(amalthea, forSyDeSystemGraph);
         }
     }
 
@@ -131,6 +134,18 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         equivalent(stimulus).ifPresent(stimulusVertex -> {
                             forSyDeSystemGraph.connect(stimulusVertex, taskVertex, "stimulated", "periodicStimulus", EdgeTrait.EXECUTION_EVENTEDGE);
                         });
+                    } else if (stimulus instanceof InterProcessStimulus) {
+                        final InterProcessStimulus interProcessStimulus = (InterProcessStimulus) stimulus;
+                        final ReactiveTask reactiveTask = ReactiveTask.enforce(taskVertex);
+                        // all input reactions are AND semantics coming from InterProcessTrigger
+                        equivalents(interProcessStimulus).forEach(reactionVertex -> {
+                            forSyDeSystemGraph.connect(reactionVertex, taskVertex, "sucessor", "reactiveStimulus", EdgeTrait.EXECUTION_EVENTEDGE);
+                            final List<Integer> reactiveGroups = reactiveTask.getReactiveANDGroups() == null ?
+                                new ArrayList<>() :
+                                reactiveTask.getReactiveANDGroups();
+                            reactiveGroups.add(0);
+                            reactiveTask.setReactiveANDGroups(reactiveGroups);
+                        });
                     }
                 });
             }
@@ -142,6 +157,11 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         equivalent(runnableCall.getRunnable()).ifPresent(runnableVertex -> {
                             forSyDeSystemGraph.connect(taskVertex, runnableVertex, "callSequence", EdgeTrait.EXECUTION_CONTAINMENTEDGE);
                             forSyDeSystemGraph.connect(taskVertex, runnableVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
+                        });
+                    } else if (item instanceof InterProcessTrigger) {
+                        final InterProcessTrigger interProcessTrigger = (InterProcessTrigger) item;
+                        equivalents(interProcessTrigger.getStimulus()).forEach(precedenceVertex -> {
+                            forSyDeSystemGraph.connect(taskVertex, precedenceVertex, null,"predecessor", EdgeTrait.EXECUTION_EVENTEDGE);
                         });
                     }
                 });
@@ -193,61 +213,61 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         });
     }
 
-    default void convertProcessPrototype(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
-        amalthea.getSwModel().getProcessPrototypes().forEach(processPrototype ->
-            processPrototype.getOrderPrecedenceSpec().forEach(orderPrecedenceSpec ->
-                equivalent(orderPrecedenceSpec.getOrigin()).ifPresent(originRunnableVertex ->
-                    equivalent(orderPrecedenceSpec.getTarget()).ifPresent(targetRunnableVertex -> {
-                        // first check if any of the created tasks contain this runnable
-                        // otherwise create a forsyde task just for it
-                        final Task originTask = forSyDeSystemGraph.incomingEdgesOf(originRunnableVertex).stream()
-                                .map(forSyDeSystemGraph::getEdgeSource)
-                                .filter(Task::conforms)
-                                .map(Task::enforce)
-                                .findAny()
-                                .orElseGet(() -> {
-                                    final Vertex srcTaskVertex = new Vertex(originRunnableVertex.identifier + "Task",
-                                            VertexTrait.EXECUTION_TASK);
-                                    final Task srcTaskViewer = Task.enforce(srcTaskVertex);
-                                    forSyDeSystemGraph.addVertex(srcTaskVertex);
-                                    forSyDeSystemGraph.connect(srcTaskVertex, originRunnableVertex, "callSequence", EdgeTrait.EXECUTION_CONTAINMENTEDGE);
-                                    return srcTaskViewer;
-                                });
-                        // first check if any of the created tasks contain this runnable
-                        // otherwise create a forsyde task just for it [same for target]
-                        final Task targetTask = forSyDeSystemGraph.incomingEdgesOf(targetRunnableVertex).stream()
-                                .map(forSyDeSystemGraph::getEdgeSource)
-                                .filter(Task::conforms)
-                                .map(Task::enforce)
-                                .findAny()
-                                .orElseGet(() -> {
-                                    final Vertex dstTaskVertex = new Vertex(targetRunnableVertex.identifier + "Task",
-                                            VertexTrait.EXECUTION_TASK);
-                                    final Task dstTaskViewer = Task.enforce(dstTaskVertex);
-                                    forSyDeSystemGraph.addVertex(dstTaskVertex);
-                                    forSyDeSystemGraph.connect(dstTaskVertex, targetRunnableVertex, "callSequence", EdgeTrait.EXECUTION_CONTAINMENTEDGE);
-                                    return dstTaskViewer;
-                                });
-                        addEquivalence(processPrototype, originTask.getViewedVertex());
-                        addEquivalence(processPrototype, targetTask.getViewedVertex());
-                        // then add the precedence if necessary
-                        if (!originTask.equals(targetTask)) {
-                            final Vertex precedenceConstraintVertex = new Vertex(
-                                    originRunnableVertex.getIdentifier() + "_to_" + targetRunnableVertex.getIdentifier(),
-                                    VertexTrait.EXECUTION_PRECEDENCECONSTRAINT);
-                            final PrecedenceConstraint precedenceConstraint = PrecedenceConstraint.enforce(precedenceConstraintVertex);
-                            forSyDeSystemGraph.addVertex(precedenceConstraintVertex);
-                            forSyDeSystemGraph.connect(precedenceConstraintVertex, originTask.getViewedVertex(), "predecessor",
-                                    EdgeTrait.EXECUTION_CONSTRAINTEDGE);
-                            forSyDeSystemGraph.connect(precedenceConstraintVertex, targetTask.getViewedVertex(), "sucessor",
-                                    EdgeTrait.EXECUTION_CONSTRAINTEDGE);
-                            addEquivalence(processPrototype, precedenceConstraintVertex);
-                        }
-                    })
-                )
-            )
-        );
-    }
+//    default void convertProcessPrototype(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+//        amalthea.getSwModel().getProcessPrototypes().forEach(processPrototype ->
+//            processPrototype.getOrderPrecedenceSpec().forEach(orderPrecedenceSpec ->
+//                equivalent(orderPrecedenceSpec.getOrigin()).ifPresent(originRunnableVertex ->
+//                    equivalent(orderPrecedenceSpec.getTarget()).ifPresent(targetRunnableVertex -> {
+//                        // first check if any of the created tasks contain this runnable
+//                        // otherwise create a forsyde task just for it
+//                        final Task originTask = forSyDeSystemGraph.incomingEdgesOf(originRunnableVertex).stream()
+//                                .map(forSyDeSystemGraph::getEdgeSource)
+//                                .filter(Task::conforms)
+//                                .map(Task::enforce)
+//                                .findAny()
+//                                .orElseGet(() -> {
+//                                    final Vertex srcTaskVertex = new Vertex(originRunnableVertex.identifier + "Task",
+//                                            VertexTrait.EXECUTION_TASK);
+//                                    final Task srcTaskViewer = Task.enforce(srcTaskVertex);
+//                                    forSyDeSystemGraph.addVertex(srcTaskVertex);
+//                                    forSyDeSystemGraph.connect(srcTaskVertex, originRunnableVertex, "callSequence", EdgeTrait.EXECUTION_CONTAINMENTEDGE);
+//                                    return srcTaskViewer;
+//                                });
+//                        // first check if any of the created tasks contain this runnable
+//                        // otherwise create a forsyde task just for it [same for target]
+//                        final Task targetTask = forSyDeSystemGraph.incomingEdgesOf(targetRunnableVertex).stream()
+//                                .map(forSyDeSystemGraph::getEdgeSource)
+//                                .filter(Task::conforms)
+//                                .map(Task::enforce)
+//                                .findAny()
+//                                .orElseGet(() -> {
+//                                    final Vertex dstTaskVertex = new Vertex(targetRunnableVertex.identifier + "Task",
+//                                            VertexTrait.EXECUTION_TASK);
+//                                    final Task dstTaskViewer = Task.enforce(dstTaskVertex);
+//                                    forSyDeSystemGraph.addVertex(dstTaskVertex);
+//                                    forSyDeSystemGraph.connect(dstTaskVertex, targetRunnableVertex, "callSequence", EdgeTrait.EXECUTION_CONTAINMENTEDGE);
+//                                    return dstTaskViewer;
+//                                });
+//                        addEquivalence(processPrototype, originTask.getViewedVertex());
+//                        addEquivalence(processPrototype, targetTask.getViewedVertex());
+//                        // then add the precedence if necessary
+//                        if (!originTask.equals(targetTask)) {
+//                            final Vertex precedenceConstraintVertex = new Vertex(
+//                                    originRunnableVertex.getIdentifier() + "_to_" + targetRunnableVertex.getIdentifier(),
+//                                    VertexTrait.EXECUTION_PRECEDENCECONSTRAINT);
+//                            final PrecedenceConstraint precedenceConstraint = PrecedenceConstraint.enforce(precedenceConstraintVertex);
+//                            forSyDeSystemGraph.addVertex(precedenceConstraintVertex);
+//                            forSyDeSystemGraph.connect(precedenceConstraintVertex, originTask.getViewedVertex(), "predecessor",
+//                                    EdgeTrait.EXECUTION_CONSTRAINTEDGE);
+//                            forSyDeSystemGraph.connect(precedenceConstraintVertex, targetTask.getViewedVertex(), "sucessor",
+//                                    EdgeTrait.EXECUTION_CONSTRAINTEDGE);
+//                            addEquivalence(processPrototype, precedenceConstraintVertex);
+//                        }
+//                    })
+//                )
+//            )
+//        );
+//    }
 
     private long fromTimeUnitToLong(TimeUnit timeUnit) {
         switch (timeUnit) {

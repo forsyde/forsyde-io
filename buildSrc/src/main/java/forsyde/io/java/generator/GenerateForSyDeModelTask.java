@@ -25,15 +25,6 @@ import java.util.stream.Collectors;
 
 public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
-    @Incremental
-    @InputFile
-    @Deprecated
-    File inputModelJson = getProject().file("meta.json");
-
-    @InputFile
-    @Deprecated
-    File inputModelXml = getProject().file("meta.json");
-
     @InputFile
     File inputModelDSL = getProject().file("traithierarchy.traitdsl");
 
@@ -590,16 +581,6 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
             default:
                 return 2;
         }
-    }
-
-
-    public File getInputModelJson() {
-        return inputModelJson;
-    }
-
-
-    public File getInputModelXml() {
-        return inputModelXml;
     }
 
     public List<File> getOutFiles() {

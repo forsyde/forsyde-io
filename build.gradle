@@ -13,7 +13,7 @@ plugins {
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = project.name
-version = '0.5.2'
+version = '0.5.3'
 project.ext.niceName = "Java Parent"
 
 
@@ -69,7 +69,7 @@ subprojects {
   publishing {
     publications {
       mavenJava(MavenPublication) {
-        artifactId = archiveBaseName
+        artifactId = archivesBaseName
         from components.java
         pom {
           name = "ForSyDe IO " + project.niceName

@@ -92,6 +92,26 @@ namespace execution {
         port stimulated is multiple unordered Task
     }
 
+    vertex ReactiveStimulus refines Stimulus {
+        port predecessor is single Task
+        port sucessor is single Task
+    }
+
+    vertex DownsampleReactiveStimulus refines ReactiveStimulus {
+        prop initialPredecessorSkips is long
+        prop repetitivePredecessorSkips is long
+    }
+
+    vertex UpsampleReactiveStimulus refines ReactiveStimulus {
+        prop initialPredecessorHolds is long
+        prop repetitivePredecessorHolds is long
+    }
+
+    vertex ExtendedReactiveStimulus refines ReactiveStimulus {
+        prop predecessorInstance is array<long>
+        prop sucessorInstance is array<long>
+    }
+
     vertex Task {
         port callSequence is multiple ordered out impl::Executable
     }
@@ -105,32 +125,18 @@ namespace execution {
         port periodicStimulus is single in PeriodicStimulus
     }
 
+    vertex ReactiveTask refines Task {
+        prop reactiveANDGroups is array<int>
+
+        port reactiveStimulus is in ReactiveStimulus
+    }
+
     vertex Channel {
         prop maxElems is int
         prop elemSizeInBits is long
     }
 
-    vertex RuntimeConstraint
-
-    vertex PrecedenceConstraint refines RuntimeConstraint {
-        port predecessor is Task
-        port sucessor is Task
-    }
-
-    vertex ExtendedPrecedenceConstraint refines PrecedenceConstraint {
-        prop predecessorInstance is array<int>
-        prop sucessorInstance is array<int>
-    }
-
-
-    vertex ColocationConstraint refines RuntimeConstraint {
-         port cocolated is multiple Task
-         port dislocated is multiple Task
-    }
-
     edge ContainmentEdge
-
-    edge ConstraintEdge
 
     edge CommunicationEdge
 
@@ -211,6 +217,17 @@ namespace platform {
 
 }
 
+namespace nonfunctional {
+
+    vertex NonFunctionalRequirement
+
+    vertex ColocationRequirement refines NonFunctionalRequirement {
+        prop coLocationGroups is array<int>
+
+        port covered is multiple out execution::Task
+    }
+}
+
 namespace decision {
     edge AbstractMapping
 
@@ -223,7 +240,7 @@ namespace decision {
     }
 
     vertex MemoryMapped refines Allocated {
-        port mappingHost is out platform::DigitalModule
+        port mappingHost is out platform::GenericMemoryModule
     }
 
     vertex Scheduled {
