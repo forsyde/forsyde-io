@@ -125,4 +125,43 @@ public final class VertexAcessor {
         }
     }
 
+    public static<Tsrc extends VertexViewer, Tdst extends VertexViewer> boolean setNamedPort(ForSyDeSystemGraph model, Tsrc src,  Tdst dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
+        return setNamedPort(model, src.getViewedVertex(), dst.getViewedVertex(), srcPortName, dstPortName, ts);
+    }
+
+    public static boolean setNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
+        if (!src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
+        if (!dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
+        return model.connect(src, dst, srcPortName, dstPortName, ts);
+    }
+
+    public static<Tsrc extends VertexViewer, Tdst extends VertexViewer> boolean addMultipleNamedPort(ForSyDeSystemGraph model, Tsrc src,  Tdst dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
+        return addMultipleNamedPort(model, src.getViewedVertex(),  dst.getViewedVertex(), srcPortName, dstPortName, ts);
+    }
+
+    public static boolean addMultipleNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
+        if (!src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
+        if (!dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
+        return model.connect(src, dst, srcPortName, dstPortName, ts);
+    }
+
+    public static boolean insertOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
+        return insertOrderedMultipleNamedPort(model, src,  dst, srcPortName, dstPortName, 0, ts);
+    }
+
+    public static<Tsrc extends VertexViewer, Tdst extends VertexViewer> boolean insertOrderedMultipleNamedPort(ForSyDeSystemGraph model, Tsrc src,  Tdst dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
+        return insertOrderedMultipleNamedPort(model, src.getViewedVertex(),  dst.getViewedVertex(), srcPortName, dstPortName, 0, ts);
+    }
+
+    public static boolean insertOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, int pos, EdgeTrait... ts) {
+        final Map<String, Integer> order = (Map<String, Integer>) src.getProperties()
+                .get("__" + srcPortName + "_ordering__")
+                .unwrap();
+        if (!src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
+        if (!dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
+        order.put(dst.identifier, pos);
+        src.properties.put("__" + srcPortName + "_ordering__", VertexProperty.create(order));
+        return model.connect(src, dst, srcPortName, dstPortName, ts);
+    }
+
 }
