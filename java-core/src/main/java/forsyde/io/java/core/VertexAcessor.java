@@ -2,59 +2,85 @@ package forsyde.io.java.core;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class VertexAcessor {
 
+    public enum VertexPortDirection {
+        INCOMING,
+        OUTGOING,
+        BIDIRECTIONAL
+    }
+
     static public Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, String traitName) {
-        return getNamedPort(model, v, portName, traitName, "BIDIRECTIONAL");
+        final Trait t = traitFromString(traitName);
+        return getNamedPort(model, v, portName, t, "BIDIRECTIONAL");
     }
 
     static public Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, String traitName, String direction) {
         Trait t = traitFromString(traitName);
-        if (direction.equalsIgnoreCase("outgoing") || direction.equalsIgnoreCase("bidirectional")) {
-            Set<EdgeInfo> outEdges = model.outgoingEdgesOf(v);
-            Optional<Vertex> dst = outEdges.stream()
-                    .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
-                    .map(model::getEdgeTarget)
-                    .filter(vv -> vv.hasTrait(t))
-                    .findAny();
-            return dst;
-        }
-        if (direction.equalsIgnoreCase("incoming") || direction.equalsIgnoreCase("bidirectional")) {
-            Set<EdgeInfo> inEdges = model.incomingEdgesOf(v);
-            Optional<Vertex> src = inEdges.stream()
-                    .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
-                    .map(model::getEdgeSource)
-                    .filter(vv -> vv.hasTrait(t))
-                    .findAny();
-            if (src.isPresent())
-                return src;
-        }
-        return Optional.empty();
+        return getNamedPort(model, v, portName, t, direction);
+//        if (direction.equalsIgnoreCase("outgoing") || direction.equalsIgnoreCase("bidirectional")) {
+//            Set<EdgeInfo> outEdges = model.outgoingEdgesOf(v);
+//            Optional<Vertex> dst = outEdges.stream()
+//                    .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+//                    .map(model::getEdgeTarget)
+//                    .filter(vv -> vv.hasTrait(t))
+//                    .findAny();
+//            return dst;
+//        }
+//        if (direction.equalsIgnoreCase("incoming") || direction.equalsIgnoreCase("bidirectional")) {
+//            Set<EdgeInfo> inEdges = model.incomingEdgesOf(v);
+//            Optional<Vertex> src = inEdges.stream()
+//                    .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+//                    .map(model::getEdgeSource)
+//                    .filter(vv -> vv.hasTrait(t))
+//                    .findAny();
+//            if (src.isPresent())
+//                return src;
+//        }
+//        return Optional.empty();
     }
 
     static public Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait trait, String direction) {
         //Trait t = traitFromString(traitName);
-        if (direction.equalsIgnoreCase("outgoing") || direction.equalsIgnoreCase("bidirectional")) {
-            Set<EdgeInfo> outEdges = model.outgoingEdgesOf(v);
-            Optional<Vertex> dst = outEdges.stream()
-                    .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
-                    .map(model::getEdgeTarget)
-                    .filter(vv -> vv.hasTrait(trait))
-                    .findAny();
-            return dst;
+        Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
+                .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+                .map(model::getEdgeTarget)
+                .filter(vv -> vv.hasTrait(trait));
+        Stream<Vertex> inStream = model.incomingEdgesOf(v).stream()
+                .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+                .map(model::getEdgeSource)
+                .filter(vv -> vv.hasTrait(trait));
+        if (direction.equalsIgnoreCase("bidirectional")) {
+            return Stream.concat(outStream, inStream).findAny();
+        } else if (direction.equalsIgnoreCase("outgoing")) {
+            return outStream.findAny();
+        } else if (direction.equalsIgnoreCase("incoming")) {
+            return inStream.findAny();
+        } else {
+            return Optional.empty();
         }
-        if (direction.equalsIgnoreCase("incoming") || direction.equalsIgnoreCase("bidirectional")) {
-            Set<EdgeInfo> inEdges = model.incomingEdgesOf(v);
-            Optional<Vertex> src = inEdges.stream()
-                    .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
-                    .map(model::getEdgeSource)
-                    .filter(vv -> vv.hasTrait(trait))
-                    .findAny();
-            if (src.isPresent())
-                return src;
-        }
-        return Optional.empty();
+//        if (direction.equalsIgnoreCase("outgoing") || direction.equalsIgnoreCase("bidirectional")) {
+//            Set<EdgeInfo> outEdges = model.outgoingEdgesOf(v);
+//            return outEdges.stream()
+//                    .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+//                    .map(model::getEdgeTarget)
+//                    .filter(vv -> vv.hasTrait(trait))
+//                    .findAny();
+//            //return dst;
+//        }
+//        if (direction.equalsIgnoreCase("incoming") || direction.equalsIgnoreCase("bidirectional")) {
+//            Set<EdgeInfo> inEdges = model.incomingEdgesOf(v);
+//            return inEdges.stream()
+//                    .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+//                    .map(model::getEdgeSource)
+//                    .filter(vv -> vv.hasTrait(trait))
+//                    .findAny();
+////            if (src.isPresent())
+////                return src;
+//        }
+//        return Optional.empty();
     }
 
     static public Set<Vertex> getMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, String traitName) {

@@ -4,13 +4,14 @@
     <tasks xmi:id="T1?type=Task" name="T1" stimuli="Timer60Hz?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:RunnableCall" runnable="R1?type=Runnable"/>
+        <items xsi:type="am:InterProcessTrigger" stimulus="T1toT3?type=InterProcessStimulus"/>
         <items xsi:type="am:InterProcessTrigger" stimulus="T1toT2?type=InterProcessStimulus"/>
       </activityGraph>
     </tasks>
     <tasks xmi:id="T2?type=Task" name="T2" stimuli="T1toT2?type=InterProcessStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:RunnableCall" runnable="R2?type=Runnable"/>
-        <items xsi:type="am:InterProcessTrigger" stimulus="T1toT3?type=InterProcessStimulus"/>
+        <items xsi:type="am:InterProcessTrigger" stimulus="T2toT5?type=InterProcessStimulus"/>
       </activityGraph>
     </tasks>
     <tasks xmi:id="T3?type=Task" name="T3" stimuli="T1toT3?type=InterProcessStimulus" preemption="preemptive" multipleTaskActivationLimit="0">

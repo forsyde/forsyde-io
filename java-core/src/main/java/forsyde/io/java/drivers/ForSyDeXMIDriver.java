@@ -308,6 +308,11 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 					newElem.setAttribute("floatValue", f.toString());
 					return newElem;
 				})
+				.DoubleVertexProperty(d -> {
+					newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:DoubleVertexProperty");
+					newElem.setAttribute("doubleValue", d.toString());
+					return newElem;
+				})
 				.LongVertexProperty(l -> {
 					newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:LongVertexProperty");
 					newElem.setAttribute("longValue", l.toString());
@@ -347,7 +352,6 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 					}
 					return newElem;
 				})
-				.otherwise_(newElem)
 				.apply(prop);
 	}
 
