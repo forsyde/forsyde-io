@@ -257,6 +257,17 @@ namespace decision {
         }
     }
 
+    namespace results {
+        vertex AnalysedTask refines execution::Task {
+            prop worstCaseResponseTimeNumeratorInSecs is long
+            prop worstCaseResponseTimeDenominatorInSecs is long
+        }
+
+        vertex StaticCycleEntry refines execution::Task {
+            prop staticOrderEntry is int
+        }
+    }
+
 }
 
 namespace visualization {

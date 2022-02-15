@@ -232,10 +232,10 @@
       <taskSchedulers xmi:id="CMP1_Core2_Runtime_Scheduler?type=TaskScheduler" name="CMP1_Core2_Runtime_Scheduler" definition="StaticCyclic?type=SchedulerDefinition"/>
     </operatingSystems>
     <operatingSystems name="CPM2_Core3_Runtime">
-      <taskSchedulers xmi:id="CMP2_Core3_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core3_Runtime_Scheduler" definition="FixedPriorityPreemptive?type=SchedulerDefinition"/>
+      <taskSchedulers xmi:id="CMP2_Core3_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core3_Runtime_Scheduler" definition="StaticCyclic?type=SchedulerDefinition"/>
     </operatingSystems>
     <operatingSystems name="CPM2_Core4_Runtime">
-      <taskSchedulers xmi:id="CMP2_Core4_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core4_Runtime_Scheduler" definition="FixedPriorityPreemptive?type=SchedulerDefinition"/>
+      <taskSchedulers xmi:id="CMP2_Core4_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core4_Runtime_Scheduler" definition="StaticCyclic?type=SchedulerDefinition"/>
     </operatingSystems>
     <schedulerDefinitions xmi:id="StaticCyclic?type=SchedulerDefinition" name="StaticCyclic" processParameters="cycleOrder?type=SchedulingParameterDefinition" requiresParentScheduler="false" passesParametersUpwards="false" hasExactlyOneChild="false"/>
     <schedulerDefinitions xmi:id="FixedPriorityPreemptive?type=SchedulerDefinition" name="FixedPriorityPreemptive" description="Fixed Priority Preemptive Scheduling (e.g. AUTOSAR),&#xA;same as OSEK but without task groups.&#xA;&#xA;Algorithm parameters&#xA; -&#xA;&#xA;Process parameters&#xA; - priority [1] Integer&#xA;      The priority of the process (a higher value means a higher priority).&#xA;&#xA;Options:&#xA; -&#xA;&#xA;Reference:&#xA; - TODO" processParameters="priority?type=SchedulingParameterDefinition" requiresParentScheduler="false" passesParametersUpwards="false" hasExactlyOneChild="false"/>
