@@ -261,6 +261,8 @@ namespace decision {
         vertex AnalysedTask refines execution::Task {
             prop worstCaseResponseTimeNumeratorInSecs is long
             prop worstCaseResponseTimeDenominatorInSecs is long
+            prop worstCaseBlockingTimeNumeratorInSecs is long
+            prop worstCaseBlockingTimeDenominatorInSecs is long
         }
 
         vertex StaticCycleEntry refines execution::Task {
