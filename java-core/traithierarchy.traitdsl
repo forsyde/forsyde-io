@@ -268,6 +268,10 @@ namespace decision {
         vertex StaticCycleEntry refines execution::Task {
             prop staticOrderEntry is int
         }
+
+        vertex AnalysedGenericProcessingModule refines platform::GenericProcessingModule {
+            prop utilization is double
+        }
     }
 
 }
