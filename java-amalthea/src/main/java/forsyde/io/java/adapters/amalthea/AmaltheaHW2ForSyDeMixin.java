@@ -2,11 +2,14 @@ package forsyde.io.java.adapters.amalthea;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
+import forsyde.io.java.typed.viewers.decision.Allocated;
 import forsyde.io.java.typed.viewers.platform.*;
+import forsyde.io.java.typed.viewers.platform.runtime.RoundRobinScheduler;
 import forsyde.io.java.typed.viewers.visualization.GreyBox;
 import forsyde.io.java.typed.viewers.visualization.Visualizable;
 import org.eclipse.app4mc.amalthea.model.*;
 
+import java.lang.System;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,17 +44,24 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         profPu.setModalInstructionsPerCycle(provisions);
     }
 
-    default void fromCUIntoVertex(ConnectionHandler connectionHandler, Vertex v) {
+    default void fromCUIntoVertex(ForSyDeSystemGraph forSyDeSystemGraph, ConnectionHandler connectionHandler, Vertex v) {
         switch (connectionHandler.getDefinition().getPolicy()) {
             case ROUND_ROBIN:
-                v.addTraits(VertexTrait.PLATFORM_ROUNDROBINCOMMUNICATIONMODULE);
-                final RoundRobinCommunicationModule rrVertex = new RoundRobinCommunicationModuleViewer(v);
+                final Vertex rrVertex = new Vertex(v.getIdentifier() + "Scheduler");
+                final RoundRobinCommunicationModule roundRobinCommunicationModule = RoundRobinCommunicationModule.enforce(v);
+                final RoundRobinScheduler roundRobinScheduler = RoundRobinScheduler.enforce(rrVertex);
                 List<HwConnection> connections = connectionHandler.getPorts().stream().flatMap(p -> p.getConnections().stream())
                         .filter(p -> p.getPort1().getNamedContainer().equals(connectionHandler)).collect(Collectors.toList());
                 HashMap<String, Integer> allocation = new HashMap<>();
                 connections.forEach(p -> allocation.put(p.getPort2().getNamedContainer().getName(), 1));
-                rrVertex.setAllocatedWeights(allocation);
-                rrVertex.setTotalWeights(allocation.size());
+                roundRobinCommunicationModule.setAllocatedWeights(allocation);
+                roundRobinCommunicationModule.setTotalWeights(allocation.size());
+                addEquivalence(connectionHandler, rrVertex);
+                forSyDeSystemGraph.addVertex(rrVertex);
+                forSyDeSystemGraph.connect(rrVertex, v, "allocationHost", EdgeTrait.DECISION_ABSTRACTALLOCATION);
+                Visualizable.enforce(rrVertex);
+                GreyBox.enforce(v);
+                forSyDeSystemGraph.connect(v, rrVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                 break;
             default:
                 break;
@@ -79,6 +89,7 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         }
         for (HwModule module : structure.getModules()) {
             final Vertex moduleVertex = new Vertex(prefix + structure.getName() + "." + module.getName());
+            model.addVertex(moduleVertex);
             final DigitalModule digitalModule = DigitalModule.enforce(moduleVertex);
             final Visualizable visualizableModule = Visualizable.enforce(moduleVertex);
             digitalModule.setOperatingFrequencyInHertz(fromFrequencyToLong(module.getFrequencyDomain().getDefaultValue()));
@@ -111,9 +122,8 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         connectionHandler.getDefinition().getReadLatency() != null ?
                         connectionHandler.getDefinition().getReadLatency().getUpperBound() :
                         0L);
-                fromCUIntoVertex(connectionHandler, moduleVertex);
+                fromCUIntoVertex(model, connectionHandler, moduleVertex);
             }
-            model.addVertex(moduleVertex);
             model.connect(structureVertex, moduleVertex, "submodules", EdgeTrait.PLATFORM_STRUCTURALCONNECTION);
             model.connect(structureVertex, moduleVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
         }

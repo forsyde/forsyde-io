@@ -197,7 +197,11 @@ namespace platform {
     namespace runtime {
         vertex AbstractScheduler
 
-        vertex StaticCyclicScheduler refines AbstractScheduler {
+        vertex CyclicExecutiveScheduler refines AbstractScheduler {
+
+        }
+
+        vertex StaticCyclicScheduler refines CyclicExecutiveScheduler {
 
         }
 
@@ -208,6 +212,7 @@ namespace platform {
         vertex RoundRobinScheduler refines AbstractScheduler {
             prop maximumTimeSliceInCycles is long
             prop minimumTimeSliceInCycles is long
+            prop maximumTimeSlices is int
         }
 
         vertex TimeTriggeredScheduler refines AbstractScheduler {

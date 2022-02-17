@@ -53,7 +53,7 @@ public interface AmaltheaOS2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 for (SchedulerAllocation allocation : amalthea.getMappingModel().getSchedulerAllocation()) {
                     if (allocation.getScheduler().equals(taskScheduler)) {
                         equivalent(allocation.getExecutingPU()).ifPresent(puVertex -> {
-                            model.connect(runtimeVertex, puVertex, EdgeTrait.DECISION_ABSTRACTALLOCATION);
+                            model.connect(runtimeVertex, puVertex, "allocationHost", EdgeTrait.DECISION_ABSTRACTALLOCATION);
                             GreyBox.enforce(puVertex);
                             model.connect(puVertex, runtimeVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                         });
