@@ -114,6 +114,7 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 moduleVertex.addTraits(VertexTrait.PLATFORM_INSTRUMENTEDCOMMUNICATIONMODULE);
                 final InstrumentedCommunicationModule interconnectVertex = new InstrumentedCommunicationModuleViewer(
                         moduleVertex);
+                interconnectVertex.setMaxCyclesPerFlit(1);
                 interconnectVertex.setMaxConcurrentFlits(connectionHandler.getDefinition().getMaxConcurrentTransfers());
                 // burst size is always in B, it seems
                 interconnectVertex
