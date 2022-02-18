@@ -143,7 +143,7 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             model.connect(sourceVertex, targetVertex, connection.getPort1().getName(), connection.getPort2().getName(), EdgeTrait.PLATFORM_PHYSICALCONNECTION);
             model.connect(sourceVertex, targetVertex, connection.getPort1().getName(), connection.getPort2().getName(), EdgeTrait.VISUALIZATION_VISUALCONNECTION);
             // add the port information
-            if (!SynthetizableDigitalPorts.conforms(sourceVertex)) {
+            if (DigitalModule.conforms(sourceVertex) && !SynthetizableDigitalPorts.conforms(sourceVertex)) {
                 sourceVertex.addTraits(VertexTrait.PLATFORM_SYNTHETIZABLEDIGITALPORTS);
                 // add the properties if they dont exist.
                 SynthetizableDigitalPorts.safeCast(sourceVertex).ifPresent(source -> {
@@ -152,7 +152,7 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                     source.setPortWidthInBits(new HashMap<>());
                 });
             }
-            if (!SynthetizableDigitalPorts.conforms(targetVertex)) {
+            if (DigitalModule.conforms(targetVertex) && !SynthetizableDigitalPorts.conforms(targetVertex)) {
                 targetVertex.addTraits(VertexTrait.PLATFORM_SYNTHETIZABLEDIGITALPORTS);
                 // add the properties if they dont exist.
                 SynthetizableDigitalPorts.safeCast(targetVertex).ifPresent(target -> {

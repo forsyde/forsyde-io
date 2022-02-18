@@ -149,7 +149,7 @@ namespace platform {
     vertex PlatformElem
 
     vertex AbstractStructure refines PlatformElem {
-        port children is multiple PlatformElem
+        port submodules is multiple PlatformElem
     }
 
     vertex DigitalModule refines PlatformElem {
