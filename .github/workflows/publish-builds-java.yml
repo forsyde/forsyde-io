@@ -32,10 +32,9 @@ jobs:
       name: Retrieve lib version
       run: |
         cd ${{ github.workspace }}
-        echo "localVersion=$(./gradlew getVersion)" >> $GITHUB_ENV
-        echo "Version saved: $GITHUB_ENV"
+        echo "::set-output name=localVersion::$(./gradlew -q getVersion)"
     - name: Build and publish with Gradle
-      if: ${{ steps.get_version.outputs.version-without-v == env.localVersion }}
+      if: ${{ steps.get_version.outputs.version-without-v == steps.localVersion.outputs.localVersion }}
       run: |
         cd ${{ github.workspace }}
         ./gradlew build publish closeAndReleaseSonatypeStagingRepository
