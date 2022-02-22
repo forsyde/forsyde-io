@@ -31,19 +31,19 @@ jobs:
       # if: ${{ matrix.os != 'windows-latest' }}
       run: |
         cd ${{ github.workspace }}
-        .\gradlew.bat jar conversyde-java:launch4j shadowJar
+        .\gradlew.bat jar java-conversyde:launch4j shadowJar
     - uses: montudor/action-zip@v1
       with:
         args: zip -qq -r conversyde.zip ${{ github.workspace }}/java-conversyde/build/launch4j
-    - name: Upload CLI Zip to release
-      uses: svenstaro/upload-release-action@v2
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: conversyde.zip
-        asset_name: conversyde-windows-cli-${{ steps.get_version.outputs.version }}.zip
-        tag: "${{ github.ref }}"
-        overwrite: true
-        body: "Executable ConverSyDe windows CLI"
+    # - name: Upload CLI Zip to release
+    #   uses: svenstaro/upload-release-action@v2
+    #   with:
+    #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+    #     file: conversyde.zip
+    #     asset_name: conversyde-windows-cli-${{ steps.get_version.outputs.version }}.zip
+    #     tag: "${{ github.ref }}"
+    #     overwrite: true
+    #     body: "Executable ConverSyDe windows CLI"
     - name: Upload Jar to release
       uses: svenstaro/upload-release-action@v2
       with:

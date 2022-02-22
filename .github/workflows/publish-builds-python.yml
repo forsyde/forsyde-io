@@ -32,15 +32,14 @@ jobs:
       id: localVersion
       run: |
         cd ${{ github.workspace }}/python-core
-        poetry version | echo "localVersion=$(awk '{print $2}')" >> $GITHUB_ENV
-        echo "Version saved: $GITHUB_ENV"
+        echo "::set-output name=localVersion::$(poetry version | awk '{print $2}')"
     - name: Generate lib
-      if: ${{ steps.get_version.outputs.version-without-v == env.localVersion }}
+      if: ${{ steps.get_version.outputs.version-without-v == steps.localVersion.outputs.localVersion }}
       run: |
         cd ${{ github.workspace }}/python-core
         python generate.py
     - name: Build and publish core and generated code
-      if: ${{ steps.get_version.outputs.version-without-v == env.localVersion }}
+      if: ${{ steps.get_version.outputs.version-without-v == steps.localVersion.outputs.localVersion }}
       run: |
         cd ${{ github.workspace }}/python-core
         poetry update

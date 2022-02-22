@@ -1,11 +1,11 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'io.github.fvarrui:javapackager:1.6.2'
-    }
-}
+// buildscript {
+//     repositories {
+//         mavenCentral()
+//     }
+//     dependencies {
+//         classpath 'io.github.fvarrui:javapackager:1.6.2'
+//     }
+// }
 
 plugins {
     id 'java'
@@ -13,9 +13,10 @@ plugins {
     id 'idea'
     id 'eclipse'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id "org.panteleyev.jpackageplugin" version "1.3.1"
 }
 
-apply plugin: 'io.github.fvarrui.javapackager.plugin'
+// apply plugin: 'io.github.fvarrui.javapackager.plugin'
 
 group 'io.github.forsyde'
 archivesBaseName = 'conversyde'
@@ -44,19 +45,23 @@ test {
 
 mainClassName = 'io.github.forsyde.conversyde.ConverSyDeStandalone'
 
-javapackager {
-    mainClass = "io.github.forsyde.conversyde.ConverSyDeStandalone"
-    generateInstaller = false
-    bundleJre = true
-    administratorRequired = false
-    name = "conversyde"
+jpackage {
+    type = 'app-image'
 }
 
-launch4j {
-    headerType = "console"
-}
+// javapackager {
+//     mainClass = "io.github.forsyde.conversyde.ConverSyDeStandalone"
+//     generateInstaller = false
+//     bundleJre = true
+//     administratorRequired = false
+//     name = "conversyde"
+// }
 
-tasks.launch4j.dependsOn(jar)
+// launch4j {
+//     headerType = "console"
+// }
+
+//tasks.launch4j.dependsOn(jar)
 
 project.tasks.publish.enabled = false
 
