@@ -31,7 +31,7 @@ jobs:
       # if: ${{ matrix.os != 'windows-latest' }}
       run: |
         cd ${{ github.workspace }}
-        .\gradlew.bat jar java-conversyde:launch4j shadowJar
+        .\gradlew.bat jar shadowJar
     - uses: montudor/action-zip@v1
       with:
         args: zip -qq -r conversyde.zip ${{ github.workspace }}/java-conversyde/build/launch4j
