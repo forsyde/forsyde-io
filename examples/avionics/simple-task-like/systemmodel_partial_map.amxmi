@@ -145,7 +145,7 @@
     </activations>
   </swModel>
   <hwModel>
-    <definitions xsi:type="am:ProcessingUnitDefinition" xmi:id="CPMDef?type=ProcessingUnitDefinition" name="CPMDef" puType="CPU" features="FloatOp/IPC_1?type=HwFeature NonFloatOp/IPC_1?type=HwFeature"/>
+    <definitions xsi:type="am:ProcessingUnitDefinition" xmi:id="CPMCoreDef?type=ProcessingUnitDefinition" name="CPMCoreDef" puType="CPU" features="FloatOp/IPC_1?type=HwFeature NonFloatOp/IPC_1?type=HwFeature"/>
     <definitions xsi:type="am:MemoryDefinition" xmi:id="OCMDef?type=MemoryDefinition" name="OCMDef" memoryType="FLASH">
       <size value="2" unit="MB"/>
     </definitions>
@@ -166,10 +166,10 @@
     </featureCategories>
     <structures xmi:id="Platform?type=HwStructure" name="Platform" structureType="System">
       <structures xmi:id="CPM1?type=HwStructure" name="CPM1" structureType="SoC">
-        <modules xsi:type="am:ProcessingUnit" xmi:id="core1?type=ProcessingUnit" name="core1" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMDef?type=ProcessingUnitDefinition">
+        <modules xsi:type="am:ProcessingUnit" xmi:id="core1?type=ProcessingUnit" name="core1" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMCoreDef?type=ProcessingUnitDefinition">
           <ports xmi:id="core1/core1Port1?type=HwPort" name="core1Port1" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
         </modules>
-        <modules xsi:type="am:ProcessingUnit" xmi:id="core2?type=ProcessingUnit" name="core2" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMDef?type=ProcessingUnitDefinition">
+        <modules xsi:type="am:ProcessingUnit" xmi:id="core2?type=ProcessingUnit" name="core2" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMCoreDef?type=ProcessingUnitDefinition">
           <ports xmi:id="core2/core2Port1?type=HwPort" name="core2Port1" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
         </modules>
         <modules xsi:type="am:Memory" xmi:id="OCM1?type=Memory" name="OCM1" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="OCMDef?type=MemoryDefinition">
@@ -186,10 +186,10 @@
         <connections xmi:id="CPM1/con3?type=HwConnection" name="con3" port1="CPM1AXI/CPM1AXIPort3?type=HwPort" port2="OCM1/OCM1Port1?type=HwPort"/>
       </structures>
       <structures xmi:id="CPM2?type=HwStructure" name="CPM2" structureType="SoC">
-        <modules xsi:type="am:ProcessingUnit" xmi:id="core3?type=ProcessingUnit" name="core3" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMDef?type=ProcessingUnitDefinition">
+        <modules xsi:type="am:ProcessingUnit" xmi:id="core3?type=ProcessingUnit" name="core3" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMCoreDef?type=ProcessingUnitDefinition">
           <ports xmi:id="core3/core3Port1?type=HwPort" name="core3Port1" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
         </modules>
-        <modules xsi:type="am:ProcessingUnit" xmi:id="core4?type=ProcessingUnit" name="core4" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMDef?type=ProcessingUnitDefinition">
+        <modules xsi:type="am:ProcessingUnit" xmi:id="core4?type=ProcessingUnit" name="core4" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="CPMCoreDef?type=ProcessingUnitDefinition">
           <ports xmi:id="core4/core4Port1?type=HwPort" name="core4Port1" bitWidth="128" priority="0" portType="initiator" portInterface="AXI"/>
         </modules>
         <modules xsi:type="am:Memory" xmi:id="OCM2?type=Memory" name="OCM2" powerDomain="DefaultPower?type=PowerDomain" frequencyDomain="CPMFreq?type=FrequencyDomain" definition="OCMDef?type=MemoryDefinition">

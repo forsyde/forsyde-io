@@ -33,6 +33,7 @@ jobs:
       run: |
         cd ${{ github.workspace }}/python-core
         poetry version | echo "localVersion=$(awk '{print $2}')" >> $GITHUB_ENV
+        echo "Version saved: $GITHUB_ENV"
     - name: Generate lib
       if: ${{ steps.get_version.outputs.version-without-v == env.localVersion }}
       run: |
