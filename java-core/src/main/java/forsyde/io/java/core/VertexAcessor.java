@@ -12,12 +12,14 @@ public final class VertexAcessor {
         BIDIRECTIONAL
     }
 
+    @Deprecated
     static public Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, String traitName) {
         final Trait t = VertexTrait.fromName(traitName);
         return getNamedPort(model, v, portName, t, VertexPortDirection.BIDIRECTIONAL);
     }
 
 
+    @Deprecated
     static public Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, String traitName, String direction) {
         Trait t = VertexTrait.fromName(traitName);
         if (direction.equalsIgnoreCase("outgoing")) {
@@ -50,10 +52,35 @@ public final class VertexAcessor {
         }
     }
 
+    static public Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait trait, VertexPortDirection direction, EdgeTrait edgeTrait) {
+        //Trait t = traitFromString(traitName);
+        Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
+                .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.hasTrait(edgeTrait))
+                .map(model::getEdgeTarget)
+                .filter(vv -> vv.hasTrait(trait));
+        Stream<Vertex> inStream = model.incomingEdgesOf(v).stream()
+                .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.hasTrait(edgeTrait))
+                .map(model::getEdgeSource)
+                .filter(vv -> vv.hasTrait(trait));
+        switch (direction) {
+            case OUTGOING:
+                return outStream.findAny();
+            case INCOMING:
+                return inStream.findAny();
+            case BIDIRECTIONAL:
+            default:
+                return Stream.concat(outStream, inStream).findAny();
+        }
+    }
+
+    @Deprecated
     static public Set<Vertex> getMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, String traitName) {
         return getMultipleNamedPort(model, v, portName, traitName, "BIDIRECTIONAL");
     }
 
+    @Deprecated
     static public Set<Vertex> getMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, String traitName, String direction) {
         Trait t = VertexTrait.fromName(traitName);
         if (direction.equalsIgnoreCase("outgoing")) {
@@ -85,11 +112,35 @@ public final class VertexAcessor {
         }
     }
 
+    static public Set<Vertex> getMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait trait, VertexPortDirection direction, EdgeTrait edgeTrait) {
+        Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
+                .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.hasTrait(edgeTrait))
+                .map(model::getEdgeTarget)
+                .filter(vv -> vv.hasTrait(trait));
+        Stream<Vertex> inStream = model.incomingEdgesOf(v).stream()
+                .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.hasTrait(edgeTrait))
+                .map(model::getEdgeSource)
+                .filter(vv -> vv.hasTrait(trait));
+        switch (direction) {
+            case OUTGOING:
+                return outStream.collect(Collectors.toSet());
+            case INCOMING:
+                return inStream.collect(Collectors.toSet());
+            case BIDIRECTIONAL:
+            default:
+                return Stream.concat(outStream, inStream).collect(Collectors.toSet());
+        }
+    }
+
+    @Deprecated
     static public List<Vertex> getOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, String traitName) {
         Trait t = VertexTrait.fromName(traitName);
         return getOrderedMultipleNamedPort(model, v, portName, t, VertexPortDirection.BIDIRECTIONAL);
     }
 
+    @Deprecated
     static public List<Vertex> getOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, String traitName, String direction) {
         Trait t = VertexTrait.fromName(traitName);
         if (direction.equalsIgnoreCase("outgoing")) {
@@ -125,6 +176,32 @@ public final class VertexAcessor {
         }
     }
 
+    static public List<Vertex> getOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait t, VertexPortDirection direction, EdgeTrait edgeTrait) {
+        @SuppressWarnings("unchecked")
+        Map<String, Integer> order = (Map<String, Integer>) v.getProperties()
+                .get("__" + portName + "_ordering__")
+                .unwrap();
+        Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
+                .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.hasTrait(edgeTrait))
+                .map(model::getEdgeTarget)
+                .filter(vv -> vv.hasTrait(t));
+        Stream<Vertex> inStream = model.incomingEdgesOf(v).stream()
+                .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.hasTrait(edgeTrait))
+                .map(model::getEdgeSource)
+                .filter(vv -> vv.hasTrait(t));
+        switch (direction) {
+            case OUTGOING:
+                return outStream.sorted(Comparator.comparing(v2 -> order.getOrDefault(v2.identifier, 0))).collect(Collectors.toList());
+            case INCOMING:
+                return inStream.sorted(Comparator.comparing(v2 -> order.getOrDefault(v2.identifier, 0))).collect(Collectors.toList());
+            case BIDIRECTIONAL:
+            default:
+                return Stream.concat(outStream, inStream).sorted(Comparator.comparing(v2 -> order.getOrDefault(v2.identifier, 0))).collect(Collectors.toList());
+        }
+    }
+
     public static<Tsrc extends VertexViewer, Tdst extends VertexViewer> boolean setNamedPort(ForSyDeSystemGraph model, Tsrc src,  Tdst dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
         return setNamedPort(model, src.getViewedVertex(), dst.getViewedVertex(), srcPortName, dstPortName, ts);
     }
@@ -139,6 +216,22 @@ public final class VertexAcessor {
         return addMultipleNamedPort(model, src.getViewedVertex(),  dst.getViewedVertex(), srcPortName, dstPortName, ts);
     }
 
+    public static<Tsrc extends VertexViewer, Tdst extends VertexViewer, TdstS extends Iterable<Tdst>> boolean addMultipleNamedPort(ForSyDeSystemGraph model, Tsrc src,  TdstS dsts, String srcPortName, String dstPortName, EdgeTrait... ts) {
+        boolean defined = true;
+        for (Tdst dst : dsts) {
+            defined = defined && addMultipleNamedPort(model, src, dst, srcPortName, dstPortName, ts);
+        }
+        return defined;
+    }
+
+    public static<Tsrc extends VertexViewer, Tdst extends VertexViewer, TsrcS extends Iterable<Tsrc>> boolean addMultipleNamedPort(ForSyDeSystemGraph model, TsrcS srcs,  Tdst dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
+        boolean defined = true;
+        for (Tsrc src: srcs) {
+            defined = defined && addMultipleNamedPort(model, src, dst, srcPortName, dstPortName, ts);
+        }
+        return defined;
+    }
+
     public static boolean addMultipleNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
         if (!src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
         if (!dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
@@ -151,6 +244,16 @@ public final class VertexAcessor {
 
     public static<Tsrc extends VertexViewer, Tdst extends VertexViewer> boolean insertOrderedMultipleNamedPort(ForSyDeSystemGraph model, Tsrc src,  Tdst dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
         return insertOrderedMultipleNamedPort(model, src.getViewedVertex(),  dst.getViewedVertex(), srcPortName, dstPortName, 0, ts);
+    }
+
+    public static<Tsrc extends VertexViewer, Tdst extends VertexViewer, TdstS extends Iterable<Tdst>> boolean insertOrderedMultipleNamedPort(ForSyDeSystemGraph model, Tsrc src,  TdstS dsts, String srcPortName, String dstPortName, EdgeTrait... ts) {
+        boolean defined = true;
+        int i = 0;
+        for (Tdst dst : dsts) {
+            defined = defined && insertOrderedMultipleNamedPort(model, src.getViewedVertex(),  dst.getViewedVertex(), srcPortName, dstPortName, i, ts);
+            i += 1;
+        }
+        return defined;
     }
 
     public static boolean insertOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, int pos, EdgeTrait... ts) {

@@ -11,14 +11,15 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public class ForSyDeToAmaltheaAdapter implements ForSyDe2AmaltheaHWAdapterMixin, ForSyDe2AmaltheaOSAdapterMixin
-, ForSyDe2AmaltheaMappingAdapterMixin, LF2AmaltheaAdapterMixin {
+, ForSyDe2AmaltheaMappingAdapterMixin, LF2AmaltheaAdapterMixin, ForSyDe2AmaltheaStimulusMixin, ForSyDe2AmaltheaSWMixin {
 
     protected Set<Pair<Vertex, INamed>> equivalences = new HashSet<>();
 
     public void convert(ForSyDeSystemGraph inputModel, Amalthea target) {
+        fromStimulusToForSyDe(inputModel, target);
         fromVertexesToHWModel(inputModel, target);
         fromVertexesToOSModel(inputModel, target);
-        convertToSWModel(inputModel, target);
+        fromForSyDeToSW(inputModel, target);
         fromEdgesToMappings(inputModel, target);
     }
 

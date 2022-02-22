@@ -17,7 +17,7 @@ edgeTrait:
 
 
 vertexPort:
-	name=QUALIFIED_ID 'is' (modifiers+=QUALIFIED_ID)* connectedVertexTrait=QUALIFIED_ID
+	name=QUALIFIED_ID 'is' (modifiers+=QUALIFIED_ID)* connectedVertexTrait=QUALIFIED_ID ('with' connectingEdgeTrait=QUALIFIED_ID)?
 ;
 
 vertexPropertyType:

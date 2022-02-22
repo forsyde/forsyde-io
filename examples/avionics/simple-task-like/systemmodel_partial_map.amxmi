@@ -11,7 +11,7 @@
     <tasks xmi:id="T2?type=Task" name="T2" stimuli="T1toT2?type=InterProcessStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:RunnableCall" runnable="R2?type=Runnable"/>
-        <items xsi:type="am:InterProcessTrigger" stimulus="T2toT5?type=InterProcessStimulus"/>
+        <items xsi:type="am:InterProcessTrigger" stimulus="T2andT4toT5?type=InterProcessStimulus"/>
       </activityGraph>
     </tasks>
     <tasks xmi:id="T3?type=Task" name="T3" stimuli="T1toT3?type=InterProcessStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
@@ -23,10 +23,10 @@
     <tasks xmi:id="T4?type=Task" name="T4" stimuli="T3toT4?type=InterProcessStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:RunnableCall" runnable="R4?type=Runnable"/>
-        <items xsi:type="am:InterProcessTrigger" stimulus="T4toT5?type=InterProcessStimulus"/>
+        <items xsi:type="am:InterProcessTrigger" stimulus="T2andT4toT5?type=InterProcessStimulus"/>
       </activityGraph>
     </tasks>
-    <tasks xmi:id="T5?type=Task" name="T5" stimuli="T4toT5?type=InterProcessStimulus T2toT5?type=InterProcessStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
+    <tasks xmi:id="T5?type=Task" name="T5" stimuli="T2andT4toT5?type=InterProcessStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:RunnableCall" runnable="R5?type=Runnable"/>
       </activityGraph>
@@ -246,21 +246,10 @@
     <stimuli xsi:type="am:PeriodicStimulus" xmi:id="Timer60Hz?type=PeriodicStimulus" name="Timer60Hz">
       <recurrence value="16" unit="ms"/>
     </stimuli>
-    <stimuli xsi:type="am:InterProcessStimulus" xmi:id="T1toT2?type=InterProcessStimulus" name="T1toT2">
-      <counter prescaler="1" offset="0"/>
-    </stimuli>
-    <stimuli xsi:type="am:InterProcessStimulus" xmi:id="T1toT3?type=InterProcessStimulus" name="T1toT3">
-      <counter prescaler="1" offset="0"/>
-    </stimuli>
-    <stimuli xsi:type="am:InterProcessStimulus" xmi:id="T3toT4?type=InterProcessStimulus" name="T3toT4">
-      <counter prescaler="1" offset="0"/>
-    </stimuli>
-    <stimuli xsi:type="am:InterProcessStimulus" xmi:id="T4toT5?type=InterProcessStimulus" name="T4toT5">
-      <counter prescaler="1" offset="0"/>
-    </stimuli>
-    <stimuli xsi:type="am:InterProcessStimulus" xmi:id="T2toT5?type=InterProcessStimulus" name="T2toT5">
-      <counter prescaler="1" offset="0"/>
-    </stimuli>
+    <stimuli xsi:type="am:InterProcessStimulus" xmi:id="T1toT2?type=InterProcessStimulus" name="T1toT2"/>
+    <stimuli xsi:type="am:InterProcessStimulus" xmi:id="T1toT3?type=InterProcessStimulus" name="T1toT3"/>
+    <stimuli xsi:type="am:InterProcessStimulus" xmi:id="T3toT4?type=InterProcessStimulus" name="T3toT4"/>
+    <stimuli xsi:type="am:InterProcessStimulus" xmi:id="T2andT4toT5?type=InterProcessStimulus" name="T2andT4toT5"/>
   </stimuliModel>
   <constraintsModel>
     <requirements xsi:type="am:ProcessRequirement" name="latency50ms" process="Func1?type=ProcessPrototype">

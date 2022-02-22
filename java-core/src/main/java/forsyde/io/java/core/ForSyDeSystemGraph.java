@@ -186,7 +186,7 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
      */
     public boolean connect(Vertex src, Vertex dst, String portSrc, String portDst, EdgeTrait... traits) {
         // portDst must not be null and 'if' portSrc is not null, it must be in src's ports
-        if (portDst != null && !portDst.isEmpty() && dst.ports.contains(portDst) && (portSrc == null || portSrc.isEmpty() || src.ports.contains(portSrc))) {
+        if (portDst != null && !portDst.isEmpty() && dst.ports.contains(portDst)) {
             // check if some connection already exists
             final Set<EdgeInfo> present = getAllEdges(src, dst).stream()
                     .filter(edgeInfo ->
@@ -201,6 +201,8 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
                 present.forEach(e -> e.edgeTraits.addAll(Arrays.asList(traits.clone())));
                 return true;
             }
+        } else if (portSrc != null) {
+            return connect(src, dst, portSrc, traits);
         } else {
             return false;
         }

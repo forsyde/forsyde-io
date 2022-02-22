@@ -4,6 +4,7 @@ import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
 import forsyde.io.java.typed.viewers.platform.*;
 import org.eclipse.app4mc.amalthea.model.*;
+import org.eclipse.emf.ecore.EObject;
 
 import java.lang.System;
 import java.math.BigInteger;
@@ -145,11 +146,11 @@ public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMi
             // get the generated equivalent
             equivalent(parent.getViewedVertex()).map(e -> (HwStructure) e).ifPresent(parentHwStructure -> {
                 // get only the sub structures
-                System.out.println(parent.getIdentifier());
-                System.out.println(parent.getSubmodulesPort(model));
+                //System.out.println(parent.getIdentifier());
+                //System.out.println(parent.getSubmodulesPort(model));
                 parent.getSubmodulesPort(model).stream().filter(AbstractStructure::conforms).forEach(child -> {
                     // get their equivalents
-                    System.out.println(child.getIdentifier());
+                    //System.out.println(child.getIdentifier());
                     equivalent(child.getViewedVertex()).map(e -> (HwStructure) e).ifPresent(childHwStructure -> {
                         // do the deed
                         parentHwStructure.getStructures().add(childHwStructure);
@@ -184,6 +185,7 @@ public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMi
     }
 
     default void fromEdgesToConnections(ForSyDeSystemGraph model, Amalthea targetModel) {
+        final HWModel hwModel = targetModel.getHwModel();
         for (EdgeInfo e: model.edgeSet()) {
             final Vertex sourceV = model.getEdgeSource(e);
             final Vertex targetV = model.getEdgeTarget(e);
@@ -196,14 +198,18 @@ public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMi
                 final INamed target = equivalent(targetV).get();
                 // get the minimum parent.
                 HwStructure commonLeastParent = null;
-                for (HwStructure sourceParent = (HwStructure) source.eContainer(); sourceParent != null;
-                     sourceParent = (HwStructure) sourceParent.eContainer()) {
-                    for (HwStructure targetParent = (HwStructure) target.eContainer(); targetParent != null;
-                         targetParent = (HwStructure) targetParent.eContainer()) {
-                            if (sourceParent.equals(targetParent)) commonLeastParent = sourceParent;
-                            if (commonLeastParent != null) break;
+                for (EObject sourceParent = source.eContainer(); !sourceParent.equals(hwModel) && commonLeastParent == null;
+                     sourceParent = sourceParent.eContainer()) {
+                    if (sourceParent instanceof HwStructure) {
+                        final HwStructure sourceParentStructure = (HwStructure) sourceParent;
+                        for (EObject targetParent = target.eContainer(); !targetParent.equals(hwModel) && commonLeastParent == null;
+                             targetParent = targetParent.eContainer()) {
+                            if (targetParent instanceof HwStructure) {
+                                final HwStructure targetParentStructure = (HwStructure) targetParent;
+                                if (sourceParent.equals(targetParent)) commonLeastParent = sourceParentStructure;
+                            }
+                        }
                     }
-                    if (commonLeastParent != null) break;
                 }
                 //System.out.println(source.getName());
                 //System.out.println(target.getName());
