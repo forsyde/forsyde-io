@@ -90,6 +90,16 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
             portSpec.vertexTraitName = namespace.isBlank() ? ctx.connectedVertexTrait.getText() :
                     namespace + "::" + ctx.connectedVertexTrait.getText();
         }
+        // absolute reference or local reference for edge trait
+        if (ctx.connectingEdgeTrait != null) {
+            if (ctx.connectingEdgeTrait.getText().contains("::")) {
+                portSpec.edgeTraitName = ctx.connectingEdgeTrait.getText();
+            } else {
+                // add the namespace in a local reference
+                portSpec.edgeTraitName = namespace.isBlank() ? ctx.connectingEdgeTrait.getText() :
+                        namespace + "::" + ctx.connectingEdgeTrait.getText();
+            }
+        }
     }
 
     protected PropertyTypeSpec buildFromContext(ForSyDeTraitDSLParser.VertexPropertyTypeContext ctx) {
@@ -246,6 +256,13 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
                 for (final VertexTraitSpec vertexTraitSpecOther : traitHierarchy.vertexTraits) {
                     if (portSpec.vertexTraitName.equals(vertexTraitSpecOther.name)) {
                         portSpec.vertexTrait = vertexTraitSpecOther;
+                    }
+                }
+                if (portSpec.edgeTraitName != null) {
+                    for (final EdgeTraitSpec edgeTraitSpec : traitHierarchy.edgeTraits) {
+                        if (portSpec.edgeTraitName.equals(edgeTraitSpec.name)) {
+                            portSpec.edgeTraitSpec = edgeTraitSpec;
+                        }
                     }
                 }
             }

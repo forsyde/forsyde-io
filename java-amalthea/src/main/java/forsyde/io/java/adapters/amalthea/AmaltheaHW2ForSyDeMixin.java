@@ -138,38 +138,42 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             fromStructureToEdges(model, childStructure);
         }
         for (HwConnection connection : structure.getConnections()) {
-            final Vertex sourceVertex = equivalent(connection.getPort1().getNamedContainer()).get();
-            final Vertex targetVertex = equivalent(connection.getPort2().getNamedContainer()).get();
-            model.connect(sourceVertex, targetVertex, connection.getPort1().getName(), connection.getPort2().getName(), EdgeTrait.PLATFORM_PHYSICALCONNECTION);
-            model.connect(sourceVertex, targetVertex, connection.getPort1().getName(), connection.getPort2().getName(), EdgeTrait.VISUALIZATION_VISUALCONNECTION);
-            // add the port information
-            if (!SynthetizableDigitalPorts.conforms(sourceVertex)) {
-                sourceVertex.addTraits(VertexTrait.PLATFORM_SYNTHETIZABLEDIGITALPORTS);
-                // add the properties if they dont exist.
-                SynthetizableDigitalPorts.safeCast(sourceVertex).ifPresent(source -> {
-                    source.setPortProtocolAcronym(new HashMap<>());
-                    source.setPortIsInitiator(new HashMap<>());
-                    source.setPortWidthInBits(new HashMap<>());
+            equivalents(connection.getPort1().getNamedContainer()).forEach(sourceVertex -> {
+                equivalents(connection.getPort2().getNamedContainer()).forEach(targetVertex -> {
+                    if (DigitalModule.conforms(sourceVertex) && DigitalModule.conforms(targetVertex)) {
+                        model.connect(sourceVertex, targetVertex, connection.getPort1().getName(), connection.getPort2().getName(), EdgeTrait.PLATFORM_PHYSICALCONNECTION);
+                        model.connect(sourceVertex, targetVertex, connection.getPort1().getName(), connection.getPort2().getName(), EdgeTrait.VISUALIZATION_VISUALCONNECTION);
+                        // add the port information
+                        if (!SynthetizableDigitalPorts.conforms(sourceVertex)) {
+                            SynthetizableDigitalPorts.enforce(sourceVertex);
+                            // add the properties if they dont exist.
+                            SynthetizableDigitalPorts.safeCast(sourceVertex).ifPresent(source -> {
+                                source.setPortProtocolAcronym(new HashMap<>());
+                                source.setPortIsInitiator(new HashMap<>());
+                                source.setPortWidthInBits(new HashMap<>());
+                            });
+                        }
+                        if (!SynthetizableDigitalPorts.conforms(targetVertex)) {
+                            // add the properties if they dont exist.
+                            SynthetizableDigitalPorts.enforce(targetVertex);
+                            SynthetizableDigitalPorts.safeCast(targetVertex).ifPresent(target -> {
+                                target.setPortProtocolAcronym(new HashMap<>());
+                                target.setPortIsInitiator(new HashMap<>());
+                                target.setPortWidthInBits(new HashMap<>());
+                            });
+                        }
+                        SynthetizableDigitalPorts.safeCast(sourceVertex).ifPresent(source -> {
+                            source.getPortProtocolAcronym().put(connection.getPort1().getName(), connection.getPort1().getPortInterface().getLiteral());
+                            source.getPortWidthInBits().put(connection.getPort1().getName(), connection.getPort1().getBitWidth());
+                            source.getPortIsInitiator().put(connection.getPort1().getName(), connection.getPort1().getPortType().equals(PortType.INITIATOR));
+                        });
+                        SynthetizableDigitalPorts.safeCast(targetVertex).ifPresent(target -> {
+                            target.getPortProtocolAcronym().put(connection.getPort2().getName(), connection.getPort2().getPortInterface().getLiteral());
+                            target.getPortWidthInBits().put(connection.getPort2().getName(), connection.getPort2().getBitWidth());
+                            target.getPortIsInitiator().put(connection.getPort2().getName(), connection.getPort2().getPortType().equals(PortType.INITIATOR));
+                        });
+                    }
                 });
-            }
-            if (!SynthetizableDigitalPorts.conforms(targetVertex)) {
-                targetVertex.addTraits(VertexTrait.PLATFORM_SYNTHETIZABLEDIGITALPORTS);
-                // add the properties if they dont exist.
-                SynthetizableDigitalPorts.safeCast(targetVertex).ifPresent(target -> {
-                    target.setPortProtocolAcronym(new HashMap<>());
-                    target.setPortIsInitiator(new HashMap<>());
-                    target.setPortWidthInBits(new HashMap<>());
-                });
-            }
-            SynthetizableDigitalPorts.safeCast(sourceVertex).ifPresent(source -> {
-                source.getPortProtocolAcronym().put(connection.getPort1().getName(), connection.getPort1().getPortInterface().getLiteral());
-                source.getPortWidthInBits().put(connection.getPort1().getName(), connection.getPort1().getBitWidth());
-                source.getPortIsInitiator().put(connection.getPort1().getName(), connection.getPort1().getPortType().equals(PortType.INITIATOR));
-            });
-            SynthetizableDigitalPorts.safeCast(targetVertex).ifPresent(target -> {
-                target.getPortProtocolAcronym().put(connection.getPort2().getName(), connection.getPort2().getPortInterface().getLiteral());
-                target.getPortWidthInBits().put(connection.getPort2().getName(), connection.getPort2().getBitWidth());
-                target.getPortIsInitiator().put(connection.getPort2().getName(), connection.getPort2().getPortType().equals(PortType.INITIATOR));
             });
         }
     }

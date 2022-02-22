@@ -3,6 +3,7 @@ package forsyde.io.java.adapters.amalthea;
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
 import forsyde.io.java.typed.viewers.platform.GenericProcessingModule;
+import forsyde.io.java.typed.viewers.platform.runtime.AbstractScheduler;
 import forsyde.io.java.typed.viewers.platform.runtime.FixedPriorityScheduler;
 import forsyde.io.java.typed.viewers.platform.runtime.RoundRobinScheduler;
 import forsyde.io.java.typed.viewers.platform.runtime.TimeTriggeredScheduler;
@@ -86,8 +87,7 @@ public interface ForSyDe2AmaltheaMappingAdapterMixin extends EquivalenceModel2Mo
     default void fromAllocationToMapping(ForSyDeSystemGraph model, Amalthea amalthea, EdgeInfo e) {
         final Vertex source = model.getEdgeSource(e);
         final Vertex target = model.getEdgeTarget(e);
-        if (FixedPriorityScheduler.conforms(source) || RoundRobinScheduler.conforms(source) ||
-                TimeTriggeredScheduler.conforms(source) && GenericProcessingModule.conforms(target)) {
+        if (AbstractScheduler.conforms(source)) {
             equivalent(source).map(elem -> (OperatingSystem) elem).stream().flatMap(os -> os.getTaskSchedulers().stream())
                 .forEach(taskScheduler -> {
                     equivalent(target).map(elem -> (ProcessingUnit) elem).ifPresent(targetPu -> {
@@ -100,8 +100,7 @@ public interface ForSyDe2AmaltheaMappingAdapterMixin extends EquivalenceModel2Mo
                 });
         }
         // opposite direction
-        if (FixedPriorityScheduler.conforms(target) || RoundRobinScheduler.conforms(target) ||
-                TimeTriggeredScheduler.conforms(target) && GenericProcessingModule.conforms(source)) {
+        if (AbstractScheduler.conforms(target)) {
             equivalent(target).map(elem -> (OperatingSystem) elem).stream().flatMap(os -> os.getTaskSchedulers().stream())
                     .forEach(taskScheduler -> {
                         equivalent(source).map(elem -> (ProcessingUnit) elem).ifPresent(targetPu -> {

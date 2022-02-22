@@ -258,41 +258,84 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         if (port.multiple.orElse(true)) {
             if (port.ordered.orElse(false)) {
                 getPortMethod.returns(listOut);
-                String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).stream().map(v -> $T.safeCast(v).get()).collect($T.toList())";
-                getPortMethod.addStatement(statement,
-                        ClassName.get("forsyde.io.java.core", "VertexAcessor"),
-                        port.name,
-                        ClassName.get("forsyde.io.java.core", "VertexTrait"),
-                        traitName,
-                        ClassName.get("forsyde.io.java.core.VertexAcessor", "VertexPortDirection"),
-                        port.direction.toString().toUpperCase(),
-                        vertexClass,
-                        Collectors.class);
+                if (port.edgeTraitSpec != null) {
+                    String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L, $T.$L).stream().map(v -> $T.safeCast(v).get()).collect($T.toList())";
+                    getPortMethod.addStatement(statement,
+                            ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                            port.name,
+                            ClassName.get("forsyde.io.java.core", "VertexTrait"),
+                            traitName,
+                            ClassName.get("forsyde.io.java.core.VertexAcessor", "VertexPortDirection"),
+                            port.direction.toString().toUpperCase(),
+                            ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                            port.edgeTraitSpec.name.replace("::", "_").toUpperCase(),
+                            vertexClass,
+                            Collectors.class);
+                } else {
+                    String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).stream().map(v -> $T.safeCast(v).get()).collect($T.toList())";
+                    getPortMethod.addStatement(statement,
+                            ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                            port.name,
+                            ClassName.get("forsyde.io.java.core", "VertexTrait"),
+                            traitName,
+                            ClassName.get("forsyde.io.java.core.VertexAcessor", "VertexPortDirection"),
+                            port.direction.toString().toUpperCase(),
+                            vertexClass,
+                            Collectors.class);
+                }
 //				getPortMethod.addStatement("$T outList = new $T()", arrayType, arrayType);
             } else {
                 getPortMethod.returns(setOut);
-                String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).stream().map(v -> $T.safeCast(v).get()).collect($T.toSet())";
-                getPortMethod.addStatement(statement,
-                        ClassName.get("forsyde.io.java.core", "VertexAcessor"),
-                        port.name,
-                        ClassName.get("forsyde.io.java.core", "VertexTrait"),
-                        traitName,
-                        ClassName.get("forsyde.io.java.core.VertexAcessor", "VertexPortDirection"),
-                        port.direction.toString().toUpperCase(),
-                        vertexClass,
-                        Collectors.class);
+                if (port.edgeTraitSpec != null) {
+                    String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L, $T.$L).stream().map(v -> $T.safeCast(v).get()).collect($T.toSet())";
+                    getPortMethod.addStatement(statement,
+                            ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                            port.name,
+                            ClassName.get("forsyde.io.java.core", "VertexTrait"),
+                            traitName,
+                            ClassName.get("forsyde.io.java.core.VertexAcessor", "VertexPortDirection"),
+                            port.direction.toString().toUpperCase(),
+                            ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                            port.edgeTraitSpec.name.replace("::", "_").toUpperCase(),
+                            vertexClass,
+                            Collectors.class);
+                } else {
+                    String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).stream().map(v -> $T.safeCast(v).get()).collect($T.toSet())";
+                    getPortMethod.addStatement(statement,
+                            ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                            port.name,
+                            ClassName.get("forsyde.io.java.core", "VertexTrait"),
+                            traitName,
+                            ClassName.get("forsyde.io.java.core.VertexAcessor", "VertexPortDirection"),
+                            port.direction.toString().toUpperCase(),
+                            vertexClass,
+                            Collectors.class);
+                }
 //				getPortMethod.addStatement("$T outList = new $T()", setType, setType);
             }
         } else {
             getPortMethod.returns(optionalOut);
-            getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).map(v -> $T.safeCast(v).get())",
-                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
-                    port.name,
-                    ClassName.get("forsyde.io.java.core", "VertexTrait"),
-                    traitName,
-                    ClassName.get("forsyde.io.java.core.VertexAcessor", "VertexPortDirection"),
-                    port.direction.toString().toUpperCase(),
-                    vertexClass);
+            if (port.edgeTraitSpec != null) {
+                getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L, $T.$L).map(v -> $T.safeCast(v).get())",
+                        ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                        port.name,
+                        ClassName.get("forsyde.io.java.core", "VertexTrait"),
+                        traitName,
+                        ClassName.get("forsyde.io.java.core.VertexAcessor", "VertexPortDirection"),
+                        port.direction.toString().toUpperCase(),
+                        ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                        port.edgeTraitSpec.name.replace("::", "_").toUpperCase(),
+                        vertexClass);
+            } else {
+                getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).map(v -> $T.safeCast(v).get())",
+                        ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                        port.name,
+                        ClassName.get("forsyde.io.java.core", "VertexTrait"),
+                        traitName,
+                        ClassName.get("forsyde.io.java.core.VertexAcessor", "VertexPortDirection"),
+                        port.direction.toString().toUpperCase(),
+                        vertexClass);
+            }
         }
         return getPortMethod.build();
     }
@@ -301,30 +344,144 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         final String traitName = port.vertexTrait.name.replace("::", "_").toUpperCase();
         final String extraPackages = port.vertexTrait.getNamespaces().isEmpty() ?
                 "" : "." + String.join(".", port.vertexTrait.getNamespaces());
-        TypeName vertexClass = ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, port.vertexTrait.getTraitLocalName());
+        final TypeName vertexClass = ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, port.vertexTrait.getTraitLocalName());
+        final ParameterizedTypeName listOut = ParameterizedTypeName.get(ClassName.get(List.class), vertexClass);
+        final ParameterizedTypeName setOut = ParameterizedTypeName.get(ClassName.get(Set.class), vertexClass);
         MethodSpec.Builder getPortMethod = MethodSpec.methodBuilder("set" + toCamelCase(port.name) + "Port")
                 .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
                 .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
-                .addParameter(vertexClass, "vertex")
                 .returns(TypeName.BOOLEAN);
         if (port.multiple.orElse(true)) {
             if (port.ordered.orElse(false)) {
-                String statement = "return $T.insertOrderedMultipleNamedPort(model, this, vertex, $S, null)";
-                getPortMethod.addStatement(statement,
-                        ClassName.get("forsyde.io.java.core", "VertexAcessor"),
-                        port.name);
+                getPortMethod.addParameter(listOut, "vertexes");
+                if (port.edgeTraitSpec != null) {
+                    String statement;
+                    switch (port.direction) {
+                        case BIDIRECTIONAL:
+                        case OUTGOING:
+                            statement = "return $T.insertOrderedMultipleNamedPort(model, this, vertexes, $S, null, $T.$L)";
+                            getPortMethod.addStatement(statement,
+                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                    port.name,
+                                    ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                                    port.edgeTraitSpec.name.replace("::", "_").toUpperCase()
+                            );
+                            break;
+                        case INCOMING:
+                            statement = "return $T.insertOrderedMultipleNamedPort(model, vertexes, this, null, $S, $T.$L)";
+                            getPortMethod.addStatement(statement,
+                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                    port.name,
+                                    ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                                    port.edgeTraitSpec.name.replace("::", "_").toUpperCase()
+                            );
+                            break;
+                    }
+                } else {
+                    String statement;
+                    switch (port.direction) {
+                        case BIDIRECTIONAL:
+                        case OUTGOING:
+                            statement = "return $T.insertOrderedMultipleNamedPort(model, this, vertexes, $S, null)";
+                            getPortMethod.addStatement(statement,
+                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                    port.name);
+                            break;
+                        case INCOMING:
+                            statement = "return $T.insertOrderedMultipleNamedPort(model, vertexes, this, null, $S)";
+                            getPortMethod.addStatement(statement,
+                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                    port.name);
+                            break;
+                    }
+                }
 //				getPortMethod.addStatement("$T outList = new $T()", arrayType, arrayType);
             } else {
-                String statement = "return $T.addMultipleNamedPort(model, this, vertex, $S, null)";
-                getPortMethod.addStatement(statement,
-                        ClassName.get("forsyde.io.java.core", "VertexAcessor"),
-                        port.name);
+                getPortMethod.addParameter(setOut, "vertexes");
+                String statement;
+                if (port.edgeTraitSpec != null) {
+                    switch (port.direction) {
+                        case BIDIRECTIONAL:
+                        case OUTGOING:
+                            statement = "return $T.addMultipleNamedPort(model, this, vertexes, $S, null, $T.$L)";
+                            getPortMethod.addStatement(statement,
+                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                    port.name,
+                                    ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                                    port.edgeTraitSpec.name.replace("::", "_").toUpperCase()
+                            );
+                            break;
+                        case INCOMING:
+                            statement = "return $T.addMultipleNamedPort(model, vertexes, this, null, $S, $T.$L)";
+                            getPortMethod.addStatement(statement,
+                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                    port.name,
+                                    ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                                    port.edgeTraitSpec.name.replace("::", "_").toUpperCase()
+                            );
+                            break;
+                    }
+                } else {
+                    switch (port.direction) {
+                        case BIDIRECTIONAL:
+                        case OUTGOING:
+                            statement = "return $T.addMultipleNamedPort(model, this, vertexes, $S, null)";
+                            getPortMethod.addStatement(statement,
+                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                    port.name);
+                            break;
+                        case INCOMING:
+                            statement = "return $T.addMultipleNamedPort(model, vertexes, this, null, $S)";
+                            getPortMethod.addStatement(statement,
+                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                    port.name);
+                            break;
+                    }
+                }
 //				getPortMethod.addStatement("$T outList = new $T()", setType, setType);
             }
         } else {
-            getPortMethod.addStatement("return $T.setNamedPort(model, this, vertex, $S, null)",
-                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
-                    port.name);
+            getPortMethod.addParameter(vertexClass, "vertex");
+            String statement;
+            if (port.edgeTraitSpec != null) {
+                switch (port.direction) {
+                    case BIDIRECTIONAL:
+                    case OUTGOING:
+                        statement = "return $T.setNamedPort(model, this, vertex, $S, null, $T.$L)";
+                        getPortMethod.addStatement(statement,
+                                ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                port.name,
+                                ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                                port.edgeTraitSpec.name.replace("::", "_").toUpperCase()
+                        );
+                        break;
+                    case INCOMING:
+                        statement = "return $T.setNamedPort(model, vertex, this, null, $S, $T.$L)";
+                        getPortMethod.addStatement(statement,
+                                ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                port.name,
+                                ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                                port.edgeTraitSpec.name.replace("::", "_").toUpperCase()
+                        );
+                        break;
+                }
+            } else {
+                switch (port.direction) {
+                    case BIDIRECTIONAL:
+                    case OUTGOING:
+                        statement = "return $T.setNamedPort(model, this, vertex, $S, null)";
+                        getPortMethod.addStatement(statement,
+                                ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                port.name);
+                        break;
+                    case INCOMING:
+                        statement = "return $T.setNamedPort(model, vertex, this, null, $S)";
+                        getPortMethod.addStatement(statement,
+                                ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                port.name);
+                        break;
+                }
+            }
         }
         return getPortMethod.build();
     }

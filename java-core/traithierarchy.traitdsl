@@ -93,23 +93,25 @@ namespace execution {
     }
 
     vertex ReactiveStimulus refines Stimulus {
-        port predecessor is single Task
-        port sucessor is single Task
+        port successor is out single ReactiveTask with EventEdge
     }
 
-    vertex DownsampleReactiveStimulus refines ReactiveStimulus {
+    vertex SimpleReactiveStimulus refines ReactiveStimulus {
+        port predecessor is in single Task with EventEdge
+    }
+
+    vertex ReactiveANDStimulus refines ReactiveStimulus {
+        port predecessors is multiple in Task with EventEdge
+    }
+
+    vertex DownsampleReactiveStimulus refines SimpleReactiveStimulus {
         prop initialPredecessorSkips is long
         prop repetitivePredecessorSkips is long
     }
 
-    vertex UpsampleReactiveStimulus refines ReactiveStimulus {
+    vertex UpsampleReactiveStimulus refines SimpleReactiveStimulus {
         prop initialPredecessorHolds is long
         prop repetitivePredecessorHolds is long
-    }
-
-    vertex ExtendedReactiveStimulus refines ReactiveStimulus {
-        prop predecessorInstance is array<long>
-        prop sucessorInstance is array<long>
     }
 
     vertex Task {
@@ -149,7 +151,7 @@ namespace platform {
     vertex PlatformElem
 
     vertex AbstractStructure refines PlatformElem {
-        port children is multiple PlatformElem
+        port submodules is multiple PlatformElem
     }
 
     vertex DigitalModule refines PlatformElem {

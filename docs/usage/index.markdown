@@ -1,25 +1,25 @@
 ---
 title: Usage
 layout: default
-permalink: /usage/
+permalink: /usage
+has_children: true
 nav_order: 2
 ---
 
-You can consume the supporting libraries code depending on your favorite language and
-development environment.
+ForSyDe IO is mainly intended to be used as a library. Both in conceptually and in supporting library implementations. 
+For the sake of convenience, there exists a thin CLI application built on top of ForSyDe IO for quick model-to-model transformations.
+You can find this tool in the ForSyDe IO repos with the name [_ConverSyDe_]({{site.baseurl}}/usage/conversyde).
 
-# Minimal features
+The supporting libraries should quick start you in:
 
-The libraries should quick start you in:
+1. Reading ForSyDe IO Models from disk to memory.
+2. Saving ForSyDe IO Models from memory to disk.
+3. Querying and manipulating them in memory for any analysis purposes.
+4. Creating model-to-text and model-to-model tools.
 
-1. Reading a [ForSyDe IO Model on disk](/concepts/#textual-specification).
-2. Saving a [ForSyDe IO Model on disk](/concepts/#textual-specification).
-3. Manipulating them in memory for any analysis purposes.
-4. Creating model-to-text and model-to-model tools based in the model.
+<!-- Here is a quick listing of the libraries and the formats which they support, even if partial. -->
 
-Here is a quick listing of the libraries and the formats which they support, even if partial.
-
-<table>
+<!-- <table>
 <thead>
   <tr>
     <th>Programming<br>Language</th>
@@ -64,7 +64,7 @@ Here is a quick listing of the libraries and the formats which they support, eve
 <caption>Overview table of supporting formats for each supporting library.
 <br>Legend: R is "Read", W is "Write", * means it is not a trivial translation and - means it is partial implementation.
 </caption>
-</table>
+</table> -->
 
 
 # Python quickstart

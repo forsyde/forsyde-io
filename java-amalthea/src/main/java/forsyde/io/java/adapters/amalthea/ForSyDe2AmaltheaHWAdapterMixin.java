@@ -4,7 +4,9 @@ import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
 import forsyde.io.java.typed.viewers.platform.*;
 import org.eclipse.app4mc.amalthea.model.*;
+import org.eclipse.emf.ecore.EObject;
 
+import java.lang.System;
 import java.math.BigInteger;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -125,12 +127,10 @@ public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMi
     default void fromVertexesToStructures(ForSyDeSystemGraph model, Amalthea target) {
         final Set<AbstractStructure> platforms = model.vertexSet()
                 .stream().filter(AbstractStructure::conforms)
-                .map(v -> AbstractStructure.safeCast(v).get())
+                .flatMap(v -> AbstractStructure.safeCast(v).stream())
                 .collect(Collectors.toSet());
-        final Set<AbstractStructure> topPlatform = model.vertexSet()
-                .stream().filter(AbstractStructure::conforms)
-                .filter(v -> model.incomingEdgesOf(v).stream().noneMatch(e -> e.edgeTraits.contains(EdgeTrait.PLATFORM_STRUCTURALCONNECTION)))
-                .map(v -> AbstractStructure.safeCast(v).get())
+        final Set<AbstractStructure> topPlatform = platforms.stream()
+                .filter(v -> model.incomingEdgesOf(v.getViewedVertex()).stream().noneMatch(e -> e.edgeTraits.contains(EdgeTrait.PLATFORM_STRUCTURALCONNECTION)))
                 .collect(Collectors.toSet());
         for (AbstractStructure p : platforms) {
             HwStructure hwStructure = AmaltheaFactory.eINSTANCE.createHwStructure();
@@ -146,8 +146,11 @@ public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMi
             // get the generated equivalent
             equivalent(parent.getViewedVertex()).map(e -> (HwStructure) e).ifPresent(parentHwStructure -> {
                 // get only the sub structures
-                parent.getChildrenPort(model).stream().filter(AbstractStructure::conforms).forEach(child -> {
+                //System.out.println(parent.getIdentifier());
+                //System.out.println(parent.getSubmodulesPort(model));
+                parent.getSubmodulesPort(model).stream().filter(AbstractStructure::conforms).forEach(child -> {
                     // get their equivalents
+                    //System.out.println(child.getIdentifier());
                     equivalent(child.getViewedVertex()).map(e -> (HwStructure) e).ifPresent(childHwStructure -> {
                         // do the deed
                         parentHwStructure.getStructures().add(childHwStructure);
@@ -162,7 +165,7 @@ public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMi
                         }
                     });
                 });
-                parent.getChildrenPort(model).stream().filter(DigitalModule::conforms).forEach(module -> {
+                parent.getSubmodulesPort(model).stream().filter(DigitalModule::conforms).forEach(module -> {
                     equivalent(module.getViewedVertex()).map(e -> (HwModule) e).ifPresent(hwModule -> {
 
                         // remove the 'namespace' from the child identifier
@@ -182,6 +185,7 @@ public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMi
     }
 
     default void fromEdgesToConnections(ForSyDeSystemGraph model, Amalthea targetModel) {
+        final HWModel hwModel = targetModel.getHwModel();
         for (EdgeInfo e: model.edgeSet()) {
             final Vertex sourceV = model.getEdgeSource(e);
             final Vertex targetV = model.getEdgeTarget(e);
@@ -194,15 +198,22 @@ public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMi
                 final INamed target = equivalent(targetV).get();
                 // get the minimum parent.
                 HwStructure commonLeastParent = null;
-                for (HwStructure sourceParent = (HwStructure) source.eContainer(); sourceParent != null;
-                     sourceParent = (HwStructure) sourceParent.eContainer()) {
-                    for (HwStructure targetParent = (HwStructure) target.eContainer(); targetParent != null;
-                         targetParent = (HwStructure) targetParent.eContainer()) {
-                            if (sourceParent.equals(targetParent)) commonLeastParent = sourceParent;
-                            if (commonLeastParent != null) break;
+                for (EObject sourceParent = source.eContainer(); !sourceParent.equals(hwModel) && commonLeastParent == null;
+                     sourceParent = sourceParent.eContainer()) {
+                    if (sourceParent instanceof HwStructure) {
+                        final HwStructure sourceParentStructure = (HwStructure) sourceParent;
+                        for (EObject targetParent = target.eContainer(); !targetParent.equals(hwModel) && commonLeastParent == null;
+                             targetParent = targetParent.eContainer()) {
+                            if (targetParent instanceof HwStructure) {
+                                final HwStructure targetParentStructure = (HwStructure) targetParent;
+                                if (sourceParent.equals(targetParent)) commonLeastParent = sourceParentStructure;
+                            }
+                        }
                     }
-                    if (commonLeastParent != null) break;
                 }
+                //System.out.println(source.getName());
+                //System.out.println(target.getName());
+                //System.out.println(commonLeastParent);
                 // create the connection
                 HwPort sourcePort = source instanceof HwModule ?
                         ((HwModule) source).getPorts().stream().filter(p -> p.getName().equals(e.sourcePort.get())).findAny().get() :
