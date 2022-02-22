@@ -6,7 +6,7 @@ nav_order: 3
 has_children: true
 ---
 
-# Prelude
+
 
 The main driver for an Intermediate Representation at a system-level is
 to be able to perform automated [Design Space Exploration]({{site.projects.idesyde}})
