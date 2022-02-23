@@ -2,7 +2,7 @@
 title: Example
 layout: default
 permalink: /concept/example
-nav_order: 1
+nav_order: 5
 parent: Concepts
 ---
 

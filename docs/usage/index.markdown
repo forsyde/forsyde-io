@@ -6,9 +6,12 @@ has_children: true
 nav_order: 2
 ---
 
-ForSyDe IO is mainly intended to be used as a library. Both in conceptually and in supporting library implementations. 
+ForSyDe IO is mainly intended to be used as a library and to be used by tools and tool developers.
+ Both in conceptually and in supporting library implementations. 
+ForSyDe IO is designed like this so that [different steps of the design flow]({{ site.projects.forsyde }}#our-vision) can share a common model. 
 For the sake of convenience, there exists a thin CLI application built on top of ForSyDe IO for quick model-to-model transformations.
 You can find this tool in the ForSyDe IO repos with the name [_ConverSyDe_]({{site.baseurl}}/usage/conversyde).
+
 
 The supporting libraries should quick start you in:
 
@@ -66,79 +69,3 @@ The supporting libraries should quick start you in:
 </caption>
 </table> -->
 
-
-# Python quickstart
-
-[ForSyDe IO Python](https://pypi.org/project/forsyde-io-python/)
-already exists and you can simply use it
-in your `pip` powered project (or `poetry` powered project) directly.
-
-This most likely translates to,
-
-    pip install forsyde-io-python
-
-and then declaring it as a required library in your project build tool.
-
-Then, in your code, you can load the model to memory and later save it again by,
-
-    ..
-    from forsyde.io.python.api import load_model, write_model
-    ..
-
-    ..
-    model_in = load_model(<in_file>)
-    ..
-    # analisys and modifications
-    ..
-    write_model(model_out, <out_file>)
-
-where `<in_file>` and `<out_file>` will be the files you intend to read and write,
-respectively. 
-
-Note that a ForSyDeModel is a 
-[networX MultiDiGraph](https://networkx.org/documentation/stable//reference/classes/multidigraph.html),
-and therefore you can use any [analysis routine from this library](https://networkx.org/documentation/stable//reference/algorithms/index.html)!
-
-# Java quickstart
-
-This should apply reasonably well to other JVM languages as well, but only
-plain Java (with 8+ syntax) has been tested.
-
-We try to make the [ForSyDe IO Java](https://search.maven.org/artifact/io.github.forsyde/forsyde-io-java)
-supporting library as up-to-date as possible with
-the [upstream reference]({{ site.sources.forsydeio }}), but sometimes
-it can take some weeks to catch up. 
-
-If you have a maven-powered project, then you can add to your dependencies section,
-
-    <dependency>
-      <groupId>io.github.forsyde</groupId>
-      <artifactId>forsyde-io-java</artifactId>
-      <version>LATEST</version>
-    </dependency>
-
-If you otherwise have a gradle-powered gradle project, you can add to your dependencies section,
-
-    implementation 'io.github.forsyde:forsyde-io-java:LATEST'
-
-Then, at any point in your code, you can load a model to memory and save it later by,
-
-    ..
-    import forsyde.io.java.core.ForSyDeModel;
-    import forsyde.io.java.drivers.ForSyDeModelHandler;
-    ..
-    
-    ForSyDeModel model = ForSyDeModelHandler.loadModel("<in_file>");
-    ..
-    // analysize and modify the model
-    ..
-    ForSyDeModelHandler.writeModel(model, "<out_file>");
-
-
-where `<in_file>` and `<out_file>` will be the files you intend to read and write,
-respectively and `LATEST` does not fully exist: you have to replace it with the latest
-version available, or one you wish to use.
-
-Note that a ForSyDeModel is a 
-[jgrapht DirectedPseudograph](https://jgrapht.org/javadoc-1.3.1/org/jgrapht/graph/DirectedPseudograph.html),
-and therefore you can use any [analysis routine from this library](https://jgrapht.org/guide/UserOverview#graph-algorithms)!

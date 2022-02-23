@@ -8,41 +8,27 @@ to know about this [ForSyDe]({{ site.projects.forsyde }}) subproject and find so
 
 # Quick facts
 
-## What is ForSyDe IO?
-
-  1. A graph model that accepts loops and multiple edges between nodes 
-     [[1](https://en.wikipedia.org/wiki/Multigraph), [2](https://www.merriam-webster.com/dictionary/pseudograph),
-     [3](https://mathworld.wolfram.com/Pseudograph.html)],
-  2. An exchange format to save and load this graph model in-memory,
-  2. Supporting libraries implementing this save and load feature for a few languages.
-
-For more information about the model concept, specification and its implementation, check [Concepts]({{ site.baseurl }}/concept).
-
-## What is the motivation behind it?
-
 ForSyDe IO's has similar goals to what Intermediate Representations
 do to conventional programming language compilation, except for model-based engineering flows.
-
 In particular, it has [ForSyDe]({{site.projects.forsyde}}) as the main target.
 
-## How do I use it?
+ForSyDe IO can be defined in three stacking levels. They are,
+  1. A graph model that accepts loops and multiple edges between nodes 
+     [[1](https://en.wikipedia.org/wiki/Multigraph), [2](https://www.merriam-webster.com/dictionary/pseudograph),
+     [3](https://mathworld.wolfram.com/Pseudograph.html)], and has notions of interfaces,
+  2. An OMG complaint exchange format to save and load this graph model in-memory,
+  3. Supporting libraries implementing basic routines for a few languages.
 
-It depends on who you are and what are your goals! Let's break it down into three main scenarios.
+# Quick links
 
-### 1) I am a designer and want to do a ForSyDe powered design!
+1. If you wish to quickly transform between ForSyDe IO and other supported models, check [_ConverSyDe_]({{site.baseurl/usage/conversyde}}),
+2. If you wish to read and write ForSyDe IO models within your tool, check [reading and writing]({{site.baseurl/usage/read-write}}),
+3. If you wish to manipulate (or analyse) a ForSyDe IO model in a type-safe effective manner, check [type-safe vieweing]().
+4. For more information about the model concept, specification and its implementation, check [Concepts]({{ site.baseurl }}/concept).
 
-Then you don't use this directly at all!
 
-ForSyDe IO is intended to be used by tools and tool developers, 
-so that [different steps of the design flow]({{ site.projects.forsyde }}#our-vision) can share a common model. 
-If you're using other [ForSyDe]({{ site.projects.forsyde }}) tools 
-like [IDeSyDe]({{ site.projects.idesyde }}), you're already benefiting from ForSyDe IO!
 
-### 2) I am a developer and want to make ForSyDE powered tool!
-
-Howdy! Then checkout [Usage]({{ site.baseurl }}/usage) and [Concepts]({{ site.baseurl }}/concept) so that you can see how to consume the models in your favorite environment!
-
-### 3) I am both a developer and a designer and want to extend the models themselves!
+<!-- ### 3) I am both a developer and a designer and want to extend the models themselves!
 
 Well-met! Then you can checkout [Concepts]({{ site.baseurl }}/concept) to see how the
 supporting libraries are generated for different languages based on the underlying model and contribute there!
@@ -52,4 +38,4 @@ This subproject is intended to be consumed by tools and tool "vendors",
 or tool developers, so that [different steps of the design flow]({{ site.projects.forsyde }}#our-vision) can share a common model. 
 
 
-If you're using other [ForSyDe]({{ site.projects.forsyde }}) tools like [IDeSyDe]({{ site.projects.idesyde}}), you're already benefiting from ForSyDe IO!
+If you're using other [ForSyDe]({{ site.projects.forsyde }}) tools like [IDeSyDe]({{ site.projects.idesyde}}), you're already benefiting from ForSyDe IO! -->
