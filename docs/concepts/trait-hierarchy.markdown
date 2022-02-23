@@ -1,5 +1,5 @@
 ---
-title: The trait hierarchy
+title: The trait hierarchy and viewers
 layout: default
 permalink: /concept/trait-hierarchy
 nav_order: 2
@@ -9,6 +9,8 @@ parent: Concepts
 <script type="text/javascript"
   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
+
+## Trait hierarchy
 
 A trait is a interface of labels that a vertex or edge must honor. 
 Exemplifying with the current "standard" ForSyDe IO trait hierarchy, 
@@ -23,11 +25,40 @@ in the previous paragraph.
 
 <img width=500 src="{{ site.baseurl }}/assets/images/svg/examplehierarchy.svg" />
 
-As classes impose static structures to objects in Object-oriented programming, so impose
-the traits _minimum_ expected structures. A big difference is that a vertex can have multiple
+As classes impose static structures to objects in Object-oriented programming, traits impose
+the _minimum_ expected structures. A big difference is that a vertex can have multiple
 _unrelated_ traits, giving it possible different aspects.
 
-**UNDER CONSTRUCTION!**
+For example, suppose a trait hierarchy with two unrelated traits, `Instrumented` and `Task`.
+A vertex that conforms to `Instrumented` must have an integer property called "global WCET";
+And a vertex that conforms to `Task` must have an integer property called "period".
+
+Assume now a system graph with a vertex `Element1` that declares the traits `Instrumented` and `Task`.
+Using the trait hierarchy just described, a _consistent_ model (system graph + trait hierarchy),
+requires `Element1` to have at least the two properties listed. One such valid case would be the following
+properties:
+* period: an int of 20
+* name: a string of "me"
+* global WCET: an int of 10
+
+## Viewers
+
+Viewers build upon trait hierarchies to transform a generic system graph into a 
+typed object graph. In other words, "viewing" a vertex enables one to access its properties and ports
+just like it was a class in standard object oriented programming.
+
+Take the same example previously given with `Element1`, `Instrumented` and `Task`.
+Both `Instrumented` and `Task` traits have their viewers which temporarily transforms `Element1`
+into an object of traits `Instrumented` and `Task`. The next image showcases with color coding
+how the viewers enable one to know ahead-of-time the names of the properties and access them
+in a type-safe manner.
+
+<img width=800 src="{{ site.baseurl }}/assets/images/svg/viewerdiagram.svg" />
+
+The viewers layer is a key abstraction for two reasons:
+1. It enables cross-cutting modelling in the same model,
+2. It enables simple typed consumption of the generic system graph in statically typed languages.
+
 
 <!-- If the node does not honor such interfaces for every one of
 its declared traits, then the model is inconsistent. This trait

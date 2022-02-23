@@ -1,10 +1,15 @@
 ---
-title: Example
+title: Example (Outdated)
 layout: default
 permalink: /concept/example
 nav_order: 5
 parent: Concepts
 ---
+
+# Outdated!!!
+
+**Sadly, this exmaple is slightly outdate in respect to the current formats. We plan to update it quite soon**.
+The ideas still remain the same, but you'd have to consider that the XMLs and other formats have changed slightly.
 
 In this example section, whenever a file is refeered to, it means implicitly those that
 can be found in the [project's example folder]({{site.sources.forsydeio}}/tree/master/examples). For example
