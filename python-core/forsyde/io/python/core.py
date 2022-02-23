@@ -9,6 +9,7 @@ from typing import Set
 from typing import Tuple
 from typing import Sequence
 from typing import Type
+from typing import NamedTuple
 from enum import Enum
 import importlib.resources as res
 import itertools
@@ -18,6 +19,7 @@ import networkx as nx  # type: ignore
 
 _port_id_counter = 0
 _vertex_id_counter = 0
+
 
 def _generate_vertex_id() -> str:
     global _vertex_id_counter
@@ -49,37 +51,24 @@ class Trait:
         return self.refines(o)
 
 
-@dataclass
-class Port(object):
-    """Port of a vertex.
+class OpaqueTrait(Trait):
 
-    This class is intended to help synthesis of components and also
-    to keep things semantically sane when dealing with the model, for instance,
-    to denote which slot of a time-division a piece of code is executed or
-    to denote which input argument of a function is to be used.
-    """
+    traitName: str
 
-    identifier: str = field(default_factory=_generate_port_id, hash=True)
+    def __init__(self, traitName: str) -> None:
+        super().__init__()
 
-    # port_type: Optional["Vertex"] = field(default=None,
-    #                                     compare=False,
-    #                                     hash=False)
+    def __hash__(self) -> int:
+        return hash(self.traitName)
 
-    def __hash__(self):
-        return hash(self.identifier)
-
-    def get_type_tag(self) -> str:
-        return "Port"
-
-    def serialize(self) -> dict:
-        return {}
-
-    # def is_type(self, t: ModelType) -> bool:
-    #     return self.port_type and self.port_type.is_refinement(t)
+    def __eq__(self, __o: object) -> bool:
+        if isinstance(__o, OpaqueTrait):
+            return __o.traitName == self.traitName
+        else:
+            return False
 
 
-@dataclass
-class Vertex(object):
+class Vertex(NamedTuple):
     """Class holding data regarding Vertexes.
 
     Every vertex representes a main element in a ForSyDe model.
@@ -91,10 +80,10 @@ class Vertex(object):
     a Time Division Multiplexer.
     """
 
-    identifier: str = field(default_factory=_generate_vertex_id, hash=True)
-    ports: Set[Port] = field(default_factory=set, compare=False, hash=False)
-    properties: Dict[str, Any] = field(default_factory=dict, compare=False, hash=False)
-    vertex_traits: Set[Trait] = field(default_factory=set, compare=False, hash=False)
+    identifier: str = str(_generate_vertex_id())
+    ports: Set[str] = set()
+    properties: Dict[str, Any] = dict()
+    vertex_traits: Set[Trait] = set()
 
     # vertex_type: ModelType = field(default=ModelType(),
     #                                compare=False,
@@ -108,14 +97,6 @@ class Vertex(object):
 
     def get_type_tag(self) -> str:
         return self.__class__.__name__
-
-    def get_port(self, name: str) -> Port:
-        try:
-            return next(p for p in self.ports if p.identifier == name)
-        except StopIteration:
-            raise AttributeError(
-                f"Required port {name} of {self.identifier} does not exist."
-            )
 
     def has_trait(self, trait: Trait) -> bool:
         return any(t.refines(trait) for t in self.vertex_traits)
@@ -137,9 +118,8 @@ class Vertex(object):
         return True
 
 
-@dataclass
-class Edge(object):
-    """Class containing all information for an Edge.
+class EdgeInfo(NamedTuple):
+    """Class containing all information for an EdgeInfo.
 
     The edge contains references to the source and target 'Vertex'es
     as well as the 'Port's being connect on both ends, in case
@@ -147,15 +127,15 @@ class Edge(object):
     so that extra deductions can be made along the EDA flow.
     """
 
-    source: Vertex = field(default=Vertex())
-    target: Vertex = field(default=Vertex())
-    source_port: Optional[Port] = field(default=None)
-    target_port: Optional[Port] = field(default=None)
-    edge_traits: Set[Trait] = field(default_factory=set)
+    source: str
+    target: str
+    source_port: Optional[str] = None
+    target_port: Optional[str] = None
+    edge_traits: Set[Trait] = set()
 
     # edge_type: ModelType = field(default=ModelType(), compare=False)
     def __hash__(self):
-        return hash((self.source_vertex, self.target_vertex))
+        return hash((self.source, self.target, self.source_port, self.target_port))
 
     def get_type_tag(self) -> str:
         return self.__class__.__name__
@@ -163,13 +143,10 @@ class Edge(object):
     def has_trait(self, o: Trait) -> bool:
         return any(t.refines(o) for t in self.edge_traits)
 
-    def has_trait_strict(self, o: Trait) -> bool:
-        return any(t is o for t in self.edge_traits)
-
-    def refines(self, other: "Edge") -> bool:
-        if self.source.identifier != other.source.identifier:
+    def refines(self, other: "EdgeInfo") -> bool:
+        if self.source != other.source:
             return False
-        if self.target.identifier != other.target.identifier:
+        if self.target != other.target:
             return False
         if self.source_port != other.source_port:
             return False
@@ -179,6 +156,10 @@ class Edge(object):
             if not any(t.refines(to) for t in self.edge_traits):
                 return False
         return True
+
+    @property
+    def _str_key(self) -> str:
+        return self.source + str(self.source_port) + str(self.target_port) + self.target
 
     # def ids_tuple(self):
     #     return (self.source_vertex.identifier, self.target_vertex.identifier,
@@ -190,6 +171,7 @@ class Edge(object):
     # def is_type(self, tsource: ModelType, ttarget: ModelType) -> bool:
     #     return self.source_vertex.is_type(
     #         tsource) and self.target_vertex.is_type(ttarget)
+
 
 @dataclass
 class VertexViewer:
@@ -208,18 +190,20 @@ class VertexViewer:
     def identifier(self) -> str:
         return self.viewed_vertex.identifier
 
+
 @dataclass
 class EdgeViewer:
 
-    viewed_edge: Edge
+    viewed_edge: EdgeInfo
 
     @classmethod
-    def conforms(cls, edge: Edge) -> bool:
+    def conforms(cls, edge: EdgeInfo) -> bool:
         return False
 
     @classmethod
-    def safe_cast(cls, edge: Edge) -> Optional["EdgeViewer"]:
+    def safe_cast(cls, edge: EdgeInfo) -> Optional["EdgeViewer"]:
         return None
+
 
 class ForSyDeModel(nx.MultiDiGraph):
     """The main graph holder element representing a ForSyDe Model
@@ -238,15 +222,6 @@ class ForSyDeModel(nx.MultiDiGraph):
     """
 
     def __init__(
-        self,
-        standard_views=["create_tables.sql", "types.sql", "create_views.sql"],
-        *args,
-        **kwargs,
+        self, *args, **kwargs,
     ):
         nx.MultiDiGraph.__init__(self, *args, **kwargs)
-
-    def get_vertex(self, label: str, label_name: str = "label") -> Optional[Vertex]:
-        for (v, d) in self.nodes.data():
-            if d[label_name] == label:
-                return v
-        return None

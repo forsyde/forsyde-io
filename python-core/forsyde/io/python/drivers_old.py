@@ -9,7 +9,7 @@ from typing import Optional
 
 # from lxml import etree  # type: ignore
 # import networkx as nx
-import pydot # type: ignore
+import pydot  # type: ignore
 
 # from networkx.drawing.nx_pydot import write_dot  # type: ignore
 
@@ -19,83 +19,7 @@ from forsyde.io.python.core import ForSyDeModel
 from forsyde.io.python.core import Port
 from forsyde.io.python.types import EdgeTrait
 from forsyde.io.python.types import VertexTrait
-
-
-class ForSyDeModelDriver(abc.ABC):
-    @abc.abstractmethod
-    def write(self, model: ForSyDeModel, sink: str) -> None:
-        pass
-
-    @abc.abstractmethod
-    def read(
-        self, source: str, other_model: Optional[ForSyDeModel] = None
-    ) -> Optional[ForSyDeModel]:
-        return None
-
-    def type_to_str(self, t: type) -> str:
-        if t is bool:
-            return "boolean"
-        elif t is int:
-            return "int"
-        elif t is float:
-            return "double"
-        elif t is str:
-            return "string"
-        elif t is list:
-            return "array"
-        elif t is dict:
-            return "stringMap"
-        else:
-            return "object"
-
-    def str_to_type(self, s: str) -> type:
-        if s == "boolean":
-            return bool
-        elif s == "int":
-            return int
-        elif s == "integer":
-            return int
-        elif s == "long":
-            return int
-        elif s == "float":
-            return float
-        elif s == "double":
-            return float
-        elif s == "string":
-            return str
-        elif s == "array":
-            return list
-        elif s == "intMap" or s == "intmap":
-            return dict
-        elif s == "stringMap" or s == "stringmap" or s == "strMap" or s == "strmap":
-            return dict
-        else:
-            return dict
-
-    def typename_from_val(self, v) -> str:
-        if isinstance(v, bool):
-            return "boolean"
-        elif isinstance(v, int):
-            # TODO: Find a robust way to distinguish between int and long
-            if v.bit_length() > 32:
-                return "long"
-            else:
-                return "int"
-        elif isinstance(v, float):
-            return "double"
-        elif isinstance(v, str):
-            return "string"
-        elif isinstance(v, list):
-            return "array"
-        elif isinstance(v, dict):
-            # TODO: find a non hac to fix the dict difference
-            if len(v) > 0 and all(isinstance(k, int) for k in v):
-                return "intMap"
-            else:
-                return "stringMap"
-        else:
-            return "object"
-
+from forsyde.io.python.drivers import ForSyDeModelDriver
 
 
 class ForSyDeMLDriver(ForSyDeModelDriver):
@@ -162,7 +86,7 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
                 vertex = Vertex(identifier=vnode.get("id"))
                 vertex.vertex_traits = set(
                     VertexTrait[trait_name]
-                    for trait_name in vnode.get("traits", '').split(";")
+                    for trait_name in vnode.get("traits", "").split(";")
                 )
                 model.add_node(vertex, label=vertex.identifier)
                 for portnode in vnode.iterfind("./" + xmlns + "port"):
@@ -216,16 +140,14 @@ class ForSyDeMLDriver(ForSyDeModelDriver):
                 edge = Edge(
                     source=source_vertex,
                     target=target_vertex,
-                    edge_traits=set(EdgeTrait[n] for n in vedge.get('traits', '').split(';'))
+                    edge_traits=set(
+                        EdgeTrait[n] for n in vedge.get("traits", "").split(";")
+                    ),
                 )
                 if vedge.get("sourceport"):
-                    edge.source_port = source_vertex.get_port(
-                        vedge.get("sourceport")
-                    )
+                    edge.source_port = source_vertex.get_port(vedge.get("sourceport"))
                 if vedge.get("targetport"):
-                    edge.target_port = target_vertex.get_port(
-                        vedge.get("targetport")
-                    )
+                    edge.target_port = target_vertex.get_port(vedge.get("targetport"))
                 key = (
                     f"{vedge.get('source')}:{vedge.get('sourceport')}->"
                     + f"{vedge.get('target')}:{vedge.get('targetport')}"
@@ -466,6 +388,7 @@ class ForSyDeDotDriver(ForSyDeModelDriver):
             sinkstream.write(dot.to_string())
         # write_dot(strg, sink)
 
+
 class ForSyDeGraphMLDriver(ForSyDeModelDriver):
     """GraphML writer for some visualization of the models."""
 
@@ -508,10 +431,10 @@ class ForSyDeGraphMLDriver(ForSyDeModelDriver):
                     ):
                         prop_elem = etree.SubElement(node_elem, xmlns + "data")
                         type_str = self.typename_from_val(val)
-                        idx = -1 
+                        idx = -1
                         if (name, type_str) not in saved_props:
                             saved_props.append((name, type_str))
-                            idx = len(saved_props)-1
+                            idx = len(saved_props) - 1
                         else:
                             idx = saved_props.index((name, type_str))
                         prop_elem.set("key", "d" + str(idx))
