@@ -39,12 +39,12 @@ public class SDFTests {
 
         // contributed from https://github.com/YihangZhao123/master-thesis
         Assertions.assertTrue(actors.stream().anyMatch(v ->
-            VertexAcessor.getNamedPort(forSyDeSystemGraph, v.getViewedVertex(), "gy", "moc::sdf::SDFChannel").isPresent() &&
-            VertexAcessor.getNamedPort(forSyDeSystemGraph, v.getViewedVertex(), "gx", "moc::sdf::SDFChannel").isPresent()
+            VertexAcessor.getNamedPort(forSyDeSystemGraph, v.getViewedVertex(), "gy", VertexTrait.fromName("moc::sdf::SDFChannel")).isPresent() &&
+            VertexAcessor.getNamedPort(forSyDeSystemGraph, v.getViewedVertex(), "gx", VertexTrait.fromName("moc::sdf::SDFChannel")).isPresent()
         ));
         Assertions.assertTrue(actors.stream().anyMatch(v ->
-                VertexAcessor.getNamedPort(forSyDeSystemGraph, v.getViewedVertex(), "gy", "moc::sdf::SDFChannel").map(SDFChannel::conforms).orElse(false) &&
-                VertexAcessor.getNamedPort(forSyDeSystemGraph, v.getViewedVertex(), "gx", "moc::sdf::SDFChannel").map(SDFChannel::conforms).orElse(false)
+                VertexAcessor.getNamedPort(forSyDeSystemGraph, v.getViewedVertex(), "gy", VertexTrait.fromName("moc::sdf::SDFChannel")).map(SDFChannel::conforms).orElse(false) &&
+                        VertexAcessor.getNamedPort(forSyDeSystemGraph, v.getViewedVertex(), "gx", VertexTrait.fromName("moc::sdf::SDFChannel")).map(SDFChannel::conforms).orElse(false)
         ));
 
         // check that sobel/getPx outputs 6

@@ -1,9 +1,36 @@
+
+
 namespace impl {
     vertex Executable
 
     vertex InstrumentedExecutable refines Executable {
         prop operationRequirements is strmap<strmap<long>>
         prop sizeInBits is long
+    }
+
+    vertex ANSICBlackBoxExecutable refines Executable {
+        prop inlinedCodeLines is array<string>
+    }
+
+    vertex ANSICTypedBlackBoxExecutable refines ANSICBlackBoxExecutable {
+        port inputTypes is ordered multiple impl::datatypes::DataType
+        port outputType is single impl::datatypes::DataType
+    }
+
+    namespace datatypes {
+        vertex DataType
+        vertex Integer refines DataType {
+            prop numberOfBits is int
+        }
+        vertex Float refines DataType
+        vertex Double refines DataType
+        vertex Array refines DataType {
+            prop maximumElems is int
+            port innerType is single DataType
+        }
+        vertex Record refines DataType {
+            port innerTypes is multiple DataType
+        }
     }
 }
 
@@ -97,10 +124,10 @@ namespace execution {
     }
 
     vertex SimpleReactiveStimulus refines ReactiveStimulus {
-        port predecessor is in single Task with EventEdge
+        port predecessor is single in Task with EventEdge
     }
 
-    vertex ReactiveANDStimulus refines ReactiveStimulus {
+    vertex MultiANDReactiveStimulus refines ReactiveStimulus {
         port predecessors is multiple in Task with EventEdge
     }
 

@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 public interface AmaltheaStimulus2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
     default void fromStimulusToForSyDe(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+        if (amalthea.getStimuliModel() == null) return; // non null guard command
         amalthea.getStimuliModel().getStimuli().forEach((stimulus) -> {
             if (stimulus instanceof PeriodicStimulus) {
                 final PeriodicStimulus periodicStimulus = (PeriodicStimulus) stimulus;
@@ -46,7 +47,7 @@ public interface AmaltheaStimulus2ForSyDeMixin extends EquivalenceModel2ModelMix
                             .anyMatch(e -> e instanceof InterProcessTrigger && ((InterProcessTrigger) e).getStimulus().equals(interProcessStimulus))
                     ).collect(Collectors.toList());
                 if (triggeringTasks.size() > 1) {
-                    final ReactiveANDStimulus reactiveANDStimulus = ReactiveANDStimulus.enforce(precedenceVertex);
+                    final MultiANDReactiveStimulus reactiveANDStimulus = MultiANDReactiveStimulus.enforce(precedenceVertex);
                 } else {
                     final SimpleReactiveStimulus simpleReactiveStimulus = SimpleReactiveStimulus.enforce(precedenceVertex);
                     if (interProcessStimulus.getCounter() != null) {

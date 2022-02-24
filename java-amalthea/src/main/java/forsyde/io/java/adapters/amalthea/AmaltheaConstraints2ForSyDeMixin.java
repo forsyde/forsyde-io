@@ -5,7 +5,10 @@ import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.typed.viewers.execution.ConstrainedTask;
+import forsyde.io.java.typed.viewers.execution.Task;
 import org.eclipse.app4mc.amalthea.model.*;
+
+import java.lang.System;
 
 public interface AmaltheaConstraints2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
@@ -14,7 +17,7 @@ public interface AmaltheaConstraints2ForSyDeMixin extends EquivalenceModel2Model
             amalthea.getConstraintsModel().getRequirements().forEach(req -> {
                 if (req instanceof ProcessRequirement) {
                     final ProcessRequirement processRequirement = (ProcessRequirement) req;
-                    equivalent(processRequirement.getProcess()).ifPresent(processVertex -> {
+                    equivalents(processRequirement.getProcess()).flatMap(v -> Task.safeCast(v).stream()).forEach(processVertex -> {
                         // now look inside all contents of the req to figure out
                         // if they are deadlines or others stuff
                         processRequirement.eAllContents().forEachRemaining(item -> {

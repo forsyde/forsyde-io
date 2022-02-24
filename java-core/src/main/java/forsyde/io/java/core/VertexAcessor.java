@@ -31,6 +31,10 @@ public final class VertexAcessor {
         }
     }
 
+    static public Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait trait) {
+        return getNamedPort(model, v, portName, trait, VertexPortDirection.BIDIRECTIONAL);
+    }
+
     static public Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait trait, VertexPortDirection direction) {
         //Trait t = traitFromString(traitName);
         Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
@@ -207,8 +211,8 @@ public final class VertexAcessor {
     }
 
     public static boolean setNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
-        if (!src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
-        if (!dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
+        if (srcPortName != null && !src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
+        if (dstPortName != null && !dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
         return model.connect(src, dst, srcPortName, dstPortName, ts);
     }
 
@@ -233,8 +237,8 @@ public final class VertexAcessor {
     }
 
     public static boolean addMultipleNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
-        if (!src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
-        if (!dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
+        if (srcPortName != null && !src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
+        if (dstPortName != null && !dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
         return model.connect(src, dst, srcPortName, dstPortName, ts);
     }
 
@@ -260,8 +264,8 @@ public final class VertexAcessor {
         final Map<String, Integer> order = (Map<String, Integer>) src.getProperties()
                 .get("__" + srcPortName + "_ordering__")
                 .unwrap();
-        if (!src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
-        if (!dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
+        if (srcPortName != null && !src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
+        if (dstPortName != null && !dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
         order.put(dst.identifier, pos);
         src.properties.put("__" + srcPortName + "_ordering__", VertexProperty.create(order));
         return model.connect(src, dst, srcPortName, dstPortName, ts);

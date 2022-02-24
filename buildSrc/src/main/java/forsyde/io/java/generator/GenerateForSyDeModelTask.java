@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
     @InputFile
-    File inputModelDSL = getProject().file("traithierarchy.traitdsl");
+    File inputModelDSL;// = getProject().file("traithierarchy.traitdsl");
 
     @OutputFiles
     List<File> outFiles = new ArrayList<>();

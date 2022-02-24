@@ -13,7 +13,7 @@ plugins {
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = project.name
-version = '0.5.3'
+version = '0.5.4'
 project.ext.niceName = "Java Parent"
 
 
@@ -52,6 +52,12 @@ sourceSets {
       srcDirs += ['java-tests']
     }
   }
+}
+
+// has to be outside so that all projects get the root trait hierarchy
+def stdTraitHierarchyFile = file("std_trait_hierarchy.traitdsl")
+allprojects {
+  project.ext.stdTraitHierarchyFile = stdTraitHierarchyFile
 }
 
 subprojects {

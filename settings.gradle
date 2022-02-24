@@ -29,4 +29,5 @@ include 'java-sdf3'
 //include 'java-linguafranca'
 include 'java-conversyde'
 include 'java-graphviz'
+include 'java-ods-reporting'
 

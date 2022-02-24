@@ -9,8 +9,7 @@ task clearForSyDeModel(type: Delete) {
 */
 
 tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
-//  inputs.property('inputModelJson',file('./meta.json'))
-//  inputs.property('rootOutDir', file('.'))
+    inputModelDSL = project.ext.stdTraitHierarchyFile
 }
 
 //tasks.generateForSyDeModel.dependsOn clearForSyDeModel

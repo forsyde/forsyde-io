@@ -26,6 +26,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             fromLabelToVertex(amalthea, forSyDeSystemGraph);
             fromRunnableToVertex(amalthea, forSyDeSystemGraph);
             fromTaskToVertex(amalthea, forSyDeSystemGraph);
+            fromSetEventsToEdges(amalthea, forSyDeSystemGraph);
             //convertProcessPrototype(amalthea, forSyDeSystemGraph);
         }
     }
@@ -116,14 +117,66 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
     }
 
     default void fromTaskToVertex(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
-        amalthea.getSwModel().getTasks().forEach(task -> {
-            final Vertex taskVertex = new Vertex(task.getName(), VertexTrait.EXECUTION_TASK);
+        amalthea.getSwModel().getTasks().forEach(aTask -> {
+            final Vertex taskVertex = new Vertex(aTask.getName());
             final GreyBox taskGreyBox = GreyBox.enforce(taskVertex);
             forSyDeSystemGraph.addVertex(taskVertex);
-            taskVertex.ports.add("callSequence");
-            final Task fTask = new TaskViewer(taskVertex);
-            if (task.getStimuli() != null) {
-                task.getStimuli().forEach(stimulus -> {
+            final Task task = Task.enforce(taskVertex);
+            // first, go in the activity graph and figure out if the task awaits for something
+            if (aTask.getActivityGraph() != null) {
+                // do tree search due to possible nesting
+                aTask.getActivityGraph().eAllContents().forEachRemaining(item -> {
+                    if (item instanceof RunnableCall) {
+                        final RunnableCall runnableCall = (RunnableCall) item;
+                        equivalent(runnableCall.getRunnable()).ifPresent(runnableVertex -> {
+                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "callSequence", EdgeTrait.EXECUTION_CONTAINMENTEDGE);
+                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
+                        });
+                    } else if (item instanceof WaitEvent) {
+                        final WaitEvent waitEvent = (WaitEvent) item;
+                        final ReactiveTask reactiveTask = ReactiveTask.enforce(task);
+                        if (waitEvent.getEventMask() != null && waitEvent.getEventMask().getEvents().size() > 0) {
+                            final String eventNames = waitEvent.getEventMask().getEvents().stream().map(OsEvent::getName).collect(Collectors.joining("_"));
+                            final Vertex precedence = new Vertex(task.getIdentifier() + "_Wait_" + eventNames);
+                            forSyDeSystemGraph.addVertex(precedence);
+                            addEquivalence(aTask, precedence);
+                            if (waitEvent.getEventMask().getEvents().size() < 2) {
+                                final SimpleReactiveStimulus simpleReactiveStimulus = SimpleReactiveStimulus.enforce(precedence);
+                                simpleReactiveStimulus.setSuccessorPort(forSyDeSystemGraph, reactiveTask);
+                                final Set<ReactiveStimulus> reactiveStimulusSet = reactiveTask.getReactiveStimulusPort(forSyDeSystemGraph);
+                                reactiveStimulusSet.add(simpleReactiveStimulus);
+                                reactiveTask.setReactiveStimulusPort(forSyDeSystemGraph,reactiveStimulusSet);
+                            } else {
+                                final MultiANDReactiveStimulus multiANDReactiveStimulus = MultiANDReactiveStimulus.enforce(precedence);
+                                multiANDReactiveStimulus.setSuccessorPort(forSyDeSystemGraph, reactiveTask);
+                                final Set<ReactiveStimulus> reactiveStimulusSet = reactiveTask.getReactiveStimulusPort(forSyDeSystemGraph);
+                                reactiveStimulusSet.add(multiANDReactiveStimulus);
+                                reactiveTask.setReactiveStimulusPort(forSyDeSystemGraph,reactiveStimulusSet);
+                            }
+                        }
+                    }
+//                    else if (item instanceof InterProcessTrigger) {
+//                        final InterProcessTrigger interProcessTrigger = (InterProcessTrigger) item;
+//                        equivalents(interProcessTrigger.getStimulus()).forEach(precedenceVertex -> {
+//                            SimpleReactiveStimulus.safeCast(precedenceVertex).ifPresent(simpleReactiveStimulus -> {
+//                                simpleReactiveStimulus.setPredecessorPort(forSyDeSystemGraph, fTask);
+//                            });
+//                            // if there are multiple incoming stimulus
+//                            ReactiveANDStimulus.safeCast(precedenceVertex).ifPresent(reactiveANDStimulus -> {
+//                                Set<Task> predecessors = reactiveANDStimulus.getPredecessorsPort(forSyDeSystemGraph);
+//                                if (predecessors == null) {
+//                                    predecessors = new HashSet<>();
+//                                }
+//                                predecessors.add(fTask);
+//                                reactiveANDStimulus.setPredecessorsPort(forSyDeSystemGraph, predecessors);
+//                            });
+//                            //forSyDeSystemGraph.connect(taskVertex, precedenceVertex, null,"predecessor", EdgeTrait.EXECUTION_EVENTEDGE);
+//                        });
+//                    }
+                });
+            }
+            if (aTask.getStimuli() != null) {
+                aTask.getStimuli().forEach(stimulus -> {
                     if (stimulus instanceof PeriodicStimulus) {
                         taskVertex.addTraits(VertexTrait.EXECUTION_PERIODICTASK);
                         taskVertex.ports.add("periodicStimulus");
@@ -155,36 +208,34 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                     }
                 });
             }
-            if (task.getActivityGraph() != null) {
-                // do tree search due to possible nesting
-                task.getActivityGraph().eAllContents().forEachRemaining(item -> {
-                    if (item instanceof RunnableCall) {
-                        final RunnableCall runnableCall = (RunnableCall) item;
-                        equivalent(runnableCall.getRunnable()).ifPresent(runnableVertex -> {
-                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "callSequence", EdgeTrait.EXECUTION_CONTAINMENTEDGE);
-                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
-                        });
-                    } else if (item instanceof InterProcessTrigger) {
-                        final InterProcessTrigger interProcessTrigger = (InterProcessTrigger) item;
-                        equivalents(interProcessTrigger.getStimulus()).forEach(precedenceVertex -> {
-                            SimpleReactiveStimulus.safeCast(precedenceVertex).ifPresent(simpleReactiveStimulus -> {
-                                simpleReactiveStimulus.setPredecessorPort(forSyDeSystemGraph, fTask);
-                            });
-                            // if there are multiple incoming stimulus
-                            ReactiveANDStimulus.safeCast(precedenceVertex).ifPresent(reactiveANDStimulus -> {
-                                Set<Task> predecessors = reactiveANDStimulus.getPredecessorsPort(forSyDeSystemGraph);
-                                if (predecessors == null) {
-                                    predecessors = new HashSet<>();
-                                }
-                                predecessors.add(fTask);
-                                reactiveANDStimulus.setPredecessorsPort(forSyDeSystemGraph, predecessors);
-                            });
-                            //forSyDeSystemGraph.connect(taskVertex, precedenceVertex, null,"predecessor", EdgeTrait.EXECUTION_EVENTEDGE);
-                        });
-                    }
+            addEquivalence(aTask, taskVertex);
+        });
+    }
+
+    default void fromSetEventsToEdges(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+        amalthea.getSwModel().getTasks().forEach(aTask -> {
+            if (aTask.getActivityGraph() != null) {
+                equivalents(aTask).flatMap(v -> Task.safeCast(v).stream()).forEach(task -> {
+                    // do tree search due to possible nesting
+                    aTask.getActivityGraph().eAllContents().forEachRemaining(item -> {
+                        if (item instanceof SetEvent) {
+                            final SetEvent setEvent = (SetEvent) item;
+                            if (setEvent.getEventMask() != null && setEvent.getProcess() != null && setEvent.getEventMask().getEvents().size() > 0) {
+                                equivalents(setEvent.getProcess()).forEach(vertex -> {
+                                    SimpleReactiveStimulus.safeCast(vertex).ifPresent(simpleReactiveStimulus -> {
+                                        simpleReactiveStimulus.setPredecessorPort(forSyDeSystemGraph, task);
+                                    });
+                                    MultiANDReactiveStimulus.safeCast(vertex).ifPresent(multiANDReactiveStimulus -> {
+                                        final Set<Task> cur = multiANDReactiveStimulus.getPredecessorsPort(forSyDeSystemGraph);
+                                        cur.add(task);
+                                        multiANDReactiveStimulus.setPredecessorsPort(forSyDeSystemGraph, cur);
+                                    });
+                                });
+                            }
+                        }
+                    });
                 });
             }
-            addEquivalence(task, taskVertex);
         });
     }
 
