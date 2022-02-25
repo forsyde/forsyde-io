@@ -17,6 +17,21 @@ namespace impl {
         port outputType is single impl::datatypes::DataType
     }
 
+    vertex CommunicatingExecutable refines Executable {
+        prop portDataReadSize is strmap<long>
+        prop portDataWrittenSize is strmap<long>
+    }
+
+    vertex DataBlock {
+        prop maxSize is long
+    }
+
+    vertex TokenizableDataBlock refines DataBlock {
+        prop tokenSize is long
+    }
+
+    edge DataMovement
+
     namespace datatypes {
         vertex DataType
         vertex Integer refines DataType {
@@ -32,6 +47,7 @@ namespace impl {
             port innerTypes is multiple DataType
         }
     }
+
 }
 
 namespace moc {
@@ -155,19 +171,10 @@ namespace execution {
     }
 
     vertex ReactiveTask refines Task {
-        prop reactiveANDGroups is array<int>
-
         port reactiveStimulus is in ReactiveStimulus
     }
 
-    vertex Channel {
-        prop maxElems is int
-        prop elemSizeInBits is long
-    }
-
     edge ContainmentEdge
-
-    edge CommunicationEdge
 
     edge EventEdge
 

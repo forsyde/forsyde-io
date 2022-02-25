@@ -11,6 +11,7 @@ import org.apache.commons.text.WordUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Task;
 import org.gradle.api.tasks.*;
+import org.gradle.internal.impldep.it.unimi.dsi.fastutil.Hash;
 import org.gradle.work.Incremental;
 
 import javax.lang.model.element.Modifier;
@@ -119,30 +120,22 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 .StringMapVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class),
                         metaToJavaType(p)))
                 .apply(prop);
-        /*
-        switch (prop.name) {
-            case INTMAP:
-                return ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(Integer.class),
-                        metaToJavaType(prop.valueType.get()));
-            case STRINGMAP:
-                return ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(String.class),
-                        metaToJavaType(prop.valueType.get()));
-            case ARRAY:
-                return ParameterizedTypeName.get(ClassName.get(ArrayList.class), metaToJavaType(prop.valueType.get()));
-            case BOOLEAN:
-                return ClassName.get(Boolean.class);
-            case INTEGER:
-                return ClassName.get(Integer.class);
-            case FLOAT:
-                return ClassName.get(Float.class);
-            case DOUBLE:
-                return ClassName.get(Double.class);
-            case LONG:
-                return ClassName.get(Long.class);
-            default:
-                return ClassName.get(String.class);
-        }
-        */
+    }
+
+    public TypeName concreteMetaToJavaType(PropertyTypeSpec prop) {
+        return PropertyTypeSpecs.cases()
+                .StringVertexProperty(() -> (TypeName) ClassName.get(String.class))
+                .IntVertexProperty(() -> ClassName.get(Integer.class))
+                .BooleanVertexProperty(() -> ClassName.get(Boolean.class))
+                .FloatVertexProperty(() -> ClassName.get(Float.class))
+                .DoubleVertexProperty(() -> ClassName.get(Double.class))
+                .LongVertexProperty(() -> ClassName.get(Long.class))
+                .ArrayVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(ArrayList.class), metaToJavaType(p)))
+                .IntMapVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(Integer.class),
+                        metaToJavaType(p)))
+                .StringMapVertexProperty((p) -> ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(String.class),
+                        metaToJavaType(p)))
+                .apply(prop);
     }
 
     public MethodSpec generatePropertyGetter(PropertySpec prop) {
@@ -183,7 +176,29 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         final MethodSpec.Builder getRequiredPropGetter = MethodSpec.methodBuilder("getRequiredProperties")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class), propClass))
-                .addStatement("return $T.of()", Map.class);
+                .addCode("return $T.of(\n", Map.class);
+        for (int i = 0; i < vertexTraitSpec.requiredProperties.size(); i++) {
+            final PropertySpec propertySpec = vertexTraitSpec.requiredProperties.get(i);
+            if (propertySpec.defaultValue == null) {
+                PropertyTypeSpecs.cases()
+                        .StringVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($S)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), ""))
+                        .IntVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), 0))
+                        .BooleanVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), false))
+                        .FloatVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), 0.0F))
+                        .DoubleVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), 0.0))
+                        .LongVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), 0L))
+                        .ArrayVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, $T.create(new $T())", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), concreteMetaToJavaType(propertySpec.type)))
+                        .IntMapVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, $T.create(new $T())", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), concreteMetaToJavaType(propertySpec.type)))
+                        .StringMapVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, $T.create(new $T())", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), concreteMetaToJavaType(propertySpec.type)))
+                        .apply(propertySpec.type);
+            } else {
+
+            }
+            if (i < vertexTraitSpec.requiredProperties.size() -1)
+                getRequiredPropGetter.addCode(",\n");
+
+        }
+        getRequiredPropGetter.addStatement(")");
         return getRequiredPropGetter.build();
     }
 

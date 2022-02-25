@@ -6,10 +6,8 @@ import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.typed.viewers.execution.*;
-import forsyde.io.java.typed.viewers.execution.Channel;
 import forsyde.io.java.typed.viewers.execution.Task;
-import forsyde.io.java.typed.viewers.impl.InstrumentedExecutable;
-import forsyde.io.java.typed.viewers.impl.InstrumentedExecutableViewer;
+import forsyde.io.java.typed.viewers.impl.*;
 import forsyde.io.java.typed.viewers.visualization.GreyBox;
 import org.eclipse.app4mc.amalthea.model.*;
 import org.eclipse.app4mc.amalthea.model.PeriodicStimulus;
@@ -24,6 +22,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         if (amalthea.getSwModel() != null) {
             convertActivations(amalthea, forSyDeSystemGraph);
             fromLabelToVertex(amalthea, forSyDeSystemGraph);
+            fromChannelToVertex(amalthea, forSyDeSystemGraph);
             fromRunnableToVertex(amalthea, forSyDeSystemGraph);
             fromTaskToVertex(amalthea, forSyDeSystemGraph);
             fromSetEventsToEdges(amalthea, forSyDeSystemGraph);
@@ -33,38 +32,90 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
 
     default void fromRunnableToVertex(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
         amalthea.getSwModel().getRunnables().forEach(runnable -> {
-            final Vertex runnableVertex = new Vertex(runnable.getName(), VertexTrait.IMPL_EXECUTABLE, VertexTrait.VISUALIZATION_VISUALIZABLE);
+            final Vertex runnableVertex = new Vertex(runnable.getName(), VertexTrait.VISUALIZATION_VISUALIZABLE);
+            final Executable executable = Executable.enforce(runnableVertex);
             forSyDeSystemGraph.addVertex(runnableVertex);
             if (runnable.getRunnableItems() != null) {
                 runnable.getRunnableItems().forEach(item -> {
                     // if it is read or write
                     if (item instanceof LabelAccess) {
+                        final CommunicatingExecutable communicatingExecutable =
+                                CommunicatingExecutable.enforce(runnableVertex);
                         final LabelAccess labelAccess = (LabelAccess) item;
                         // assume that the label creation is completed
-                        equivalent(((LabelAccess) item).getData()).ifPresent(labelVertex -> {
+                        equivalents(((LabelAccess) item).getData()).flatMap(v -> DataBlock.safeCast(v).stream())
+                                .forEach(dataBlock -> {
+                            final Label label = ((LabelAccess) item).getData();
                             runnableVertex.ports.add(((LabelAccess) item).getData().getName());
                             switch (labelAccess.getAccess()) {
                                 case READ:
+                                    final Map<String, Long> reads = communicatingExecutable.getPortDataReadSize();
+                                    reads.put(label.getName(), label.getSize() != null ? label.getSize().getNumberBits() : 0);
                                     forSyDeSystemGraph.connect(
-                                            labelVertex,
-                                            runnableVertex,
+                                            dataBlock,
+                                            executable,
                                             null,
                                             ((LabelAccess) item).getData().getName(),
-                                            EdgeTrait.EXECUTION_COMMUNICATIONEDGE,
+                                            EdgeTrait.IMPL_DATAMOVEMENT,
                                             EdgeTrait.VISUALIZATION_VISUALCONNECTION
                                     );
+                                    communicatingExecutable.setPortDataReadSize(reads);
                                     break;
                                 case WRITE:
+                                    final Map<String, Long> writes = communicatingExecutable.getPortDataWrittenSize();
+                                    writes.put(label.getName(), label.getSize() != null ? label.getSize().getNumberBits() : 0);
                                     forSyDeSystemGraph.connect(
-                                            runnableVertex,
-                                            labelVertex,
+                                            executable,
+                                            dataBlock,
                                             ((LabelAccess) item).getData().getName(),
-                                            EdgeTrait.EXECUTION_COMMUNICATIONEDGE,
+                                            EdgeTrait.IMPL_DATAMOVEMENT,
                                             EdgeTrait.VISUALIZATION_VISUALCONNECTION
                                     );
+                                    communicatingExecutable.setPortDataWrittenSize(writes);
                                     break;
                             }
                         });
+                    }
+                    // if it is recieving from a channel
+                    else if (item instanceof ChannelReceive) {
+                        final ChannelReceive channelReceive = (ChannelReceive) item;
+                        final Channel aChannel = channelReceive.getData();
+                        final CommunicatingExecutable communicatingExecutable =
+                                CommunicatingExecutable.enforce(runnableVertex);
+                        equivalents(channelReceive.getData()).flatMap(v -> TokenizableDataBlock.safeCast(v).stream())
+                                .forEach(tokenizableDataBlock -> {
+                                    final Map<String, Long> reads = communicatingExecutable.getPortDataReadSize();
+                                    reads.put(aChannel.getName(), aChannel.getSize() != null ? aChannel.getSize().getNumberBits() : 0);
+                                    tokenizableDataBlock.setTokenSize(aChannel.getSize().getNumberBits() / aChannel.getMaxElements());
+                                    communicatingExecutable.setPortDataReadSize(reads);
+                                    forSyDeSystemGraph.connect(
+                                            tokenizableDataBlock,
+                                            executable,
+                                            null,
+                                            aChannel.getName(),
+                                            EdgeTrait.IMPL_DATAMOVEMENT,
+                                            EdgeTrait.VISUALIZATION_VISUALCONNECTION
+                                    );
+                                });
+                    } else if (item instanceof ChannelSend) {
+                        final ChannelSend channelSend = (ChannelSend) item;
+                        final Channel aChannel = channelSend.getData();
+                        final CommunicatingExecutable communicatingExecutable =
+                                CommunicatingExecutable.enforce(runnableVertex);
+                        equivalents(channelSend.getData()).flatMap(v -> TokenizableDataBlock.safeCast(v).stream())
+                                .forEach(tokenizableDataBlock -> {
+                                    final Map<String, Long> writes = communicatingExecutable.getPortDataWrittenSize();
+                                    writes.put(aChannel.getName(), aChannel.getSize() != null ? aChannel.getSize().getNumberBits() : 0);
+                                    tokenizableDataBlock.setTokenSize(aChannel.getSize().getNumberBits() / aChannel.getMaxElements());
+                                    communicatingExecutable.setPortDataWrittenSize(writes);
+                                    forSyDeSystemGraph.connect(
+                                            executable,
+                                            tokenizableDataBlock,
+                                            aChannel.getName(),
+                                            EdgeTrait.IMPL_DATAMOVEMENT,
+                                            EdgeTrait.VISUALIZATION_VISUALCONNECTION
+                                    );
+                                });
                     }
                     // if it is an execution through "ticks"
                     else if (item instanceof Ticks) {
@@ -241,17 +292,31 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
 
     default void fromLabelToVertex(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
         amalthea.getSwModel().getLabels().forEach(label -> {
-            final Vertex channelVertex = new Vertex(label.getName(), VertexTrait.EXECUTION_CHANNEL, VertexTrait.VISUALIZATION_VISUALIZABLE);
+            final Vertex channelVertex = new Vertex(label.getName(), VertexTrait.VISUALIZATION_VISUALIZABLE);
+            final DataBlock dataBlock = DataBlock.enforce(channelVertex);
             forSyDeSystemGraph.addVertex(channelVertex);
-            final Channel channel = new ChannelViewer(channelVertex);
-            channel.setMaxElems(1);
             // if the number of bits is not gigantic, it should be OK.
             if (label.getSize() != null) {
-                channel.setElemSizeInBits(label.getSize().getNumberBits());
-            } else {
-                channel.setElemSizeInBits(0L);
+                dataBlock.setMaxSize(label.getSize().getNumberBits());
             }
             addEquivalence(label, channelVertex);
+        });
+    }
+
+    default void fromChannelToVertex(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+        amalthea.getSwModel().getChannels().forEach(aChannel -> {
+            final Vertex channelVertex = new Vertex(aChannel.getName(), VertexTrait.VISUALIZATION_VISUALIZABLE);
+            forSyDeSystemGraph.addVertex(channelVertex);
+            final TokenizableDataBlock tokenizableDataBlock = TokenizableDataBlock.enforce(channelVertex);
+            // if the number of bits is not gigantic, it should be OK.
+            if (aChannel.getSize() != null) {
+                tokenizableDataBlock.setTokenSize(aChannel.getSize().getNumberBits() / aChannel.getMaxElements());
+                tokenizableDataBlock.setMaxSize(aChannel.getSize().getNumberBits());
+            } else {
+                tokenizableDataBlock.setTokenSize(0L);
+                tokenizableDataBlock.setMaxSize(0L);
+            }
+            addEquivalence(aChannel, channelVertex);
         });
     }
 

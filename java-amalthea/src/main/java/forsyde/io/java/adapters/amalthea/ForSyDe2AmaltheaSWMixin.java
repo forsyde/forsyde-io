@@ -4,12 +4,13 @@ import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
-import forsyde.io.java.typed.viewers.execution.Channel;
 import forsyde.io.java.typed.viewers.execution.PeriodicTask;
 import forsyde.io.java.typed.viewers.execution.ReactiveTask;
 import forsyde.io.java.typed.viewers.execution.Task;
+import forsyde.io.java.typed.viewers.impl.DataBlock;
 import forsyde.io.java.typed.viewers.impl.Executable;
 import forsyde.io.java.typed.viewers.impl.InstrumentedExecutable;
+import forsyde.io.java.typed.viewers.impl.TokenizableDataBlock;
 import org.eclipse.app4mc.amalthea.model.Runnable;
 import org.eclipse.app4mc.amalthea.model.*;
 
@@ -27,32 +28,32 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
 
     default void fromVertexToLabel(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
         forSyDeSystemGraph.vertexSet().forEach(vertex -> {
-            Channel.safeCast(vertex).ifPresent(channel -> {
-                // decide if it is a label or a channel
-                if (channel.getMaxElems() == 1) {
+            // decide if it is a label or a channel
+            TokenizableDataBlock.safeCast(vertex).ifPresentOrElse(tokenizableDataBlock -> {
+                final org.eclipse.app4mc.amalthea.model.Channel aChannel = AmaltheaFactory.eINSTANCE.createChannel();
+                aChannel.setName(vertex.getIdentifier());
+
+                final DataSize dataSize = AmaltheaFactory.eINSTANCE.createDataSize();
+                dataSize.setValue(BigInteger.valueOf(tokenizableDataBlock.getTokenSize()));
+                dataSize.setUnit(DataSizeUnit.BIT);
+                aChannel.setSize(dataSize);
+
+                aChannel.setMaxElements((int)(Math.floorDiv(tokenizableDataBlock.getMaxSize(), tokenizableDataBlock.getTokenSize()) + 1));
+                amalthea.getSwModel().getChannels().add(aChannel);
+                addEquivalence(vertex, aChannel);
+            }, () -> {
+                DataBlock.safeCast(vertex).ifPresent(dataBlock -> {
                     final Label label = AmaltheaFactory.eINSTANCE.createLabel();
                     label.setName(vertex.getIdentifier());
 
                     final DataSize dataSize = AmaltheaFactory.eINSTANCE.createDataSize();
-                    dataSize.setValue(BigInteger.valueOf(channel.getElemSizeInBits()));
+                    dataSize.setValue(BigInteger.valueOf(dataBlock.getMaxSize()));
                     dataSize.setUnit(DataSizeUnit.BIT);
                     label.setSize(dataSize);
 
                     amalthea.getSwModel().getLabels().add(label);
                     addEquivalence(vertex, label);
-                } else {
-                    final org.eclipse.app4mc.amalthea.model.Channel aChannel = AmaltheaFactory.eINSTANCE.createChannel();
-                    aChannel.setName(vertex.getIdentifier());
-
-                    final DataSize dataSize = AmaltheaFactory.eINSTANCE.createDataSize();
-                    dataSize.setValue(BigInteger.valueOf(channel.getElemSizeInBits()));
-                    dataSize.setUnit(DataSizeUnit.BIT);
-                    aChannel.setSize(dataSize);
-
-                    aChannel.setMaxElements(channel.getMaxElems());
-                    amalthea.getSwModel().getChannels().add(aChannel);
-                    addEquivalence(vertex, aChannel);
-                }
+                });
             });
         });
     }
@@ -124,7 +125,7 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
     }
 
     default void fromEdgesToReadsAndWrites(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
-        forSyDeSystemGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.EXECUTION_COMMUNICATIONEDGE)).forEach(e -> {
+        forSyDeSystemGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.IMPL_DATAMOVEMENT)).forEach(e -> {
             final Vertex src = forSyDeSystemGraph.getEdgeSource(e);
             final Vertex dst = forSyDeSystemGraph.getEdgeTarget(e);
             // first from label to runnable
