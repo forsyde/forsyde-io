@@ -85,8 +85,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         equivalents(channelReceive.getData()).flatMap(v -> TokenizableDataBlock.safeCast(v).stream())
                                 .forEach(tokenizableDataBlock -> {
                                     final Map<String, Long> reads = communicatingExecutable.getPortDataReadSize();
-                                    reads.put(aChannel.getName(), aChannel.getSize() != null ? aChannel.getSize().getNumberBits() : 0);
-                                    tokenizableDataBlock.setTokenSize(aChannel.getSize().getNumberBits() / aChannel.getMaxElements());
+                                    reads.put(aChannel.getName(), channelReceive.getElements() == 0 ? aChannel.getSize().getNumberBits() : tokenizableDataBlock.getTokenSize() * channelReceive.getElements());
                                     communicatingExecutable.setPortDataReadSize(reads);
                                     forSyDeSystemGraph.connect(
                                             tokenizableDataBlock,
@@ -105,8 +104,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         equivalents(channelSend.getData()).flatMap(v -> TokenizableDataBlock.safeCast(v).stream())
                                 .forEach(tokenizableDataBlock -> {
                                     final Map<String, Long> writes = communicatingExecutable.getPortDataWrittenSize();
-                                    writes.put(aChannel.getName(), aChannel.getSize() != null ? aChannel.getSize().getNumberBits() : 0);
-                                    tokenizableDataBlock.setTokenSize(aChannel.getSize().getNumberBits() / aChannel.getMaxElements());
+                                    writes.put(aChannel.getName(), channelSend.getElements() == 0 ? aChannel.getSize().getNumberBits() : tokenizableDataBlock.getTokenSize() * channelSend.getElements());
                                     communicatingExecutable.setPortDataWrittenSize(writes);
                                     forSyDeSystemGraph.connect(
                                             executable,
@@ -197,6 +195,11 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                                 final Set<ReactiveStimulus> reactiveStimulusSet = reactiveTask.getReactiveStimulusPort(forSyDeSystemGraph);
                                 reactiveStimulusSet.add(simpleReactiveStimulus);
                                 reactiveTask.setReactiveStimulusPort(forSyDeSystemGraph,reactiveStimulusSet);
+                                if (waitEvent.getCounter() != null) {
+                                     final DownsampleReactiveStimulus downsampleReactiveStimulus = DownsampleReactiveStimulus.enforce(precedence);
+                                     downsampleReactiveStimulus.setInitialPredecessorSkips(waitEvent.getCounter().getOffset());
+                                     downsampleReactiveStimulus.setRepetitivePredecessorSkips(waitEvent.getCounter().getPrescaler());
+                                }
                             } else {
                                 final MultiANDReactiveStimulus multiANDReactiveStimulus = MultiANDReactiveStimulus.enforce(precedence);
                                 multiANDReactiveStimulus.setSuccessorPort(forSyDeSystemGraph, reactiveTask);
