@@ -47,6 +47,20 @@
           <eventMask events="DFBompleted?type=OsEvent"/>
         </items>
         <items xsi:type="am:RunnableCall" runnable="CFARFunc?type=Runnable"/>
+        <items xsi:type="am:SetEvent" process="INT?type=Task">
+          <eventMask events="CFARCompleted?type=OsEvent"/>
+        </items>
+      </activityGraph>
+    </tasks>
+    <tasks xmi:id="INT?type=Task" name="INT" stimuli="INTIPeriod?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
+      <activityGraph>
+        <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
+          <eventMask events="CFARCompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:ClearEvent">
+          <eventMask events="CFARCompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:RunnableCall" runnable="INTFunc?type=Runnable"/>
       </activityGraph>
     </tasks>
     <runnables xmi:id="DBFFunc?type=Runnable" name="DBFFunc" callback="false" service="false">
@@ -96,6 +110,17 @@
         </items>
       </activityGraph>
     </runnables>
+    <runnables xmi:id="INTFunc?type=Runnable" name="INTFunc" callback="false" service="false">
+      <size value="0" unit="kB"/>
+      <activityGraph>
+        <items xsi:type="am:ChannelReceive" data="DFBToCFAR?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="true" elementIndex="0" lowerBound="0"/>
+        <items xsi:type="am:ExecutionNeed">
+          <needs key="FloatOp">
+            <value xsi:type="am:DiscreteValueConstant" value="2513"/>
+          </needs>
+        </items>
+      </activityGraph>
+    </runnables>
     <channels xmi:id="PCtoDFB?type=Channel" name="PCtoDFB" defaultElements="0" maxElements="1048576">
       <size value="134217728" unit="B"/>
     </channels>
@@ -108,9 +133,13 @@
     <channels xmi:id="DFBToCFAR?type=Channel" name="DFBToCFAR" defaultElements="0" maxElements="1048576">
       <size value="67108864" unit="B"/>
     </channels>
+    <channels xmi:id="CFARToINT?type=Channel" name="CFARToINT" defaultElements="0" maxElements="1048576">
+      <size value="134217728" unit="B"/>
+    </channels>
     <events xmi:id="DBFCompleted?type=OsEvent" name="DBFCompleted" communicationOverheadInBit="0"/>
     <events xmi:id="PCCompleted?type=OsEvent" name="PCCompleted" communicationOverheadInBit="0"/>
     <events xmi:id="DFBompleted?type=OsEvent" name="DFBompleted" communicationOverheadInBit="0"/>
+    <events xmi:id="CFARCompleted?type=OsEvent" name="CFARCompleted" communicationOverheadInBit="0"/>
   </swModel>
   <hwModel>
     <definitions xsi:type="am:ProcessingUnitDefinition" xmi:id="CPMCoreDef?type=ProcessingUnitDefinition" name="CPMCoreDef" puType="CPU" features="FloatOp/IPC_1?type=HwFeature NonFloatOp/IPC_1?type=HwFeature"/>
