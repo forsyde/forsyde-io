@@ -5,6 +5,7 @@ import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.typed.viewers.execution.PeriodicTask;
+import forsyde.io.java.typed.viewers.execution.ReactiveStimulus;
 import forsyde.io.java.typed.viewers.execution.ReactiveTask;
 import forsyde.io.java.typed.viewers.execution.Task;
 import forsyde.io.java.typed.viewers.impl.DataBlock;
@@ -20,13 +21,15 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
 
     default void fromForSyDeToSW(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
         amalthea.setSwModel(AmaltheaFactory.eINSTANCE.createSWModel());
-        fromVertexToLabel(forSyDeSystemGraph, amalthea);
+        fromVertexToLabelAndChannels(forSyDeSystemGraph, amalthea);
+        fromVertexToOSEvents(forSyDeSystemGraph, amalthea);
         fromVertexToRunnables(forSyDeSystemGraph, amalthea);
         fromVertexToTasks(forSyDeSystemGraph, amalthea);
         fromEdgesToReadsAndWrites(forSyDeSystemGraph, amalthea);
+        fromEdgesToOSWaitsAndSignals(forSyDeSystemGraph, amalthea);
     }
 
-    default void fromVertexToLabel(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
+    default void fromVertexToLabelAndChannels(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
         forSyDeSystemGraph.vertexSet().forEach(vertex -> {
             // decide if it is a label or a channel
             TokenizableDataBlock.safeCast(vertex).ifPresentOrElse(tokenizableDataBlock -> {
@@ -54,6 +57,17 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
                     amalthea.getSwModel().getLabels().add(label);
                     addEquivalence(vertex, label);
                 });
+            });
+        });
+    }
+
+    default void fromVertexToOSEvents(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
+        forSyDeSystemGraph.vertexSet().forEach(vertex -> {
+            ReactiveStimulus.safeCast(vertex).ifPresent(reactiveStimulus -> {
+                final OsEvent osEvent = AmaltheaFactory.eINSTANCE.createOsEvent();
+                osEvent.setName(reactiveStimulus.getIdentifier());
+                addEquivalence(vertex, osEvent);
+                amalthea.getSwModel().getEvents().add(osEvent);
             });
         });
     }
@@ -146,6 +160,62 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
                     labelAccess.setData(label);
                     // always add write to the end
                     runnable.getRunnableItems().add(labelAccess);
+                });
+            });
+            // TODO: fix when the runnables consume and take more than 1 element
+            // same but for channels
+            equivalents(src).filter(v -> v instanceof Channel).map(l -> (Channel) l).forEach(channel -> {
+                equivalents(dst).filter(v -> v instanceof Runnable).map(r -> (Runnable) r).forEach(runnable -> {
+                    final ChannelReceive channelReceive = AmaltheaFactory.eINSTANCE.createChannelReceive();
+                    channelReceive.setData(channel);
+                    channelReceive.setElements(1);
+                    // always add read to the beginning
+                    runnable.getRunnableItems().add(0, channelReceive);
+                });
+            });
+            // now from runnable to label
+            equivalents(src).filter(v -> v instanceof Runnable).map(l -> (Runnable) l).forEach(runnable -> {
+                equivalents(dst).filter(v -> v instanceof Channel).map(r -> (Channel) r).forEach(channel -> {
+                    final ChannelSend channelSend = AmaltheaFactory.eINSTANCE.createChannelSend();
+                    channelSend.setData(channel);
+                    channelSend.setElements(1);
+                    // always add write to the end
+                    runnable.getRunnableItems().add(channelSend);
+                });
+            });
+        });
+    }
+
+    default void fromEdgesToOSWaitsAndSignals(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
+        forSyDeSystemGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.EXECUTION_EVENTEDGE)).forEach(e -> {
+            final Vertex src = forSyDeSystemGraph.getEdgeSource(e);
+            final Vertex dst = forSyDeSystemGraph.getEdgeTarget(e);
+            // TODO: fix the AND semantics of incoming events
+            // first from event to runnable
+            equivalents(src).filter(v -> v instanceof OsEvent).map(l -> (OsEvent) l).forEach(osEvent -> {
+                equivalents(dst).filter(v -> v instanceof org.eclipse.app4mc.amalthea.model.Task).map(r -> (org.eclipse.app4mc.amalthea.model.Task) r).forEach(task -> {
+                    final WaitEvent waitEvent = AmaltheaFactory.eINSTANCE.createWaitEvent();
+                    final ClearEvent clearEvent = AmaltheaFactory.eINSTANCE.createClearEvent();
+                    final EventMask eventMask = AmaltheaFactory.eINSTANCE.createEventMask();
+                    eventMask.getEvents().add(osEvent);
+                    waitEvent.setEventMask(eventMask);
+                    waitEvent.setMaskType(WaitEventType.AND);
+                    waitEvent.setWaitingBehaviour(WaitingBehaviour.PASSIVE);
+                    clearEvent.setEventMask(eventMask);
+                    // always add read to the beginning
+                    task.getActivityGraph().getItems().add(0, waitEvent);
+                    task.getActivityGraph().getItems().add(1, clearEvent);
+                });
+            });
+            // now from runnable to event
+            equivalents(src).filter(v -> v instanceof org.eclipse.app4mc.amalthea.model.Task).map(l -> (org.eclipse.app4mc.amalthea.model.Task) l).forEach(task -> {
+                equivalents(dst).filter(v -> v instanceof OsEvent).map(r -> (OsEvent) r).forEach(osEvent -> {
+                    final SetEvent setEvent = AmaltheaFactory.eINSTANCE.createSetEvent();
+                    final EventMask eventMask = AmaltheaFactory.eINSTANCE.createEventMask();
+                    eventMask.getEvents().add(osEvent);
+                    setEvent.setEventMask(eventMask);
+                    // always add read to the beginning
+                    task.getActivityGraph().getItems().add(setEvent);
                 });
             });
         });

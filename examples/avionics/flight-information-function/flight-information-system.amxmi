@@ -21,6 +21,9 @@
         <items xsi:type="am:SetEvent" process="DFB?type=Task">
           <eventMask events="PCCompleted?type=OsEvent"/>
         </items>
+        <items xsi:type="am:SetEvent" process="DFBDisplaced?type=Task">
+          <eventMask events="PCCompleted?type=OsEvent"/>
+        </items>
       </activityGraph>
     </tasks>
     <tasks xmi:id="DFB?type=Task" name="DFB" stimuli="INTIPeriod?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
@@ -55,7 +58,7 @@
     <tasks xmi:id="INT?type=Task" name="INT" stimuli="INTIPeriod?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
-          <eventMask events="CFARCompleted?type=OsEvent"/>
+          <eventMask events="CFARCompleted?type=OsEvent CFARDisplacedCompleted?type=OsEvent"/>
         </items>
         <items xsi:type="am:ClearEvent">
           <eventMask events="CFARCompleted?type=OsEvent"/>
@@ -63,10 +66,39 @@
         <items xsi:type="am:RunnableCall" runnable="INTFunc?type=Runnable"/>
       </activityGraph>
     </tasks>
+    <tasks xmi:id="DFBDisplaced?type=Task" name="DFBDisplaced" stimuli="INTIPeriod?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
+      <activityGraph>
+        <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
+          <eventMask events="PCCompleted?type=OsEvent"/>
+          <counter prescaler="1048576" offset="524288"/>
+        </items>
+        <items xsi:type="am:ClearEvent">
+          <eventMask events="PCCompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:RunnableCall" runnable="DFBDisplacedFunc?type=Runnable"/>
+        <items xsi:type="am:SetEvent" process="CFARDisplaced?type=Task">
+          <eventMask events="DFBompleted?type=OsEvent"/>
+        </items>
+      </activityGraph>
+    </tasks>
+    <tasks xmi:id="CFARDisplaced?type=Task" name="CFARDisplaced" stimuli="INTIPeriod?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
+      <activityGraph>
+        <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
+          <eventMask events="DFBompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:ClearEvent">
+          <eventMask events="DFBompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:RunnableCall" runnable="CFARDisplacedFunc?type=Runnable"/>
+        <items xsi:type="am:SetEvent" process="INT?type=Task">
+          <eventMask events="CFARDisplacedCompleted?type=OsEvent"/>
+        </items>
+      </activityGraph>
+    </tasks>
     <runnables xmi:id="DBFFunc?type=Runnable" name="DBFFunc" callback="false" service="false">
       <size value="0" unit="kB"/>
       <activityGraph>
-        <items xsi:type="am:ChannelReceive" data="SnapshotToDBF?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="false" elementIndex="0" lowerBound="0"/>
+        <items xsi:type="am:ChannelReceive" data="EntryToDBF?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="false" elementIndex="0" lowerBound="0"/>
         <items xsi:type="am:ExecutionNeed">
           <needs key="FloatOp">
             <value xsi:type="am:DiscreteValueConstant" value="7"/>
@@ -108,9 +140,34 @@
             <value xsi:type="am:DiscreteValueConstant" value="2513"/>
           </needs>
         </items>
+        <items xsi:type="am:ChannelSend" data="CFARToINT?type=Channel" elements="1"/>
       </activityGraph>
     </runnables>
     <runnables xmi:id="INTFunc?type=Runnable" name="INTFunc" callback="false" service="false">
+      <size value="0" unit="kB"/>
+      <activityGraph>
+        <items xsi:type="am:ChannelReceive" data="CFARToINT?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="true" elementIndex="0" lowerBound="0"/>
+        <items xsi:type="am:ExecutionNeed">
+          <needs key="FloatOp">
+            <value xsi:type="am:DiscreteValueConstant" value="2513"/>
+          </needs>
+        </items>
+        <items xsi:type="am:ChannelSend" data="INTToExit?type=Channel" elements="1"/>
+      </activityGraph>
+    </runnables>
+    <runnables xmi:id="DFBDisplacedFunc?type=Runnable" name="DFBDisplacedFunc" callback="false" service="false">
+      <size value="0" unit="kB"/>
+      <activityGraph>
+        <items xsi:type="am:ChannelReceive" data="PCtoDFB?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="true" elementIndex="0" lowerBound="0"/>
+        <items xsi:type="am:ExecutionNeed">
+          <needs key="FloatOp">
+            <value xsi:type="am:DiscreteValueConstant" value="15099"/>
+          </needs>
+        </items>
+        <items xsi:type="am:ChannelSend" data="DFBToCFAR?type=Channel" elements="1"/>
+      </activityGraph>
+    </runnables>
+    <runnables xmi:id="CFARDisplacedFunc?type=Runnable" name="CFARDisplacedFunc" callback="false" service="false">
       <size value="0" unit="kB"/>
       <activityGraph>
         <items xsi:type="am:ChannelReceive" data="DFBToCFAR?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="true" elementIndex="0" lowerBound="0"/>
@@ -119,6 +176,7 @@
             <value xsi:type="am:DiscreteValueConstant" value="2513"/>
           </needs>
         </items>
+        <items xsi:type="am:ChannelSend" data="CFARToINT?type=Channel" elements="1"/>
       </activityGraph>
     </runnables>
     <channels xmi:id="PCtoDFB?type=Channel" name="PCtoDFB" defaultElements="0" maxElements="1048576">
@@ -127,7 +185,7 @@
     <channels xmi:id="DBFToPC?type=Channel" name="DBFToPC" defaultElements="0" maxElements="1">
       <size value="512" unit="B"/>
     </channels>
-    <channels xmi:id="SnapshotToDBF?type=Channel" name="SnapshotToDBF" defaultElements="0" maxElements="1">
+    <channels xmi:id="EntryToDBF?type=Channel" name="EntryToDBF" defaultElements="0" maxElements="1">
       <size value="512" unit="B"/>
     </channels>
     <channels xmi:id="DFBToCFAR?type=Channel" name="DFBToCFAR" defaultElements="0" maxElements="1048576">
@@ -136,10 +194,14 @@
     <channels xmi:id="CFARToINT?type=Channel" name="CFARToINT" defaultElements="0" maxElements="1048576">
       <size value="134217728" unit="B"/>
     </channels>
+    <channels xmi:id="INTToExit?type=Channel" name="INTToExit" defaultElements="0" maxElements="1048576">
+      <size value="134217728" unit="B"/>
+    </channels>
     <events xmi:id="DBFCompleted?type=OsEvent" name="DBFCompleted" communicationOverheadInBit="0"/>
     <events xmi:id="PCCompleted?type=OsEvent" name="PCCompleted" communicationOverheadInBit="0"/>
     <events xmi:id="DFBompleted?type=OsEvent" name="DFBompleted" communicationOverheadInBit="0"/>
     <events xmi:id="CFARCompleted?type=OsEvent" name="CFARCompleted" communicationOverheadInBit="0"/>
+    <events xmi:id="CFARDisplacedCompleted?type=OsEvent" name="CFARDisplacedCompleted" communicationOverheadInBit="0"/>
   </swModel>
   <hwModel>
     <definitions xsi:type="am:ProcessingUnitDefinition" xmi:id="CPMCoreDef?type=ProcessingUnitDefinition" name="CPMCoreDef" puType="CPU" features="FloatOp/IPC_1?type=HwFeature NonFloatOp/IPC_1?type=HwFeature"/>
@@ -229,10 +291,10 @@
       <taskSchedulers xmi:id="CMP1_Core2_FP_Runtime_Scheduler?type=TaskScheduler" name="CMP1_Core2_FP_Runtime_Scheduler" definition="FixedPriorityPreemptive?type=SchedulerDefinition"/>
     </operatingSystems>
     <operatingSystems name="CPM2_Core3_Runtime">
-      <taskSchedulers xmi:id="CMP2_Core3_CE_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core3_CE_Runtime_Scheduler" definition="StaticCyclic?type=SchedulerDefinition"/>
+      <taskSchedulers xmi:id="CMP2_Core3_CE_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core3_CE_Runtime_Scheduler" definition="FixedPriorityPreemptive?type=SchedulerDefinition"/>
     </operatingSystems>
     <operatingSystems name="CPM2_Core4_Runtime">
-      <taskSchedulers xmi:id="CMP2_Core4_CE_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core4_CE_Runtime_Scheduler" definition="StaticCyclic?type=SchedulerDefinition"/>
+      <taskSchedulers xmi:id="CMP2_Core4_CE_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core4_CE_Runtime_Scheduler" definition="FixedPriorityPreemptive?type=SchedulerDefinition"/>
     </operatingSystems>
     <schedulerDefinitions xmi:id="StaticCyclic?type=SchedulerDefinition" name="StaticCyclic" processParameters="cycleOrder?type=SchedulingParameterDefinition" requiresParentScheduler="false" passesParametersUpwards="false" hasExactlyOneChild="false"/>
     <schedulerDefinitions xmi:id="FixedPriorityPreemptive?type=SchedulerDefinition" name="FixedPriorityPreemptive" description="Fixed Priority Preemptive Scheduling (e.g. AUTOSAR),&#xA;same as OSEK but without task groups.&#xA;&#xA;Algorithm parameters&#xA; -&#xA;&#xA;Process parameters&#xA; - priority [1] Integer&#xA;      The priority of the process (a higher value means a higher priority).&#xA;&#xA;Options:&#xA; -&#xA;&#xA;Reference:&#xA; - TODO" processParameters="priority?type=SchedulingParameterDefinition" requiresParentScheduler="false" passesParametersUpwards="false" hasExactlyOneChild="false"/>
@@ -252,6 +314,7 @@
     <schedulerAllocation scheduler="CMP1_Core2_FP_Runtime_Scheduler?type=TaskScheduler" responsibility="core2?type=ProcessingUnit" executingPU="core2?type=ProcessingUnit"/>
     <schedulerAllocation scheduler="CMP2_Core3_CE_Runtime_Scheduler?type=TaskScheduler" responsibility="core3?type=ProcessingUnit" executingPU="core3?type=ProcessingUnit"/>
     <schedulerAllocation scheduler="CMP2_Core4_CE_Runtime_Scheduler?type=TaskScheduler" responsibility="core4?type=ProcessingUnit" executingPU="core4?type=ProcessingUnit"/>
-    <memoryMapping abstractElement="SnapshotToDBF?type=Channel" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
+    <memoryMapping abstractElement="EntryToDBF?type=Channel" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
+    <memoryMapping abstractElement="INTToExit?type=Channel" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
   </mappingModel>
 </am:Amalthea>

@@ -82,6 +82,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final Channel aChannel = channelReceive.getData();
                         final CommunicatingExecutable communicatingExecutable =
                                 CommunicatingExecutable.enforce(runnableVertex);
+                        runnableVertex.ports.add(aChannel.getName());
                         equivalents(channelReceive.getData()).flatMap(v -> TokenizableDataBlock.safeCast(v).stream())
                                 .forEach(tokenizableDataBlock -> {
                                     final Map<String, Long> reads = communicatingExecutable.getPortDataReadSize();
@@ -101,6 +102,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final Channel aChannel = channelSend.getData();
                         final CommunicatingExecutable communicatingExecutable =
                                 CommunicatingExecutable.enforce(runnableVertex);
+                        runnableVertex.ports.add(aChannel.getName());
                         equivalents(channelSend.getData()).flatMap(v -> TokenizableDataBlock.safeCast(v).stream())
                                 .forEach(tokenizableDataBlock -> {
                                     final Map<String, Long> writes = communicatingExecutable.getPortDataWrittenSize();

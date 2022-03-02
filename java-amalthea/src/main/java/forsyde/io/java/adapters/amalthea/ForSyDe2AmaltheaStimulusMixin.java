@@ -38,13 +38,13 @@ public interface ForSyDe2AmaltheaStimulusMixin extends EquivalenceModel2ModelMix
                 addEquivalence(vertex, periodicStimulus);
             });
             // check for precendeces (inter task stimulus)
-            ReactiveStimulus.safeCast(vertex).ifPresent(reactiveStimulus -> {
-                final InterProcessStimulus interProcessStimulus = AmaltheaFactory.eINSTANCE.createInterProcessStimulus();
-                interProcessStimulus.setName(reactiveStimulus.getIdentifier());
-
-                stimuliModel.getStimuli().add(interProcessStimulus);
-                addEquivalence(vertex, interProcessStimulus);
-            });
+//            ReactiveStimulus.safeCast(vertex).ifPresent(reactiveStimulus -> {
+//                final InterProcessStimulus interProcessStimulus = AmaltheaFactory.eINSTANCE.createInterProcessStimulus();
+//                interProcessStimulus.setName(reactiveStimulus.getIdentifier());
+//
+//                stimuliModel.getStimuli().add(interProcessStimulus);
+//                addEquivalence(vertex, interProcessStimulus);
+//            });
         });
 //        amalthea.getStimuliModel().getStimuli().forEach((stimulus) -> {
 //            if (stimulus instanceof PeriodicStimulus) {

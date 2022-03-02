@@ -4,17 +4,15 @@
     <tasks xmi:id="T1?type=Task" name="T1" stimuli="Timer60Hz?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:RunnableCall" runnable="R1?type=Runnable"/>
-        <items xsi:type="am:SetEvent">
+        <items xsi:type="am:SetEvent" process="T2?type=Task">
           <eventMask events="T1Completed?type=OsEvent"/>
-          <process xsi:type="am:Task" href="amlt:/#T2?type=Task"/>
         </items>
-        <items xsi:type="am:SetEvent">
+        <items xsi:type="am:SetEvent" process="T3?type=Task">
           <eventMask events="T1Completed?type=OsEvent"/>
-          <process xsi:type="am:Task" href="amlt:/#T3?type=Task"/>
         </items>
       </activityGraph>
     </tasks>
-    <tasks xmi:id="T2?type=Task" name="T2" preemption="preemptive" multipleTaskActivationLimit="0">
+    <tasks xmi:id="T2?type=Task" name="T2" stimuli="Timer60Hz?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
           <eventMask events="T1Completed?type=OsEvent"/>
@@ -23,14 +21,12 @@
           <eventMask events="T1Completed?type=OsEvent"/>
         </items>
         <items xsi:type="am:RunnableCall" runnable="R2?type=Runnable"/>
-        <items xsi:type="am:SetEvent">
+        <items xsi:type="am:SetEvent" process="T5?type=Task">
           <eventMask events="T2Completed?type=OsEvent"/>
-          <process xsi:type="am:Task" href="amlt:/#T5?type=Task"/>
         </items>
       </activityGraph>
-      <stimuli xsi:type="am:PeriodicStimulus" href="amlt:/#Timer60Hz?type=PeriodicStimulus"/>
     </tasks>
-    <tasks xmi:id="T3?type=Task" name="T3" preemption="preemptive" multipleTaskActivationLimit="0">
+    <tasks xmi:id="T3?type=Task" name="T3" stimuli="Timer60Hz?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
           <eventMask events="T1Completed?type=OsEvent"/>
@@ -39,14 +35,12 @@
           <eventMask events="T1Completed?type=OsEvent"/>
         </items>
         <items xsi:type="am:RunnableCall" runnable="R3?type=Runnable"/>
-        <items xsi:type="am:SetEvent">
+        <items xsi:type="am:SetEvent" process="T4?type=Task">
           <eventMask events="T3Completed?type=OsEvent"/>
-          <process xsi:type="am:Task" href="amlt:/#T4?type=Task"/>
         </items>
       </activityGraph>
-      <stimuli xsi:type="am:PeriodicStimulus" href="amlt:/#Timer60Hz?type=PeriodicStimulus"/>
     </tasks>
-    <tasks xmi:id="T4?type=Task" name="T4" preemption="preemptive" multipleTaskActivationLimit="0">
+    <tasks xmi:id="T4?type=Task" name="T4" stimuli="Timer60Hz?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
           <eventMask events="T3Completed?type=OsEvent"/>
@@ -55,14 +49,12 @@
           <eventMask events="T3Completed?type=OsEvent"/>
         </items>
         <items xsi:type="am:RunnableCall" runnable="R4?type=Runnable"/>
-        <items xsi:type="am:SetEvent">
+        <items xsi:type="am:SetEvent" process="T5?type=Task">
           <eventMask events="T4Completed?type=OsEvent"/>
-          <process xsi:type="am:Task" href="amlt:/#T5?type=Task"/>
         </items>
       </activityGraph>
-      <stimuli xsi:type="am:PeriodicStimulus" href="amlt:/#Timer60Hz?type=PeriodicStimulus"/>
     </tasks>
-    <tasks xmi:id="T5?type=Task" name="T5" preemption="preemptive" multipleTaskActivationLimit="0">
+    <tasks xmi:id="T5?type=Task" name="T5" stimuli="Timer60Hz?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
         <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
           <eventMask events="T2Completed?type=OsEvent T4Completed?type=OsEvent"/>
@@ -72,7 +64,6 @@
         </items>
         <items xsi:type="am:RunnableCall" runnable="R5?type=Runnable"/>
       </activityGraph>
-      <stimuli xsi:type="am:PeriodicStimulus" href="amlt:/#Timer60Hz?type=PeriodicStimulus"/>
     </tasks>
     <runnables xmi:id="R1?type=Runnable" name="R1" callback="false" service="false">
       <size value="500" unit="B"/>
@@ -197,10 +188,10 @@
       <dataRate value="500" unit="MBPerSecond"/>
     </definitions>
     <featureCategories xmi:id="FloatOp?type=HwFeatureCategory" name="FloatOp" featureType="performance">
-      <features xmi:id="FloatOp/IPC_1?type=HwFeature" name="IPC_1" value="1.0"/>
+      <features xmi:id="FloatOp/IPC_1?type=HwFeature" name="IPC_1" value="0.08"/>
     </featureCategories>
     <featureCategories xmi:id="NonFloatOp?type=HwFeatureCategory" name="NonFloatOp" featureType="performance">
-      <features xmi:id="NonFloatOp/IPC_1?type=HwFeature" name="IPC_1" value="1.0"/>
+      <features xmi:id="NonFloatOp/IPC_1?type=HwFeature" name="IPC_1" value="0.8"/>
     </featureCategories>
     <structures xmi:id="Platform?type=HwStructure" name="Platform" structureType="System">
       <structures xmi:id="CPM1?type=HwStructure" name="CPM1" structureType="SoC">
@@ -259,7 +250,7 @@
       <defaultValue value="1.0" unit="mV"/>
     </domains>
     <domains xsi:type="am:FrequencyDomain" xmi:id="CPMFreq?type=FrequencyDomain" name="CPMFreq" clockGating="false">
-      <defaultValue value="600.0" unit="MHz"/>
+      <defaultValue value="1.2" unit="GHz"/>
     </domains>
   </hwModel>
   <osModel>
@@ -270,10 +261,10 @@
       <taskSchedulers xmi:id="CMP1_Core2_FP_Runtime_Scheduler?type=TaskScheduler" name="CMP1_Core2_FP_Runtime_Scheduler" definition="FixedPriorityPreemptive?type=SchedulerDefinition"/>
     </operatingSystems>
     <operatingSystems name="CPM2_Core3_Runtime">
-      <taskSchedulers xmi:id="CMP2_Core3_CE_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core3_CE_Runtime_Scheduler" definition="StaticCyclic?type=SchedulerDefinition"/>
+      <taskSchedulers xmi:id="CMP2_Core3_CE_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core3_CE_Runtime_Scheduler" definition="FixedPriorityPreemptive?type=SchedulerDefinition"/>
     </operatingSystems>
     <operatingSystems name="CPM2_Core4_Runtime">
-      <taskSchedulers xmi:id="CMP2_Core4_CE_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core4_CE_Runtime_Scheduler" definition="StaticCyclic?type=SchedulerDefinition"/>
+      <taskSchedulers xmi:id="CMP2_Core4_CE_Runtime_Scheduler?type=TaskScheduler" name="CMP2_Core4_CE_Runtime_Scheduler" definition="FixedPriorityPreemptive?type=SchedulerDefinition"/>
     </operatingSystems>
     <schedulerDefinitions xmi:id="StaticCyclic?type=SchedulerDefinition" name="StaticCyclic" processParameters="cycleOrder?type=SchedulingParameterDefinition" requiresParentScheduler="false" passesParametersUpwards="false" hasExactlyOneChild="false"/>
     <schedulerDefinitions xmi:id="FixedPriorityPreemptive?type=SchedulerDefinition" name="FixedPriorityPreemptive" description="Fixed Priority Preemptive Scheduling (e.g. AUTOSAR),&#xA;same as OSEK but without task groups.&#xA;&#xA;Algorithm parameters&#xA; -&#xA;&#xA;Process parameters&#xA; - priority [1] Integer&#xA;      The priority of the process (a higher value means a higher priority).&#xA;&#xA;Options:&#xA; -&#xA;&#xA;Reference:&#xA; - TODO" processParameters="priority?type=SchedulingParameterDefinition" requiresParentScheduler="false" passesParametersUpwards="false" hasExactlyOneChild="false"/>
@@ -286,35 +277,30 @@
     </stimuli>
   </stimuliModel>
   <constraintsModel>
-    <requirements xsi:type="am:ProcessRequirement" name="T1Deadline">
+    <requirements xsi:type="am:ProcessRequirement" name="T1Deadline" process="T1?type=Task">
       <limit xsi:type="am:TimeRequirementLimit" limitType="UpperLimit" metric="ResponseTime">
         <limitValue value="50" unit="ms"/>
       </limit>
-      <process xsi:type="am:Task" href="amlt:/#T1?type=Task"/>
     </requirements>
-    <requirements xsi:type="am:ProcessRequirement" name="T2Deadline">
+    <requirements xsi:type="am:ProcessRequirement" name="T2Deadline" process="T2?type=Task">
       <limit xsi:type="am:TimeRequirementLimit" limitType="UpperLimit" metric="ResponseTime">
         <limitValue value="50" unit="ms"/>
       </limit>
-      <process xsi:type="am:Task" href="amlt:/#T2?type=Task"/>
     </requirements>
-    <requirements xsi:type="am:ProcessRequirement" name="T3Deadline">
+    <requirements xsi:type="am:ProcessRequirement" name="T3Deadline" process="T3?type=Task">
       <limit xsi:type="am:TimeRequirementLimit" limitType="UpperLimit" metric="ResponseTime">
         <limitValue value="50" unit="ms"/>
       </limit>
-      <process xsi:type="am:Task" href="amlt:/#T3?type=Task"/>
     </requirements>
-    <requirements xsi:type="am:ProcessRequirement" name="T4Deadline">
+    <requirements xsi:type="am:ProcessRequirement" name="T4Deadline" process="T4?type=Task">
       <limit xsi:type="am:TimeRequirementLimit" limitType="UpperLimit" metric="ResponseTime">
         <limitValue value="50" unit="ms"/>
       </limit>
-      <process xsi:type="am:Task" href="amlt:/#T4?type=Task"/>
     </requirements>
-    <requirements xsi:type="am:ProcessRequirement" name="T5Deadline">
+    <requirements xsi:type="am:ProcessRequirement" name="T5Deadline" process="T5?type=Task">
       <limit xsi:type="am:TimeRequirementLimit" limitType="UpperLimit" metric="ResponseTime">
         <limitValue value="50" unit="ms"/>
       </limit>
-      <process xsi:type="am:Task" href="amlt:/#T5?type=Task"/>
     </requirements>
   </constraintsModel>
   <mappingModel addressMappingType="offset">
