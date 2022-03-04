@@ -101,7 +101,7 @@
         <items xsi:type="am:ChannelReceive" data="EntryToDBF?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="false" elementIndex="0" lowerBound="0"/>
         <items xsi:type="am:ExecutionNeed">
           <needs key="FloatOp">
-            <value xsi:type="am:DiscreteValueConstant" value="7"/>
+            <value xsi:type="am:DiscreteValueConstant" value="6"/>
           </needs>
         </items>
         <items xsi:type="am:ChannelSend" data="DBFToPC?type=Channel" elements="1"/>
@@ -113,7 +113,7 @@
         <items xsi:type="am:ChannelReceive" data="DBFToPC?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="true" elementIndex="0" lowerBound="0"/>
         <items xsi:type="am:ExecutionNeed">
           <needs key="FloatOp">
-            <value xsi:type="am:DiscreteValueConstant" value="7"/>
+            <value xsi:type="am:DiscreteValueConstant" value="6"/>
           </needs>
         </items>
         <items xsi:type="am:ChannelSend" data="PCtoDFB?type=Channel" elements="1"/>

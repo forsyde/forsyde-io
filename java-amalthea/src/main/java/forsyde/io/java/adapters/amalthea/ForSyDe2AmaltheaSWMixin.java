@@ -4,29 +4,28 @@ import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
-import forsyde.io.java.typed.viewers.execution.PeriodicTask;
-import forsyde.io.java.typed.viewers.execution.ReactiveStimulus;
-import forsyde.io.java.typed.viewers.execution.ReactiveTask;
+import forsyde.io.java.typed.viewers.execution.*;
 import forsyde.io.java.typed.viewers.execution.Task;
-import forsyde.io.java.typed.viewers.impl.DataBlock;
-import forsyde.io.java.typed.viewers.impl.Executable;
-import forsyde.io.java.typed.viewers.impl.InstrumentedExecutable;
-import forsyde.io.java.typed.viewers.impl.TokenizableDataBlock;
+import forsyde.io.java.typed.viewers.impl.*;
+import org.eclipse.app4mc.amalthea.model.PeriodicStimulus;
+import org.eclipse.app4mc.amalthea.model.Process;
 import org.eclipse.app4mc.amalthea.model.Runnable;
 import org.eclipse.app4mc.amalthea.model.*;
 
 import java.math.BigInteger;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Vertex, INamed> {
 
     default void fromForSyDeToSW(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
         amalthea.setSwModel(AmaltheaFactory.eINSTANCE.createSWModel());
         fromVertexToLabelAndChannels(forSyDeSystemGraph, amalthea);
-        fromVertexToOSEvents(forSyDeSystemGraph, amalthea);
         fromVertexToRunnables(forSyDeSystemGraph, amalthea);
         fromVertexToTasks(forSyDeSystemGraph, amalthea);
         fromEdgesToReadsAndWrites(forSyDeSystemGraph, amalthea);
-        fromEdgesToOSWaitsAndSignals(forSyDeSystemGraph, amalthea);
+        fromVertexAndEdgesToOsEvents(forSyDeSystemGraph, amalthea);
     }
 
     default void fromVertexToLabelAndChannels(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
@@ -61,13 +60,68 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
         });
     }
 
-    default void fromVertexToOSEvents(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
+    default void fromVertexAndEdgesToOsEvents(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
         forSyDeSystemGraph.vertexSet().forEach(vertex -> {
             ReactiveStimulus.safeCast(vertex).ifPresent(reactiveStimulus -> {
-                final OsEvent osEvent = AmaltheaFactory.eINSTANCE.createOsEvent();
-                osEvent.setName(reactiveStimulus.getIdentifier());
-                addEquivalence(vertex, osEvent);
-                amalthea.getSwModel().getEvents().add(osEvent);
+                reactiveStimulus.getSuccessorPort(forSyDeSystemGraph).ifPresent(sucessor -> {
+                    final ClearEvent clearEvent = AmaltheaFactory.eINSTANCE.createClearEvent();
+                    final WaitEvent waitEvent = AmaltheaFactory.eINSTANCE.createWaitEvent();
+                    final EventMask eventMaskForClear = AmaltheaFactory.eINSTANCE.createEventMask();
+                    final EventMask eventMaskForWait = AmaltheaFactory.eINSTANCE.createEventMask();
+                    final List<OsEvent> events = MultiANDReactiveStimulus.conforms(reactiveStimulus) ?
+                            MultiANDReactiveStimulus.safeCast(reactiveStimulus).stream().flatMap(multiANDReactiveStimulus ->
+                                multiANDReactiveStimulus.getPredecessorsPort(forSyDeSystemGraph).stream().map(predecessor -> {
+                                    final OsEvent osEvent = AmaltheaFactory.eINSTANCE.createOsEvent();
+                                    osEvent.setName(sucessor.getIdentifier() + "_Wait_" + predecessor.getIdentifier());
+                                    addEquivalence(vertex, osEvent);
+                                    amalthea.getSwModel().getEvents().add(osEvent);
+
+                                    // put the predecessor code as we create them to avoid dealing with names later
+                                    equivalents(predecessor.getViewedVertex()).filter(v -> v instanceof org.eclipse.app4mc.amalthea.model.Task).map(r -> (org.eclipse.app4mc.amalthea.model.Task) r).forEach(task -> {
+                                        final SetEvent setEvent = AmaltheaFactory.eINSTANCE.createSetEvent();
+                                        final EventMask eventMask = AmaltheaFactory.eINSTANCE.createEventMask();
+                                        eventMask.getEvents().add(osEvent);
+                                        setEvent.setEventMask(eventMask);
+                                        // always add read to the beginning
+                                        task.getActivityGraph().getItems().add(setEvent);
+                                        equivalents(sucessor.getViewedVertex()).filter(v -> v instanceof org.eclipse.app4mc.amalthea.model.Task).map(r -> (org.eclipse.app4mc.amalthea.model.Task) r).forEach(setEvent::setProcess);
+                                    });
+
+                                    return osEvent;
+                                })
+                            ).collect(Collectors.toList()) : SimpleReactiveStimulus.safeCast(reactiveStimulus).flatMap(simpleReactiveStimulus -> simpleReactiveStimulus.getPredecessorPort(forSyDeSystemGraph))
+                            .map(predecessor -> {
+                                final OsEvent osEvent = AmaltheaFactory.eINSTANCE.createOsEvent();
+                                osEvent.setName(sucessor.getIdentifier() + "_Wait_" + predecessor.getIdentifier());
+                                addEquivalence(vertex, osEvent);
+                                amalthea.getSwModel().getEvents().add(osEvent);
+
+                                // put the predecessor code as we create them to avoid dealing with names later
+                                equivalents(predecessor.getViewedVertex()).filter(v -> v instanceof org.eclipse.app4mc.amalthea.model.Task).map(r -> (org.eclipse.app4mc.amalthea.model.Task) r).forEach(task -> {
+                                    final SetEvent setEvent = AmaltheaFactory.eINSTANCE.createSetEvent();
+                                    final EventMask eventMask = AmaltheaFactory.eINSTANCE.createEventMask();
+                                    eventMask.getEvents().add(osEvent);
+                                    setEvent.setEventMask(eventMask);
+                                    // always add read to the beginning
+                                    task.getActivityGraph().getItems().add(setEvent);
+                                    equivalents(sucessor.getViewedVertex()).filter(v -> v instanceof org.eclipse.app4mc.amalthea.model.Task).map(r -> (org.eclipse.app4mc.amalthea.model.Task) r).forEach(setEvent::setProcess);
+                                });
+
+                                return osEvent;
+                            }).stream().collect(Collectors.toList());
+
+                    eventMaskForClear.getEvents().addAll(events);
+                    eventMaskForWait.getEvents().addAll(events);
+                    waitEvent.setEventMask(eventMaskForWait);
+                    waitEvent.setMaskType(WaitEventType.AND);
+                    waitEvent.setWaitingBehaviour(WaitingBehaviour.PASSIVE);
+                    clearEvent.setEventMask(eventMaskForClear);
+                    // always add read to the beginning
+                    equivalents(sucessor.getViewedVertex()).filter(v -> v instanceof org.eclipse.app4mc.amalthea.model.Task).map(r -> (org.eclipse.app4mc.amalthea.model.Task) r).forEach(task -> {
+                        task.getActivityGraph().getItems().add(0, waitEvent);
+                        task.getActivityGraph().getItems().add(1, clearEvent);
+                    });
+                });
             });
         });
     }
@@ -162,13 +216,13 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
                     runnable.getRunnableItems().add(labelAccess);
                 });
             });
-            // TODO: fix when the runnables consume and take more than 1 element
             // same but for channels
             equivalents(src).filter(v -> v instanceof Channel).map(l -> (Channel) l).forEach(channel -> {
                 equivalents(dst).filter(v -> v instanceof Runnable).map(r -> (Runnable) r).forEach(runnable -> {
                     final ChannelReceive channelReceive = AmaltheaFactory.eINSTANCE.createChannelReceive();
                     channelReceive.setData(channel);
-                    channelReceive.setElements(1);
+                    final int elems = CommunicatingExecutable.safeCast(dst).map(communicatingExecutable -> communicatingExecutable.getPortDataReadSize().get(src.getIdentifier()).intValue()).orElse(1);
+                    channelReceive.setElements(elems);
                     // always add read to the beginning
                     runnable.getRunnableItems().add(0, channelReceive);
                 });
@@ -178,7 +232,8 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
                 equivalents(dst).filter(v -> v instanceof Channel).map(r -> (Channel) r).forEach(channel -> {
                     final ChannelSend channelSend = AmaltheaFactory.eINSTANCE.createChannelSend();
                     channelSend.setData(channel);
-                    channelSend.setElements(1);
+                    final int elems = CommunicatingExecutable.safeCast(dst).map(communicatingExecutable -> communicatingExecutable.getPortDataWrittenSize().get(dst.getIdentifier()).intValue()).orElse(1);
+                    channelSend.setElements(elems);
                     // always add write to the end
                     runnable.getRunnableItems().add(channelSend);
                 });
@@ -186,7 +241,7 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
         });
     }
 
-    default void fromEdgesToOSWaitsAndSignals(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
+    /*default void fromVertexAndEdgesToOsEvents(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
         forSyDeSystemGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.EXECUTION_EVENTEDGE)).forEach(e -> {
             final Vertex src = forSyDeSystemGraph.getEdgeSource(e);
             final Vertex dst = forSyDeSystemGraph.getEdgeTarget(e);
@@ -194,14 +249,16 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
             // first from event to runnable
             equivalents(src).filter(v -> v instanceof OsEvent).map(l -> (OsEvent) l).forEach(osEvent -> {
                 equivalents(dst).filter(v -> v instanceof org.eclipse.app4mc.amalthea.model.Task).map(r -> (org.eclipse.app4mc.amalthea.model.Task) r).forEach(task -> {
-                    final WaitEvent waitEvent = AmaltheaFactory.eINSTANCE.createWaitEvent();
                     final ClearEvent clearEvent = AmaltheaFactory.eINSTANCE.createClearEvent();
-                    final EventMask eventMask = AmaltheaFactory.eINSTANCE.createEventMask();
-                    eventMask.getEvents().add(osEvent);
-                    waitEvent.setEventMask(eventMask);
+                    final WaitEvent waitEvent = AmaltheaFactory.eINSTANCE.createWaitEvent();
+                    final EventMask eventMaskForClear = AmaltheaFactory.eINSTANCE.createEventMask();
+                    final EventMask eventMaskForWait = AmaltheaFactory.eINSTANCE.createEventMask();
+                    eventMaskForClear.getEvents().add(osEvent);
+                    eventMaskForWait.getEvents().add(osEvent);
+                    waitEvent.setEventMask(eventMaskForWait);
                     waitEvent.setMaskType(WaitEventType.AND);
                     waitEvent.setWaitingBehaviour(WaitingBehaviour.PASSIVE);
-                    clearEvent.setEventMask(eventMask);
+                    clearEvent.setEventMask(eventMaskForClear);
                     // always add read to the beginning
                     task.getActivityGraph().getItems().add(0, waitEvent);
                     task.getActivityGraph().getItems().add(1, clearEvent);
@@ -216,10 +273,13 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
                     setEvent.setEventMask(eventMask);
                     // always add read to the beginning
                     task.getActivityGraph().getItems().add(setEvent);
+                    ReactiveStimulus.safeCast(dst).flatMap(reactiveStimulus -> reactiveStimulus.getSuccessorPort(forSyDeSystemGraph)).ifPresent(dstTask -> {
+                        equivalents(dstTask.getViewedVertex()).filter(v -> v instanceof Process).map(v -> (Process) v).forEach(setEvent::setProcess);
+                    });
                 });
             });
         });
-    }
+    }*/
 
     private long fromTimeUnitToLong(TimeUnit timeUnit) {
         switch (timeUnit) {

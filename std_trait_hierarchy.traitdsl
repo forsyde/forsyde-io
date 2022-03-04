@@ -267,6 +267,11 @@ namespace nonfunctional {
 
         port covered is multiple out execution::Task
     }
+
+    vertex UtilizationBoundedProcessingElem refines NonFunctionalRequirement, platform::GenericProcessingModule {
+        prop maxUtilizationNumerator is long
+        prop maxUtilizationDenominator is long
+    }
 }
 
 namespace decision {
