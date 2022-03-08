@@ -3,6 +3,7 @@ package forsyde.io.java.generator;
 import com.squareup.javapoet.*;
 import forsyde.io.java.generator.dsl.ForSyDeTraitDSLLexer;
 import forsyde.io.java.generator.dsl.ForSyDeTraitDSLParser;
+import forsyde.io.java.generator.exceptions.InconsistentTraitHierarchyException;
 import forsyde.io.java.generator.specs.*;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -42,12 +43,13 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
             final ForSyDeTraitDSLLexer forSyDeTraitDSLLexer = new ForSyDeTraitDSLLexer(CharStreams.fromPath(inputModelDSL.toPath()));
             final CommonTokenStream commonTokenStream = new CommonTokenStream(forSyDeTraitDSLLexer);
             final ForSyDeTraitDSLParser forSyDeTraitDSLParser = new ForSyDeTraitDSLParser(commonTokenStream);
-            final ForSyDeIOTraitDSLListener forSyDeTraitDSLListener = new ForSyDeIOTraitDSLListener();
-            final ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
-            parseTreeWalker.walk(forSyDeTraitDSLListener, forSyDeTraitDSLParser.rootTraitHierarchy());
-            final TraitHierarchy traitHierarchy = forSyDeTraitDSLListener.traitHierarchy;//objectMapper.readValue(inputModelJson, TraitHierarchy.class);
+            final ForSyDeIOTraitDSLVisitor forSyDeIOTraitDSLVisitor = new ForSyDeIOTraitDSLVisitor();
+            //final ForSyDeIOTraitDSLListener forSyDeTraitDSLListener = new ForSyDeIOTraitDSLListener();
+            //final ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
+            //parseTreeWalker.walk(forSyDeTraitDSLListener, forSyDeTraitDSLParser.rootTraitHierarchy());
+            final TraitHierarchy traitHierarchy = forSyDeIOTraitDSLVisitor.getRootTraitHierarchy(forSyDeTraitDSLParser.rootTraitHierarchy());//objectMapper.readValue(inputModelJson, TraitHierarchy.class);
             generateFiles(traitHierarchy);
-        } catch (IOException e) {
+        } catch (IOException | InconsistentTraitHierarchyException e) {
             e.printStackTrace();
         }
     }

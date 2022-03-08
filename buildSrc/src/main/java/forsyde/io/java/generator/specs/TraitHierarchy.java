@@ -8,6 +8,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TraitHierarchy {
+
     public List<VertexTraitSpec> vertexTraits = new ArrayList<>();
     public List<EdgeTraitSpec> edgeTraits = new ArrayList<>();
 }

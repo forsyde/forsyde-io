@@ -10,15 +10,14 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
 
     TraitHierarchy traitHierarchy = new TraitHierarchy();
     String namespace = "";
-    Map<ForSyDeTraitDSLParser.EdgeTraitContext, EdgeTraitSpec> edgeTraitSpecMap = new HashMap<>();
-    Map<ForSyDeTraitDSLParser.VertexTraitContext, VertexTraitSpec> vertexTraitSpecMap = new HashMap<>();
+    Map<ForSyDeTraitDSLParser.EdgeTraitContext, EdgeTraitSpec> declaredEdgeTraitSpecMap = new HashMap<>();
+    Map<ForSyDeTraitDSLParser.VertexTraitContext, VertexTraitSpec> declaredVertexTraitSpecMap = new HashMap<>();
     Map<ForSyDeTraitDSLParser.VertexPortContext, PortSpec> portSpecMap = new HashMap<>();
     Map<ForSyDeTraitDSLParser.VertexPropertyTypeContext, PropertyTypeSpec> propertyTypeSpecMap = new HashMap<>();
     Map<ForSyDeTraitDSLParser.VertexPropertyContext, PropertySpec> propertySpecMap = new HashMap<>();
@@ -31,17 +30,17 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
     @Override
     public void exitEdgeTrait(ForSyDeTraitDSLParser.EdgeTraitContext ctx) {
         final EdgeTraitSpec edgeTraitSpec = new EdgeTraitSpec();
-        edgeTraitSpecMap.put(ctx, edgeTraitSpec);
+        declaredEdgeTraitSpecMap.put(ctx, edgeTraitSpec);
         edgeTraitSpec.name = namespace + "::" + ctx.name.getText();
         for (final Token token : ctx.refinedTraits) {
-            edgeTraitSpec.refinedTraitNames.add(token.getText());
+            edgeTraitSpec.absoluteRefinedTraitNames.add(token.getText());
             // absolute reference or local reference
             if (token.getText().contains("::")) {
-                edgeTraitSpec.refinedTraitNames.add(token.getText());
+                edgeTraitSpec.absoluteRefinedTraitNames.add(token.getText());
                 //vertexRefinedParent.add(token.getText())
             } else {
                 // add the namespace in a local reference
-                edgeTraitSpec.refinedTraitNames.add(namespace + "::" + token.getText());
+                edgeTraitSpec.absoluteRefinedTraitNames.add(namespace + "::" + token.getText());
                 //vertexRefinedParent.add(namespace + "::" + token.getText());
             }
         }
@@ -84,19 +83,19 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
         }
         // absolute reference or local reference for vertex trait
         if (ctx.connectedVertexTrait.getText().contains("::")) {
-            portSpec.vertexTraitName = ctx.connectedVertexTrait.getText();
+            portSpec.absoluteVertexTraitName = ctx.connectedVertexTrait.getText();
         } else {
             // add the namespace in a local reference
-            portSpec.vertexTraitName = namespace.isBlank() ? ctx.connectedVertexTrait.getText() :
+            portSpec.absoluteVertexTraitName = namespace.isBlank() ? ctx.connectedVertexTrait.getText() :
                     namespace + "::" + ctx.connectedVertexTrait.getText();
         }
         // absolute reference or local reference for edge trait
         if (ctx.connectingEdgeTrait != null) {
             if (ctx.connectingEdgeTrait.getText().contains("::")) {
-                portSpec.edgeTraitName = ctx.connectingEdgeTrait.getText();
+                portSpec.absoluteEdgeTraitName = ctx.connectingEdgeTrait.getText();
             } else {
                 // add the namespace in a local reference
-                portSpec.edgeTraitName = namespace.isBlank() ? ctx.connectingEdgeTrait.getText() :
+                portSpec.absoluteEdgeTraitName = namespace.isBlank() ? ctx.connectingEdgeTrait.getText() :
                         namespace + "::" + ctx.connectingEdgeTrait.getText();
             }
         }
@@ -187,14 +186,14 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
             }
         }
         for (final Token token : ctx.refinedTraits) {
-            vertexTraitSpec.refinedTraitNames.add(token.getText());
+            vertexTraitSpec.absoluteRefinedTraitNames.add(token.getText());
             // absolute reference or local reference
             if (token.getText().contains("::")) {
-                vertexTraitSpec.refinedTraitNames.add(token.getText());
+                vertexTraitSpec.absoluteRefinedTraitNames.add(token.getText());
                 //vertexRefinedParent.add(token.getText())
             } else {
                 // add the namespace in a local reference
-                vertexTraitSpec.refinedTraitNames.add(namespace + "::" + token.getText());
+                vertexTraitSpec.absoluteRefinedTraitNames.add(namespace + "::" + token.getText());
                 //vertexRefinedParent.add(namespace + "::" + token.getText());
             }
         }
@@ -247,20 +246,20 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
         for (final VertexTraitSpec vertexTraitSpec : traitHierarchy.vertexTraits) {
             // refinements
             for (final VertexTraitSpec vertexTraitSpecOther : traitHierarchy.vertexTraits) {
-                if (vertexTraitSpec.refinedTraitNames.contains(vertexTraitSpecOther.name)) {
+                if (vertexTraitSpec.absoluteRefinedTraitNames.contains(vertexTraitSpecOther.name)) {
                     vertexTraitSpec.refinedTraits.add(vertexTraitSpecOther);
                 }
             }
             // ports
             for (final PortSpec portSpec : vertexTraitSpec.requiredPorts) {
                 for (final VertexTraitSpec vertexTraitSpecOther : traitHierarchy.vertexTraits) {
-                    if (portSpec.vertexTraitName.equals(vertexTraitSpecOther.name)) {
+                    if (portSpec.absoluteVertexTraitName.equals(vertexTraitSpecOther.name)) {
                         portSpec.vertexTrait = vertexTraitSpecOther;
                     }
                 }
-                if (portSpec.edgeTraitName != null) {
+                if (portSpec.absoluteEdgeTraitName != null) {
                     for (final EdgeTraitSpec edgeTraitSpec : traitHierarchy.edgeTraits) {
-                        if (portSpec.edgeTraitName.equals(edgeTraitSpec.name)) {
+                        if (portSpec.absoluteEdgeTraitName.equals(edgeTraitSpec.name)) {
                             portSpec.edgeTraitSpec = edgeTraitSpec;
                         }
                     }
@@ -272,7 +271,7 @@ public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
         for (final EdgeTraitSpec edgeTraitSpec : traitHierarchy.edgeTraits) {
             // refinements
             for (final EdgeTraitSpec edgeTraitSpecOther : traitHierarchy.edgeTraits) {
-                if (edgeTraitSpec.refinedTraitNames.contains(edgeTraitSpecOther.name)) {
+                if (edgeTraitSpec.absoluteRefinedTraitNames.contains(edgeTraitSpecOther.name)) {
                     edgeTraitSpec.refinedTraits.add(edgeTraitSpecOther);
                 }
             }
