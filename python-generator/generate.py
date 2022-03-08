@@ -1,200 +1,141 @@
 # import networkx as nx
 import json
-from typing import Set
-from typing import Dict
-from typing import List
-from typing import Optional
-
-from dataclasses import dataclass
-from dataclasses import field
-
-@dataclass
-class TraitSpec:
-
-    name: str
-    refinedTraits: Set["TraitSpec"] = field(default_factory=set)
-    refinedTraitsNames: Set[str] = field(default_factory=set)
-
-    def refines(self, other: "TraitSpec"):
-        return other.name == self.name or any(r.refines(other) for r in self.refinedTraits) 
-
-    @classmethod
-    def from_dict(cls, data):
-        return TraitSpec(
-            name = data["name"],
-            refinedTraitsNames = data["refinedTraits"]
-        )
-
-@dataclass
-class PropertyTypeSpec:
-
-    typeName: str
-    valueType: Optional["PropertyTypeSpec"] = None
-
-    @classmethod
-    def from_dict(cls, data):
-        return PropertyTypeSpec(
-            typeName = data["name"],
-            valueType = PropertyTypeSpec.from_dict(data["valueType"]) if "valueType" in data else None
-        )
-
-    def meta_to_py(self) -> str:
-        if self.typeName == "strMap" or self.typeName == "strmap" or self.typeName == "stringMap" or self.typeName == "stringmap":
-            return "Mapping[str, {0}]".format(self.valueType.meta_to_py() if self.valueType else "Any")
-        elif self.typeName == "intMap" or self.typeName == "intmap" or self.typeName == "integerMap" or self.typeName == "integermap":
-            return "Mapping[int, {0}]".format(self.valueType.meta_to_py() if self.valueType else "Any")
-        elif self.typeName == "array":
-            return "Sequence[{0}]".format(self.valueType.meta_to_py() if self.valueType else "Any")
-        elif self.typeName == "int" or self.typeName == "integer" or self.typeName == "long":
-            return "int"
-        elif self.typeName == "double" or self.typeName == "float":
-            return "float"
-        elif self.typeName == "boolean" or self.typeName == "bool":
-            return "bool"
-        else:
-            return "str"
-	
 
 
-@dataclass
-class PropertySpec:
-
-    name: str
-    propertyType: PropertyTypeSpec
-    
-    @classmethod
-    def from_dict(cls, data):
-        return PropertySpec(
-            name = data["name"],
-            propertyType = PropertyTypeSpec.from_dict(data["type"])
-        )
-
-    def __hash__(self):
-        return hash(self.name)
+from traitdl.ForSyDeTraitDSLVisitor import *
+from traitdl.ForSyDeTraitDSLParser import *
+from specs import *
 
 
-@dataclass
-class PortSpec:
+class ForSyDeIOTraitDSL(ForSyDeTraitDSLVisitor):
+    def linkElements(self):
+        pass
 
-    name: str
-    vertexTraitName: str
-    ordered: bool = False
-    multiple: bool = True
-    vertexTrait: Optional["VertexTraitSpec"] = None
+    # Visit a parse tree produced by ForSyDeTraitDSLParser#edgeTrait.
+    def visitEdgeTrait(
+        self, ctx: ForSyDeTraitDSLParser.EdgeTraitContext
+    ) -> EdgeTraitSpec:
+        return self.visitChildren(ctx)
 
-    @classmethod
-    def from_dict(cls, data):
-        return PortSpec(
-            name = data["name"],
-            vertexTraitName = data["vertexTrait"],
-            ordered = data["ordered"] if "ordered" in data  else False,
-            multiple = data["multiple"] if "multiple" in data else True
-        )
+    # Visit a parse tree produced by ForSyDeTraitDSLParser#vertexPort.
+    def visitVertexPort(self, ctx: ForSyDeTraitDSLParser.VertexPortContext) -> PortSpec:
+        return self.visitChildren(ctx)
 
-    def __hash__(self):
-        return hash(self.name)
+    # Visit a parse tree produced by ForSyDeTraitDSLParser#vertexPropertyType.
+    def visitVertexPropertyType(
+        self, ctx: ForSyDeTraitDSLParser.VertexPropertyTypeContext
+    ) -> PropertyTypeSpec:
+        return self.visitChildren(ctx)
 
-@dataclass
-class VertexTraitSpec(TraitSpec):
+    # Visit a parse tree produced by ForSyDeTraitDSLParser#vertexProperty.
+    def visitVertexProperty(
+        self, ctx: ForSyDeTraitDSLParser.VertexPropertyContext
+    ) -> PropertySpec:
+        return self.visitChildren(ctx)
 
-    required_properties: Set[PropertySpec] = field(default_factory=set)
-    required_ports: Set[PortSpec] = field(default_factory=set)
+    # Visit a parse tree produced by ForSyDeTraitDSLParser#vertexTrait.
+    def visitVertexTrait(
+        self, ctx: ForSyDeTraitDSLParser.VertexTraitContext
+    ) -> VertexTraitSpec:
+        vertexTraitSpec = VertexTraitSpec(str(ctx.name))
+        # final VertexTraitSpec vertexTraitSpec = vertexTraitSpecMap.get(ctx);
+        vertexTraitSpec.required_ports = {
+            self.visitVertexPort(p) for p in ctx.vertexPort() or []
+        }
+        vertexTraitSpec.required_properties = {
+            self.visitVertexProperty(p) for p in ctx.vertexProperty() or []
+        }
+        # for (final Token token : ctx.refinedTraits) {
+        #     //vertexTraitSpec.absoluteRefinedTraitNames.add(token.getText());
+        #     // absolute reference or local reference
+        #     if (token.getText().contains("::")) {
+        #         if (token.getText().startsWith("::"))
+        #             vertexTraitSpec.absoluteRefinedTraitNames.add(token.getText());
+        #         else
+        #             vertexTraitSpec.absoluteRefinedTraitNames.add("::" + token.getText());
+        #         //vertexRefinedParent.add(token.getText())
+        #     } else {
+        #         // add the namespace in a local reference
+        #         vertexTraitSpec.relativeRefinedTraitNames.add(token.getText());
+        #         //vertexRefinedParent.add(namespace + "::" + token.getText());
+        #     }
+        # }
+        return vertexTraitSpec
 
-    @classmethod
-    def from_dict(cls, data):
-        return VertexTraitSpec(
-            name = data["name"],
-            refinedTraitsNames = data.get("refinedTraits", []),
-            required_properties = {
-                PropertySpec.from_dict(dProp) for dProp in data.get("required_properties", [])
-            } | {
-                PropertySpec.from_dict(dProp) for dProp in data.get("requiredProperties", [])
-            },
-            required_ports = {
-                PortSpec.from_dict(dPort) for dPort in data.get("required_ports", [])
-            } | {
-                PortSpec.from_dict(dPort) for dPort in data.get("requiredPorts", [])
-            }
-        )
+    # Visit a parse tree produced by ForSyDeTraitDSLParser#traitHierarchy.
+    def visitTraitHierarchy(
+        self, ctx: ForSyDeTraitDSLParser.TraitHierarchyContext
+    ) -> TraitHierarchy:
+        traitHierarchy = TraitHierarchy()
+        namespace = ""
+        traitHierarchies = [
+            self.visitTraitHierarchy(t) for t in ctx.traitHierarchy() or []
+        ]
+        # concatenate grand children with children
+        containedVertexTraits = [
+            v for hierarchy in traitHierarchies for v in hierarchy.vertexes
+        ]
+        containedVertexTraits += [
+            self.visitVertexTrait(v) for v in ctx.vertexTrait() or []
+        ]
+        # Stream.concat(traitHierarchies.stream().flatMap(c -> c.vertexTraits.stream()), ctx.vertexTrait().stream()
+        #                 .map(this::))
+        #         .peek(v -> v.name = namespace + "::" + v.name)
+        #         .peek(v -> v.relativeRefinedTraitNames.replaceAll(s -> namespace + "::" + s))
+        #         .peek(v -> v.requiredPorts.replaceAll(p -> {
+        #             p.relativeVertexTraitName = p.relativeVertexTraitName != null ? namespace + "::" + p.relativeVertexTraitName : null;
+        #             p.relativeEdgeTraitName = p.relativeEdgeTraitName != null ? namespace + "::" + p.relativeEdgeTraitName : null;
+        #             return p;
+        #         }));
+        # final Stream<EdgeTraitSpec> containedEdgeTraits =
+        #         Stream.concat(traitHierarchies.stream().flatMap(c -> c.edgeTraits.stream()), ctx.edgeTrait().stream()
+        #                         .map(this::visitEdgeTraitTyped))
+        #                 .peek(v -> v.name = namespace + "::" + v.name)
+        #                 .peek(v -> v.relativeRefinedTraitNames.replaceAll(s -> namespace + "::" + s));
+        traitHierarchy.vertexes = containedVertexTraits
+        traitHierarchy.edges = []
+        return traitHierarchy
 
-    def __hash__(self):
-        return hash(self.name)
-
-    def to_viewer_code(self):
-        code = ""
-        # class def
-        if self.refinedTraits:
-            code += "class {0}({1}):\n".format(self.name, ", ".join(self.refinedTraitsNames))
-        else:
-            code += "class {0}(core.VertexViewer):\n".format(self.name)
-        # conforms method
-        code += 4*" " + "@classmethod\n"
-        code += 4*" " + "def conforms(cls, vertex):\n"
-        code += 8*" " + "return any(t.refines(VertexTrait.{0}) for t in vertex.vertex_traits)\n\n".format(
-            self.name
-        )
-        # safe cast method
-        # code += 4*" " + "@classmethod\n"
-        # code += 4*" " + "def safe_cast(cls, vertex):\n"
-        # code += 8*" " + "return cls(viewed_vertex=vertex) if cls.conforms(vertex) else None\n\n"
-        # identity override
-        code += 4*" " + "@property\n"
-        code += 4*" " + "def identifier(self) -> str:\n"
-        code += 8*" " + 'return "{0}" + self.viewed_vertex.identifier\n\n'.format(self.name)
-        # property getter
-        for p in self.required_properties:
-            code += 4*" " + "@property\n"
-            code += 4*" " + "def {0}(self) -> {1}:\n".format(p.name, p.propertyType.meta_to_py())
-            code += 8*" " + 'return self.viewed_vertex.properties["{0}"]\n\n'.format(p.name)
-        # port getter
-        for p in self.required_ports:
-            if p.multiple:
-                code += 4*" " + 'def get_{0}(self, model: core.ForSyDeModel) -> Sequence["{1}"]:\n'.format(p.name, p.vertexTraitName)
-                if p.ordered:
-                    code += 8*" " + 'return sorted(\n'
-                    code += 12*" " + '[{0}.safe_cast(n) for n in model[self.viewed_vertex] if {0}.conforms(n)],\n'.format(p.vertexTraitName)
-                    code += 12*" " + 'key = lambda v: int(self.viewed_vertex.properties["__{0}_ordering__"][v.viewed_vertex.identifier])\n'.format(p.name)
-                    code += 8*" " + ')\n\n'
-                else:
-                    code += 8*" " + 'return [{0}.safe_cast(n) for n in model[self.viewed_vertex] if {0}.conforms(n)]\n\n'.format(p.vertexTraitName)
-            else:
-                code += 4*" " + 'def get_{0}(self, model: core.ForSyDeModel) -> Optional["{1}"]:\n'.format(p.name, p.vertexTraitName)
-                code += 8*" " + 'return next(({0}.safe_cast(n) for n in model[self.viewed_vertex] if {0}.conforms(n)), None)\n\n'.format(p.vertexTraitName)
-        return code
-
-@dataclass
-class EdgeTraitSpec(TraitSpec):
-
-    @classmethod
-    def from_dict(cls, data):
-        return EdgeTraitSpec(
-            name = data["name"],
-            refinedTraitsNames = data.get("refinedTraits", [])
-        )
-    
-
-    def to_viewer_code(self):
-        code = ""
-        # class def
-        code += "class {0}(core.EdgeViewer):\n".format(self.name)
-        # conforms method
-        code += 4*" " + "@classmethod\n"
-        code += 4*" " + "def conforms(cls, edge):\n"
-        code += 8*" " + "return any(t.refines(EdgeTrait.{0}) for t in edge.edge_traits)\n\n".format(
-            self.name
-        )
-        # safe cast method
-        code += 4*" " + "@classmethod\n"
-        code += 4*" " + "def safe_cast(cls, edge):\n"
-        code += 8*" " + "return cls(viewed_edge=edge) if cls.conforms(edge) else None\n\n"
-        return code
-
+    # Visit a parse tree produced by ForSyDeTraitDSLParser#rootTraitHierarchy.
+    def visitRootTraitHierarchy(
+        self, ctx: ForSyDeTraitDSLParser.RootTraitHierarchyContext
+    ) -> TraitHierarchy:
+        traitHierarchy = TraitHierarchy()
+        namespace = ""
+        traitHierarchies = [
+            self.visitTraitHierarchy(t) for t in ctx.traitHierarchy() or []
+        ]
+        # concatenate grand children with children
+        containedVertexTraits = [
+            v for hierarchy in traitHierarchies for v in hierarchy.vertexes
+        ]
+        containedVertexTraits += [
+            self.visitVertexTrait(v) for v in ctx.vertexTrait() or []
+        ]
+        # Stream.concat(traitHierarchies.stream().flatMap(c -> c.vertexTraits.stream()), ctx.vertexTrait().stream()
+        #                 .map(this::))
+        #         .peek(v -> v.name = namespace + "::" + v.name)
+        #         .peek(v -> v.relativeRefinedTraitNames.replaceAll(s -> namespace + "::" + s))
+        #         .peek(v -> v.requiredPorts.replaceAll(p -> {
+        #             p.relativeVertexTraitName = p.relativeVertexTraitName != null ? namespace + "::" + p.relativeVertexTraitName : null;
+        #             p.relativeEdgeTraitName = p.relativeEdgeTraitName != null ? namespace + "::" + p.relativeEdgeTraitName : null;
+        #             return p;
+        #         }));
+        # final Stream<EdgeTraitSpec> containedEdgeTraits =
+        #         Stream.concat(traitHierarchies.stream().flatMap(c -> c.edgeTraits.stream()), ctx.edgeTrait().stream()
+        #                         .map(this::visitEdgeTraitTyped))
+        #                 .peek(v -> v.name = namespace + "::" + v.name)
+        #                 .peek(v -> v.relativeRefinedTraitNames.replaceAll(s -> namespace + "::" + s));
+        traitHierarchy.vertexes = containedVertexTraits
+        traitHierarchy.edges = []
+        self.linkElements()
+        return traitHierarchy
 
 
 vertexes: List[VertexTraitSpec] = []
 edges: List[EdgeTraitSpec] = []
 # populate and link the model
-with open('meta.json', 'r') as model_file:
+with open("meta.json", "r") as model_file:
     model = json.load(model_file)
     for vSpec in model["vertexTraits"]:
         vertexes.append(VertexTraitSpec.from_dict(vSpec))
@@ -203,7 +144,7 @@ with open('meta.json', 'r') as model_file:
     # link the vertexes
     for v in vertexes:
         for vv in vertexes:
-            if vv.name in v.refinedTraitsNames:
+            if vv.name in v.absoluteRefinedTraitsNames:
                 v.refinedTraits.add(vv)
             # and the ports
             for port in v.required_ports:
@@ -211,12 +152,11 @@ with open('meta.json', 'r') as model_file:
                     port.vertexTrait = vv
 
 # sort from least refined to most refined
-for i in range(len(vertexes)-1):
-    for j in range(i+1, len(vertexes)):
+for i in range(len(vertexes) - 1):
+    for j in range(i + 1, len(vertexes)):
         if vertexes[i].refines(vertexes[j]):
             vertexes.insert(i, vertexes[j])
-            vertexes.pop(j+1) # sum 1 since the list is bigger
-
+            vertexes.pop(j + 1)  # sum 1 since the list is bigger
 
 
 # with open('package_template.py', 'r') as template_file:
@@ -266,7 +206,7 @@ default_property_map = {}
 #         if nx.has_path(edgeTraitGraph, vname, other) and vname != other:
 #             edgeTraitSuper[vname].add(other)
 
-header = '''
+header = """
 from enum import Enum
 from enum import auto
 from typing import Optional
@@ -275,58 +215,62 @@ from typing import Sequence
 
 import forsyde.io.python.core as core
 
-'''
+"""
 
 vertexEnum = "class VertexTrait(core.Trait, Enum):\n"
 for v in vertexes:
-    vertexEnum += 4*" " + "{0} = auto()\n".format(v.name)
+    vertexEnum += 4 * " " + "{0} = auto()\n".format(v.name)
 vertexEnum += "\n"
-vertexEnum += 4*" " + "@classmethod\n"
-vertexEnum += 4*" " + "def refines_static(cls, one, other):\n"
+vertexEnum += 4 * " " + "@classmethod\n"
+vertexEnum += 4 * " " + "def refines_static(cls, one, other):\n"
 for v in vertexes:
     for vv in v.refinedTraits:
-        vertexEnum += 8*" " + "if one is cls.{0} and other is cls.{1}:\n".format(v.name, vv.name)
-        vertexEnum += 12*" " + "return True\n"
-vertexEnum += 8*" " + "return one == other\n\n"
-vertexEnum += 4*" " + "def __str__(self):\n"
-vertexEnum += 8*" " + "return self.name\n\n"
-vertexEnum += 4*" " + "def refines(self, other):\n"
-vertexEnum += 8*" " + "return VertexTrait.refines_static(self, other)\n\n"
+        vertexEnum += 8 * " " + "if one is cls.{0} and other is cls.{1}:\n".format(
+            v.name, vv.name
+        )
+        vertexEnum += 12 * " " + "return True\n"
+vertexEnum += 8 * " " + "return one == other\n\n"
+vertexEnum += 4 * " " + "def __str__(self):\n"
+vertexEnum += 8 * " " + "return self.name\n\n"
+vertexEnum += 4 * " " + "def refines(self, other):\n"
+vertexEnum += 8 * " " + "return VertexTrait.refines_static(self, other)\n\n"
 
 edgeEnum = "class EdgeTrait(core.Trait, Enum):\n"
 for v in edges:
-    edgeEnum += 4*" " + "{0} = auto()\n".format(v.name)
+    edgeEnum += 4 * " " + "{0} = auto()\n".format(v.name)
 edgeEnum += "\n"
-edgeEnum += 4*" " + "@classmethod\n"
-edgeEnum += 4*" " + "def refines_static(cls, one, other):\n"
+edgeEnum += 4 * " " + "@classmethod\n"
+edgeEnum += 4 * " " + "def refines_static(cls, one, other):\n"
 for v in edges:
     for vv in v.refinedTraits:
-        edgeEnum += 8*" " + "if one is cls.{0} and other is cls.{1}:\n".format(v.name, vv.name)
-        edgeEnum += 12*" " + "return True\n"
-edgeEnum += 8*" " + "return one == other\n\n"
-edgeEnum += 4*" " + "def __str__(self):\n"
-edgeEnum += 8*" " + "return self.name\n\n"
-edgeEnum += 4*" " + "def refines(self, other):\n"
-edgeEnum += 8*" " + "return EdgeTrait.refines_static(self, other)\n\n"
+        edgeEnum += 8 * " " + "if one is cls.{0} and other is cls.{1}:\n".format(
+            v.name, vv.name
+        )
+        edgeEnum += 12 * " " + "return True\n"
+edgeEnum += 8 * " " + "return one == other\n\n"
+edgeEnum += 4 * " " + "def __str__(self):\n"
+edgeEnum += 8 * " " + "return self.name\n\n"
+edgeEnum += 4 * " " + "def refines(self, other):\n"
+edgeEnum += 8 * " " + "return EdgeTrait.refines_static(self, other)\n\n"
 
 
-with open('forsyde/io/python/types.py', 'w') as out_file:
+with open("forsyde/io/python/types.py", "w") as out_file:
     out_file.write(
-        header + 
-        vertexEnum + 
-        edgeEnum +
-        "\n".join(v.to_viewer_code() for v in vertexes) +
-        "\n".join(e.to_viewer_code() for e in edges)
+        header
+        + vertexEnum
+        + edgeEnum
+        + "\n".join(v.to_viewer_code() for v in vertexes)
+        + "\n".join(e.to_viewer_code() for e in edges)
     )
-        # template.render(
-        # vertexTraits=model['vertexTraits'],
-        # vertexTraitProps={
-        #     k: {name: meta_to_py(cl) for (name, cl) in v['required_properties'].items()} 
-        #        if v and 'required_properties' in v else {}
-        #     for (k, v) in model['vertexTraits'].items()
-        # },
-        # vertexTraitSuper=vertexTraitSuper,
-        # edgeTraitSuper=edgeTraitSuper,
-        # property_map=property_map,
-        # default_property_map=default_property_map
-        # ))
+    # template.render(
+    # vertexTraits=model['vertexTraits'],
+    # vertexTraitProps={
+    #     k: {name: meta_to_py(cl) for (name, cl) in v['required_properties'].items()}
+    #        if v and 'required_properties' in v else {}
+    #     for (k, v) in model['vertexTraits'].items()
+    # },
+    # vertexTraitSuper=vertexTraitSuper,
+    # edgeTraitSuper=edgeTraitSuper,
+    # property_map=property_map,
+    # default_property_map=default_property_map
+    # ))

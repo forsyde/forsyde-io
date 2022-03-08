@@ -1,22 +1,18 @@
 [tool.poetry]
-name = "forsyde-io-python"
-version = "0.3.8"
-description = "Python supporting libraries for ForSyDe IO"
+name = "forsyde-io-python-generator"
+version = "0.5.5"
+description = "Python supporting libraries generator for ForSyDe IO"
 authors = ["Rodolfo <jordao@kth.se>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://forsyde.github.io/forsyde-io/"
 repository = "https://github.com/forsyde/forsyde-io"
 documentation = "https://forsyde.github.io/forsyde-io/"
-packages = [
-    {include = "forsyde"}
-]
 include = ["forsyde/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-networkx = "^2.5"
-pydot = "^1.4.2"
+antlr4-python3-runtime = "^4"
 
 [tool.poetry.dev-dependencies]
 
