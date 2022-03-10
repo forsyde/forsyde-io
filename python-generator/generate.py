@@ -19,19 +19,110 @@ class ForSyDeIOTraitDSL(ForSyDeTraitDSLVisitor):
 
     # Visit a parse tree produced by ForSyDeTraitDSLParser#vertexPort.
     def visitVertexPort(self, ctx: ForSyDeTraitDSLParser.VertexPortContext) -> PortSpec:
-        return self.visitChildren(ctx)
+        portSpec = PortSpec(ctx.name.getText(), "")
+        # portSpec.declaredLine = ctx.getStart().getLine();
+        # portSpec.declaredColumn = ctx.getStart().getCharPositionInLine();
+        modifiers = [v.getText() for v in ctx.modifiers]
+        if "ordered" in modifiers:
+            portSpec.ordered = True
+        elif "unordered" in modifiers:
+            portSpec.ordered = False
+        if "multiple" in modifiers:
+            portSpec.multiple = True
+        elif "single" in modifiers:
+            portSpec.multiple = False
+        if "in" in modifiers:
+            portSpec.direction = PortDirection.INCOMING
+        elif "out" in modifiers:
+            portSpec.direction = PortDirection.OUTGOING
+        else:
+            portSpec.direction = PortDirection.BIDIRECTIONAL
+        # absolute reference or local reference for vertex trait
+        if ctx.connectedVertexTrait.getText().contains("::"):
+            if ctx.connectedVertexTrait.getText().startsWith("::"):
+                portSpec.absoluteVertexTraitName = ctx.connectedVertexTrait.getText()[
+                    2:
+                ]
+            else:
+                portSpec.absoluteVertexTraitName = ctx.connectedVertexTrait.getText()
+        else:
+            # add the namespace in a local reference
+            portSpec.relativeVertexTraitName = ctx.connectedVertexTrait.getText()
+        # absolute reference or local reference for edge trait
+        if ctx.connectingEdgeTrait:
+            if ctx.connectingEdgeTrait.getText().contains("::"):
+                if ctx.connectingEdgeTrait.getText().startsWith("::"):
+                    portSpec.absoluteEdgeTraitName = ctx.connectingEdgeTrait.getText()[
+                        2:
+                    ]
+                else:
+                    portSpec.absoluteEdgeTraitName = ctx.connectingEdgeTrait.getText()
+            else:
+                # add the namespace in a local reference
+                portSpec.relativeEdgeTraitName = ctx.connectingEdgeTrait.getText()
+        return portSpec
 
     # Visit a parse tree produced by ForSyDeTraitDSLParser#vertexPropertyType.
     def visitVertexPropertyType(
         self, ctx: ForSyDeTraitDSLParser.VertexPropertyTypeContext
     ) -> PropertyTypeSpec:
-        return self.visitChildren(ctx)
+        return (
+            IntVertexProperty()
+            if ctx.typeName.getText().equals("int")
+            else IntVertexProperty()
+            if ctx.typeName.getText().equals("integer")
+            else FloatVertexProperty()
+            if ctx.typeName.getText().equals("float")
+            else BooleanVertexProperty()
+            if ctx.typeName.getText().equals("bool")
+            else BooleanVertexProperty()
+            if ctx.typeName.getText().equals("boolean")
+            else LongVertexProperty()
+            if ctx.typeName.getText().equals("long")
+            else DoubleVertexProperty()
+            if ctx.typeName.getText().equals("double")
+            else DoubleVertexProperty()
+            if ctx.typeName.getText().equals("real")
+            else StringVertexProperty()
+            if ctx.typeName.getText().equals("str")
+            else StringVertexProperty()
+            if ctx.typeName.getText().equals("string")
+            else ArrayVertexProperty(self.visitVertexPropertyTypeTyped(ctx.arrayType))
+            if ctx.typeName.getText().equals("array")
+            else IntMapVertexProperty(self.visitVertexPropertyTypeTyped(ctx.intMapType))
+            if ctx.typeName.getText().equals("intmap")
+            else IntMapVertexProperty(self.visitVertexPropertyTypeTyped(ctx.intMapType))
+            if ctx.typeName.getText().equals("integermap")
+            else IntMapVertexProperty(self.visitVertexPropertyTypeTyped(ctx.intMapType))
+            if ctx.typeName.getText().equals("intMap")
+            else IntMapVertexProperty(self.visitVertexPropertyTypeTyped(ctx.intMapType))
+            if ctx.typeName.getText().equals("integerMap")
+            else StringMapVertexProperty(
+                self.visitVertexPropertyTypeTyped(ctx.strMapType)
+            )
+            if ctx.typeName.getText().equals("strmap")
+            else StringMapVertexProperty(
+                self.visitVertexPropertyTypeTyped(ctx.strMapType)
+            )
+            if ctx.typeName.getText().equals("stringmap")
+            else StringMapVertexProperty(
+                self.visitVertexPropertyTypeTyped(ctx.strMapType)
+            )
+            if ctx.typeName.getText().equals("strMap")
+            else StringMapVertexProperty(
+                self.visitVertexPropertyTypeTyped(ctx.strMapType)
+            )
+            if ctx.typeName.getText().equals("stringMap")
+            else StringVertexProperty()
+        )
 
     # Visit a parse tree produced by ForSyDeTraitDSLParser#vertexProperty.
     def visitVertexProperty(
         self, ctx: ForSyDeTraitDSLParser.VertexPropertyContext
     ) -> PropertySpec:
-        return self.visitChildren(ctx)
+        propertyType = self.visitVertexPropertyTypeTyped(ctx.vertexPropertyType())
+        propertySpec = PropertySpec(ctx.name.getText(), propertyType)
+        return propertySpec
 
     # Visit a parse tree produced by ForSyDeTraitDSLParser#vertexTrait.
     def visitVertexTrait(
@@ -45,21 +136,15 @@ class ForSyDeIOTraitDSL(ForSyDeTraitDSLVisitor):
         vertexTraitSpec.required_properties = {
             self.visitVertexProperty(p) for p in ctx.vertexProperty() or []
         }
-        # for (final Token token : ctx.refinedTraits) {
-        #     //vertexTraitSpec.absoluteRefinedTraitNames.add(token.getText());
-        #     // absolute reference or local reference
-        #     if (token.getText().contains("::")) {
-        #         if (token.getText().startsWith("::"))
-        #             vertexTraitSpec.absoluteRefinedTraitNames.add(token.getText());
-        #         else
-        #             vertexTraitSpec.absoluteRefinedTraitNames.add("::" + token.getText());
-        #         //vertexRefinedParent.add(token.getText())
-        #     } else {
-        #         // add the namespace in a local reference
-        #         vertexTraitSpec.relativeRefinedTraitNames.add(token.getText());
-        #         //vertexRefinedParent.add(namespace + "::" + token.getText());
-        #     }
-        # }
+        for token in ctx.refinedTraits:
+            if token.getText().contains("::"):
+                if token.getText().startsWith("::"):
+                    vertexTraitSpec.absoluteRefinedTraitNames.add(token.getText()[2:])
+                else:
+                    vertexTraitSpec.absoluteRefinedTraitNames.add(token.getText())
+            else:
+                # add the namespace in a local reference
+                vertexTraitSpec.relativeRefinedTraitNames.add(token.getText())
         return vertexTraitSpec
 
     # Visit a parse tree produced by ForSyDeTraitDSLParser#traitHierarchy.

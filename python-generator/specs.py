@@ -1,3 +1,4 @@
+from enum import Enum, auto
 from typing import Set
 from typing import Dict
 from typing import List
@@ -5,6 +6,7 @@ from typing import Optional
 
 from dataclasses import dataclass
 from dataclasses import field
+from unicodedata import bidirectional
 
 
 @dataclass
@@ -12,8 +14,8 @@ class TraitSpec:
 
     name: str
     refinedTraits: Set["TraitSpec"] = field(default_factory=set)
-    absoluteRefinedTraitsNames: Set[str] = field(default_factory=set)
-    relativeRefinedTraitsNames: Set[str] = field(default_factory=set)
+    absoluteRefinedTraitNames: Set[str] = field(default_factory=set)
+    relativeRefinedTraitNames: Set[str] = field(default_factory=set)
 
     def refines(self, other: "TraitSpec"):
         return other.name == self.name or any(
@@ -22,59 +24,106 @@ class TraitSpec:
 
     @classmethod
     def from_dict(cls, data):
-        return TraitSpec(name=data["name"], absoluteRefinedTraitsNames=data["refinedTraits"])
+        return TraitSpec(
+            name=data["name"], absoluteRefinedTraitNames=data["refinedTraits"]
+        )
 
 
 @dataclass
 class PropertyTypeSpec:
+    pass
+    # typeName: str
+    # valueType: Optional["PropertyTypeSpec"] = None
 
-    typeName: str
-    valueType: Optional["PropertyTypeSpec"] = None
+    # @classmethod
+    # def from_dict(cls, data):
+    #     return PropertyTypeSpec(
+    #         typeName=data["name"],
+    #         valueType=PropertyTypeSpec.from_dict(data["valueType"])
+    #         if "valueType" in data
+    #         else None,
+    #     )
 
-    @classmethod
-    def from_dict(cls, data):
-        return PropertyTypeSpec(
-            typeName=data["name"],
-            valueType=PropertyTypeSpec.from_dict(data["valueType"])
-            if "valueType" in data
-            else None,
-        )
+    # def meta_to_py(self) -> str:
+    #     if (
+    #         self.typeName == "strMap"
+    #         or self.typeName == "strmap"
+    #         or self.typeName == "stringMap"
+    #         or self.typeName == "stringmap"
+    #     ):
+    #         return "Mapping[str, {0}]".format(
+    #             self.valueType.meta_to_py() if self.valueType else "Any"
+    #         )
+    #     elif (
+    #         self.typeName == "intMap"
+    #         or self.typeName == "intmap"
+    #         or self.typeName == "integerMap"
+    #         or self.typeName == "integermap"
+    #     ):
+    #         return "Mapping[int, {0}]".format(
+    #             self.valueType.meta_to_py() if self.valueType else "Any"
+    #         )
+    #     elif self.typeName == "array":
+    #         return "Sequence[{0}]".format(
+    #             self.valueType.meta_to_py() if self.valueType else "Any"
+    #         )
+    #     elif (
+    #         self.typeName == "int"
+    #         or self.typeName == "integer"
+    #         or self.typeName == "long"
+    #     ):
+    #         return "int"
+    #     elif self.typeName == "double" or self.typeName == "float":
+    #         return "float"
+    #     elif self.typeName == "boolean" or self.typeName == "bool":
+    #         return "bool"
+    #     else:
+    #         return "str"
 
-    def meta_to_py(self) -> str:
-        if (
-            self.typeName == "strMap"
-            or self.typeName == "strmap"
-            or self.typeName == "stringMap"
-            or self.typeName == "stringmap"
-        ):
-            return "Mapping[str, {0}]".format(
-                self.valueType.meta_to_py() if self.valueType else "Any"
-            )
-        elif (
-            self.typeName == "intMap"
-            or self.typeName == "intmap"
-            or self.typeName == "integerMap"
-            or self.typeName == "integermap"
-        ):
-            return "Mapping[int, {0}]".format(
-                self.valueType.meta_to_py() if self.valueType else "Any"
-            )
-        elif self.typeName == "array":
-            return "Sequence[{0}]".format(
-                self.valueType.meta_to_py() if self.valueType else "Any"
-            )
-        elif (
-            self.typeName == "int"
-            or self.typeName == "integer"
-            or self.typeName == "long"
-        ):
-            return "int"
-        elif self.typeName == "double" or self.typeName == "float":
-            return "float"
-        elif self.typeName == "boolean" or self.typeName == "bool":
-            return "bool"
-        else:
-            return "str"
+
+@dataclass
+class IntVertexProperty(PropertyTypeSpec):
+    pass
+
+
+@dataclass
+class FloatVertexProperty(PropertyTypeSpec):
+    pass
+
+
+@dataclass
+class BooleanVertexProperty(PropertyTypeSpec):
+    pass
+
+
+@dataclass
+class LongVertexProperty(PropertyTypeSpec):
+    pass
+
+
+@dataclass
+class DoubleVertexProperty(PropertyTypeSpec):
+    pass
+
+
+@dataclass
+class StringVertexProperty(PropertyTypeSpec):
+    pass
+
+
+@dataclass
+class ArrayVertexProperty(PropertyTypeSpec):
+    valueType: PropertyTypeSpec
+
+
+@dataclass
+class IntMapVertexProperty(PropertyTypeSpec):
+    valueType: PropertyTypeSpec
+
+
+@dataclass
+class StringMapVertexProperty(PropertyTypeSpec):
+    valueType: PropertyTypeSpec
 
 
 @dataclass
@@ -93,23 +142,34 @@ class PropertySpec:
         return hash(self.name)
 
 
+class PortDirection(Enum):
+    OUTGOING = auto()
+    INCOMING = auto()
+    BIDIRECTIONAL = auto()
+
+
 @dataclass
 class PortSpec:
 
     name: str
     vertexTraitName: str
+    absoluteVertexTraitName: Optional[str] = None
+    relativeVertexTraitName: Optional[str] = None
+    absoluteEdgeTraitName: Optional[str] = None
+    relativeEdgeTraitName: Optional[str] = None
     ordered: bool = False
     multiple: bool = True
     vertexTrait: Optional["VertexTraitSpec"] = None
+    direction: PortDirection = PortDirection.BIDIRECTIONAL
 
-    @classmethod
-    def from_dict(cls, data):
-        return PortSpec(
-            name=data["name"],
-            vertexTraitName=data["vertexTrait"],
-            ordered=data["ordered"] if "ordered" in data else False,
-            multiple=data["multiple"] if "multiple" in data else True,
-        )
+    # @classmethod
+    # def from_dict(cls, data):
+    #     return PortSpec(
+    #         name=data["name"],
+    #         vertexTraitName=data["vertexTrait"],
+    #         ordered=data["ordered"] if "ordered" in data else False,
+    #         multiple=data["multiple"] if "multiple" in data else True,
+    #     )
 
     def __hash__(self):
         return hash(self.name)
@@ -230,11 +290,11 @@ class VertexTraitSpec(TraitSpec):
 
 @dataclass
 class EdgeTraitSpec(TraitSpec):
-    @classmethod
-    def from_dict(cls, data):
-        return EdgeTraitSpec(
-            name=data["name"], absoluteRefinedTraitsNames=data.get("refinedTraits", [])
-        )
+    # @classmethod
+    # def from_dict(cls, data):
+    #     return EdgeTraitSpec(
+    #         name=data["name"], absoluteRefinedTraitsNames=data.get("refinedTraits", [])
+    #     )
 
     def to_viewer_code(self):
         code = ""
