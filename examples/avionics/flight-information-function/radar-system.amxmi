@@ -1,161 +1,202 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <am:Amalthea xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:am="http://app4mc.eclipse.org/amalthea/2.0.0">
   <swModel>
-    <tasks xmi:id="AltitudeCalc?type=Task" name="AltitudeCalc" multipleTaskActivationLimit="0">
+    <tasks xmi:id="DBF?type=Task" name="DBF" stimuli="SnapshotPeriod?type=PeriodicStimulus" multipleTaskActivationLimit="0">
       <activityGraph>
-        <items xsi:type="am:RunnableCall" runnable="AltitudeCalcRunnable?type=Runnable"/>
+        <items xsi:type="am:RunnableCall" runnable="DBFFunc?type=Runnable"/>
+        <items xsi:type="am:SetEvent" process="PC?type=Task">
+          <eventMask events="DBFCompleted?type=OsEvent"/>
+        </items>
       </activityGraph>
     </tasks>
-    <tasks xmi:id="FormatSpeedVectorCalc?type=Task" name="FormatSpeedVectorCalc" multipleTaskActivationLimit="0">
+    <tasks xmi:id="PC?type=Task" name="PC" stimuli="SnapshotPeriod?type=PeriodicStimulus" multipleTaskActivationLimit="0">
       <activityGraph>
-        <items xsi:type="am:RunnableCall" runnable="FormatSpeedVectorCalcRunnable?type=Runnable"/>
+        <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
+          <eventMask events="DBFCompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:ClearEvent">
+          <eventMask events="DBFCompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:RunnableCall" runnable="PCFunc?type=Runnable"/>
+        <items xsi:type="am:SetEvent" process="DFB?type=Task">
+          <eventMask events="PCCompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:SetEvent" process="DFBDisplaced?type=Task">
+          <eventMask events="PCCompleted?type=OsEvent"/>
+        </items>
       </activityGraph>
     </tasks>
-    <tasks xmi:id="SpeedVectorCalc?type=Task" name="SpeedVectorCalc" multipleTaskActivationLimit="0">
+    <tasks xmi:id="DFB?type=Task" name="DFB" stimuli="INTIPeriod?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
-        <items xsi:type="am:RunnableCall" runnable="SpeedVectorCalcRunnable?type=Runnable"/>
+        <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
+          <eventMask events="PCCompleted?type=OsEvent"/>
+          <counter prescaler="1048576" offset="0"/>
+        </items>
+        <items xsi:type="am:ClearEvent">
+          <eventMask events="PCCompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:RunnableCall" runnable="DFBFunc?type=Runnable"/>
+        <items xsi:type="am:SetEvent" process="CFAR?type=Task">
+          <eventMask events="DFBompleted?type=OsEvent"/>
+        </items>
       </activityGraph>
     </tasks>
-    <tasks xmi:id="HeadingCalc?type=Task" name="HeadingCalc" multipleTaskActivationLimit="0">
+    <tasks xmi:id="CFAR?type=Task" name="CFAR" stimuli="INTIPeriod?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
-        <items xsi:type="am:RunnableCall" runnable="HeadingCalcRunnable?type=Runnable"/>
+        <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
+          <eventMask events="DFBompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:ClearEvent">
+          <eventMask events="DFBompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:RunnableCall" runnable="CFARFunc?type=Runnable"/>
+        <items xsi:type="am:SetEvent" process="INT?type=Task">
+          <eventMask events="CFARCompleted?type=OsEvent"/>
+        </items>
       </activityGraph>
     </tasks>
-    <tasks xmi:id="FormatLoadFactorCalc?type=Task" name="FormatLoadFactorCalc" multipleTaskActivationLimit="0">
+    <tasks xmi:id="INT?type=Task" name="INT" stimuli="INTIPeriod?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
-        <items xsi:type="am:RunnableCall" runnable="FormatLoadFactorCalcRunnable?type=Runnable"/>
+        <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
+          <eventMask events="CFARCompleted?type=OsEvent CFARDisplacedCompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:ClearEvent">
+          <eventMask events="CFARCompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:RunnableCall" runnable="INTFunc?type=Runnable"/>
       </activityGraph>
     </tasks>
-    <tasks xmi:id="LoadFactorCalc?type=Task" name="LoadFactorCalc" multipleTaskActivationLimit="0">
+    <tasks xmi:id="DFBDisplaced?type=Task" name="DFBDisplaced" stimuli="INTIPeriod?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
-        <items xsi:type="am:RunnableCall" runnable="LoadFactorCalcRunnable?type=Runnable"/>
+        <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
+          <eventMask events="PCCompleted?type=OsEvent"/>
+          <counter prescaler="1048576" offset="524288"/>
+        </items>
+        <items xsi:type="am:ClearEvent">
+          <eventMask events="PCCompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:RunnableCall" runnable="DFBDisplacedFunc?type=Runnable"/>
+        <items xsi:type="am:SetEvent" process="CFARDisplaced?type=Task">
+          <eventMask events="DFBompleted?type=OsEvent"/>
+        </items>
       </activityGraph>
     </tasks>
-    <tasks xmi:id="AccCalc?type=Task" name="AccCalc" multipleTaskActivationLimit="0">
+    <tasks xmi:id="CFARDisplaced?type=Task" name="CFARDisplaced" stimuli="INTIPeriod?type=PeriodicStimulus" preemption="preemptive" multipleTaskActivationLimit="0">
       <activityGraph>
-        <items xsi:type="am:RunnableCall" runnable="AccCalcRunnable?type=Runnable"/>
+        <items xsi:type="am:WaitEvent" maskType="AND" waitingBehaviour="passive">
+          <eventMask events="DFBompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:ClearEvent">
+          <eventMask events="DFBompleted?type=OsEvent"/>
+        </items>
+        <items xsi:type="am:RunnableCall" runnable="CFARDisplacedFunc?type=Runnable"/>
+        <items xsi:type="am:SetEvent" process="INT?type=Task">
+          <eventMask events="CFARDisplacedCompleted?type=OsEvent"/>
+        </items>
       </activityGraph>
     </tasks>
-    <runnables xmi:id="AltitudeCalcRunnable?type=Runnable" name="AltitudeCalcRunnable" callback="false" service="false">
+    <runnables xmi:id="DBFFunc?type=Runnable" name="DBFFunc" callback="false" service="false">
+      <size value="0" unit="kB"/>
       <activityGraph>
-        <items xsi:type="am:LabelAccess" data="AccSignal?type=Label" access="read"/>
-        <items xsi:type="am:LabelAccess" data="ADC1AltitudeSignal?type=Label" access="read"/>
+        <items xsi:type="am:ChannelReceive" data="EntryToDBF?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="false" elementIndex="0" lowerBound="0"/>
         <items xsi:type="am:ExecutionNeed">
           <needs key="FloatOp">
-            <value xsi:type="am:DiscreteValueConstant" value="0"/>
+            <value xsi:type="am:DiscreteValueConstant" value="6"/>
           </needs>
         </items>
-        <items xsi:type="am:LabelAccess" data="AltitudeSignal?type=Label" access="write"/>
+        <items xsi:type="am:ChannelSend" data="DBFToPC?type=Channel" elements="1"/>
       </activityGraph>
     </runnables>
-    <runnables xmi:id="FormatSpeedVectorCalcRunnable?type=Runnable" name="FormatSpeedVectorCalcRunnable" callback="false" service="false">
+    <runnables xmi:id="PCFunc?type=Runnable" name="PCFunc" callback="false" service="false">
+      <size value="0" unit="kB"/>
       <activityGraph>
-        <items xsi:type="am:LabelAccess" data="INS1SpeedVectorSignal?type=Label" access="read"/>
-        <items xsi:type="am:LabelAccess" data="INS2SpeedVectorSignal?type=Label" access="read"/>
+        <items xsi:type="am:ChannelReceive" data="DBFToPC?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="true" elementIndex="0" lowerBound="0"/>
         <items xsi:type="am:ExecutionNeed">
           <needs key="FloatOp">
-            <value xsi:type="am:DiscreteValueConstant" value="0"/>
+            <value xsi:type="am:DiscreteValueConstant" value="6"/>
           </needs>
         </items>
-        <items xsi:type="am:LabelAccess" data="InternalSpeedVectorSignal?type=Label" access="write"/>
+        <items xsi:type="am:ChannelSend" data="PCtoDFB?type=Channel" elements="1"/>
       </activityGraph>
     </runnables>
-    <runnables xmi:id="SpeedVectorCalcRunnable?type=Runnable" name="SpeedVectorCalcRunnable" callback="false" service="false">
+    <runnables xmi:id="DFBFunc?type=Runnable" name="DFBFunc" callback="false" service="false">
+      <size value="0" unit="kB"/>
       <activityGraph>
-        <items xsi:type="am:LabelAccess" data="InternalSpeedVectorSignal?type=Label" access="read"/>
+        <items xsi:type="am:ChannelReceive" data="PCtoDFB?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="true" elementIndex="0" lowerBound="0"/>
         <items xsi:type="am:ExecutionNeed">
           <needs key="FloatOp">
-            <value xsi:type="am:DiscreteValueConstant" value="0"/>
+            <value xsi:type="am:DiscreteValueConstant" value="15099"/>
           </needs>
         </items>
-        <items xsi:type="am:LabelAccess" data="SpeedSignal?type=Label" access="write"/>
-        <items xsi:type="am:LabelAccess" data="SpeedVectorSignal?type=Label" access="write"/>
+        <items xsi:type="am:ChannelSend" data="DFBToCFAR?type=Channel" elements="1"/>
       </activityGraph>
     </runnables>
-    <runnables xmi:id="HeadingCalcRunnable?type=Runnable" name="HeadingCalcRunnable" callback="false" service="false">
+    <runnables xmi:id="CFARFunc?type=Runnable" name="CFARFunc" callback="false" service="false">
+      <size value="0" unit="kB"/>
       <activityGraph>
-        <items xsi:type="am:LabelAccess" data="SpeedVectorSignal?type=Label" access="read"/>
+        <items xsi:type="am:ChannelReceive" data="DFBToCFAR?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="true" elementIndex="0" lowerBound="0"/>
         <items xsi:type="am:ExecutionNeed">
           <needs key="FloatOp">
-            <value xsi:type="am:DiscreteValueConstant" value="0"/>
+            <value xsi:type="am:DiscreteValueConstant" value="2513"/>
           </needs>
         </items>
-        <items xsi:type="am:LabelAccess" data="HeadingSignal?type=Label" access="write"/>
+        <items xsi:type="am:ChannelSend" data="CFARToINT?type=Channel" elements="1"/>
       </activityGraph>
     </runnables>
-    <runnables xmi:id="FormatLoadFactorCalcRunnable?type=Runnable" name="FormatLoadFactorCalcRunnable" callback="false" service="false">
+    <runnables xmi:id="INTFunc?type=Runnable" name="INTFunc" callback="false" service="false">
+      <size value="0" unit="kB"/>
       <activityGraph>
-        <items xsi:type="am:LabelAccess" data="INS1LoadFactorSignal?type=Label" access="read"/>
-        <items xsi:type="am:LabelAccess" data="INS2LoadFactorSignal?type=Label" access="read"/>
+        <items xsi:type="am:ChannelReceive" data="CFARToINT?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="true" elementIndex="0" lowerBound="0"/>
         <items xsi:type="am:ExecutionNeed">
           <needs key="FloatOp">
-            <value xsi:type="am:DiscreteValueConstant" value="0"/>
+            <value xsi:type="am:DiscreteValueConstant" value="2513"/>
           </needs>
         </items>
-        <items xsi:type="am:LabelAccess" data="InternalLoadFactorSignal?type=Label" access="write"/>
+        <items xsi:type="am:ChannelSend" data="INTToExit?type=Channel" elements="1"/>
       </activityGraph>
     </runnables>
-    <runnables xmi:id="LoadFactorCalcRunnable?type=Runnable" name="LoadFactorCalcRunnable" callback="false" service="false">
+    <runnables xmi:id="DFBDisplacedFunc?type=Runnable" name="DFBDisplacedFunc" callback="false" service="false">
+      <size value="0" unit="kB"/>
       <activityGraph>
-        <items xsi:type="am:LabelAccess" data="InternalLoadFactorSignal?type=Label" access="read"/>
+        <items xsi:type="am:ChannelReceive" data="PCtoDFB?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="true" elementIndex="0" lowerBound="0"/>
         <items xsi:type="am:ExecutionNeed">
           <needs key="FloatOp">
-            <value xsi:type="am:DiscreteValueConstant" value="0"/>
+            <value xsi:type="am:DiscreteValueConstant" value="15099"/>
           </needs>
         </items>
-        <items xsi:type="am:LabelAccess" data="LoadFactorSignal?type=Label" access="write"/>
+        <items xsi:type="am:ChannelSend" data="DFBToCFAR?type=Channel" elements="1"/>
       </activityGraph>
     </runnables>
-    <runnables xmi:id="AccCalcRunnable?type=Runnable" name="AccCalcRunnable" callback="false" service="false">
+    <runnables xmi:id="CFARDisplacedFunc?type=Runnable" name="CFARDisplacedFunc" callback="false" service="false">
+      <size value="0" unit="kB"/>
       <activityGraph>
-        <items xsi:type="am:LabelAccess" data="LoadFactorSignal?type=Label" access="read"/>
+        <items xsi:type="am:ChannelReceive" data="DFBToCFAR?type=Channel" elements="1" receiveOperation="FIFO_Read" dataMustBeNew="true" elementIndex="0" lowerBound="0"/>
         <items xsi:type="am:ExecutionNeed">
           <needs key="FloatOp">
-            <value xsi:type="am:DiscreteValueConstant" value="0"/>
+            <value xsi:type="am:DiscreteValueConstant" value="2513"/>
           </needs>
         </items>
-        <items xsi:type="am:LabelAccess" data="AccSignal?type=Label" access="write"/>
+        <items xsi:type="am:ChannelSend" data="CFARToINT?type=Channel" elements="1"/>
       </activityGraph>
     </runnables>
-    <labels xmi:id="ADC1AltitudeSignal?type=Label" name="ADC1AltitudeSignal" constant="false" bVolatile="false">
-      <size value="200" unit="B"/>
-    </labels>
-    <labels xmi:id="INS1SpeedVectorSignal?type=Label" name="INS1SpeedVectorSignal" constant="false" bVolatile="false">
-      <size value="1000" unit="B"/>
-    </labels>
-    <labels xmi:id="INS2SpeedVectorSignal?type=Label" name="INS2SpeedVectorSignal" constant="false" bVolatile="false">
-      <size value="1000" unit="B"/>
-    </labels>
-    <labels xmi:id="INS1LoadFactorSignal?type=Label" name="INS1LoadFactorSignal" constant="false" bVolatile="false">
-      <size value="1000" unit="B"/>
-    </labels>
-    <labels xmi:id="INS2LoadFactorSignal?type=Label" name="INS2LoadFactorSignal" constant="false" bVolatile="false">
-      <size value="1000" unit="B"/>
-    </labels>
-    <labels xmi:id="InternalSpeedVectorSignal?type=Label" name="InternalSpeedVectorSignal" constant="false" bVolatile="false">
-      <size value="1000" unit="B"/>
-    </labels>
-    <labels xmi:id="SpeedVectorSignal?type=Label" name="SpeedVectorSignal" constant="false" bVolatile="false">
-      <size value="1000" unit="B"/>
-    </labels>
-    <labels xmi:id="InternalLoadFactorSignal?type=Label" name="InternalLoadFactorSignal" constant="false" bVolatile="false">
-      <size value="1000" unit="B"/>
-    </labels>
-    <labels xmi:id="LoadFactorSignal?type=Label" name="LoadFactorSignal" constant="false" bVolatile="false">
-      <size value="1000" unit="B"/>
-    </labels>
-    <labels xmi:id="AccSignal?type=Label" name="AccSignal" constant="false" bVolatile="false">
-      <size value="500" unit="B"/>
-    </labels>
-    <labels xmi:id="AltitudeSignal?type=Label" name="AltitudeSignal" constant="false" bVolatile="false">
-      <size value="200" unit="B"/>
-    </labels>
-    <labels xmi:id="SpeedSignal?type=Label" name="SpeedSignal" constant="false" bVolatile="false">
-      <size value="1000" unit="B"/>
-    </labels>
-    <labels xmi:id="HeadingSignal?type=Label" name="HeadingSignal" constant="false" bVolatile="false">
-      <size value="500" unit="B"/>
-    </labels>
+    <channels xmi:id="PCtoDFB?type=Channel" name="PCtoDFB" defaultElements="0" maxElements="1048576">
+      <size value="134217728" unit="B"/>
+    </channels>
+    <channels xmi:id="DBFToPC?type=Channel" name="DBFToPC" defaultElements="0" maxElements="1">
+      <size value="512" unit="B"/>
+    </channels>
+    <channels xmi:id="EntryToDBF?type=Channel" name="EntryToDBF" defaultElements="0" maxElements="1">
+      <size value="512" unit="B"/>
+    </channels>
+    <channels xmi:id="DFBToCFAR?type=Channel" name="DFBToCFAR" defaultElements="0" maxElements="1048576">
+      <size value="67108864" unit="B"/>
+    </channels>
+    <channels xmi:id="CFARToINT?type=Channel" name="CFARToINT" defaultElements="0" maxElements="1048576">
+      <size value="134217728" unit="B"/>
+    </channels>
+    <channels xmi:id="INTToExit?type=Channel" name="INTToExit" defaultElements="0" maxElements="1048576">
+      <size value="134217728" unit="B"/>
+    </channels>
     <events xmi:id="DBFCompleted?type=OsEvent" name="DBFCompleted" communicationOverheadInBit="0"/>
     <events xmi:id="PCCompleted?type=OsEvent" name="PCCompleted" communicationOverheadInBit="0"/>
     <events xmi:id="DFBompleted?type=OsEvent" name="DFBompleted" communicationOverheadInBit="0"/>
@@ -306,13 +347,7 @@
     <schedulerAllocation scheduler="CMP2_Core3_FP_Runtime_Scheduler?type=TaskScheduler" responsibility="A53core3?type=ProcessingUnit" executingPU="A53core3?type=ProcessingUnit"/>
     <schedulerAllocation scheduler="CMP2_Core5_FP_Runtime_Scheduler?type=TaskScheduler" responsibility="R5core1?type=ProcessingUnit" executingPU="R5core1?type=ProcessingUnit"/>
     <schedulerAllocation scheduler="CMP2_Core6_FP_Runtime_Scheduler?type=TaskScheduler" responsibility="R5core2?type=ProcessingUnit" executingPU="R5core2?type=ProcessingUnit"/>
-    <memoryMapping abstractElement="INS1LoadFactorSignal?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
-    <memoryMapping abstractElement="INS2LoadFactorSignal?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
-    <memoryMapping abstractElement="INS1SpeedVectorSignal?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
-    <memoryMapping abstractElement="INS2SpeedVectorSignal?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
-    <memoryMapping abstractElement="ADC1AltitudeSignal?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
-    <memoryMapping abstractElement="HeadingSignal?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
-    <memoryMapping abstractElement="AltitudeSignal?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
-    <memoryMapping abstractElement="SpeedSignal?type=Label" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
+    <memoryMapping abstractElement="EntryToDBF?type=Channel" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
+    <memoryMapping abstractElement="INTToExit?type=Channel" memory="SDRAM?type=Memory" memoryPositionAddress="0x0"/>
   </mappingModel>
 </am:Amalthea>

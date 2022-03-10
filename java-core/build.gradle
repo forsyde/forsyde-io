@@ -8,11 +8,18 @@ task clearForSyDeModel(type: Delete) {
 }
 */
 
+tasks.register("cleanForSyDeModel", Delete) {
+    delete 'src-gen/main/java/forsyde/io/java'
+}
+
+tasks.clean.dependsOn(tasks.cleanForSyDeModel)
+
 tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
     inputModelDSL = project.ext.stdTraitHierarchyFile
 }
 
 //tasks.generateForSyDeModel.dependsOn clearForSyDeModel
+tasks.build.dependsOn generateForSyDeModel
 tasks.compileJava.dependsOn generateForSyDeModel
 //tasks.sourcesJar.dependsOn generateForSyDeModel
 

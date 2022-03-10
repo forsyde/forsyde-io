@@ -54,6 +54,15 @@ namespace moc {
 
     vertex MoCElem
 
+    vertex MoCSource refines MoCElem
+
+    vertex ContinousMoCSource refines MoCSource
+
+    vertex PeriodicMoCSource refines MoCSource {
+        prop eventPeriodNumerator is long
+        prop eventPeriodDenominator is long
+    }
+
     namespace linguafranca {
         vertex LinguaFrancaElem refines moc::MoCElem
 

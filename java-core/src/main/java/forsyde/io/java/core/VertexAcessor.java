@@ -271,6 +271,7 @@ public final class VertexAcessor {
     }
 
     public static boolean insertOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, int pos, EdgeTrait... ts) {
+        @SuppressWarnings("unchecked")
         final Map<String, Integer> order = (Map<String, Integer>) src.getProperties()
                 .get("__" + srcPortName + "_ordering__")
                 .unwrap();

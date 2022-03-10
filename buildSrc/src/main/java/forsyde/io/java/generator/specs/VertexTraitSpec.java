@@ -8,8 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
-public class VertexTraitSpec {
+public class VertexTraitSpec implements SourceTraceableSpec {
 
+    public transient int declaredLine = 0;
+    public transient int declaredColumn = 0;
     public String name;
     public String comment = "";
     @JsonIdentityReference(alwaysAsId = true)
@@ -43,5 +45,15 @@ public class VertexTraitSpec {
         sb.append(", refinedTraits=").append(refinedTraits);
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public int getLine() {
+        return declaredLine;
+    }
+
+    @Override
+    public int getColumn() {
+        return declaredColumn;
     }
 }

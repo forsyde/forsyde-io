@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
-public class EdgeTraitSpec {
+public class EdgeTraitSpec implements SourceTraceableSpec {
 
+    public transient int declaredLine = 0;
+    public transient int declaredColumn = 0;
     public String name;
     public List<EdgeTraitSpec> refinedTraits = new ArrayList<>();
     public transient List<String> absoluteRefinedTraitNames = new ArrayList<>();
@@ -17,5 +19,17 @@ public class EdgeTraitSpec {
     public List<VertexTraitSpec> targetTraits = new ArrayList<>();
     public transient List<String> sourceTraitNames = new ArrayList<>();
     public transient List<String> targetTraitNames = new ArrayList<>();
+
+
+    @Override
+    public int getLine() {
+        return declaredLine;
+    }
+
+    @Override
+    public int getColumn() {
+        return declaredColumn;
+    }
+
 
 }

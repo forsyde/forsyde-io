@@ -27,7 +27,13 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
                     vertexTraitSpec.refinedTraits.add(refinedtrait.get());
                 else
                     throw new InconsistentTraitHierarchyException(
-                            "Trait " + vertexTraitSpec.name + " declares refinement " + refinedName + " which does not exist in the hierarchy."
+                            "Vertex trait '" +
+                                    vertexTraitSpec.name +
+                                    "' declared at " +
+                                    vertexTraitSpec.getLine() + ":" + vertexTraitSpec.getColumn() +
+                                    " refines " +
+                                    refinedName +
+                                    " which does not exist in the hierarchy."
                     );
             }
             // ports
@@ -40,7 +46,15 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
                     portSpec.vertexTrait = portVertexTrait.get();
                 else
                     throw new InconsistentTraitHierarchyException(
-                            "Trait " + vertexTraitSpec.name + " declares refinement " + portVertexTraitName + " which does not exist in the hierarchy."
+                            "Port '" +
+                                    portSpec.name +
+                                    "' of Vertex trait '" +
+                                    vertexTraitSpec.name +
+                                    "' declared at " +
+                                    portSpec.getLine() + ":" + portSpec.getColumn() +
+                                    " specifies vertex trait '" +
+                                    portVertexTraitName +
+                                    "' which does not exist in the hierarchy."
                     );
                 final String portEdgeTraitName = portSpec.absoluteEdgeTraitName != null ? portSpec.absoluteEdgeTraitName :
                         portSpec.relativeEdgeTraitName != null ? portSpec.relativeEdgeTraitName : null;
@@ -50,7 +64,15 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
                         portSpec.edgeTraitSpec = portEdgeTrait.get();
                     else
                         throw new InconsistentTraitHierarchyException(
-                                "Trait " + vertexTraitSpec.name + " declares refinement " + portEdgeTraitName + " which does not exist in the hierarchy."
+                                "Port '" +
+                                        portSpec.name +
+                                        "' of Vertex trait '" +
+                                        vertexTraitSpec.name +
+                                        "' declared at " +
+                                        portSpec.getLine() + ":" + portSpec.getColumn() +
+                                        " specifies edge trait '" +
+                                        portEdgeTraitName +
+                                        "' which does not exist in the hierarchy."
                         );
                 }
             }
@@ -67,7 +89,13 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
                     edgeTraitSpec.refinedTraits.add(refinedtrait.get());
                 else
                     throw new InconsistentTraitHierarchyException(
-                            "Trait " + edgeTraitSpec.name + " declares refinement " + refinedName + " which does not exist in the hierarchy."
+                            "Edge trait '" +
+                                    edgeTraitSpec.name +
+                                    "' declared at " +
+                                    edgeTraitSpec.getLine() + ":" + edgeTraitSpec.getColumn() +
+                                    " refines " +
+                                    refinedName +
+                                    " which does not exist in the hierarchy."
                     );
             }
             // vertexes constraints
@@ -86,14 +114,16 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
     public EdgeTraitSpec visitEdgeTraitTyped(ForSyDeTraitDSLParser.EdgeTraitContext ctx) {
         final EdgeTraitSpec edgeTraitSpec = new EdgeTraitSpec();
         edgeTraitSpec.name =ctx.name.getText();
+        edgeTraitSpec.declaredLine = ctx.getStart().getLine();
+        edgeTraitSpec.declaredColumn = ctx.getStart().getCharPositionInLine();
         for (final Token token : ctx.refinedTraits) {
             //edgeTraitSpec.absoluteRefinedTraitNames.add(token.getText());
             // absolute reference or local reference
             if (token.getText().contains("::")) {
                 if (token.getText().startsWith("::"))
-                    edgeTraitSpec.absoluteRefinedTraitNames.add(token.getText());
+                    edgeTraitSpec.absoluteRefinedTraitNames.add(token.getText().substring(2));
                 else
-                    edgeTraitSpec.absoluteRefinedTraitNames.add("::" + token.getText());
+                    edgeTraitSpec.absoluteRefinedTraitNames.add(token.getText());
                 //vertexRefinedParent.add(token.getText())
             } else {
                 // add the namespace in a local reference
@@ -113,6 +143,8 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
     public PortSpec visitVertexPortTyped(ForSyDeTraitDSLParser.VertexPortContext ctx) {
         final PortSpec portSpec = new PortSpec();
         portSpec.name = ctx.name.getText();
+        portSpec.declaredLine = ctx.getStart().getLine();
+        portSpec.declaredColumn = ctx.getStart().getCharPositionInLine();
         final List<String> modifiers = ctx.modifiers.stream().map(Token::getText).collect(Collectors.toList());
         if (modifiers.contains("ordered")) {
             portSpec.ordered = Optional.of(true);
@@ -134,9 +166,9 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
         // absolute reference or local reference for vertex trait
         if (ctx.connectedVertexTrait.getText().contains("::")) {
             if (ctx.connectedVertexTrait.getText().startsWith("::"))
-                portSpec.absoluteVertexTraitName = ctx.connectedVertexTrait.getText();
+                portSpec.absoluteVertexTraitName = ctx.connectedVertexTrait.getText().substring(2);
             else
-                portSpec.absoluteVertexTraitName = "::" + ctx.connectedVertexTrait.getText();
+                portSpec.absoluteVertexTraitName = ctx.connectedVertexTrait.getText();
         } else {
             // add the namespace in a local reference
             portSpec.relativeVertexTraitName = ctx.connectedVertexTrait.getText();
@@ -145,9 +177,9 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
         if (ctx.connectingEdgeTrait != null) {
             if (ctx.connectingEdgeTrait.getText().contains("::")) {
                 if (ctx.connectingEdgeTrait.getText().startsWith("::"))
-                    portSpec.absoluteEdgeTraitName = ctx.connectingEdgeTrait.getText();
+                    portSpec.absoluteEdgeTraitName = ctx.connectingEdgeTrait.getText().substring(2);
                 else
-                    portSpec.absoluteEdgeTraitName = "::" + ctx.connectingEdgeTrait.getText();
+                    portSpec.absoluteEdgeTraitName = ctx.connectingEdgeTrait.getText();
             } else {
                 // add the namespace in a local reference
                 portSpec.relativeEdgeTraitName = ctx.connectingEdgeTrait.getText();
@@ -190,6 +222,8 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
         final VertexTraitSpec vertexTraitSpec = new VertexTraitSpec();
         //final VertexTraitSpec vertexTraitSpec = vertexTraitSpecMap.get(ctx);
         vertexTraitSpec.name = ctx.name.getText();
+        vertexTraitSpec.declaredLine = ctx.getStart().getLine();
+        vertexTraitSpec.declaredColumn = ctx.getStart().getCharPositionInLine();
         vertexTraitSpec.requiredPorts.addAll(ctx.vertexPort().stream().map(this::visitVertexPortTyped).collect(Collectors.toList()));
         vertexTraitSpec.requiredProperties.addAll(ctx.vertexProperty().stream().map(this::visitVertexPropertyTyped).collect(Collectors.toList()));
         for (final Token token : ctx.refinedTraits) {
@@ -197,9 +231,9 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
             // absolute reference or local reference
             if (token.getText().contains("::")) {
                 if (token.getText().startsWith("::"))
-                    vertexTraitSpec.absoluteRefinedTraitNames.add(token.getText());
+                    vertexTraitSpec.absoluteRefinedTraitNames.add(token.getText().substring(2));
                 else
-                    vertexTraitSpec.absoluteRefinedTraitNames.add("::" + token.getText());
+                    vertexTraitSpec.absoluteRefinedTraitNames.add(token.getText());
                 //vertexRefinedParent.add(token.getText())
             } else {
                 // add the namespace in a local reference
@@ -244,19 +278,19 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
         // concatenate grand children with children
         final Stream<VertexTraitSpec> containedVertexTraits =
                 Stream.concat(traitHierarchies.stream().flatMap(c -> c.vertexTraits.stream()), ctx.vertexTrait().stream()
-                                .map(this::visitVertexTraitTyped))
-                        .peek(v -> v.name = namespace + "::" + v.name)
-                        .peek(v -> v.relativeRefinedTraitNames.replaceAll(s -> namespace + "::" + s))
-                        .peek(v -> v.requiredPorts.replaceAll(p -> {
-                            p.relativeVertexTraitName = p.relativeVertexTraitName != null ? namespace + "::" + p.relativeVertexTraitName : null;
-                            p.relativeEdgeTraitName = p.relativeEdgeTraitName != null ? namespace + "::" + p.relativeEdgeTraitName : null;
-                            return p;
-                        }));
+                                .map(this::visitVertexTraitTyped));
+//                        .peek(v -> v.name = namespace + "::" + v.name)
+//                        .peek(v -> v.relativeRefinedTraitNames.replaceAll(s -> namespace + "::" + s))
+//                        .peek(v -> v.requiredPorts.replaceAll(p -> {
+//                            p.relativeVertexTraitName = p.relativeVertexTraitName != null ? namespace + "::" + p.relativeVertexTraitName : null;
+//                            p.relativeEdgeTraitName = p.relativeEdgeTraitName != null ? namespace + "::" + p.relativeEdgeTraitName : null;
+//                            return p;
+//                        }));
         final Stream<EdgeTraitSpec> containedEdgeTraits =
                 Stream.concat(traitHierarchies.stream().flatMap(c -> c.edgeTraits.stream()), ctx.edgeTrait().stream()
-                                .map(this::visitEdgeTraitTyped))
-                        .peek(v -> v.name = namespace + "::" + v.name)
-                        .peek(v -> v.relativeRefinedTraitNames.replaceAll(s -> namespace + "::" + s));
+                                .map(this::visitEdgeTraitTyped));
+//                        .peek(v -> v.name = namespace + "::" + v.name)
+//                        .peek(v -> v.relativeRefinedTraitNames.replaceAll(s -> namespace + "::" + s));
         traitHierarchy.vertexTraits.addAll(containedVertexTraits.collect(Collectors.toList()));
         traitHierarchy.edgeTraits.addAll(containedEdgeTraits.collect(Collectors.toList()));
         // now do extra linking and more
