@@ -32,9 +32,9 @@ jobs:
       run: |
         cd ${{ github.workspace }}
         ./gradlew jar shadowJar
-    - uses: montudor/action-zip@v1
-      with:
-        args: zip -qq -r conversyde.zip ${{ github.workspace }}/java-conversyde/build/launch4j
+#    - uses: montudor/action-zip@v1
+#      with:
+#        args: zip -qq -r conversyde.zip ${{ github.workspace }}/java-conversyde/build/launch4j
     # - name: Upload CLI Zip to release
     #   uses: svenstaro/upload-release-action@v2
     #   with:
