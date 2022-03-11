@@ -27,11 +27,11 @@ jobs:
       with:
         distribution: 'temurin' # See 'Supported distributions' for available options
         java-version: '11'
-    - name: Build with sbt (All)
+    - name: Build with Gradle (All)
       # if: ${{ matrix.os != 'windows-latest' }}
       run: |
         cd ${{ github.workspace }}
-        .\gradlew.bat jar shadowJar
+        ./gradlew jar shadowJar
     - uses: montudor/action-zip@v1
       with:
         args: zip -qq -r conversyde.zip ${{ github.workspace }}/java-conversyde/build/launch4j
