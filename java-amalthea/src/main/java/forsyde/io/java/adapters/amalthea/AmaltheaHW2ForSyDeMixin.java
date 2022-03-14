@@ -50,10 +50,13 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 final Vertex rrVertex = new Vertex(v.getIdentifier() + "Scheduler");
                 final RoundRobinCommunicationModule roundRobinCommunicationModule = RoundRobinCommunicationModule.enforce(v);
                 final RoundRobinScheduler roundRobinScheduler = RoundRobinScheduler.enforce(rrVertex);
-                List<HwConnection> connections = connectionHandler.getPorts().stream().flatMap(p -> p.getConnections().stream())
+                final List<HwConnection> outgoingConnections = connectionHandler.getPorts().stream().flatMap(p -> p.getConnections().stream())
                         .filter(p -> p.getPort1().getNamedContainer().equals(connectionHandler)).collect(Collectors.toList());
+                final List<HwConnection> incomingConnections = connectionHandler.getPorts().stream().flatMap(p -> p.getConnections().stream())
+                        .filter(p -> p.getPort2().getNamedContainer().equals(connectionHandler)).collect(Collectors.toList());
                 HashMap<String, Integer> allocation = new HashMap<>();
-                connections.forEach(p -> allocation.put(p.getPort2().getNamedContainer().getName(), 1));
+                outgoingConnections.forEach(p -> allocation.put(p.getPort2().getNamedContainer().getName(), 1));
+                incomingConnections.forEach(p -> allocation.put(p.getPort1().getNamedContainer().getName(), 1));
                 roundRobinCommunicationModule.setAllocatedWeights(allocation);
                 roundRobinCommunicationModule.setTotalWeights(allocation.size());
                 addEquivalence(connectionHandler, rrVertex);
