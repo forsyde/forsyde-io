@@ -30,6 +30,9 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
     @InputFile
     File inputModelDSL;// = getProject().file("traithierarchy.traitdsl");
 
+    @Input
+    File outputRootDir = getProject().getProjectDir().toPath().resolve(Paths.get("src-gen/main/java")).toFile();
+
     @OutputFiles
     List<File> outFiles = new ArrayList<>();
 
@@ -56,7 +59,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
 
     public void generateFiles(TraitHierarchy model) throws IOException {
-        final File rootOutDir = getProject().getProjectDir().toPath().resolve(Paths.get("src-gen/main/java")).toFile();
+        final File rootOutDir = outputRootDir;//getProject().getProjectDir().toPath().resolve(Paths.get("src-gen/main/java")).toFile();
         Path root = rootOutDir.toPath();
         Path enumsPath = root.resolve(Paths.get("forsyde/io/java/core/"));
         Path viewersPath = root.resolve("forsyde/io/java/typed/viewers/");
@@ -816,4 +819,11 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         this.inputModelDSL = inputModelDSL;
     }
 
+    public File getOutputRootDir() {
+        return outputRootDir;
+    }
+
+    public void setOutputRootDir(File outputRootDir) {
+        this.outputRootDir = outputRootDir;
+    }
 }

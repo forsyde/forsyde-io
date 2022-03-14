@@ -1,3 +1,7 @@
+plugins {
+    id 'antlr' // required for java core
+}
+
 import forsyde.io.java.generator.GenerateForSyDeModelTask
 
 project.ext.niceName = "Java Core"
@@ -35,10 +39,18 @@ dependencies {
 
     implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
     implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
+    antlr 'org.antlr:antlr4:4.9.3'
+    implementation 'org.antlr:antlr4-runtime:4.9.3'
 
     compileOnly "org.derive4j:derive4j-annotation:1.1.1"
     annotationProcessor "org.derive4j:derive4j:1.1.1"
 
+}
+
+generateGrammarSource {
+    maxHeapSize = "512m"
+    arguments += ['-package', 'forsyde.io.java.adapters.fiodl', '-visitor']
+    outputDirectory file("src-gen/main/java/forsyde/io/java/adapters/fiodl")
 }
 
 sourceSets {
