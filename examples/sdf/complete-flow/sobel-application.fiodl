@@ -1,0 +1,255 @@
+systemgraph {
+
+    vertex ArrayXOfArrayXOfDoubleType [typing::datatypes::Array] (innerType) {
+        "maximumElems": -1_i
+    }
+
+    vertex ArrayXOfDoubleType [typing::datatypes::Array] (innerType) {
+        "maximumElems": -1_i
+    }
+
+    edge [typing::datatypes::DataDefinition] from ArrayXOfArrayXOfDoubleType port innerType to ArrayXOfDoubleType
+
+    vertex Array6OfDoubleType [typing::datatypes::Array] (innerType) {
+        "maximumElems": 6_i
+    }
+
+    vertex DoubleType [typing::datatypes::Double] () {}
+
+    vertex UInt16 [typing::datatypes::Integer] () {
+        "numberOfBits": 16_i
+    }
+
+    edge [typing::datatypes::DataDefinition] from Array6OfDoubleType port innerType to DoubleType
+    edge [typing::datatypes::DataDefinition] from ArrayXOfDoubleType port innerType to DoubleType
+
+    vertex system_img_source [impl::TokenizableDataBlock, typing::TypedDataBlock] (dataType) {
+        "maxSizeInBits": 172000000_l,
+        "tokenSizeInBits": 64_l
+    }
+
+    edge [typing::datatypes::DataDefinition] from system_img_source port dataType to ArrayXOfArrayXOfDoubleType
+
+    vertex system_img_sink [impl::TokenizableDataBlock, typing::TypedDataBlock] (dataType) {
+        "maxSizeInBits": 172000000_l,
+        "tokenSizeInBits": 64_l
+    }
+
+    edge [typing::datatypes::DataDefinition] from system_img_sink port dataType to ArrayXOfArrayXOfDoubleType
+
+    vertex getPx [moc::sdf::SDFComb, moc::MoCSource] (combFunctions, system_img_source) {
+        "dataTakenPerExecution": {
+            "system_img_source": 384_l
+        }
+    }
+
+    edge [impl::DataMovement] from system_img_source to getPx port system_img_source 
+
+    vertex Gx [moc::sdf::SDFComb] (combFunctions) {}
+    
+    vertex Gy [moc::sdf::SDFComb] (combFunctions) {}
+
+    vertex Abs [moc::sdf::SDFComb, moc::MoCSink] (combFunctions, system_img_sink) {}
+
+    edge [impl::DataMovement] from Abs port system_img_sink to system_img_sink
+
+    vertex getPxImpl1
+    [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
+    (portTypes, system_img_source_address, imgBlockX, offsetX, offsetY, dimX, dimY)
+    {
+        "inlineCode": "
+            imgBlockX[0] = system_img_source_address[offsetX + 0][offsetY + 0];
+            imgBlockX[1] = system_img_source_address[offsetX + 0][offsetY + 2];
+            imgBlockX[2] = system_img_source_address[offsetX + 1][offsetY + 0];
+            imgBlockX[3] = system_img_source_address[offsetX + 1][offsetY + 2];
+            imgBlockX[4] = system_img_source_address[offsetX + 2][offsetY + 0];
+            imgBlockX[5] = system_img_source_address[offsetX + 2][offsetY + 2];
+            if (offsetX >= dimX - 2) {
+                offsetY += 1;
+                offsetX = 0;
+            }
+            if (offsetY >= dimY - 2) {
+                offsetY = 0;
+            }
+        ",
+        "inputPorts": ["system_img_source_address", "dimX", "dimY", "offsetX", "offsetY"],
+        "outputPorts": ["imgBlockX", "offsetX", "offsetY"],
+        "portToTypeName": {
+            "system_img_source_address": "ArrayXOfArrayXOfDoubleType",
+            "dimX": "UInt16",
+            "dimY": "UInt16",
+            "offsetX": "UInt16",
+            "offsetY": "UInt16",
+            "imgBlockX": "Array6OfDoubleType"
+        },
+        "operationRequirements": {
+            "default": {
+                "assign": 8_i,
+                "boolean": 2_i, 
+                "integer": 3_i
+            }
+        },
+        "sizeInBits": 100_l
+    }
+
+    edge [typing::datatypes::DataDefinition] from getPxImpl1 port portTypes to Array6OfDoubleType
+    edge [typing::datatypes::DataDefinition] from getPxImpl1 port portTypes to ArrayXOfArrayXOfDoubleType
+    edge [typing::datatypes::DataDefinition] from getPxImpl1 port portTypes to UInt16
+
+    vertex getPxImpl2
+    [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
+    (portTypes, system_img_source_address, imgBlockY, offsetX, offsetY, dimX, dimY)
+    {
+        "inlineCode": "
+            imgBlockY[0] = system_img_source_address[offsetX + 0][offsetY + 0];
+            imgBlockY[1] = system_img_source_address[offsetX + 0][offsetY + 1];
+            imgBlockY[2] = system_img_source_address[offsetX + 0][offsetY + 2];
+            imgBlockY[3] = system_img_source_address[offsetX + 2][offsetY + 0];
+            imgBlockY[4] = system_img_source_address[offsetX + 2][offsetY + 1];
+            imgBlockY[5] = system_img_source_address[offsetX + 2][offsetY + 2];
+            if (offsetX >= dimX - 2) {
+                offsetY += 1;
+                offsetX = 0;
+            }
+            if (offsetY >= dimY - 2) {
+                offsetY = 0;
+            }
+        ",
+        "inputPorts": ["system_img_source_address", "dimX", "dimY", "offsetX", "offsetY"],
+        "outputPorts": ["imgBlockY", "offsetX", "offsetY"],
+        "portToTypeName": {
+            "system_img_source_address": "ArrayXOfArrayXOfDoubleType",
+            "dimX": "UInt16",
+            "dimY": "UInt16",
+            "offsetX": "UInt16",
+            "offsetY": "UInt16",
+            "imgBlockY": "Array6OfDoubleType"
+        },
+        "operationRequirements": {
+            "default": {
+                "assign": 8_i,
+                "boolean": 2_i, 
+                "integer": 3_i
+            }
+        },
+        "sizeInBits": 100_l
+    }
+
+    edge [typing::datatypes::DataDefinition] from getPxImpl2 port portTypes to Array6OfDoubleType
+    edge [typing::datatypes::DataDefinition] from getPxImpl2 port portTypes to ArrayXOfArrayXOfDoubleType
+    edge [typing::datatypes::DataDefinition] from getPxImpl2 port portTypes to UInt16
+
+    edge [] from getPx port combFunctions to getPxImpl1
+    edge [] from getPx port combFunctions to getPxImpl2
+
+    vertex GxImp
+    [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
+    (portTypes, imgBlockX, gx)
+    {
+        "inlineCode": "
+            gx = gx - imgBlockX[0];
+            gx = gx + imgBlockX[1];
+            gx = gx - 2.0*imgBlockX[2];
+            gx = gx + 2.0*imgBlockX[3];
+            gx = gx - imgBlockX[4];
+            gx = gx + imgBlockX[5];
+        ",
+        "inputPorts": ["imgBlockX"],
+        "outputPorts": ["gx"],
+        "portToTypeName": {
+            "gx": "Double",
+            "imgBlockX": "Array6OfDoubleType"
+        },
+        "operationRequirements": {
+            "default": {
+                "assign": 6_i,
+                "double": 8_i
+            }
+        },
+        "sizeInBits": 100_l
+    }
+
+    edge [typing::datatypes::DataDefinition] from GxImp port portTypes to Array6OfDoubleType
+    edge [typing::datatypes::DataDefinition] from GxImp port portTypes to DoubleType
+
+    edge [] from getPx port combFunctions to getPxImpl1
+    edge [] from getPx port combFunctions to getPxImpl2
+
+    vertex GyImp
+    [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
+    (portTypes, imgBlockY, gy)
+    {
+        "inlineCode": "
+            gy = gy + imgBlockX[0];
+            gy = gy + 2.0*imgBlockX[1];
+            gy = gy + imgBlockX[2];
+            gy = gy - imgBlockX[3];
+            gy = gy - 2.0*imgBlockX[4];
+            gy = gy - imgBlockX[5];
+        ",
+        "inputPorts": ["imgBlockY"],
+        "outputPorts": ["gy"],
+        "portToTypeName": {
+            "gx": "Double",
+            "imgBlockX": "Array6OfDoubleType"
+        },
+        "operationRequirements": {
+            "default": {
+                "assign": 6_i,
+                "double": 8_i
+            }
+        },
+        "sizeInBits": 100_l
+    }
+
+    edge [typing::datatypes::DataDefinition] from GyImp port portTypes to Array6OfDoubleType
+    edge [typing::datatypes::DataDefinition] from GyImp port portTypes to DoubleType
+
+    vertex AbsImpl
+    [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
+    (portTypes, system_img_sink_address, gx, gy, offsetX, offsetY, dimX, dimY)
+    {
+        "inlineCode": "
+            if (gx < 0.0)
+                gx = -gx;
+            if (gy < 0.0)
+                gy = -gy;
+            if (offsetX >= dimX - 2) {
+                offsetY += 1;
+                offsetX = 0;
+            }
+            if (offsetY >= dimY - 2) {
+                offsetY = 0;
+            }
+            system_img_sink_address[offsetX][offsetY] = gx + gy;
+        ",
+        "inputPorts": ["system_img_sink_address", "gx", "gy", "dimX", "dimY", "offsetX", "offsetY"],
+        "outputPorts": ["offsetX", "offsetY"],
+        "portToTypeName": {
+            "system_img_sink_address": "ArrayXOfArrayXOfDoubleType",
+            "dimX": "UInt16",
+            "dimY": "UInt16",
+            "offsetX": "UInt16",
+            "offsetY": "UInt16",
+            "gx": "Double",
+            "gy": "Double",
+            "norm": "Double"
+        },
+        "operationRequirements": {
+            "default": {
+                "assign": 5_i,
+                "double": 2_i,
+                "boolean": 5_i, 
+                "integer": 3_i
+            }
+        },
+        "sizeInBits": 100_l
+    }
+
+    edge [typing::datatypes::DataDefinition] from AbsImpl port portTypes to DoubleType
+    edge [typing::datatypes::DataDefinition] from AbsImpl port portTypes to ArrayXOfArrayXOfDoubleType
+    edge [typing::datatypes::DataDefinition] from AbsImpl port portTypes to UInt16
+
+    
+
+}

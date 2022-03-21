@@ -36,11 +36,11 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
                 aChannel.setName(vertex.getIdentifier());
 
                 final DataSize dataSize = AmaltheaFactory.eINSTANCE.createDataSize();
-                dataSize.setValue(BigInteger.valueOf(tokenizableDataBlock.getTokenSize()));
+                dataSize.setValue(BigInteger.valueOf(tokenizableDataBlock.getTokenSizeInBits()));
                 dataSize.setUnit(DataSizeUnit.BIT);
                 aChannel.setSize(dataSize);
 
-                aChannel.setMaxElements((int)(Math.floorDiv(tokenizableDataBlock.getMaxSize(), tokenizableDataBlock.getTokenSize()) + 1));
+                aChannel.setMaxElements((int)(Math.floorDiv(tokenizableDataBlock.getMaxSizeInBits(), tokenizableDataBlock.getTokenSizeInBits()) + 1));
                 amalthea.getSwModel().getChannels().add(aChannel);
                 addEquivalence(vertex, aChannel);
             }, () -> {
@@ -49,7 +49,7 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
                     label.setName(vertex.getIdentifier());
 
                     final DataSize dataSize = AmaltheaFactory.eINSTANCE.createDataSize();
-                    dataSize.setValue(BigInteger.valueOf(dataBlock.getMaxSize()));
+                    dataSize.setValue(BigInteger.valueOf(dataBlock.getMaxSizeInBits()));
                     dataSize.setUnit(DataSizeUnit.BIT);
                     label.setSize(dataSize);
 

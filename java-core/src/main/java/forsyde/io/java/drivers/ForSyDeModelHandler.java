@@ -28,6 +28,7 @@ public final class ForSyDeModelHandler {
 		// register default drivers
 		registeredDrivers.add(new ForSyDeMLDriver());
 		registeredDrivers.add(new ForSyDeXMIDriver());
+        registeredDrivers.add(new ForSyDeFiodlHandler());
 		registeredDrivers.add(new ForSyDeDOTDriver());
 		registeredDrivers.add(new ForSyDeGraphMLDriver());
 		// register extra drivers

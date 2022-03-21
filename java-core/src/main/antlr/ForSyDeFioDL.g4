@@ -1,44 +1,101 @@
 grammar ForSyDeFioDL;
 
+ALPHABETIC: [A-Za-z];
+
+NUMERIC: [0-9];
+
+ALPHANUM: [A-Za-z0-9];
+
+QUALIFIER: '::';
+
+CLARIFIER: ':';
+
+SEPARATOR: ',';
+
+QUOTE: '"';
+
+PORTS_START: '(';
+
+PORTS_END: ')';
+
+LIST_START: '[';
+
+LIST_END: ']';
+
+DICT_START: '{';
+
+DICT_END: '}';
+
+INTEGER: ('-')?NUMERIC+('_i')?;
+LONG: ('-')?NUMERIC+'_l';
+REAL: ('-')?(NUMERIC*'.'NUMERIC+ | NUMERIC+'.'NUMERIC*)'_'NUMERIC+;
+
 QUALIFIED_ID
-    :   ('::'|[A-Za-z])('::'|[A-Za-z0-9])*
+    :   ('::'|ALPHABETIC)('::'|'_'|ALPHANUM)*
 ;
 
-ALPHANUM
-    :  [A-Za-z0-9]+
-;
+INLINE_SYMBOLS: ('*'|'.'|'='|';'|'_'|'+'|'<'|'>'|'-');
 
-WS : [ \t\r\n]+ -> skip ;
-
-INTEGER: [0-9]+'_i';
-LONG: [0-9]+'_l';
-REAL: ([0-9]*'.'[0-9]+ | [0-9]+'.'[0-9]*)'_'[1-9][0-9]*;
+WS : [ \t\r\n]+ -> channel(HIDDEN) ;
 
 number: intVal=INTEGER | longVal=LONG | realVal=REAL;
 
+stringVal:
+    QUOTE  (
+       content+=QUALIFIED_ID |
+       content+=NUMERIC |
+       content+=INTEGER |
+       content+=LONG |
+       content+=REAL |
+       content+=INLINE_SYMBOLS |
+       content+=PORTS_START |
+       content+=PORTS_END |
+       content+=LIST_START |
+       content+=LIST_END |
+       content+=DICT_START |
+       content+=DICT_END |
+       content+=SEPARATOR  |
+       content+=WS
+   )* QUOTE
+;
+
 systemGraph:
-    'systemgraph' '{' (vertexes+=vertex | edges+=edge)* '}'
+    'systemgraph' DICT_START (vertexes+=vertex | edges+=edge)* DICT_END
 ;
 
 vertex:
     'vertex' name=QUALIFIED_ID
-    ('traits' '[' traits+=QUALIFIED_ID (',' traits+=QUALIFIED_ID)* ']')?
-    ('ports' '[' ports+=QUALIFIED_ID (',' ports+=QUALIFIED_ID)* ']')?
-    ('properties' '{' (propertyNames+=ALPHANUM ':' propertyValues+=vertexPropertyValue) '}')?
-    ('trait' traits+=QUALIFIED_ID)*
-    ('port' ports+=QUALIFIED_ID)*
-    ('property' propertyNames+=ALPHANUM ':' propertyValues+=vertexPropertyValue)*
+    LIST_START (traits+=QUALIFIED_ID (SEPARATOR traits+=QUALIFIED_ID)*)? LIST_END
+    PORTS_START (ports+=QUALIFIED_ID (SEPARATOR ports+=QUALIFIED_ID)*)? PORTS_END
+    DICT_START (propertyNames+=stringVal CLARIFIER propertyValues+=vertexPropertyValue
+        (SEPARATOR propertyNames+=stringVal CLARIFIER propertyValues+=vertexPropertyValue)*)? DICT_END
 ;
 
 vertexPropertyValue:
     number |
-    '[' (arrayEntries+=vertexPropertyValue)* ']' |
-    '{' (mapKey+=ALPHANUM ':' mapValue+=vertexPropertyValue)* '}'
+    stringVal |
+    vertexPropertyArray |
+    vertexPropertyMap
+;
+
+vertexPropertyArray:
+    '[' (arrayEntries+=vertexPropertyValue (SEPARATOR arrayEntries+=vertexPropertyValue)*)? ']'
+;
+
+vertexPropertyMapKey:
+    number |
+    stringVal
+;
+
+vertexPropertyMap:
+    DICT_START (mapKey+=vertexPropertyMapKey CLARIFIER mapValue+=vertexPropertyValue (SEPARATOR mapKey+=vertexPropertyMapKey CLARIFIER mapValue+=vertexPropertyValue)*)? DICT_END
 ;
 
 edge:
-    'edge' 'from' source=QUALIFIED_ID ('port' sourceport=QUALIFIED_ID)? 'to' target=QUALIFIED_ID ('port' targetport=QUALIFIED_ID)
-    ('traits' '[' traits+=QUALIFIED_ID (',' traits+=QUALIFIED_ID)* ']')?
+    'edge'
+    '[' (traits+=QUALIFIED_ID (SEPARATOR traits+=QUALIFIED_ID)*)? ']'
+    'from' source=QUALIFIED_ID ('port' sourceport=QUALIFIED_ID)? 'to' target=QUALIFIED_ID ('port' targetport=QUALIFIED_ID)?
+
 ;
 
 //edgeTrait:

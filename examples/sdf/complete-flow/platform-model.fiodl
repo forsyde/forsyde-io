@@ -1,0 +1,15 @@
+systemgraph {
+
+    vertex tdmabus1 
+    [platform::RoundRobinCommunicationModule]
+    ()
+    {
+        allocatedWeights: {
+            tile1: 1_i,
+            tile2: 1_i,
+            tile3: 1_i,
+            tile4: 1_i
+        },
+        totalWeights: 4_i
+    }
+}

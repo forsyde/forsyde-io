@@ -9,12 +9,7 @@ namespace impl {
     }
 
     vertex ANSICBlackBoxExecutable refines Executable {
-        prop inlinedCodeLines is array<string>
-    }
-
-    vertex ANSICTypedBlackBoxExecutable refines ANSICBlackBoxExecutable {
-        port inputTypes is ordered multiple impl::datatypes::DataType
-        port outputType is single impl::datatypes::DataType
+        prop inlinedCode is string
     }
 
     vertex CommunicatingExecutable refines Executable {
@@ -23,14 +18,29 @@ namespace impl {
     }
 
     vertex DataBlock {
-        prop maxSize is long
+        prop maxSizeInBits is long
     }
 
     vertex TokenizableDataBlock refines DataBlock {
-        prop tokenSize is long
+        prop tokenSizeInBits is long
     }
 
     edge DataMovement
+
+}
+
+namespace typing {
+
+    vertex TypedOperation refines impl::Executable {
+        port portTypes is multiple typing::datatypes::DataType with typing::datatypes::DataDefinition
+        prop inputPorts is array<string>
+        prop outputPorts is array<string>
+        prop portToTypeName is strmap<string>
+    }
+
+    vertex TypedDataBlock refines impl::DataBlock {
+        port dataType is out single typing::datatypes::DataType with typing::datatypes::DataDefinition
+    }
 
     namespace datatypes {
         vertex DataType
@@ -41,20 +51,23 @@ namespace impl {
         vertex Double refines DataType
         vertex Array refines DataType {
             prop maximumElems is int
-            port innerType is single DataType
+            port innerType is single DataType with DataDefinition
         }
         vertex Record refines DataType {
-            port innerTypes is multiple DataType
+            port innerTypes is multiple DataType with DataDefinition
         }
-    }
 
+        edge DataDefinition
+    }
 }
 
 namespace moc {
 
     vertex MoCElem
 
-    vertex MoCSource refines MoCElem
+    vertex MoCSource refines MoCElem {
+        prop dataTakenPerExecution is strmap<long>
+    }
 
     vertex ContinousMoCSource refines MoCSource
 
@@ -62,6 +75,8 @@ namespace moc {
         prop eventPeriodNumerator is long
         prop eventPeriodDenominator is long
     }
+
+    vertex MoCSink refines MoCElem
 
     namespace linguafranca {
         vertex LinguaFrancaElem refines moc::MoCElem
@@ -105,7 +120,7 @@ namespace moc {
             prop consumption is strmap<int>
             prop production is strmap<int>
 
-            port combFunction is single impl::Executable
+            port combFunctions is multiple out impl::Executable
         }
 
         vertex SDFDelay refines SDFElem {
@@ -117,7 +132,6 @@ namespace moc {
         }
 
         vertex SDFChannel refines SDFElem {
-            prop tokenSizeInBits is long
 
             port producer is single in SDFElem
             port consumer is single out SDFElem
