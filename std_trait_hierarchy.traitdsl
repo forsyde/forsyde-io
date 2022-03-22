@@ -29,6 +29,15 @@ namespace impl {
 
 }
 
+namespace values {
+    vertex Value;
+
+    vertex IntegerValue refines Value {
+        prop intValue is integer
+    }
+}
+
+
 namespace typing {
 
     vertex TypedOperation refines impl::Executable {
@@ -76,7 +85,9 @@ namespace moc {
         prop eventPeriodDenominator is long
     }
 
-    vertex MoCSink refines MoCElem
+    vertex MoCSink refines MoCElem {
+        prop dataWritenPerExecution is strmap<long>
+    }
 
     namespace linguafranca {
         vertex LinguaFrancaElem refines moc::MoCElem
@@ -126,15 +137,17 @@ namespace moc {
         vertex SDFDelay refines SDFElem {
             prop delayedTokens is int
 
-            port delayFunction is single impl::Executable
+            port delayValue is single values::IntegerValue
             port notDelayedChannel is single in SDFChannel
             port delayedChannel is single out SDFChannel
         }
 
         vertex SDFChannel refines SDFElem {
+            prop numOfInitialTokens is int
 
             port producer is single in SDFElem
             port consumer is single out SDFElem
+            port initialTokenValues is ordered multiple out values::Value
         }
 
         edge SDFDataEdge {

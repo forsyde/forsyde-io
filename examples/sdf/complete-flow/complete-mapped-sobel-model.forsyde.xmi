@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<forsyde.io.eclipse.systemgraph:ForSyDeSystemGraph xmlns:forsyde.io.eclipse.systemgraph="forsyde.io.eclipse.systemgraph" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmi:version="2.0" xsi:schemaLocation="forsyde.io.eclipse.systemgraph systemgraph.ecore#//io/eclipse/systemgraph">
+<forsyde.io.eclipse.systemgraph:ForSyDeSystemGraph xmlns:forsyde.io.eclipse.systemgraph="forsyde.io.eclipse.systemgraph"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmi:version="2.0" xsi:schemaLocation="forsyde.io.eclipse.systemgraph systemgraph.ecore#//io/eclipse/systemgraph">
     <nodes identifier="Array1000OfArrayOfDouble">
         <traits>typing::datatypes::Array</traits>
         <propertiesValues intValue="1000" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
@@ -38,7 +40,7 @@
         </propertiesValues>
         <propertiesNames>production</propertiesNames>
         <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:ArrayVertexProperty">
-            <values intValue="0" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+            <values intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
         </propertiesValues>
         <propertiesNames>firingSlots</propertiesNames>
     </nodes>
@@ -60,7 +62,7 @@
         </propertiesValues>
         <propertiesNames>consumption</propertiesNames>
         <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:ArrayVertexProperty">
-            <values intValue="1" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+            <values intValue="2" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
         </propertiesValues>
         <propertiesNames>firingSlots</propertiesNames>
     </nodes>
@@ -82,7 +84,7 @@
         </propertiesValues>
         <propertiesNames>consumption</propertiesNames>
         <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:ArrayVertexProperty">
-            <values intValue="2" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+            <values intValue="3" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
         </propertiesValues>
         <propertiesNames>firingSlots</propertiesNames>
     </nodes>
@@ -102,7 +104,7 @@
         </propertiesValues>
         <propertiesNames>consumption</propertiesNames>
         <propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:ArrayVertexProperty">
-            <values intValue="3" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
+            <values intValue="4" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
         </propertiesValues>
         <propertiesNames>firingSlots</propertiesNames>
     </nodes>

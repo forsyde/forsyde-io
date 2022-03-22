@@ -1,5 +1,9 @@
 systemgraph {
 
+    vertex ZeroValue [values::IntegerValue] () {
+        "intValue": 0
+    }
+
     vertex ArrayXOfArrayXOfDoubleType [typing::datatypes::Array] (innerType) {
         "maximumElems": -1_i
     }
@@ -37,33 +41,67 @@ systemgraph {
 
     edge [typing::datatypes::DataDefinition] from system_img_sink port dataType to ArrayXOfArrayXOfDoubleType
 
-    vertex getPx [moc::sdf::SDFComb, moc::MoCSource] (combFunctions, system_img_source) {
-        "dataTakenPerExecution": {
-            "system_img_source": 384_l
-        }
+     vertex dimX [impl::DataBlock, typing::TypedDataBlock] (dataType) {
+        "maxSizeInBits": 16_l,
     }
 
-    edge [impl::DataMovement] from system_img_source to getPx port system_img_source 
+    edge [typing::datatypes::DataDefinition] from dimX port dataType to UInt16
 
-    vertex Gx [moc::sdf::SDFComb] (combFunctions) {}
-    
-    vertex Gy [moc::sdf::SDFComb] (combFunctions) {}
+    vertex dimY [impl::DataBlock, typing::TypedDataBlock] (dataType) {
+        "maxSizeInBits": 16_l,
+    }
 
-    vertex Abs [moc::sdf::SDFComb, moc::MoCSink] (combFunctions, system_img_sink) {}
+    edge [typing::datatypes::DataDefinition] from dimY port dataType to UInt16
 
-    edge [impl::DataMovement] from Abs port system_img_sink to system_img_sink
+    vertex GrayScale [moc::sdf::SDFComb, moc::MoCSource, decision::sdf::PASSedSDFComb] 
+    (combFunctions, system_img_source, dimX, dimY, dimsOut, offsetXIn, offsetYIn, offsetXOut, offsetYOut, gray) {
+        "dataTakenPerExecution": {
+            "system_img_source": 384_l,
+            "dimX": 16_l,
+            "dimY": 16_l
+        },
+        "production": {
+            "offsetXOut": 1,
+            "offsetYOut": 1,
+            "gray": 6,
+            "dimsOut": 2
+        },
+        "consumption": {
+            "offsetXIn": 1,
+            "offsetYIn": 1
+        },
+        "firingSlots": [0]
+    }
 
-    vertex getPxImpl1
+    vertex GrayScaleImpl
     [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
-    (portTypes, system_img_source_address, imgBlockX, offsetX, offsetY, dimX, dimY)
+    (portTypes, system_img_source_address, gray, offsetX, offsetY, dimX, dimY, dimsOut)
     {
-        "inlineCode": "
-            imgBlockX[0] = system_img_source_address[offsetX + 0][offsetY + 0];
-            imgBlockX[1] = system_img_source_address[offsetX + 0][offsetY + 2];
-            imgBlockX[2] = system_img_source_address[offsetX + 1][offsetY + 0];
-            imgBlockX[3] = system_img_source_address[offsetX + 1][offsetY + 2];
-            imgBlockX[4] = system_img_source_address[offsetX + 2][offsetY + 0];
-            imgBlockX[5] = system_img_source_address[offsetX + 2][offsetY + 2];
+        "inlinedCode": "
+            gray[0] = 
+                0.3125 * system_img_source_address[offsetY + 0][offsetX + 0] +
+                0.5625 * system_img_source_address[offsetY + 0][offsetX + 1] +
+                0.125 * system_img_source_address[offsetY + 0][offsetX + 2];
+            gray[1] = 
+                0.3125 * system_img_source_address[offsetY + 0][offsetX + 2] +
+                0.5625 * system_img_source_address[offsetY + 0][offsetX + 3] +
+                0.125 * system_img_source_address[offsetY + 0][offsetX + 4];
+            gray[2] = 
+                0.3125 * system_img_source_address[offsetY + 1][offsetX + 0] +
+                0.5625 * system_img_source_address[offsetY + 1][offsetX + 1] +
+                0.125 * system_img_source_address[offsetY + 1][offsetX + 2];
+            gray[3] = 
+                0.3125 * system_img_source_address[offsetY + 1][offsetX + 2] +
+                0.5625 * system_img_source_address[offsetY + 1][offsetX + 3] +
+                0.125 * system_img_source_address[offsetY + 1][offsetX + 4];
+            gray[4] = 
+                0.3125 * system_img_source_address[offsetY + 2][offsetX + 0] +
+                0.5625 * system_img_source_address[offsetY + 2][offsetX + 1] +
+                0.125 * system_img_source_address[offsetY + 2][offsetX + 2];
+            gray[5] = 
+                0.3125 * system_img_source_address[offsetY + 2][offsetX + 2] +
+                0.5625 * system_img_source_address[offsetY + 2][offsetX + 3] +
+                0.125 * system_img_source_address[offsetY + 2][offsetX + 4];
             if (offsetX >= dimX - 2) {
                 offsetY += 1;
                 offsetX = 0;
@@ -71,82 +109,158 @@ systemgraph {
             if (offsetY >= dimY - 2) {
                 offsetY = 0;
             }
+            dimsOut[0] = dimX;
+            dimsOut[1] = dimY;
         ",
         "inputPorts": ["system_img_source_address", "dimX", "dimY", "offsetX", "offsetY"],
-        "outputPorts": ["imgBlockX", "offsetX", "offsetY"],
+        "outputPorts": ["gray", "offsetX", "offsetY", "dimsOut"],
         "portToTypeName": {
             "system_img_source_address": "ArrayXOfArrayXOfDoubleType",
             "dimX": "UInt16",
             "dimY": "UInt16",
             "offsetX": "UInt16",
             "offsetY": "UInt16",
-            "imgBlockX": "Array6OfDoubleType"
+            "gray": "Array6OfDoubleType"
         },
         "operationRequirements": {
             "default": {
                 "assign": 8_i,
                 "boolean": 2_i, 
-                "integer": 3_i
+                "integer": 3_i,
+                "float": 18_i
+            }
+        },
+        "sizeInBits": 100_l
+    }
+
+    vertex GraysScaleX [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
+        "tokenSizeInBits": 16_i,
+        "numOfInitialTokens": 1,
+        "__initialTokenValues_ordering__": {
+            "ZeroValue": 0
+        }
+    }
+    edge from GraysScaleX port initialTokenValues to ZeroValue
+
+    vertex GraysScaleY [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
+        "tokenSizeInBits": 16_i,
+        "numOfInitialTokens": 1,
+        "__initialTokenValues_ordering__": {
+            "ZeroValue": 0
+        }
+    }
+    edge from GraysScaleY port initialTokenValues to ZeroValue
+
+    edge [moc::sdf::DataEdge] from GrayScale port offsetXOut to GrayScaleX port producer
+    edge [moc::sdf::DataEdge] from GrayScale port offsetYOut to GrayScaleY port producer
+    edge [moc::sdf::DataEdge] from GrayScaleX port consumer to GrayScale port offsetXIn
+    edge [moc::sdf::DataEdge] from GrayScaleY port consumer to GrayScale port offsetYIn
+
+    edge [impl::DataMovement] from system_img_source to GrayScale port system_img_source 
+
+    edge [] from GrayScale port combFunctions to GrayScaleImpl
+    edge [] from GrayScale port offsetXIn to GrayScaleImpl port offsetX
+    edge [] from GrayScale port system_img_source to GrayScaleImpl port system_img_source_address
+    edge [] from GrayScale port dimX to GrayScaleImpl port dimX
+    edge [] from GrayScale port dimY to GrayScaleImpl port dimY
+    edge [] from GrayScaleImpl port offsetX to GrayScale port offsetXOut
+    edge [] from GrayScale port offsetYIn to GrayScaleImpl port offsetY
+    edge [] from GrayScaleImpl port offsetY to GrayScale port offsetYOut
+    edge [] from GrayScaleImpl port gray to GrayScale port gray
+    edge [] from GrayScaleImpl port dimsOut to GrayScale port dimsOut
+
+    vertex GrayScaleToAbs [moc::sdf::SDFChannel] (consumer, producer) {
+        "numOfInitialTokens": 0
+    }
+
+    edge [moc::sdf::DataEdge] from GrayScale port dimsOut to GrayScaleToAbs port producer
+    
+    vertex getPx [moc::sdf::SDFComb] (combFunctions, gray, copyX, copyY) {
+        "dataTakenPerExecution": {
+            "system_img_source": 384_l
+        },
+        "consumption": {
+            "gray": 6
+        },
+        "production": {
+            "copyX": 6,
+            "copyY": 6
+        }
+    }
+
+    
+    vertex getPxImpl1
+    [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
+    (portTypes, gray, imgBlockX)
+    {
+        "inlinedCode": "
+            imgBlockX[0] = gray[0];
+            imgBlockX[1] = gray[1];
+            imgBlockX[2] = gray[2];
+            imgBlockX[3] = gray[3];
+            imgBlockX[4] = gray[4];
+            imgBlockX[5] = gray[5];
+        ",
+        "inputPorts": ["gray"],
+        "outputPorts": ["imgBlockX"],
+        "portToTypeName": {
+            "gray": "Array6OfDoubleType",
+            "imgBlockX": "Array6OfDoubleType"
+        },
+        "operationRequirements": {
+            "default": {
+                "assign": 6_i
             }
         },
         "sizeInBits": 100_l
     }
 
     edge [typing::datatypes::DataDefinition] from getPxImpl1 port portTypes to Array6OfDoubleType
-    edge [typing::datatypes::DataDefinition] from getPxImpl1 port portTypes to ArrayXOfArrayXOfDoubleType
-    edge [typing::datatypes::DataDefinition] from getPxImpl1 port portTypes to UInt16
+
+    edge [] from getPx port gray to getPxImpl1 port gray
+    edge [] from getPxImpl1 port imgBlockX to getPx port copyX
 
     vertex getPxImpl2
     [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
-    (portTypes, system_img_source_address, imgBlockY, offsetX, offsetY, dimX, dimY)
+    (portTypes, imgBlockY, gray)
     {
-        "inlineCode": "
-            imgBlockY[0] = system_img_source_address[offsetX + 0][offsetY + 0];
-            imgBlockY[1] = system_img_source_address[offsetX + 0][offsetY + 1];
-            imgBlockY[2] = system_img_source_address[offsetX + 0][offsetY + 2];
-            imgBlockY[3] = system_img_source_address[offsetX + 2][offsetY + 0];
-            imgBlockY[4] = system_img_source_address[offsetX + 2][offsetY + 1];
-            imgBlockY[5] = system_img_source_address[offsetX + 2][offsetY + 2];
-            if (offsetX >= dimX - 2) {
-                offsetY += 1;
-                offsetX = 0;
-            }
-            if (offsetY >= dimY - 2) {
-                offsetY = 0;
-            }
+        "inlinedCode": "
+            imgBlockY[0] = gray[0];
+            imgBlockY[1] = gray[1];
+            imgBlockY[2] = gray[2];
+            imgBlockY[3] = gray[3];
+            imgBlockY[4] = gray[4];
+            imgBlockY[5] = gray[5];
         ",
-        "inputPorts": ["system_img_source_address", "dimX", "dimY", "offsetX", "offsetY"],
-        "outputPorts": ["imgBlockY", "offsetX", "offsetY"],
+        "inputPorts": ["gray"],
+        "outputPorts": ["imgBlockY"],
         "portToTypeName": {
-            "system_img_source_address": "ArrayXOfArrayXOfDoubleType",
-            "dimX": "UInt16",
-            "dimY": "UInt16",
-            "offsetX": "UInt16",
-            "offsetY": "UInt16",
+            "gray": "Array6OfDoubleType",
             "imgBlockY": "Array6OfDoubleType"
         },
         "operationRequirements": {
             "default": {
-                "assign": 8_i,
-                "boolean": 2_i, 
-                "integer": 3_i
+                "assign": 6_i
             }
         },
         "sizeInBits": 100_l
     }
 
+    edge [] from getPx port gray to getPxImpl2 port gray
+    edge [] from getPxImpl2 port imgBlockY to getPx port copyY
+
     edge [typing::datatypes::DataDefinition] from getPxImpl2 port portTypes to Array6OfDoubleType
-    edge [typing::datatypes::DataDefinition] from getPxImpl2 port portTypes to ArrayXOfArrayXOfDoubleType
-    edge [typing::datatypes::DataDefinition] from getPxImpl2 port portTypes to UInt16
 
     edge [] from getPx port combFunctions to getPxImpl1
     edge [] from getPx port combFunctions to getPxImpl2
+
+    vertex Gx [moc::sdf::SDFComb] (combFunctions, imgBlockX, gx) {}
 
     vertex GxImp
     [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
     (portTypes, imgBlockX, gx)
     {
-        "inlineCode": "
+        "inlinedCode": "
             gx = gx - imgBlockX[0];
             gx = gx + imgBlockX[1];
             gx = gx - 2.0*imgBlockX[2];
@@ -172,20 +286,24 @@ systemgraph {
     edge [typing::datatypes::DataDefinition] from GxImp port portTypes to Array6OfDoubleType
     edge [typing::datatypes::DataDefinition] from GxImp port portTypes to DoubleType
 
-    edge [] from getPx port combFunctions to getPxImpl1
-    edge [] from getPx port combFunctions to getPxImpl2
+    edge [] from Gx port combFunctions to GxImp
+
+    edge [] from Gx port imgBlockX to GxImpl port imgBlockX
+    edge [] from GxImpl port gx to Gx port gx
+
+    vertex Gy [moc::sdf::SDFComb] (combFunctions) {}
 
     vertex GyImp
     [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
     (portTypes, imgBlockY, gy)
     {
-        "inlineCode": "
-            gy = gy + imgBlockX[0];
-            gy = gy + 2.0*imgBlockX[1];
-            gy = gy + imgBlockX[2];
-            gy = gy - imgBlockX[3];
-            gy = gy - 2.0*imgBlockX[4];
-            gy = gy - imgBlockX[5];
+        "inlinedCode": "
+            gy = gy + imgBlockY[0];
+            gy = gy + 2.0*imgBlockY[1];
+            gy = gy + imgBlockY[2];
+            gy = gy - imgBlockY[3];
+            gy = gy - 2.0*imgBlockY[4];
+            gy = gy - imgBlockY[5];
         ",
         "inputPorts": ["imgBlockY"],
         "outputPorts": ["gy"],
@@ -205,25 +323,69 @@ systemgraph {
     edge [typing::datatypes::DataDefinition] from GyImp port portTypes to Array6OfDoubleType
     edge [typing::datatypes::DataDefinition] from GyImp port portTypes to DoubleType
 
+    edge [] from Gy port combFunctions to GyImp
+
+    vertex Abs [moc::sdf::SDFComb, moc::MoCSink] (combFunctions, system_img_sink, dimsIn, gx, gy, offsetXIn, offsetYIn, offsetXOut, offsetYOut) {
+        "dataWritenPerExecution": {
+            "system_img_sink": 64_l
+        },
+        "production": {
+            "offsetXOut": 1,
+            "offsetYOut": 1
+        },
+        "consumption": {
+            "offsetXIn": 1,
+            "offsetYIn": 1,
+            "dimsIn": 2
+        }
+    }
+    
+    edge [impl::DataMovement] from Abs port system_img_sink to system_img_sink
+
+    vertex AbsX [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
+        "tokenSizeInBits": 16_i,
+        "numOfInitialTokens": 1,
+        "__initialTokenValues_ordering__": {
+            "ZeroValue": 0
+        }
+    }
+    edge from AbsX port initialTokenValues to ZeroValue
+
+    vertex AbsY [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
+        "tokenSizeInBits": 16_i,
+        "numOfInitialTokens": 1,
+        "__initialTokenValues_ordering__": {
+            "ZeroValue": 0
+        }
+    }
+    edge from AbsY port initialTokenValues to ZeroValue
+
+    edge [moc::sdf::DataEdge] from Abs port offsetXOut to AbsX port producer
+    edge [moc::sdf::DataEdge] from Abs port offsetYOut to AbsY port producer
+    edge [moc::sdf::DataEdge] from AbsX port consumer to Abs port offsetXIn
+    edge [moc::sdf::DataEdge] from AbsY port consumer to Abs port offsetYIn
+
+    edge [moc::sdf::DataEdge] from GrayScaleToAbs port consumer to Abs port dimsIn
+
     vertex AbsImpl
     [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
-    (portTypes, system_img_sink_address, gx, gy, offsetX, offsetY, dimX, dimY)
+    (portTypes, system_img_sink_address, gx, gy, offsetX, offsetY, dims)
     {
-        "inlineCode": "
+        "inlinedCode": "
             if (gx < 0.0)
                 gx = -gx;
             if (gy < 0.0)
                 gy = -gy;
-            if (offsetX >= dimX - 2) {
+            if (offsetX >= dims[0] - 2) {
                 offsetY += 1;
                 offsetX = 0;
             }
-            if (offsetY >= dimY - 2) {
+            if (offsetY >= dims[1] - 2) {
                 offsetY = 0;
             }
             system_img_sink_address[offsetX][offsetY] = gx + gy;
         ",
-        "inputPorts": ["system_img_sink_address", "gx", "gy", "dimX", "dimY", "offsetX", "offsetY"],
+        "inputPorts": ["system_img_sink_address", "gx", "gy", "dims", "offsetX", "offsetY"],
         "outputPorts": ["offsetX", "offsetY"],
         "portToTypeName": {
             "system_img_sink_address": "ArrayXOfArrayXOfDoubleType",
@@ -250,6 +412,21 @@ systemgraph {
     edge [typing::datatypes::DataDefinition] from AbsImpl port portTypes to ArrayXOfArrayXOfDoubleType
     edge [typing::datatypes::DataDefinition] from AbsImpl port portTypes to UInt16
 
-    
+    edge [] from Abs port combFunctions to AbsImpl
+    edge [] from Abs port offsetXIn to AbsImpl port offsetX
+    edge [] from Abs port system_img_sink to AbsImpl port system_img_sink_address
+    edge [] from Abs port dimsIn to AbsImpl port dims
+    edge [] from AbsImpl port offsetX to Abs port offsetXOut
+    edge [] from Abs port offsetYIn to AbsImpl port offsetY
+    edge [] from AbsImpl port offsetY to Abs port offsetYOut
+
+    vertex GrayScaleToGetPx [moc::sdf::SDFChannel]
+    (consumer, producer, initialTokenValues)
+    {
+        "numOfInitialTokens": 0_i
+    }
+
+    edge [moc::sdf::DataEdge] from GrayScale port gray to GrayScaleToGetPx port producer
+    edge [moc::sdf::DataEdge] from GrayScaleToGetPx port consumer to getPx port gray
 
 }
