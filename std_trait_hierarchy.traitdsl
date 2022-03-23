@@ -30,7 +30,7 @@ namespace impl {
 }
 
 namespace values {
-    vertex Value;
+    vertex Value
 
     vertex IntegerValue refines Value {
         prop intValue is integer

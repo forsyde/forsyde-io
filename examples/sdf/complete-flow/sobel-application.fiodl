@@ -1,7 +1,7 @@
 systemgraph {
 
     vertex ZeroValue [values::IntegerValue] () {
-        "intValue": 0
+        "intValue": 0_i
     }
 
     vertex ArrayXOfArrayXOfDoubleType [typing::datatypes::Array] (innerType) {
@@ -41,14 +41,14 @@ systemgraph {
 
     edge [typing::datatypes::DataDefinition] from system_img_sink port dataType to ArrayXOfArrayXOfDoubleType
 
-     vertex dimX [impl::DataBlock, typing::TypedDataBlock] (dataType) {
-        "maxSizeInBits": 16_l,
+    vertex dimX [impl::DataBlock, typing::TypedDataBlock] (dataType) {
+        "maxSizeInBits": 16_l
     }
 
     edge [typing::datatypes::DataDefinition] from dimX port dataType to UInt16
 
     vertex dimY [impl::DataBlock, typing::TypedDataBlock] (dataType) {
-        "maxSizeInBits": 16_l,
+        "maxSizeInBits": 16_l
     }
 
     edge [typing::datatypes::DataDefinition] from dimY port dataType to UInt16
@@ -61,16 +61,16 @@ systemgraph {
             "dimY": 16_l
         },
         "production": {
-            "offsetXOut": 1,
-            "offsetYOut": 1,
-            "gray": 6,
-            "dimsOut": 2
+            "offsetXOut": 1_i,
+            "offsetYOut": 1_i,
+            "gray": 6_i,
+            "dimsOut": 2_i
         },
         "consumption": {
-            "offsetXIn": 1,
-            "offsetYIn": 1
+            "offsetXIn": 1_i,
+            "offsetYIn": 1_i
         },
-        "firingSlots": [0]
+        "firingSlots": [0_i]
     }
 
     vertex GrayScaleImpl
@@ -133,23 +133,23 @@ systemgraph {
         "sizeInBits": 100_l
     }
 
-    vertex GraysScaleX [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
+    vertex GrayScaleX [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
         "tokenSizeInBits": 16_i,
-        "numOfInitialTokens": 1,
+        "numOfInitialTokens": 1_i,
         "__initialTokenValues_ordering__": {
-            "ZeroValue": 0
+            "ZeroValue": 0_i
         }
     }
-    edge from GraysScaleX port initialTokenValues to ZeroValue
+    edge [] from GrayScaleX port initialTokenValues to ZeroValue
 
-    vertex GraysScaleY [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
+    vertex GrayScaleY [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
         "tokenSizeInBits": 16_i,
-        "numOfInitialTokens": 1,
+        "numOfInitialTokens": 1_i,
         "__initialTokenValues_ordering__": {
-            "ZeroValue": 0
+            "ZeroValue": 0_i
         }
     }
-    edge from GraysScaleY port initialTokenValues to ZeroValue
+    edge [] from GrayScaleY port initialTokenValues to ZeroValue
 
     edge [moc::sdf::DataEdge] from GrayScale port offsetXOut to GrayScaleX port producer
     edge [moc::sdf::DataEdge] from GrayScale port offsetYOut to GrayScaleY port producer
@@ -170,7 +170,7 @@ systemgraph {
     edge [] from GrayScaleImpl port dimsOut to GrayScale port dimsOut
 
     vertex GrayScaleToAbs [moc::sdf::SDFChannel] (consumer, producer) {
-        "numOfInitialTokens": 0
+        "numOfInitialTokens": 0_i
     }
 
     edge [moc::sdf::DataEdge] from GrayScale port dimsOut to GrayScaleToAbs port producer
@@ -180,11 +180,11 @@ systemgraph {
             "system_img_source": 384_l
         },
         "consumption": {
-            "gray": 6
+            "gray": 6_i
         },
         "production": {
-            "copyX": 6,
-            "copyY": 6
+            "copyX": 6_i,
+            "copyY": 6_i
         }
     }
 
@@ -256,7 +256,7 @@ systemgraph {
 
     vertex Gx [moc::sdf::SDFComb] (combFunctions, imgBlockX, gx) {}
 
-    vertex GxImp
+    vertex GxImpl
     [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
     (portTypes, imgBlockX, gx)
     {
@@ -283,17 +283,17 @@ systemgraph {
         "sizeInBits": 100_l
     }
 
-    edge [typing::datatypes::DataDefinition] from GxImp port portTypes to Array6OfDoubleType
-    edge [typing::datatypes::DataDefinition] from GxImp port portTypes to DoubleType
+    edge [typing::datatypes::DataDefinition] from GxImpl port portTypes to Array6OfDoubleType
+    edge [typing::datatypes::DataDefinition] from GxImpl port portTypes to DoubleType
 
-    edge [] from Gx port combFunctions to GxImp
+    edge [] from Gx port combFunctions to GxImpl
 
     edge [] from Gx port imgBlockX to GxImpl port imgBlockX
     edge [] from GxImpl port gx to Gx port gx
 
     vertex Gy [moc::sdf::SDFComb] (combFunctions) {}
 
-    vertex GyImp
+    vertex GyImpl
     [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
     (portTypes, imgBlockY, gy)
     {
@@ -320,23 +320,23 @@ systemgraph {
         "sizeInBits": 100_l
     }
 
-    edge [typing::datatypes::DataDefinition] from GyImp port portTypes to Array6OfDoubleType
-    edge [typing::datatypes::DataDefinition] from GyImp port portTypes to DoubleType
+    edge [typing::datatypes::DataDefinition] from GyImpl port portTypes to Array6OfDoubleType
+    edge [typing::datatypes::DataDefinition] from GyImpl port portTypes to DoubleType
 
-    edge [] from Gy port combFunctions to GyImp
+    edge [] from Gy port combFunctions to GyImpl
 
     vertex Abs [moc::sdf::SDFComb, moc::MoCSink] (combFunctions, system_img_sink, dimsIn, gx, gy, offsetXIn, offsetYIn, offsetXOut, offsetYOut) {
         "dataWritenPerExecution": {
             "system_img_sink": 64_l
         },
         "production": {
-            "offsetXOut": 1,
-            "offsetYOut": 1
+            "offsetXOut": 1_i,
+            "offsetYOut": 1_i
         },
         "consumption": {
-            "offsetXIn": 1,
-            "offsetYIn": 1,
-            "dimsIn": 2
+            "offsetXIn": 1_i,
+            "offsetYIn": 1_i,
+            "dimsIn": 2_i
         }
     }
     
@@ -344,21 +344,21 @@ systemgraph {
 
     vertex AbsX [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
         "tokenSizeInBits": 16_i,
-        "numOfInitialTokens": 1,
+        "numOfInitialTokens": 1_i,
         "__initialTokenValues_ordering__": {
-            "ZeroValue": 0
+            "ZeroValue": 0_i
         }
     }
-    edge from AbsX port initialTokenValues to ZeroValue
+    edge [] from AbsX port initialTokenValues to ZeroValue
 
     vertex AbsY [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
         "tokenSizeInBits": 16_i,
-        "numOfInitialTokens": 1,
+        "numOfInitialTokens": 1_i,
         "__initialTokenValues_ordering__": {
-            "ZeroValue": 0
+            "ZeroValue": 0_i
         }
     }
-    edge from AbsY port initialTokenValues to ZeroValue
+    edge [] from AbsY port initialTokenValues to ZeroValue
 
     edge [moc::sdf::DataEdge] from Abs port offsetXOut to AbsX port producer
     edge [moc::sdf::DataEdge] from Abs port offsetYOut to AbsY port producer
