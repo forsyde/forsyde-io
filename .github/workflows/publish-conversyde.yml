@@ -48,7 +48,7 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{ github.workspace }}/java-conversyde/build/libs/conversyde-${{ steps.get_version.outputs.version }}-all.jar
+        file: ${{ github.workspace }}/java-conversyde/build/libs/conversyde-${{ steps.get_version.outputs.version-without-v }}-all.jar
         asset_name: conversyde-all-cli-${{ steps.get_version.outputs.version }}.jar
         tag: "${{ github.ref }}"
         overwrite: true
