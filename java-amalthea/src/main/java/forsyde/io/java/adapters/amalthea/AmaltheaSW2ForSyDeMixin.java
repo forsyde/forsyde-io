@@ -86,7 +86,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         equivalents(channelReceive.getData()).flatMap(v -> TokenizableDataBlock.safeCast(v).stream())
                                 .forEach(tokenizableDataBlock -> {
                                     final Map<String, Long> reads = communicatingExecutable.getPortDataReadSize();
-                                    reads.put(aChannel.getName(), channelReceive.getElements() == 0 ? aChannel.getSize().getNumberBits() : tokenizableDataBlock.getTokenSize() * channelReceive.getElements());
+                                    reads.put(aChannel.getName(), channelReceive.getElements() == 0 ? aChannel.getSize().getNumberBits() : tokenizableDataBlock.getTokenSizeInBits() * channelReceive.getElements());
                                     communicatingExecutable.setPortDataReadSize(reads);
                                     forSyDeSystemGraph.connect(
                                             tokenizableDataBlock,
@@ -106,7 +106,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         equivalents(channelSend.getData()).flatMap(v -> TokenizableDataBlock.safeCast(v).stream())
                                 .forEach(tokenizableDataBlock -> {
                                     final Map<String, Long> writes = communicatingExecutable.getPortDataWrittenSize();
-                                    writes.put(aChannel.getName(), channelSend.getElements() == 0 ? aChannel.getSize().getNumberBits() : tokenizableDataBlock.getTokenSize() * channelSend.getElements());
+                                    writes.put(aChannel.getName(), channelSend.getElements() == 0 ? aChannel.getSize().getNumberBits() : tokenizableDataBlock.getTokenSizeInBits() * channelSend.getElements());
                                     communicatingExecutable.setPortDataWrittenSize(writes);
                                     forSyDeSystemGraph.connect(
                                             executable,
@@ -302,7 +302,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             forSyDeSystemGraph.addVertex(channelVertex);
             // if the number of bits is not gigantic, it should be OK.
             if (label.getSize() != null) {
-                dataBlock.setMaxSize(label.getSize().getNumberBits());
+                dataBlock.setMaxSizeInBits(label.getSize().getNumberBits());
             }
             addEquivalence(label, channelVertex);
         });
@@ -315,11 +315,11 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             final TokenizableDataBlock tokenizableDataBlock = TokenizableDataBlock.enforce(channelVertex);
             // if the number of bits is not gigantic, it should be OK.
             if (aChannel.getSize() != null) {
-                tokenizableDataBlock.setTokenSize(aChannel.getSize().getNumberBits() / aChannel.getMaxElements());
-                tokenizableDataBlock.setMaxSize(aChannel.getSize().getNumberBits());
+                tokenizableDataBlock.setTokenSizeInBits(aChannel.getSize().getNumberBits() / aChannel.getMaxElements());
+                tokenizableDataBlock.setMaxSizeInBits(aChannel.getSize().getNumberBits());
             } else {
-                tokenizableDataBlock.setTokenSize(0L);
-                tokenizableDataBlock.setMaxSize(0L);
+                tokenizableDataBlock.setTokenSizeInBits(0L);
+                tokenizableDataBlock.setMaxSizeInBits(0L);
             }
             addEquivalence(aChannel, channelVertex);
         });
