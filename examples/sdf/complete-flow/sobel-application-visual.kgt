@@ -1,0 +1,88 @@
+properties:
+    org.eclipse.elk.edgeRouting=POLYLINE
+
+knode app {
+    
+    klabel "application"
+
+    knode imgSource {
+        kellipse
+        klabel "img_source"
+        kedge (-> gray)
+    }
+
+    knode gray {
+        klabel "GrayScale"
+        klabel "moc::Source"
+        kport gray {
+            klabel "gray: 6"
+        }
+        kport dims {
+            klabel "dims: 2"
+        }
+        kedge (:gray -> fanOut:gray)
+        kedge (:dims -> Abs:dims)
+    }
+
+    knode fanOut {
+        klabel "FanOut"
+        kport gray {
+            klabel "gray: 6"
+        }
+        kport copyX {
+            klabel "blockX: 6"
+            
+        }
+        kport copyY {
+            klabel "blockY: 6"
+        }   
+        kedge (:copyX -> Gx:blockX)
+        kedge (:copyY -> Gy:blockY)
+    }
+
+    knode Gx {
+        klabel "Gx"
+        kport blockX {
+            klabel "blockX: 6"
+        }
+        kport gx {
+            properties:
+                de.cau.cs.kieler.portSide=EAST
+            klabel "gx: 1"
+        }
+        kedge (:gx -> Abs:absx)
+    }
+
+    knode Gy {
+        klabel "Gy"
+        kport blockY {
+            klabel "blockY: 6"
+        }
+        kport gy {
+            properties:
+                de.cau.cs.kieler.portSide=EAST
+            klabel "gy: 1"
+        }
+        kedge (:gy -> Abs:absy)
+    }
+
+    knode Abs {
+        klabel "Abs"
+        kport absx {
+            klabel "absx: 1"
+        }
+        kport absy {
+            klabel "absy: 1"
+        }
+        kport dims {
+            klabel "dims: 2"
+        }
+        kedge (-> imgSink)
+    }
+
+    knode imgSink {
+        kellipse
+        klabel "img_sink"
+    }
+
+}
