@@ -53,7 +53,7 @@ systemgraph {
 
     edge [typing::datatypes::DataDefinition] from dimY port dataType to UInt16
 
-    vertex GrayScale [moc::sdf::SDFComb, moc::MoCSource, decision::sdf::PASSedSDFComb] 
+    vertex GrayScale [moc::sdf::SDFComb, moc::ContinousMoCSource, decision::sdf::PASSedSDFComb] 
     (combFunctions, system_img_source, dimX, dimY, dimsOut, offsetXIn, offsetYIn, offsetXOut, offsetYOut, gray) {
         "dataTakenPerExecution": {
             "system_img_source": 384_l,
