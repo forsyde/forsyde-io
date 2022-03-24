@@ -141,18 +141,18 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         for (ForSyDeFioDLParser.EdgeContext edgeContext : ctx.edges) {
             final EdgeInfo edgeInfo = visitEdgeDirect(edgeContext);
             final Vertex source = newModel.vertexSet().stream().filter(v -> v.getIdentifier().equals(edgeInfo.sourceId)).findFirst().orElseThrow(() ->
-                    new InconsistentModelException("edge at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine() +
+                    new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
                             " declares source '" + edgeInfo.sourceId +"' that does not exist."));
             final Vertex target = newModel.vertexSet().stream().filter(v -> v.getIdentifier().equals(edgeInfo.targetId)).findFirst().orElseThrow(() ->
-                    new InconsistentModelException("edge at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine() +
+                    new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
                             " declares target '" + edgeInfo.targetId +"' that does not exist."));
             if (!edgeInfo.sourcePort.map(s -> source.ports.contains(s)).orElse(true)) {
-                throw new InconsistentModelException("edge at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine() +
+                throw new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
                         " declares port '" + edgeInfo.sourcePort.get() +"' at source " +
                         source.getIdentifier() + " which it does not declare.");
             }
             if (!edgeInfo.targetPort.map(s -> target.ports.contains(s)).orElse(true)) {
-                throw new InconsistentModelException("edge at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine() +
+                throw new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
                         " declares port '" + edgeInfo.targetPort.get() +"' at target " +
                         target.getIdentifier() + " which it does not declare.");
             }

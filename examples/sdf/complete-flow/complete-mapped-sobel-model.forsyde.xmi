@@ -26,7 +26,6 @@
     <nodes identifier="getPx">
         <traits>visualization::Visualizable</traits>
         <traits>moc::sdf::SDFComb</traits>
-        <traits>moc::ContinousMoCSource</traits>
         <traits>decision::sdf::PASSedSDFComb</traits>
         <ports>gx</ports>
         <ports>combinator</ports>

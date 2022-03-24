@@ -65,7 +65,7 @@ int main()
             &GraysScaleY_channel,
             &GrayScaleToAbs_channel,
             &GrayScaleToGetPx_channel);
-        fire_getPx(&GrayScaleToGetPx_channel, &gxsig, &gysig);
+        fire_getPx(&GrayScaleToGetPx_channel, &gxsig_channel, &gysig_channel);
         fire_Gx(&gxsig_channel, &absxsig_channel);
         fire_Gy(&gysig_channel, &absysig_channel);
         fire_Abs(

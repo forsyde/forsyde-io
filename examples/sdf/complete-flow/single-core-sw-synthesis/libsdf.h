@@ -30,18 +30,19 @@ double_channel_t create_channel_double(double *buffer, size_t size)
     read a token from channel. The token is of type DoubleType
 
 */
-double read_token_non_blocking_double(double_channel_t *channel)
+int read_token_non_blocking_double(double_channel_t *channel, double* data)
 {
-    double data = NULL;
+    //double data = NULL;
     if (channel->front != channel->rear)
     {
-        data = channel->buffer[channel->front];
+        *data = channel->buffer[channel->front];
         // printf("buffer absxsig: before read, front: %d, rear %d size:%d\n",channel->front,channel->rear,channel->size);
         channel->front = (channel->front + 1) % channel->size;
         // printf("buffer absxsig: after read, front: %d, rear %d size:%d\n",channel->front,channel->rear,channel->size);
-        // return 0;
+        return 0;
+    } else {
+        return -1;
     }
-    return data;
 };
 
 /*
@@ -67,7 +68,7 @@ int write_token_non_blocking_double(double_channel_t *channel, double data)
     }
 };
 
-// generated for token of type uint16_tType
+// generated for token of type UInt16
 typedef struct
 {
     uint16_t *buffer;
@@ -93,18 +94,19 @@ uint16_t_channel_t create_channel_uint16_t(uint16_t *buffer, size_t size)
     read a token from channel. The token is of type uint16_tType
 
 */
-uint16_t read_token_non_blocking_uint16_t(uint16_t_channel_t *channel)
+int read_token_non_blocking_uint16_t(uint16_t_channel_t *channel, uint16_t* data)
 {
-    uint16_t data = NULL;
+    //uint16_t data = NULL;
     if (channel->front != channel->rear)
     {
-        data = channel->buffer[channel->front];
+        *data = channel->buffer[channel->front];
         // printf("buffer absxsig: before read, front: %d, rear %d size:%d\n",channel->front,channel->rear,channel->size);
         channel->front = (channel->front + 1) % channel->size;
         // printf("buffer absxsig: after read, front: %d, rear %d size:%d\n",channel->front,channel->rear,channel->size);
-        // return 0;
+        return 0;
+    } else {
+        return -1;
     }
-    return data;
 };
 
 /*
@@ -132,9 +134,9 @@ int write_token_non_blocking_uint16_t(uint16_t_channel_t *channel, uint16_t data
 
 // generated due to the SDF actors present in the model
 void fire_GrayScale(
-    double **system_img_source, // this comes from GrayScale Being a Source
-    uint16_t dimX,              // this comes from GrayScale Being a Source
-    uint16_t dimY,              // this comes from GrayScale Being a Source
+    volatile double **system_img_source, // this comes from GrayScale Being a Source
+    volatile uint16_t dimX,              // this comes from GrayScale Being a Source
+    volatile uint16_t dimY,              // this comes from GrayScale Being a Source
     uint16_t_channel_t *offsetXIn_channel,
     uint16_t_channel_t *offsetYIn_channel,
     uint16_t_channel_t *offsetXOut_channel,
@@ -153,11 +155,13 @@ void fire_GrayScale(
     //  edge [] from GrayScaleImpl port offsetYOut to GrayScale port offsetY
     //  edge [] from GrayScaleImpl port gray to GrayScale port gray
     unsigned int i;
-    double **system_img_source_address = system_img_source;
+    volatile double **system_img_source_address = system_img_source;
     double gray[6];
     uint16_t dimsOut[2];
-    uint16_t offsetX = read_token_non_blocking_uint16_t(offsetXIn_channel);
-    uint16_t offsetY = read_token_non_blocking_uint16_t(offsetYIn_channel);
+    uint16_t offsetX;
+    uint16_t offsetY;
+    read_token_non_blocking_uint16_t(offsetXIn_channel, &offsetX);
+    read_token_non_blocking_uint16_t(offsetYIn_channel, &offsetY);
     gray[0] =
         0.3125 * system_img_source_address[offsetY + 0][offsetX + 0] +
         0.5625 * system_img_source_address[offsetY + 0][offsetX + 1] +
@@ -214,7 +218,7 @@ void fire_getPx(
     //  edge [] from getPx port gray to getPxImpl1 port gray
     //  edge [] from getPxImpl1 port imgBlockX to getPx port copyX
     for (i = 0; i < 6; i++)
-        gray[i] = read_token_non_blocking_double(gray_channel);
+        read_token_non_blocking_double(gray_channel, &gray[i]);
     imgBlockX[0] = gray[0];
     imgBlockX[1] = gray[1];
     imgBlockX[2] = gray[2];
@@ -244,7 +248,7 @@ void fire_Gx(
     double imgBlockX[6];
     double gx;
     for (i = 0; i < 6; i++)
-        imgBlockX[i] = read_token_non_blocking_double(imgBlockX_channel);
+        read_token_non_blocking_double(imgBlockX_channel, &imgBlockX[i]);
     gx = gx - imgBlockX[0];
     gx = gx + imgBlockX[1];
     gx = gx - 2.0 * imgBlockX[2];
@@ -262,7 +266,7 @@ void fire_Gy(
     double imgBlockY[6];
     double gy;
     for (i = 0; i < 6; i++)
-        imgBlockY[i] = read_token_non_blocking_double(imgBlockY_channel);
+        read_token_non_blocking_double(imgBlockY_channel, &imgBlockY[i]);
     gy = gy + imgBlockY[0];
     gy = gy + 2.0 * imgBlockY[1];
     gy = gy + imgBlockY[2];
@@ -273,7 +277,7 @@ void fire_Gy(
 }
 
 void fire_Abs(
-    double **system_img_sink,
+    volatile double **system_img_sink,
     uint16_t_channel_t *dimsIn_channel,
     uint16_t_channel_t *offsetXIn_channel,
     uint16_t_channel_t *offsetYIn_channel,
@@ -283,14 +287,18 @@ void fire_Abs(
     double_channel_t *gy_channel)
 {
     unsigned int i;
-    double **system_img_sink_address = system_img_sink;
-    double gx = read_token_non_blocking_double(gx_channel);
-    double gy = read_token_non_blocking_double(gy_channel);
-    uint16_t offsetX = read_token_non_blocking_uint16_t(offsetXIn_channel);
-    uint16_t offsetY = read_token_non_blocking_uint16_t(offsetYIn_channel);
+    volatile double **system_img_sink_address = system_img_sink;
+    double gx;
+    double gy;
+    uint16_t offsetX;
+    uint16_t offsetY;
     uint16_t dims[2];
+    read_token_non_blocking_double(gx_channel, &gx);
+    read_token_non_blocking_double(gy_channel, &gy);    
+    read_token_non_blocking_uint16_t(offsetXIn_channel, &offsetX);
+    read_token_non_blocking_uint16_t(offsetYIn_channel, &offsetY);
     for (i = 0; i < 6; i++)
-        dims[i] = read_token_non_blocking_uint16_t(dimsIn_channel);
+        read_token_non_blocking_uint16_t(dimsIn_channel, &dims[i]);
     if (gx < 0.0)
         gx = -gx;
     if (gy < 0.0)
