@@ -93,8 +93,10 @@ namespace moc {
         vertex LinguaFrancaElem refines moc::MoCElem
 
         vertex LinguaFrancaTimer refines LinguaFrancaElem {
-            prop periodNumeratorPerSec is int
-            prop periodDenominatorPerSec is int
+            prop periodNumeratorInSec is int
+            prop periodDenominatorInSec is int
+            prop offsetNumeratorInSec is long
+            prop offsetDenominatorInSec is long
         }
 
         vertex LinguaFrancaReaction refines LinguaFrancaElem {

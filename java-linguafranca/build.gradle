@@ -36,7 +36,7 @@ plugins.withId('war') {
 	webAppDirName = "WebRoot"
 }
 
-apply from: 'org.lflang/build.gradle'
+//apply from: 'org.lflang/build.gradle'
 
 repositories {
     mavenCentral()

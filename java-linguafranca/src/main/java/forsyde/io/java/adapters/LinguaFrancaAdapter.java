@@ -6,6 +6,7 @@ import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.typed.viewers.moc.linguafranca.LinguaFrancaSignal;
 import forsyde.io.java.typed.viewers.moc.linguafranca.LinguaFrancaSignalViewer;
+import forsyde.io.java.typed.viewers.moc.linguafranca.LinguaFrancaTimer;
 import org.lflang.TimeUnit;
 import org.lflang.lf.*;
 
@@ -45,26 +46,19 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
     }
 
     protected Vertex fromLFTimerToForsyDeTimer(ForSyDeSystemGraph model, Timer timer, String prefix, String suffix) {
-        Vertex timerVertex = new Vertex(prefix +  timer.getName() + suffix, VertexTrait.MOC_LINGUAFRANCA_LINGUAFRANCATIMER);
+        Vertex timerVertex = new Vertex(prefix +  timer.getName() + suffix);
+        LinguaFrancaTimer linguaFrancaTimer = LinguaFrancaTimer.enforce(timerVertex);
         model.addVertex(timerVertex);
         if (timer.getPeriod().getTime() != null) {
-            timerVertex.putProperty("period_numerator_per_sec", timer.getPeriod().getTime().getInterval());
-            timerVertex.putProperty("period_denominator_per_sec", fromLFTimeUnitToSecondsDenominator(timer.getPeriod().getTime().getUnit()));
+            linguaFrancaTimer.setPeriodNumeratorInSec(timer.getPeriod().getTime().getInterval());
+            linguaFrancaTimer.setPeriodDenominatorInSec(fromLFTimeUnitToSecondsDenominator(timer.getPeriod().getTime().getUnit()));
         }
         if (timer.getOffset().getTime() != null) {
-            timerVertex.putProperty("offset_numerator_per_sec", timer.getOffset().getTime().getInterval());
-            timerVertex.putProperty("offset_denominator_per_sec", fromLFTimeUnitToSecondsDenominator(timer.getOffset().getTime().getUnit()));
+            linguaFrancaTimer.setOffsetNumeratorInSec(timer.getOffset().getTime().getInterval());
+            linguaFrancaTimer.setOffsetDenominatorInSec(fromLFTimeUnitToSecondsDenominator(timer.getOffset().getTime().getUnit()));
         }
         return timerVertex;
     }
-
-    protected Vertex fromCoolGuysSDFToForSyDe(String identifier) {
-        final Vertex newSDFACtor = Vertex(identifier);
-        final SDFActor actor = SDFActor.enforce(newSDFACtor);
-        actor.setConsumptionRates();
-        graph.addVertex(newSDFACtor);
-    }
-
 
     protected Integer fromLFTimeUnitToSecondsDenominator(String timeUnit) {
         if (timeUnit.equalsIgnoreCase(TimeUnit.MILLI.getCanonicalName())) return 1000;
