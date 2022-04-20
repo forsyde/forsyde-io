@@ -9,8 +9,10 @@ import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.typed.viewers.moc.sdf.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Object, Vertex> {
+
 
     default void fromActorsToVertexes(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getActor().forEach(a -> {
@@ -32,6 +34,21 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
             sdfComb.setProduction(production);
             addEquivalence(a, sdfComb.getViewedVertex());
         });
+    }
+
+    default Vertex sdfActor(Object... args) {
+        final Vertex newSdfActor = new Vertex("identifier extracted from args");
+        final SDFComb sdfComb = SDFComb.enforce(newSdfActor);
+        // suppose you call with gray scale
+        sdfComb.setProduction(Map.of(
+                "gray", 6,
+                "dimsOut", 6,
+                "offsetOut", 2
+        ));
+        sdfComb.setConsumption(Map.of(
+                "offsetIn", 2
+        ));
+        return newSdfActor;
     }
 
     default void fromChannelstoSignalsAndPrefix(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {

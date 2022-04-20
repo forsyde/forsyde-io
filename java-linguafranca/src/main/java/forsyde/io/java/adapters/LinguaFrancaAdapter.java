@@ -58,6 +58,14 @@ public class LinguaFrancaAdapter implements ModelAdapter<Model> {
         return timerVertex;
     }
 
+    protected Vertex fromCoolGuysSDFToForSyDe(String identifier) {
+        final Vertex newSDFACtor = Vertex(identifier);
+        final SDFActor actor = SDFActor.enforce(newSDFACtor);
+        actor.setConsumptionRates();
+        graph.addVertex(newSDFACtor);
+    }
+
+
     protected Integer fromLFTimeUnitToSecondsDenominator(String timeUnit) {
         if (timeUnit.equalsIgnoreCase(TimeUnit.MILLI.getCanonicalName())) return 1000;
         else if (timeUnit.equalsIgnoreCase(TimeUnit.MICRO.getCanonicalName())) return 1000000;
