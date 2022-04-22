@@ -8,6 +8,8 @@ import java.nio.file.*;
 import java.util.*;
 
 import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.migrations.NoMoreReactiveTaskMigration;
+import forsyde.io.java.migrations.SystemGraphMigrator;
 
 /**
  * @author rjordao
@@ -15,6 +17,7 @@ import forsyde.io.java.core.ForSyDeSystemGraph;
  */
 public final class ForSyDeModelHandler {
 
+	private final List<SystemGraphMigrator> registeredMigrators = new ArrayList<>();
 	private final List<ForSyDeModelDriver> registeredDrivers = new ArrayList<>();
 	private final List<PathMatcher> registeredDriversInputMatchers = new ArrayList<>();
 	private final List<PathMatcher> registeredDriversOutputMatchers = new ArrayList<>();
@@ -25,6 +28,8 @@ public final class ForSyDeModelHandler {
 //	PathMatcher amaltheaMatcher;
 
 	public ForSyDeModelHandler(ForSyDeModelDriver... extraDrivers) {
+		// register default migrators
+		registeredMigrators.add(new NoMoreReactiveTaskMigration());
 		// register default drivers
 		registeredDrivers.add(new ForSyDeMLDriver());
 		registeredDrivers.add(new ForSyDeXMIDriver());
@@ -44,6 +49,10 @@ public final class ForSyDeModelHandler {
 					FileSystems.getDefault().getPathMatcher("glob:**." + outExtensions)
 			);
 		}
+	}
+
+	public void registerSystemGraphMigrator(SystemGraphMigrator systemGraphMigrator, int applyOrder) {
+		registeredMigrators.add(applyOrder, systemGraphMigrator);
 	}
 
 	public void registerDriver(ForSyDeModelDriver extraDriver, int loadOrder) {
@@ -87,7 +96,13 @@ public final class ForSyDeModelHandler {
 	public ForSyDeSystemGraph loadModel(Path inPath) throws Exception {
 		for (int i = 0; i < registeredDrivers.size(); i++) {
 			if (registeredDriversInputMatchers.get(i).matches(inPath)) {
-				return registeredDrivers.get(i).loadModel(inPath);
+				final ForSyDeSystemGraph forSyDeSystemGraph = registeredDrivers.get(i).loadModel(inPath);
+				for (SystemGraphMigrator systemGraphMigrator : registeredMigrators) {
+					if (!systemGraphMigrator.effect(forSyDeSystemGraph)) {
+						throw new Exception("Migrator " + systemGraphMigrator.getName() + " has failed its migration.");
+					}
+				}
+				return forSyDeSystemGraph;
 			}
 		}
 		throw new Exception("Unsupported read format for file: " + inPath.toString());

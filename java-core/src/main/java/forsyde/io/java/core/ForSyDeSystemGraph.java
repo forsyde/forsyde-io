@@ -227,6 +227,16 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
         return connect(src.getViewedVertex(), dst.getViewedVertex(), portSrc, portDst, traits);
     }
 
+    public boolean connect(Vertex src, Vertex dst, String portSrc, String portDst, String... traitNames) {
+        return connect(src, dst, portSrc, portDst,
+                (EdgeTrait[]) Arrays.stream(traitNames).map(EdgeTrait::fromName).toArray());
+    }
+
+    public boolean connect(VertexViewer src, VertexViewer dst, String portSrc, String portDst, String... traitNames) {
+        return connect(src.getViewedVertex(), dst.getViewedVertex(), portSrc, portDst,
+                (EdgeTrait[]) Arrays.stream(traitNames).map(EdgeTrait::fromName).toArray());
+    }
+
     /**
      * Convenience method to check existence of an edge connecting two vertexes,
      * through the viewer that are wrapping them. This method ignores ports and

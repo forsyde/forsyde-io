@@ -162,57 +162,41 @@ namespace moc {
 }
 
 namespace execution {
-    vertex Stimulus
+    vertex Stimulatable {
+        port activators is multiple in Stimulator with EventEdge
+    }
 
-    vertex PeriodicStimulus refines Stimulus {
+    vertex Stimulator {
+        port activated is multiple out Stimulatable with EventEdge
+    }
+
+    vertex PeriodicStimulus refines Stimulator {
         prop periodNumerator is long
         prop periodDenominator is long
         prop offsetNumerator is long
         prop offsetDenominator is long
-
-        port stimulated is multiple unordered Task
     }
 
-    vertex ReactiveStimulus refines Stimulus {
-        port successor is out single ReactiveTask with EventEdge
-    }
+    vertex ContinousStimulus refines Stimulator
 
-    vertex SimpleReactiveStimulus refines ReactiveStimulus {
-        port predecessor is single in Task with EventEdge
-    }
-
-    vertex MultiANDReactiveStimulus refines ReactiveStimulus {
-        port predecessors is multiple in Task with EventEdge
-    }
-
-    vertex DownsampleReactiveStimulus refines SimpleReactiveStimulus {
+    vertex Downsample refines Stimulatable, Stimulator {
         prop initialPredecessorSkips is long
         prop repetitivePredecessorSkips is long
     }
 
-    vertex UpsampleReactiveStimulus refines SimpleReactiveStimulus {
+    vertex Upsample refines Stimulatable, Stimulator {
         prop initialPredecessorHolds is long
         prop repetitivePredecessorHolds is long
     }
 
-    vertex Task {
+    vertex Task refines Stimulatable {
         port callSequence is multiple ordered out impl::Executable
     }
 
-    vertex ConstrainedTask {
+    vertex ConstrainedTask refines Task {
         prop relativeDeadlineNumerator is long
         prop relativeDeadlineDenominator is long
     }
-
-    vertex PeriodicTask refines Task {
-        port periodicStimulus is single in PeriodicStimulus
-    }
-
-    vertex ReactiveTask refines Task {
-        port reactiveStimulus is in ReactiveStimulus
-    }
-
-    edge ContainmentEdge
 
     edge EventEdge
 

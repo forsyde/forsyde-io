@@ -176,4 +176,8 @@ final public class Vertex {
 		vertexTraits.addAll(Arrays.asList(traits.clone()));
 	}
 
+	public void addTraits(String... traitNames) {
+		vertexTraits.addAll(Arrays.stream(traitNames).map(VertexTrait::fromName).collect(Collectors.toList()));
+	}
+
 }
