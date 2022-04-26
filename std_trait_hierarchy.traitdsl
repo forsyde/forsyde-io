@@ -136,19 +136,11 @@ namespace moc {
             port combFunctions is multiple out impl::Executable
         }
 
-        vertex SDFDelay refines SDFElem {
-            prop delayedTokens is int
-
-            port delayValue is single values::IntegerValue
-            port notDelayedChannel is single in SDFChannel
-            port delayedChannel is single out SDFChannel
-        }
-
         vertex SDFChannel refines SDFElem {
             prop numOfInitialTokens is int
 
-            port producer is single in SDFElem
-            port consumer is single out SDFElem
+            port producer is single in SDFElem with SDFDataEdge
+            port consumer is single out SDFElem with SDFDataEdge
             port initialTokenValues is ordered multiple out values::Value
         }
 
