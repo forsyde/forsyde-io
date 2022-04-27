@@ -3,7 +3,7 @@ package sdf;
 import forsyde.io.java.core.*;
 import forsyde.io.java.drivers.ForSyDeModelHandler;
 import forsyde.io.java.typed.viewers.moc.sdf.SDFChannel;
-import forsyde.io.java.typed.viewers.moc.sdf.SDFComb;
+import forsyde.io.java.typed.viewers.moc.sdf.SDFActor;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.AsUndirectedGraph;
@@ -22,8 +22,8 @@ public class SDFTests {
     @Test
     public void sobelSDFModel() throws Exception {
         final ForSyDeSystemGraph forSyDeSystemGraph = forSyDeModelHandler.loadModel("examples/sdf/sobel2mpsoc.forsyde.xmi");
-        final Set<SDFComb> actors = forSyDeSystemGraph.vertexSet().stream().filter(SDFComb::conforms)
-                .map(SDFComb::enforce).collect(Collectors.toSet());
+        final Set<SDFActor> actors = forSyDeSystemGraph.vertexSet().stream().filter(SDFActor::conforms)
+                .map(SDFActor::enforce).collect(Collectors.toSet());
         final Set<Vertex> actorsVertexes = actors.stream().map(VertexViewer::getViewedVertex)
                 .collect(Collectors.toSet());
         final Set<SDFChannel> channels = forSyDeSystemGraph.vertexSet().stream()
@@ -51,10 +51,10 @@ public class SDFTests {
         Assertions.assertTrue(forSyDeSystemGraph.edgeSet().stream().filter(e ->
                     e.hasTrait(EdgeTrait.MOC_SDF_SDFDATAEDGE) &&
                     forSyDeSystemGraph.getEdgeSource(e).getIdentifier().equals("sobel/getPx") &&
-                    SDFComb.conforms(forSyDeSystemGraph.getEdgeSource(e)) &&
+                    SDFActor.conforms(forSyDeSystemGraph.getEdgeSource(e)) &&
                     SDFChannel.conforms(forSyDeSystemGraph.getEdgeSource(e))
                 ).allMatch(e ->
-                    SDFComb.safeCast(forSyDeSystemGraph.getEdgeSource(e)).flatMap(sourceSDF ->
+                    SDFActor.safeCast(forSyDeSystemGraph.getEdgeSource(e)).flatMap(sourceSDF ->
                         e.getSourcePort().map(port -> sourceSDF.getProduction().get(port).equals(6))
                     ).orElse(false)
                 ));

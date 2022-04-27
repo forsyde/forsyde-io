@@ -129,7 +129,7 @@ namespace moc {
 
         vertex SDFElem refines moc::MoCElem
 
-        vertex SDFComb refines SDFElem {
+        vertex SDFActor refines SDFElem {
             prop consumption is strmap<int>
             prop production is strmap<int>
 
@@ -139,8 +139,8 @@ namespace moc {
         vertex SDFChannel refines SDFElem {
             prop numOfInitialTokens is int
 
-            port producer is single in SDFElem with SDFDataEdge
-            port consumer is single out SDFElem with SDFDataEdge
+            port producer is single in SDFActor with SDFDataEdge
+            port consumer is single out SDFActor with SDFDataEdge
             port initialTokenValues is ordered multiple out values::Value
         }
 
@@ -311,7 +311,7 @@ namespace decision {
     }
 
     namespace sdf {
-        vertex PASSedSDFComb refines moc::sdf::SDFComb {
+        vertex PASSedSDFActor refines moc::sdf::SDFActor {
             prop firingSlots is array<int>
         }
 

@@ -9,6 +9,7 @@ import java.util.*;
 
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.migrations.NoMoreReactiveTaskMigration;
+import forsyde.io.java.migrations.SDFCombToSDFActorConversion;
 import forsyde.io.java.migrations.SystemGraphMigrator;
 import forsyde.io.java.migrations.TaskCallSequenceSplit;
 
@@ -32,6 +33,7 @@ public final class ForSyDeModelHandler {
 		// register default migrators
 		registeredMigrators.add(new NoMoreReactiveTaskMigration());
         registeredMigrators.add(new TaskCallSequenceSplit());
+		registeredMigrators.add(new SDFCombToSDFActorConversion());
 		// register default drivers
 		registeredDrivers.add(new ForSyDeMLDriver());
 		registeredDrivers.add(new ForSyDeXMIDriver());
