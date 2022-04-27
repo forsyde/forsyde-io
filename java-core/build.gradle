@@ -31,17 +31,17 @@ tasks.compileJava.dependsOn generateForSyDeModel
 dependencies {
     // The production code uses the SLF4J logging API at compile time
     //implementation 'org.slf4j:slf4j-api:1.7.32'
-    api group: 'org.jgrapht', name: 'jgrapht-core', version: '1.+'
-    api group: 'org.jgrapht', name: 'jgrapht-io', version: '1.+'
+    api group: 'org.jgrapht', name: 'jgrapht-core', version: '[1.5.1,)'
+    api group: 'org.jgrapht', name: 'jgrapht-io', version: '[1.5.1,)'
     // these two are intrusive results of lingua franca
     //implementation 'org.eclipse.xtend:org.eclipse.xtend.lib:2.25.0'
     //implementation 'commons-cli:commons-cli:1.5.0'
 
-    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.+'
-    implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.+'
-    antlr 'org.antlr:antlr4:4.+'
-    implementation 'org.antlr:antlr4-runtime:4.+'
-    implementation 'org.ainslec:picocog:1.+'
+    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
+    antlr 'org.antlr:antlr4:4.10.1'
+    implementation 'org.antlr:antlr4-runtime:4.10.1'
+    implementation 'org.ainslec:picocog:1.0.7'
 
     compileOnly "org.derive4j:derive4j-annotation:1.1.1"
     annotationProcessor "org.derive4j:derive4j:1.1.1"

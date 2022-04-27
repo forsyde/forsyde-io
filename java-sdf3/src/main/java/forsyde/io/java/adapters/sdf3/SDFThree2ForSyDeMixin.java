@@ -54,14 +54,16 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
     default void fromChannelstoSignalsAndPrefix(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getChannel().forEach(channel -> {
             // initial channel if no initial token exists
-            final Vertex channelVertex = new Vertex(channel.getName(), VertexTrait.MOC_SDF_SDFCHANNEL);
+            final Vertex channelVertex = new Vertex(channel.getName());
+            final SDFChannel sdfChannel = SDFChannel.enforce(channelVertex);
             systemGraph.addVertex(channelVertex);
-            channelVertex.ports.add("producer");
-            channelVertex.ports.add("consumer");
+            // channelVertex.ports.add("producer");
+            // channelVertex.ports.add("consumer");
             addEquivalence(channel, channelVertex);
             // additional tokens and prefixes until the prefixing chain is over
             if (channel.getInitialTokens() != null && channel.getInitialTokens().intValueExact() > 0) {
-                final Vertex extraPrefix = new Vertex(channel.getName() + "Prefix", VertexTrait.MOC_SDF_SDFDELAY);
+                sdfChannel.setNumOfInitialTokens(channel.getInitialTokens().intValueExact());
+                /*final Vertex extraPrefix = new Vertex(channel.getName() + "Prefix", VertexTrait.MOC_SDF_SDFDELAY);
                 final Vertex delayedChannel = new Vertex(channel.getName() + "Delayed", VertexTrait.MOC_SDF_SDFCHANNEL);
                 final SDFDelay sdfDelay = new SDFDelayViewer(extraPrefix);
                 systemGraph.addVertex(extraPrefix);
@@ -75,7 +77,9 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                 systemGraph.connect(channelVertex, extraPrefix, "consumer", "notDelayedChannel", EdgeTrait.MOC_SDF_SDFDATAEDGE);
                 systemGraph.connect(extraPrefix, delayedChannel, "delayedChannel", "producer", EdgeTrait.MOC_SDF_SDFDATAEDGE);
                 addEquivalence(channel, extraPrefix);
-                addEquivalence(channel, delayedChannel);
+                addEquivalence(channel, delayedChannel);*/
+            } else {
+                sdfChannel.setNumOfInitialTokens(0);
             }
             /*
             for (int i = 1; i < channel.getInitialTokens().intValueExact(); i++) {
@@ -115,7 +119,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
             .forEach(sdfChannel -> {
                 sdf3.getApplicationGraph().getSdf().getActor().stream()
                 .filter(srcActor -> srcActor.getName().equals(channel.getSrcActor()))
-                .flatMap(srcActor -> equivalents(srcActor))
+                .flatMap(this::equivalents)
                 .forEach(srcActorV -> {
                     // find the one without consumer, as it could be expanded with delays beforehand.
                     // find the equivalent signal to connect. Should not NPE.
@@ -125,7 +129,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                 });
                 sdf3.getApplicationGraph().getSdf().getActor().stream()
                 .filter(dstActor -> dstActor.getName().equals(channel.getDstActor()))
-                .flatMap(dstActor -> equivalents(dstActor))
+                .flatMap(this::equivalents)
                 .forEach(dstActorV -> {
                     // find the one without consumer, as it could be expanded with delays beforehand.
                     // find the equivalent signal to connect. Should not NPE.

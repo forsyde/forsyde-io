@@ -73,10 +73,11 @@ GrayScaleActor = sdf.actor(
 
 // might fill the description of the actor later...
 GetPxActor = sdf.actor(
-    gray: tokens(-6, Double), 
+    gray1: tokens(-6, Double),
+    gray2: tokens(-6, Double),
     copyX: tokens(6, Double),
     copyY: tokens(6, Double)) {
     
 }
 
-GrayScaleActor["gray"] >> GetPxActor["gray"]
+GrayScaleActor["gray"] >> GetPxActor["gray2"]

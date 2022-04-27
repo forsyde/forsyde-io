@@ -10,6 +10,7 @@ import java.util.*;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.migrations.NoMoreReactiveTaskMigration;
 import forsyde.io.java.migrations.SystemGraphMigrator;
+import forsyde.io.java.migrations.TaskCallSequenceSplit;
 
 /**
  * @author rjordao
@@ -30,6 +31,7 @@ public final class ForSyDeModelHandler {
 	public ForSyDeModelHandler(ForSyDeModelDriver... extraDrivers) {
 		// register default migrators
 		registeredMigrators.add(new NoMoreReactiveTaskMigration());
+        registeredMigrators.add(new TaskCallSequenceSplit());
 		// register default drivers
 		registeredDrivers.add(new ForSyDeMLDriver());
 		registeredDrivers.add(new ForSyDeXMIDriver());

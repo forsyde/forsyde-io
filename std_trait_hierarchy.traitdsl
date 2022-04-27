@@ -182,7 +182,8 @@ namespace execution {
     }
 
     vertex Task refines Stimulatable {
-        port callSequence is multiple ordered out impl::Executable
+        port initSequence is multiple ordered out impl::Executable with ExecutionEdge
+        port loopSequence is multiple ordered out impl::Executable with ExecutionEdge
     }
 
     vertex ConstrainedTask refines Task {
@@ -191,6 +192,8 @@ namespace execution {
     }
 
     edge EventEdge
+
+    edge ExecutionEdge
 
 }
 

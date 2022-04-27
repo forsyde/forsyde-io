@@ -53,6 +53,7 @@ public class NoMoreReactiveTaskMigration implements SystemGraphMigrator {
             }
             if (v.hasTrait("execution::PeriodicTask")) {
                 v.ports.add("activated");
+                v.addTraits("execution::Task");
                 for (EdgeInfo e : forSyDeSystemGraph.outgoingEdgesOf(v)) {
                     final Vertex dst = forSyDeSystemGraph.getEdgeTarget(e);
                     forSyDeSystemGraph.connect(v, dst, "activated", e.targetPort.orElse("activators"), "execution::EventEdge");

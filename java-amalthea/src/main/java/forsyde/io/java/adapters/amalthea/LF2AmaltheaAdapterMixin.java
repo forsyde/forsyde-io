@@ -31,8 +31,8 @@ public interface LF2AmaltheaAdapterMixin extends EquivalenceModel2ModelMixin<Ver
         .map(v -> LinguaFrancaTimer.safeCast(v).get())
         .forEach(timer -> {
             final Time time = AmaltheaFactory.eINSTANCE.createTime();
-            time.setUnit(fromDenominatorToTimeUnit(timer.getPeriodDenominatorPerSec()));
-            time.setValue(BigInteger.valueOf(timer.getPeriodNumeratorPerSec()));
+            time.setUnit(fromDenominatorToTimeUnit(timer.getPeriodDenominatorInSec()));
+            time.setValue(BigInteger.valueOf(timer.getPeriodNumeratorInSec()));
             // try to find if the timer already exists or not, and if not, create it
             final PeriodicStimulus stimulus = amalthea.getStimuliModel().getStimuli().stream()
                     .filter(st -> st instanceof PeriodicStimulus)
@@ -43,7 +43,7 @@ public interface LF2AmaltheaAdapterMixin extends EquivalenceModel2ModelMixin<Ver
                     .orElseGet(() -> {
                         final PeriodicStimulus newStimulus = AmaltheaFactory.eINSTANCE.createPeriodicStimulus();
                         newStimulus.setRecurrence(time);
-                        newStimulus.setName("PeriodicStimulusOf" + timer.getPeriodNumeratorPerSec().toString() + "_" + timer.getPeriodDenominatorPerSec().toString());
+                        newStimulus.setName("PeriodicStimulusOf" + timer.getPeriodNumeratorInSec().toString() + "_" + timer.getPeriodDenominatorInSec().toString());
                         amalthea.getStimuliModel().getStimuli().add(newStimulus);
                         return newStimulus;
                     });
