@@ -6,9 +6,7 @@ import forsyde.io.java.generator.exceptions.InconsistentTraitHierarchyException;
 import forsyde.io.java.generator.specs.*;
 import org.antlr.v4.runtime.Token;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -268,6 +266,99 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
         traitHierarchy.vertexTraits.addAll(containedVertexTraits.collect(Collectors.toList()));
         traitHierarchy.edgeTraits.addAll(containedEdgeTraits.collect(Collectors.toList()));
         return traitHierarchy;
+    }
+
+    public Object visitNumberDirect(ForSyDeTraitDSLParser.NumberContext ctx) throws InconsistentTraitHierarchyException {
+        if (ctx.intVal != null) {
+            return Integer.parseInt(ctx.intVal.getText().replace("_i", ""));
+        } else if (ctx.boolVal != null) {
+            return ctx.boolVal.getText().contains("1");
+        } else if (ctx.longVal != null) {
+            return Long.parseLong(ctx.longVal.getText().replace("_l", ""));
+        } else if (ctx.realVal != null) {
+            final String[] numAndBits = ctx.realVal.getText().split("_");
+            final int bits = Integer.parseInt(numAndBits[1]);
+            if (bits <= 32) {
+                return Float.parseFloat(numAndBits[0]);
+            } else {
+                return Double.parseDouble(numAndBits[0]);
+            }
+        } else {
+            throw new InconsistentTraitHierarchyException("Could not parse property at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
+        }
+    }
+
+    public String visitStringValDirect(ForSyDeTraitDSLParser.StringValContext ctx) throws InconsistentTraitHierarchyException {
+        if (ctx.content != null) {
+            return ctx.content.stream().map(Token::getText).collect(Collectors.joining());
+        }
+//        else if (ctx.multiLineContent != null) {
+//            System.out.println("multi");
+//            System.out.println(ctx.multiLineContent.stream().map(Token::getText).collect(Collectors.joining("\n")));
+//            return VertexProperty.create(
+//                    ctx.multiLineContent.stream().map(Token::getText).collect(Collectors.joining("\n"))
+//            );
+//        }
+        else {
+            throw new InconsistentTraitHierarchyException("Could not parse string property at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
+        }
+    }
+
+    public Object visitVertexPropertyKeyDirect(ForSyDeTraitDSLParser.VertexPropertyMapKeyContext ctx) throws InconsistentTraitHierarchyException {
+        if (ctx.number() != null) {
+            return visitNumberDirect(ctx.number());
+        } else if (ctx.stringVal() != null) {
+            return visitStringValDirect(ctx.stringVal());
+        } else {
+            throw new InconsistentTraitHierarchyException("Could not parse map key property at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
+        }
+    }
+
+    public VertexProperty visitVertexPropertyValueDirect(ForSyDeTraitDSLParser.VertexPropertyValueContext ctx) throws InconsistentTraitHierarchyException {
+        if (ctx.number() != null) {
+            return VertexProperty.create(visitNumberDirect(ctx.number()));
+        } else if (ctx.stringVal() != null) {
+            return VertexProperty.create(visitStringValDirect(ctx.stringVal()));
+        //} else if (ctx.() != null) {
+        } else if (ctx.vertexPropertyArray() != null) {
+            final ForSyDeTraitDSLParser.VertexPropertyArrayContext arrayContext = ctx.vertexPropertyArray();
+            final List<VertexProperty> props = new ArrayList<>(arrayContext.arrayEntries.size());
+            for (ForSyDeTraitDSLParser.VertexPropertyValueContext child : arrayContext.arrayEntries) {
+                props.add(visitVertexPropertyValueDirect(child));
+            }
+            return VertexProperty.create(props);
+        } else if (ctx.vertexPropertyMap() != null) {
+            final ForSyDeTraitDSLParser.VertexPropertyMapContext mapContext = ctx.vertexPropertyMap();
+            boolean isIntMap = true;
+            Object firstKey = null;
+            // we also catch index out of bounds exception because some dictionaries may be empty, just like {}
+            try {
+                firstKey = visitVertexPropertyKeyDirect(mapContext.mapKey.get(0));
+                if (firstKey instanceof String) {
+                    isIntMap = false;
+                }
+            } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                isIntMap = false;
+            }
+            final Map<Object, VertexProperty> props = new HashMap<>(mapContext.mapKey.size());
+            for (int i = 0; i < mapContext.mapKey.size(); i++) {
+                final VertexProperty value = visitVertexPropertyValueDirect(mapContext.mapValue.get(i));
+                if (isIntMap) {
+                    try {
+                        final Integer key = (Integer) visitVertexPropertyKeyDirect(mapContext.mapKey.get(i));
+                        props.put(key, value);
+                    } catch (NumberFormatException e) {
+                        throw new InconsistentTraitHierarchyException("Expected an integer key at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
+                    }
+                } else {
+                    final String key = (String) visitVertexPropertyKeyDirect(mapContext.mapKey.get(i));
+                    props.put(key, value);
+                }
+            }
+            return VertexProperty.create(props);
+        } else {
+            throw new InconsistentTraitHierarchyException("Could not parse property at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
+        }
     }
 
     @Override

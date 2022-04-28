@@ -1,5 +1,6 @@
 package forsyde.io.java.generator;
 
+import forsyde.io.java.generator.dsl.ForSyDeTraitDSLBaseListener;
 import forsyde.io.java.generator.dsl.ForSyDeTraitDSLListener;
 import forsyde.io.java.generator.dsl.ForSyDeTraitDSLParser;
 import forsyde.io.java.generator.specs.*;
@@ -12,7 +13,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ForSyDeIOTraitDSLListener  implements ForSyDeTraitDSLListener {
+public class ForSyDeIOTraitDSLListener extends ForSyDeTraitDSLBaseListener {
 
     TraitHierarchy traitHierarchy = new TraitHierarchy();
     String namespace = "";

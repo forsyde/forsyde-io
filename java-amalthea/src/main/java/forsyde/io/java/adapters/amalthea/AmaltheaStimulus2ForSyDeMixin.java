@@ -39,26 +39,27 @@ public interface AmaltheaStimulus2ForSyDeMixin extends EquivalenceModel2ModelMix
                     periodicStimulusVertex.setOffsetDenominator(1L);
                 }
                 addEquivalence(stimulus, timerVertex);
-            } else if (stimulus instanceof InterProcessStimulus) {
-                final InterProcessStimulus interProcessStimulus = (InterProcessStimulus) stimulus;
-                final Vertex precedenceVertex = new Vertex(stimulus.getName());
-                final List<Task> triggeringTasks = amalthea.getSwModel().getTasks().stream().filter(t ->
-                    t.getActivityGraph().getItems().stream()
-                            .anyMatch(e -> e instanceof InterProcessTrigger && ((InterProcessTrigger) e).getStimulus().equals(interProcessStimulus))
-                    ).collect(Collectors.toList());
-                if (triggeringTasks.size() > 1) {
-                    final MultiANDReactiveStimulus reactiveANDStimulus = MultiANDReactiveStimulus.enforce(precedenceVertex);
-                } else {
-                    final SimpleReactiveStimulus simpleReactiveStimulus = SimpleReactiveStimulus.enforce(precedenceVertex);
-                    if (interProcessStimulus.getCounter() != null) {
-                        final DownsampleReactiveStimulus repetitionReactiveStimulus = DownsampleReactiveStimulus.enforce(precedenceVertex);
-                        repetitionReactiveStimulus.setInitialPredecessorSkips(interProcessStimulus.getCounter().getOffset());
-                        repetitionReactiveStimulus.setRepetitivePredecessorSkips(interProcessStimulus.getCounter().getPrescaler());
-                    }
-                }
-                forSyDeSystemGraph.addVertex(precedenceVertex);
-                addEquivalence(interProcessStimulus, precedenceVertex);
             }
+//            else if (stimulus instanceof InterProcessStimulus) {
+//                final InterProcessStimulus interProcessStimulus = (InterProcessStimulus) stimulus;
+//                final Vertex precedenceVertex = new Vertex(stimulus.getName());
+//                final List<Task> triggeringTasks = amalthea.getSwModel().getTasks().stream().filter(t ->
+//                    t.getActivityGraph().getItems().stream()
+//                            .anyMatch(e -> e instanceof InterProcessTrigger && ((InterProcessTrigger) e).getStimulus().equals(interProcessStimulus))
+//                    ).collect(Collectors.toList());
+//                if (triggeringTasks.size() > 1) {
+//                    final MultiANDReactiveStimulus reactiveANDStimulus = MultiANDReactiveStimulus.enforce(precedenceVertex);
+//                } else {
+//                    final SimpleReactiveStimulus simpleReactiveStimulus = SimpleReactiveStimulus.enforce(precedenceVertex);
+//                    if (interProcessStimulus.getCounter() != null) {
+//                        final DownsampleReactiveStimulus repetitionReactiveStimulus = DownsampleReactiveStimulus.enforce(precedenceVertex);
+//                        repetitionReactiveStimulus.setInitialPredecessorSkips(interProcessStimulus.getCounter().getOffset());
+//                        repetitionReactiveStimulus.setRepetitivePredecessorSkips(interProcessStimulus.getCounter().getPrescaler());
+//                    }
+//                }
+//                forSyDeSystemGraph.addVertex(precedenceVertex);
+//                addEquivalence(interProcessStimulus, precedenceVertex);
+//            }
         });
     }
 

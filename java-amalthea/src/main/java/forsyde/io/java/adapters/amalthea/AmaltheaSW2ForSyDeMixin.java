@@ -6,11 +6,11 @@ import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.typed.viewers.execution.*;
+import forsyde.io.java.typed.viewers.execution.PeriodicStimulus;
 import forsyde.io.java.typed.viewers.execution.Task;
 import forsyde.io.java.typed.viewers.impl.*;
 import forsyde.io.java.typed.viewers.visualization.GreyBox;
 import org.eclipse.app4mc.amalthea.model.*;
-import org.eclipse.app4mc.amalthea.model.PeriodicStimulus;
 
 import java.lang.System;
 import java.util.*;
@@ -172,6 +172,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             final Vertex taskVertex = new Vertex(aTask.getName());
             final GreyBox taskGreyBox = GreyBox.enforce(taskVertex);
             forSyDeSystemGraph.addVertex(taskVertex);
+            addEquivalence(aTask, taskVertex);
             final Task task = Task.enforce(taskVertex);
             // first, go in the activity graph and figure out if the task awaits for something
             if (aTask.getActivityGraph() != null) {
@@ -180,34 +181,25 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                     if (item instanceof RunnableCall) {
                         final RunnableCall runnableCall = (RunnableCall) item;
                         equivalent(runnableCall.getRunnable()).ifPresent(runnableVertex -> {
-                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "callSequence", EdgeTrait.EXECUTION_CONTAINMENTEDGE);
+                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "callSequence", EdgeTrait.EXECUTION_EXECUTIONEDGE);
                             forSyDeSystemGraph.connect(taskVertex, runnableVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                         });
                     } else if (item instanceof WaitEvent) {
                         final WaitEvent waitEvent = (WaitEvent) item;
-                        final ReactiveTask reactiveTask = ReactiveTask.enforce(task);
                         if (waitEvent.getEventMask() != null && waitEvent.getEventMask().getEvents().size() > 0) {
                             final String eventNames = waitEvent.getEventMask().getEvents().stream().map(OsEvent::getName).collect(Collectors.joining("_"));
                             final Vertex precedence = new Vertex(task.getIdentifier() + "_Wait_" + eventNames);
+                            final Stimulatable precedenceSti = Stimulatable.enforce(precedence);
                             forSyDeSystemGraph.addVertex(precedence);
                             addEquivalence(aTask, precedence);
-                            if (waitEvent.getEventMask().getEvents().size() < 2) {
-                                final SimpleReactiveStimulus simpleReactiveStimulus = SimpleReactiveStimulus.enforce(precedence);
-                                simpleReactiveStimulus.setSuccessorPort(forSyDeSystemGraph, reactiveTask);
-                                final Set<ReactiveStimulus> reactiveStimulusSet = reactiveTask.getReactiveStimulusPort(forSyDeSystemGraph);
-                                reactiveStimulusSet.add(simpleReactiveStimulus);
-                                reactiveTask.setReactiveStimulusPort(forSyDeSystemGraph,reactiveStimulusSet);
+                            precedenceSti.setHasORSemantics(waitEvent.getMaskType() == WaitEventType.OR);
+                            if (waitEvent.getEventMask().getEvents().size() == 1) {
+                                final Downsample downsample = Downsample.enforce(precedence);
+                                forSyDeSystemGraph.connect(downsample, task, "activated", "activators", EdgeTrait.EXECUTION_EVENTEDGE);
                                 if (waitEvent.getCounter() != null) {
-                                     final DownsampleReactiveStimulus downsampleReactiveStimulus = DownsampleReactiveStimulus.enforce(precedence);
-                                     downsampleReactiveStimulus.setInitialPredecessorSkips(waitEvent.getCounter().getOffset());
-                                     downsampleReactiveStimulus.setRepetitivePredecessorSkips(waitEvent.getCounter().getPrescaler());
+                                    downsample.setInitialPredecessorSkips(waitEvent.getCounter().getOffset());
+                                    downsample.setRepetitivePredecessorSkips(waitEvent.getCounter().getPrescaler());
                                 }
-                            } else {
-                                final MultiANDReactiveStimulus multiANDReactiveStimulus = MultiANDReactiveStimulus.enforce(precedence);
-                                multiANDReactiveStimulus.setSuccessorPort(forSyDeSystemGraph, reactiveTask);
-                                final Set<ReactiveStimulus> reactiveStimulusSet = reactiveTask.getReactiveStimulusPort(forSyDeSystemGraph);
-                                reactiveStimulusSet.add(multiANDReactiveStimulus);
-                                reactiveTask.setReactiveStimulusPort(forSyDeSystemGraph,reactiveStimulusSet);
                             }
                         }
                     }
@@ -233,38 +225,40 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             }
             if (aTask.getStimuli() != null) {
                 aTask.getStimuli().forEach(stimulus -> {
-                    if (stimulus instanceof PeriodicStimulus) {
-                        taskVertex.addTraits(VertexTrait.EXECUTION_PERIODICTASK);
-                        taskVertex.ports.add("periodicStimulus");
-                        equivalent(stimulus).ifPresent(stimulusVertex -> {
-                            forSyDeSystemGraph.connect(stimulusVertex, taskVertex, "stimulated", "periodicStimulus", EdgeTrait.EXECUTION_EVENTEDGE);
-                        });
-                    } else if (stimulus instanceof InterProcessStimulus) {
-                        final InterProcessStimulus interProcessStimulus = (InterProcessStimulus) stimulus;
-                        final ReactiveTask reactiveTask = ReactiveTask.enforce(taskVertex);
-                        // all input reactions are AND semantics coming from InterProcessTrigger
-                        equivalents(interProcessStimulus).forEach(reactionVertex -> {
-                            ReactiveStimulus.safeCast(reactionVertex).ifPresent(reactiveStimulus -> {
-                                reactiveStimulus.setSuccessorPort(forSyDeSystemGraph, reactiveTask);
-                            });
+                    equivalents(stimulus).flatMap(v -> PeriodicStimulus.safeCast(v).stream()).forEach(periodicStimulus -> {
+                        forSyDeSystemGraph.connect(periodicStimulus, task, "activated", "activators", EdgeTrait.EXECUTION_EVENTEDGE);
+                    });
+//                    if (stimulus instanceof PeriodicStimulus) {
+//                        taskVertex.addTraits(VertexTrait.EXECUTION_PERIODICTASK);
+//                        taskVertex.ports.add("periodicStimulus");
+//                        equivalent(stimulus).ifPresent(stimulusVertex -> {
+//                            forSyDeSystemGraph.connect(stimulusVertex, taskVertex, "stimulated", "periodicStimulus", EdgeTrait.EXECUTION_EVENTEDGE);
+//                        });
+//                    } else if (stimulus instanceof InterProcessStimulus) {
+//                        final InterProcessStimulus interProcessStimulus = (InterProcessStimulus) stimulus;
+//                        final Task Task = Task.enforce(taskVertex);
+//                        // all input reactions are AND semantics coming from InterProcessTrigger
+//                        equivalents(interProcessStimulus).forEach(reactionVertex -> {
+//                            ReactiveStimulus.safeCast(reactionVertex).ifPresent(reactiveStimulus -> {
+//                                reactiveStimulus.setSuccessorPort(forSyDeSystemGraph, Task);
+//                            });
 
                             //forSyDeSystemGraph.connect(reactionVertex, taskVertex, "sucessor", "reactiveStimulus", EdgeTrait.EXECUTION_EVENTEDGE);
 //
-//                            if (reactiveTask.getReactiveStimulusPort(forSyDeSystemGraph).size() > 1) {
+//                            if (Task.getReactiveStimulusPort(forSyDeSystemGraph).size() > 1) {
 //
 //                            } else {
 //
 //                            }
-//                            final List<Integer> reactiveGroups = reactiveTask.getReactiveANDGroups() == null ?
+//                            final List<Integer> reactiveGroups = Task.getReactiveANDGroups() == null ?
 //                                new ArrayList<>() :
-//                                reactiveTask.getReactiveANDGroups();
+//                                Task.getReactiveANDGroups();
 //                            reactiveGroups.add(0);
-//                            reactiveTask.setReactiveANDGroups(reactiveGroups);
-                        });
-                    }
+//                            Task.setReactiveANDGroups(reactiveGroups);
+//                        });
+//                    }
                 });
             }
-            addEquivalence(aTask, taskVertex);
         });
     }
 
@@ -277,15 +271,16 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         if (item instanceof SetEvent) {
                             final SetEvent setEvent = (SetEvent) item;
                             if (setEvent.getEventMask() != null && setEvent.getProcess() != null && setEvent.getEventMask().getEvents().size() > 0) {
-                                equivalents(setEvent.getProcess()).forEach(vertex -> {
-                                    SimpleReactiveStimulus.safeCast(vertex).ifPresent(simpleReactiveStimulus -> {
-                                        simpleReactiveStimulus.setPredecessorPort(forSyDeSystemGraph, task);
-                                    });
-                                    MultiANDReactiveStimulus.safeCast(vertex).ifPresent(multiANDReactiveStimulus -> {
-                                        final Set<Task> cur = multiANDReactiveStimulus.getPredecessorsPort(forSyDeSystemGraph);
-                                        cur.add(task);
-                                        multiANDReactiveStimulus.setPredecessorsPort(forSyDeSystemGraph, cur);
-                                    });
+                                equivalents(setEvent.getProcess()).flatMap(v -> Downsample.safeCast(v).stream()).forEach(downsample -> {
+                                    forSyDeSystemGraph.connect(task, downsample, "activated", "activators", EdgeTrait.EXECUTION_EVENTEDGE);
+//                                    SimpleReactiveStimulus.safeCast(vertex).ifPresent(simpleReactiveStimulus -> {
+//                                        simpleReactiveStimulus.setPredecessorPort(forSyDeSystemGraph, task);
+//                                    });
+//                                    MultiANDReactiveStimulus.safeCast(vertex).ifPresent(multiANDReactiveStimulus -> {
+//                                        final Set<Task> cur = multiANDReactiveStimulus.getPredecessorsPort(forSyDeSystemGraph);
+//                                        cur.add(task);
+//                                        multiANDReactiveStimulus.setPredecessorsPort(forSyDeSystemGraph, cur);
+//                                    });
                                 });
                             }
                         }

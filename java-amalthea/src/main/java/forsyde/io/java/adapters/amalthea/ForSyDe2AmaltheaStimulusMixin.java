@@ -4,9 +4,7 @@ import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
-import forsyde.io.java.typed.viewers.execution.DownsampleReactiveStimulus;
 import forsyde.io.java.typed.viewers.execution.PeriodicStimulusViewer;
-import forsyde.io.java.typed.viewers.execution.ReactiveStimulus;
 import org.eclipse.app4mc.amalthea.model.*;
 
 import java.math.BigInteger;
@@ -18,9 +16,9 @@ public interface ForSyDe2AmaltheaStimulusMixin extends EquivalenceModel2ModelMix
     default void fromStimulusToForSyDe(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
         final StimuliModel stimuliModel = AmaltheaFactory.eINSTANCE.createStimuliModel();
         amalthea.setStimuliModel(stimuliModel);
-        forSyDeSystemGraph.vertexSet().stream().filter(forsyde.io.java.typed.viewers.execution.Stimulus::conforms).forEach(vertex -> {
+        forSyDeSystemGraph.vertexSet().stream().flatMap(v -> forsyde.io.java.typed.viewers.execution.PeriodicStimulus.safeCast(v).stream())
+                .forEach(vPeriodicStimulus -> {
             // check periodic stimulus
-            forsyde.io.java.typed.viewers.execution.PeriodicStimulus.safeCast(vertex).ifPresent(vPeriodicStimulus -> {
                 final PeriodicStimulus periodicStimulus = AmaltheaFactory.eINSTANCE.createPeriodicStimulus();
                 periodicStimulus.setName(vPeriodicStimulus.getIdentifier());
 
@@ -35,8 +33,8 @@ public interface ForSyDe2AmaltheaStimulusMixin extends EquivalenceModel2ModelMix
                 periodicStimulus.setOffset(offset);
 
                 stimuliModel.getStimuli().add(periodicStimulus);
-                addEquivalence(vertex, periodicStimulus);
-            });
+                addEquivalence(vPeriodicStimulus.getViewedVertex(), periodicStimulus);
+            // });
             // check for precendeces (inter task stimulus)
 //            ReactiveStimulus.safeCast(vertex).ifPresent(reactiveStimulus -> {
 //                final InterProcessStimulus interProcessStimulus = AmaltheaFactory.eINSTANCE.createInterProcessStimulus();

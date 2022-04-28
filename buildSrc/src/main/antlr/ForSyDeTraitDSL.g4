@@ -1,11 +1,43 @@
 grammar ForSyDeTraitDSL;
 
+ALPHABETIC: [A-Za-z];
+
+NUMERIC: [0-9];
+
+ALPHANUM: [A-Za-z0-9];
+
+QUALIFIER: '::';
+
+CLARIFIER: ':';
+
+SEPARATOR: ',';
+
+QUOTE: '"';
+
+PORTS_START: '(';
+
+PORTS_END: ')';
+
+LIST_START: '[';
+
+LIST_END: ']';
+
+DICT_START: '{';
+
+DICT_END: '}';
+
+BOOLEAN: NUMERIC+('_b')?;
+INTEGER: ('-')?NUMERIC+('_i')?;
+LONG: ('-')?NUMERIC+'_l';
+REAL: ('-')?(NUMERIC*'.'NUMERIC+ | NUMERIC+'.'NUMERIC*)'_'NUMERIC+;
+
 QUALIFIED_ID
-    :   ('::'|[A-Za-z])('::'|[A-Za-z0-9])*
+    :   ('::'|ALPHABETIC)('::'|'_'|ALPHANUM)*
 ;
 
-WS : [ \t\r\n]+ -> skip ;
+INLINE_SYMBOLS: ('*'|'.'|'='|';'|'_'|'+'|'<'|'>'|'-');
 
+WS : [ \t\r\n]+ -> channel(HIDDEN) ;
 
 
 edgeTrait:
@@ -44,7 +76,7 @@ vertexPropertyType:
 
 
 vertexProperty:
-	name=QUALIFIED_ID 'is' propertyType=vertexPropertyType
+	name=QUALIFIED_ID 'is' propertyType=vertexPropertyType ('=' defaultValue=vertexPropertyValue)?
 ;
 
 vertexTrait:
@@ -65,19 +97,45 @@ rootTraitHierarchy:
 	('vertex' vertexTrait | 'edge' edgeTrait | 'namespace' traitHierarchy)*
 ;
 
+// this next section is taken directly from FioDL
 
-/*
-ArrayVertexPropertyType returns ArrayVertexPropertyType:
-	'array' '<' valueTypes= VertexPropertyType '>'
+vertexPropertyValue:
+    number |
+    stringVal |
+    vertexPropertyArray |
+    vertexPropertyMap
 ;
 
-IntMapVertexPropertyType returns ArrayVertexPropertyType:
-	('intmap' | 'intMap' | 'integermap' | 'integerMap') '<' valueTypes=VertexPropertyType '>'
+vertexPropertyArray:
+    '[' (arrayEntries+=vertexPropertyValue (SEPARATOR arrayEntries+=vertexPropertyValue)*)? ']'
 ;
 
-
-StrMapVertexPropertyType returns ArrayVertexPropertyType:
-	('srtmap' | 'strMap' | 'stringmap' | 'stringMap') '<' valueTypes= VertexPropertyType '>'
+vertexPropertyMapKey:
+    number |
+    stringVal
 ;
 
-*/
+vertexPropertyMap:
+    DICT_START (mapKey+=vertexPropertyMapKey CLARIFIER mapValue+=vertexPropertyValue (SEPARATOR mapKey+=vertexPropertyMapKey CLARIFIER mapValue+=vertexPropertyValue)*)? DICT_END
+;
+
+number: intVal=INTEGER | longVal=LONG | realVal=REAL | boolVal=BOOLEAN;
+
+stringVal:
+    QUOTE  (
+       content+=QUALIFIED_ID |
+       content+=NUMERIC |
+       content+=INTEGER |
+       content+=LONG |
+       content+=REAL |
+       content+=INLINE_SYMBOLS |
+       content+=PORTS_START |
+       content+=PORTS_END |
+       content+=LIST_START |
+       content+=LIST_END |
+       content+=DICT_START |
+       content+=DICT_END |
+       content+=SEPARATOR  |
+       content+=WS
+   )* QUOTE
+;

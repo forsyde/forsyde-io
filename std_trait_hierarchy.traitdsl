@@ -44,7 +44,6 @@ namespace typing {
         port portTypes is multiple typing::datatypes::DataType with typing::datatypes::DataDefinition
         prop inputPorts is array<string>
         prop outputPorts is array<string>
-        prop portToTypeName is strmap<string>
     }
 
     vertex TypedDataBlock refines impl::DataBlock {
@@ -137,7 +136,7 @@ namespace moc {
         }
 
         vertex SDFChannel refines SDFElem {
-            prop numOfInitialTokens is int
+            prop numOfInitialTokens is int = 0_i
 
             port producer is single in SDFActor with SDFDataEdge
             port consumer is single out SDFActor with SDFDataEdge
@@ -155,6 +154,7 @@ namespace moc {
 
 namespace execution {
     vertex Stimulatable {
+        prop hasORSemantics is bool = 0_b
         port activators is multiple in Stimulator with EventEdge
     }
 
@@ -164,21 +164,21 @@ namespace execution {
 
     vertex PeriodicStimulus refines Stimulator {
         prop periodNumerator is long
-        prop periodDenominator is long
-        prop offsetNumerator is long
-        prop offsetDenominator is long
+        prop periodDenominator is long = 1_l
+        prop offsetNumerator is long = 0_l
+        prop offsetDenominator is long = 1_l
     }
 
     vertex ContinousStimulus refines Stimulator
 
     vertex Downsample refines Stimulatable, Stimulator {
-        prop initialPredecessorSkips is long
-        prop repetitivePredecessorSkips is long
+        prop initialPredecessorSkips is long = 0_l
+        prop repetitivePredecessorSkips is long = 0_l
     }
 
     vertex Upsample refines Stimulatable, Stimulator {
-        prop initialPredecessorHolds is long
-        prop repetitivePredecessorHolds is long
+        prop initialPredecessorHolds is long = 0_l
+        prop repetitivePredecessorHolds is long = 0_l
     }
 
     vertex Task refines Stimulatable {
@@ -188,7 +188,7 @@ namespace execution {
 
     vertex ConstrainedTask refines Task {
         prop relativeDeadlineNumerator is long
-        prop relativeDeadlineDenominator is long
+        prop relativeDeadlineDenominator is long = 1_l
     }
 
     edge EventEdge

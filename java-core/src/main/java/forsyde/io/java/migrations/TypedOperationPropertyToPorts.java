@@ -1,24 +1,25 @@
 package forsyde.io.java.migrations;
 
-import forsyde.io.java.core.*;
+import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.core.Vertex;
+import forsyde.io.java.core.VertexProperty;
 
 import java.util.HashMap;
 
-public class TaskCallSequenceSplit implements SystemGraphMigrator {
+public class TypedOperationPropertyToPorts implements SystemGraphMigrator {
 
     @Override
     public String getName() {
-        return "TaskCallSequenceSplit";
+        return "TypedOperationPropertyToPorts";
     }
 
     @Override
     public boolean effect(ForSyDeSystemGraph forSyDeSystemGraph) {
         for (Vertex v : forSyDeSystemGraph.vertexSet()) {
-            if (v.hasTrait("execution::Task")) {
-                v.ports.add("initSequence");
-                v.ports.add("loopSequence");
-                v.putProperty("__loopSequence_ordering__",
-                        v.properties.getOrDefault("__callSequence_ordering__",
+            if (v.hasTrait("typing::TypedOperation")) {
+
+                v.putProperty("_loopSequence_ordering_",
+                        v.properties.getOrDefault("_callSequence_ordering_",
                                 VertexProperty.create(new HashMap<String, Integer>())));
                 forSyDeSystemGraph.outgoingEdgesOf(v).stream()
                         .filter(e -> e.sourcePort.orElse("").equals("callSequence"))

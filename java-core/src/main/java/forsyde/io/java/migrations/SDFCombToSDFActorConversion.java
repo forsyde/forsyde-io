@@ -12,6 +12,7 @@ public class SDFCombToSDFActorConversion implements SystemGraphMigrator {
                 v.addTraits("moc::sdf::SDFActor");
             }
         }
+        return true;
     }
 
     @Override

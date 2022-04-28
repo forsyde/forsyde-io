@@ -18,37 +18,20 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
         sdf3.getApplicationGraph().getSdf().getActor().forEach(a -> {
             final Vertex v = new Vertex(a.getName());
             systemGraph.addVertex(v);
-            v.addTraits(VertexTrait.MOC_SDF_SDFCOMB);
-            v.ports.add("combFunction");
-            final SDFComb sdfComb = SDFComb.safeCast(v).get();
+            final SDFActor sdfActor = SDFActor.enforce(v);
             final HashMap<String, Integer> consumption = new HashMap<>();
             final HashMap<String, Integer> production = new HashMap<>();
             a.getPort().forEach(port -> {
-                sdfComb.getPorts().add(port.getName());
+                sdfActor.getPorts().add(port.getName());
                 if (port.getType().equals("in"))
                     consumption.put(port.getName(), port.getRate().intValueExact());
                 else if (port.getType().equals("out"))
                     production.put(port.getName(), port.getRate().intValueExact());
             });
-            sdfComb.setConsumption(consumption);
-            sdfComb.setProduction(production);
-            addEquivalence(a, sdfComb.getViewedVertex());
+            sdfActor.setConsumption(consumption);
+            sdfActor.setProduction(production);
+            addEquivalence(a, sdfActor.getViewedVertex());
         });
-    }
-
-    default Vertex sdfActor(Object... args) {
-        final Vertex newSdfActor = new Vertex("identifier extracted from args");
-        final SDFComb sdfComb = SDFComb.enforce(newSdfActor);
-        // suppose you call with gray scale
-        sdfComb.setProduction(Map.of(
-                "gray", 6,
-                "dimsOut", 6,
-                "offsetOut", 2
-        ));
-        sdfComb.setConsumption(Map.of(
-                "offsetIn", 2
-        ));
-        return newSdfActor;
     }
 
     default void fromChannelstoSignalsAndPrefix(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {

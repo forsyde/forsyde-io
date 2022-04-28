@@ -8,7 +8,7 @@ public class PropertySpec {
 
     public String name;
     @JsonProperty("default")
-    public Object defaultValue;
+    public VertexProperty defaultValue;
     public PropertyTypeSpec type;
     public Optional<String> comment = Optional.empty();
 }

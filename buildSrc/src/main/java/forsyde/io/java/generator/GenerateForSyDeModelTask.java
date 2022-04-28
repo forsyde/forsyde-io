@@ -194,7 +194,15 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                         .StringMapVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, $T.create(new $T())", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), concreteMetaToJavaType(propertySpec.type)))
                         .apply(propertySpec.type);
             } else {
-
+                // TODO: support also definition of mappings and arrays as default values
+                VertexProperties.caseOf(propertySpec.defaultValue)
+                        .StringVertexProperty(s -> getRequiredPropGetter.addCode("\t$S, $T.create($S)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), s))
+                        .IntVertexProperty(in -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), in))
+                        .BooleanVertexProperty(b -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), b))
+                        .FloatVertexProperty(f -> getRequiredPropGetter.addCode("\t$S, $T.create($LF)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), f))
+                        .DoubleVertexProperty(f -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), f))
+                        .LongVertexProperty(l -> getRequiredPropGetter.addCode("\t$S, $T.create($LL)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), l))
+                        .otherwiseEmpty();
             }
             if (i < vertexTraitSpec.requiredProperties.size() -1)
                 getRequiredPropGetter.addCode(",\n");
