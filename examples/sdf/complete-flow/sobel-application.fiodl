@@ -332,9 +332,12 @@ systemgraph {
     edge [typing::datatypes::DataDefinition] from GyImpl port imgBlockY to Array6OfDoubleType
     edge [typing::datatypes::DataDefinition] from GyImpl port gy to DoubleType
 
+    edge [] from Gy port imgBlockX to GyImpl port imgBlockY
+    edge [] from GyImpl port gy to Gy port gy
+
     edge [] from Gy port combFunctions to GyImpl
 
-    vertex Abs [moc::sdf::SDFComb, moc::MoCSink] (combFunctions, system_img_sink, dimsIn, gx, gy, offsetXIn, offsetYIn, offsetXOut, offsetYOut) {
+    vertex Abs [moc::sdf::SDFComb, moc::MoCSink] (combFunctions, system_img_sink, dimsIn, resx, resy, offsetXIn, offsetYIn, offsetXOut, offsetYOut) {
         "dataWritenPerExecution": {
             "system_img_sink": 64_l
         },
@@ -378,13 +381,13 @@ systemgraph {
 
     vertex AbsImpl
     [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
-    (portTypes, system_img_sink_address, gx, gy, offsetXIn, offsetXOut, offsetYIn, offsetYOut, dims)
+    (portTypes, system_img_sink_address, resx, resy, offsetXIn, offsetXOut, offsetYIn, offsetYOut, dims)
     {
         "inlinedCode": "
-            if (gx < 0.0)
-                gx = -gx;
-            if (gy < 0.0)
-                gy = -gy;
+            if (resx < 0.0)
+                resx = -resx;
+            if (resy < 0.0)
+                resy = -resy;
             if (offsetX >= dims[0] - 2) {
                 offsetY += 1;
                 offsetX = 0;
@@ -392,9 +395,9 @@ systemgraph {
             if (offsetY >= dims[1] - 2) {
                 offsetY = 0;
             }
-            system_img_sink_address[offsetX][offsetY] = gx + gy;
+            system_img_sink_address[offsetX][offsetY] = resx + resy;
         ",
-        "inputPorts": ["system_img_sink_address", "gx", "gy", "dims", "offsetXIn", "offsetYIn"],
+        "inputPorts": ["system_img_sink_address", "resx", "resy", "dims", "offsetXIn", "offsetYIn"],
         "outputPorts": ["offsetXOut", "offsetYOut"],
         "operationRequirements": {
             "default": {
@@ -416,8 +419,8 @@ systemgraph {
     edge [typing::datatypes::DataDefinition] from AbsImpl port offsetYIn to UInt16
     edge [typing::datatypes::DataDefinition] from AbsImpl port offsetXOut to UInt16
     edge [typing::datatypes::DataDefinition] from AbsImpl port offsetYOut to UInt16
-    edge [typing::datatypes::DataDefinition] from AbsImpl port gx to Double
-    edge [typing::datatypes::DataDefinition] from AbsImpl port gy to Double
+    edge [typing::datatypes::DataDefinition] from AbsImpl port resx to Double
+    edge [typing::datatypes::DataDefinition] from AbsImpl port resy to Double
     edge [typing::datatypes::DataDefinition] from AbsImpl port norm to Double
 
     edge [] from Abs port combFunctions to AbsImpl
