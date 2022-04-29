@@ -159,10 +159,10 @@ systemgraph {
     }
     edge [] from GrayScaleY port initialTokenValues to ZeroValue
 
-    edge [moc::sdf::DataEdge] from GrayScale port offsetXOut to GrayScaleX port producer
-    edge [moc::sdf::DataEdge] from GrayScale port offsetYOut to GrayScaleY port producer
-    edge [moc::sdf::DataEdge] from GrayScaleX port consumer to GrayScale port offsetXIn
-    edge [moc::sdf::DataEdge] from GrayScaleY port consumer to GrayScale port offsetYIn
+    edge [moc::sdf::SDFDataEdge] from GrayScale port offsetXOut to GrayScaleX port producer
+    edge [moc::sdf::SDFDataEdge] from GrayScale port offsetYOut to GrayScaleY port producer
+    edge [moc::sdf::SDFDataEdge] from GrayScaleX port consumer to GrayScale port offsetXIn
+    edge [moc::sdf::SDFDataEdge] from GrayScaleY port consumer to GrayScale port offsetYIn
 
     edge [impl::DataMovement] from system_img_source to GrayScale port system_img_source 
 
@@ -181,7 +181,7 @@ systemgraph {
         "numOfInitialTokens": 0_i
     }
 
-    edge [moc::sdf::DataEdge] from GrayScale port dimsOut to GrayScaleToAbs port producer
+    edge [moc::sdf::SDFDataEdge] from GrayScale port dimsOut to GrayScaleToAbs port producer
     
     vertex getPx [moc::sdf::SDFComb] (combFunctions, gray, copyX, copyY) {
         "dataTakenPerExecution": {
@@ -372,12 +372,12 @@ systemgraph {
     }
     edge [] from AbsY port initialTokenValues to ZeroValue
 
-    edge [moc::sdf::DataEdge] from Abs port offsetXOut to AbsX port producer
-    edge [moc::sdf::DataEdge] from Abs port offsetYOut to AbsY port producer
-    edge [moc::sdf::DataEdge] from AbsX port consumer to Abs port offsetXIn
-    edge [moc::sdf::DataEdge] from AbsY port consumer to Abs port offsetYIn
+    edge [moc::sdf::SDFDataEdge] from Abs port offsetXOut to AbsX port producer
+    edge [moc::sdf::SDFDataEdge] from Abs port offsetYOut to AbsY port producer
+    edge [moc::sdf::SDFDataEdge] from AbsX port consumer to Abs port offsetXIn
+    edge [moc::sdf::SDFDataEdge] from AbsY port consumer to Abs port offsetYIn
 
-    edge [moc::sdf::DataEdge] from GrayScaleToAbs port consumer to Abs port dimsIn
+    edge [moc::sdf::SDFDataEdge] from GrayScaleToAbs port consumer to Abs port dimsIn
 
     vertex AbsImpl
     [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
@@ -438,7 +438,7 @@ systemgraph {
         "numOfInitialTokens": 0_i
     }
 
-    edge [moc::sdf::DataEdge] from GrayScale port gray to GrayScaleToGetPx port producer
-    edge [moc::sdf::DataEdge] from GrayScaleToGetPx port consumer to getPx port gray
+    edge [moc::sdf::SDFDataEdge] from GrayScale port gray to GrayScaleToGetPx port producer
+    edge [moc::sdf::SDFDataEdge] from GrayScaleToGetPx port consumer to getPx port gray
 
 }
