@@ -290,7 +290,7 @@ systemgraph {
 
     edge [typing::datatypes::DataDefinition] from GxImpl port portTypes to Array6OfDoubleType
     edge [typing::datatypes::DataDefinition] from GxImpl port portTypes to DoubleType
-    edge [typing::datatypes::DataDefinition] from GxImpl port gx to Double
+    edge [typing::datatypes::DataDefinition] from GxImpl port gx to DoubleType
     edge [typing::datatypes::DataDefinition] from GxImpl port imgBlockX to Array6OfDoubleType
 
     edge [] from Gx port combFunctions to GxImpl
@@ -298,7 +298,7 @@ systemgraph {
     edge [] from Gx port imgBlockX to GxImpl port imgBlockX
     edge [] from GxImpl port gx to Gx port gx
 
-    vertex Gy [moc::sdf::SDFComb] (combFunctions) {}
+    vertex Gy [moc::sdf::SDFComb] (combFunctions, imgBlockY, gy) {}
 
     vertex GyImpl
     [impl::ANSICBlackBoxExecutable, typing::TypedOperation, impl::InstrumentedExecutable] 
@@ -332,7 +332,7 @@ systemgraph {
     edge [typing::datatypes::DataDefinition] from GyImpl port imgBlockY to Array6OfDoubleType
     edge [typing::datatypes::DataDefinition] from GyImpl port gy to DoubleType
 
-    edge [] from Gy port imgBlockX to GyImpl port imgBlockY
+    edge [] from Gy port imgBlockY to GyImpl port imgBlockY
     edge [] from GyImpl port gy to Gy port gy
 
     edge [] from Gy port combFunctions to GyImpl
@@ -419,9 +419,8 @@ systemgraph {
     edge [typing::datatypes::DataDefinition] from AbsImpl port offsetYIn to UInt16
     edge [typing::datatypes::DataDefinition] from AbsImpl port offsetXOut to UInt16
     edge [typing::datatypes::DataDefinition] from AbsImpl port offsetYOut to UInt16
-    edge [typing::datatypes::DataDefinition] from AbsImpl port resx to Double
-    edge [typing::datatypes::DataDefinition] from AbsImpl port resy to Double
-    edge [typing::datatypes::DataDefinition] from AbsImpl port norm to Double
+    edge [typing::datatypes::DataDefinition] from AbsImpl port resx to DoubleType
+    edge [typing::datatypes::DataDefinition] from AbsImpl port resy to DoubleType
 
     edge [] from Abs port combFunctions to AbsImpl
     edge [] from Abs port offsetXIn to AbsImpl port offsetXIn
@@ -430,8 +429,8 @@ systemgraph {
     edge [] from Abs port dimsIn to AbsImpl port dims
     edge [] from AbsImpl port offsetXIn to Abs port offsetXIn
     edge [] from AbsImpl port offsetXOut to Abs port offsetXOut
-    edge [] from Abs port offsetYIn to AbsImpl port offsetY
-    edge [] from AbsImpl port offsetY to Abs port offsetYOut
+    edge [] from Abs port offsetYIn to AbsImpl port offsetYIn
+    edge [] from AbsImpl port offsetYOut to Abs port offsetYOut
 
     vertex GrayScaleToGetPx [moc::sdf::SDFChannel]
     (consumer, producer, initialTokenValues)
