@@ -142,7 +142,7 @@ systemgraph {
     edge [typing::datatypes::DataDefinition] from GrayScaleImpl port portTypes to Array2OfUInt16
 
     vertex GrayScaleX [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
-        "tokenSizeInBits": 16_i,
+        "tokenSizeInBits": 16_l,
         "numOfInitialTokens": 1_i,
         "__initialTokenValues_ordering__": {
             "ZeroValue": 0_i
@@ -151,7 +151,7 @@ systemgraph {
     edge [] from GrayScaleX port initialTokenValues to ZeroValue
 
     vertex GrayScaleY [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
-        "tokenSizeInBits": 16_i,
+        "tokenSizeInBits": 16_l,
         "numOfInitialTokens": 1_i,
         "__initialTokenValues_ordering__": {
             "ZeroValue": 0_i
@@ -355,7 +355,7 @@ systemgraph {
     edge [impl::DataMovement] from Abs port system_img_sink to system_img_sink
 
     vertex AbsX [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
-        "tokenSizeInBits": 16_i,
+        "tokenSizeInBits": 16_l,
         "numOfInitialTokens": 1_i,
         "__initialTokenValues_ordering__": {
             "ZeroValue": 0_i
@@ -364,7 +364,7 @@ systemgraph {
     edge [] from AbsX port initialTokenValues to ZeroValue
 
     vertex AbsY [moc::sdf::SDFChannel] (producer, consumer, initialTokenValues) {
-        "tokenSizeInBits": 16_i,
+        "tokenSizeInBits": 16_l,
         "numOfInitialTokens": 1_i,
         "__initialTokenValues_ordering__": {
             "ZeroValue": 0_i

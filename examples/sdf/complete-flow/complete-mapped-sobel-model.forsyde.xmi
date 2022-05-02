@@ -5,13 +5,13 @@
     <nodes identifier="Array1000OfArrayOfDouble">
         <traits>typing::datatypes::Array</traits>
         <propertiesValues intValue="1000" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
-        <propertiesNames>production</propertiesNames>
+        <propertiesNames>maximumElems</propertiesNames>
         <ports>innerType</ports>
     </nodes>
     <nodes identifier="Array1000OfDouble">
         <traits>typing::datatypes::Array</traits>
         <propertiesValues intValue="1000" xsi:type="forsyde.io.eclipse.systemgraph:IntVertexProperty"/>
-        <propertiesNames>production</propertiesNames>
+        <propertiesNames>maximumElems</propertiesNames>
         <ports>innerType</ports>
     </nodes>
     <nodes identifier="Double">
