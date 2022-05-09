@@ -1,10 +1,10 @@
 grammar ForSyDeFioDL;
 
-ALPHABETIC: [A-Za-z];
+ALPHABETIC: [a-zA-Z];
 
 NUMERIC: [0-9];
 
-ALPHANUM: [A-Za-z0-9];
+ALPHANUM: [a-zA-Z0-9];
 
 QUALIFIER: '::';
 
