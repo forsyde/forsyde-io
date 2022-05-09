@@ -2,7 +2,7 @@
 <forsyde.io.eclipse.systemgraph:ForSyDeSystemGraph xmlns:forsyde.io.eclipse.systemgraph="forsyde.io.eclipse.systemgraph" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmi:version="2.0" xsi:schemaLocation="forsyde.io.eclipse.systemgraph systemgraph.ecore#//io/eclipse/systemgraph">
     <nodes identifier="sobel/getPx">
         <traits>visualization::Visualizable</traits>
-        <traits>moc::sdf::SDFComb</traits>
+        <traits>moc::sdf::SDFActor</traits>
         <ports>gx</ports>
         <ports>combinator</ports>
         <ports>gy</ports>
@@ -17,7 +17,7 @@
     </nodes>
     <nodes identifier="sobel/Gx">
         <traits>visualization::Visualizable</traits>
-        <traits>moc::sdf::SDFComb</traits>
+        <traits>moc::sdf::SDFActor</traits>
         <ports>gx</ports>
         <ports>combinator</ports>
         <ports>resx</ports>
@@ -34,7 +34,7 @@
     </nodes>
     <nodes identifier="sobel/Gy">
         <traits>visualization::Visualizable</traits>
-        <traits>moc::sdf::SDFComb</traits>
+        <traits>moc::sdf::SDFActor</traits>
         <ports>combinator</ports>
         <ports>gy</ports>
         <ports>resy</ports>
@@ -51,7 +51,7 @@
     </nodes>
     <nodes identifier="sobel/Abs">
         <traits>visualization::Visualizable</traits>
-        <traits>moc::sdf::SDFComb</traits>
+        <traits>moc::sdf::SDFActor</traits>
         <ports>combinator</ports>
         <ports>resy</ports>
         <ports>resx</ports>

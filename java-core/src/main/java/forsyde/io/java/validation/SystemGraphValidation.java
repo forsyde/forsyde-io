@@ -11,5 +11,5 @@ import java.util.Optional;
  */
 public interface SystemGraphValidation {
 
-    boolean validate(ForSyDeSystemGraph forSyDeSystemGraph);
+    Optional<String> validate(ForSyDeSystemGraph forSyDeSystemGraph);
 }

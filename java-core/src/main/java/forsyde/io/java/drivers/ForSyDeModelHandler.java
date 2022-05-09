@@ -12,6 +12,8 @@ import forsyde.io.java.migrations.NoMoreReactiveTaskMigration;
 import forsyde.io.java.migrations.SDFCombToSDFActorConversion;
 import forsyde.io.java.migrations.SystemGraphMigrator;
 import forsyde.io.java.migrations.TaskCallSequenceSplit;
+import forsyde.io.java.validation.SDFValidator;
+import forsyde.io.java.validation.SystemGraphValidation;
 
 /**
  * @author rjordao
@@ -20,6 +22,7 @@ import forsyde.io.java.migrations.TaskCallSequenceSplit;
 public final class ForSyDeModelHandler {
 
 	private final List<SystemGraphMigrator> registeredMigrators = new ArrayList<>();
+	private final List<SystemGraphValidation> registesteredValidators = new ArrayList<>();
 	private final List<ForSyDeModelDriver> registeredDrivers = new ArrayList<>();
 	private final List<PathMatcher> registeredDriversInputMatchers = new ArrayList<>();
 	private final List<PathMatcher> registeredDriversOutputMatchers = new ArrayList<>();
@@ -34,6 +37,8 @@ public final class ForSyDeModelHandler {
 		registeredMigrators.add(new NoMoreReactiveTaskMigration());
         registeredMigrators.add(new TaskCallSequenceSplit());
 		registeredMigrators.add(new SDFCombToSDFActorConversion());
+		// default validators
+		registesteredValidators.add(new SDFValidator());
 		// register default drivers
 		registeredDrivers.add(new ForSyDeMLDriver());
 		registeredDrivers.add(new ForSyDeXMIDriver());
@@ -106,6 +111,12 @@ public final class ForSyDeModelHandler {
 						throw new Exception("Migrator " + systemGraphMigrator.getName() + " has failed its migration.");
 					}
 				}
+				for (SystemGraphValidation validation : registesteredValidators) {
+					final Optional<String> validationResult = validation.validate(forSyDeSystemGraph);
+					if (validationResult.isPresent()) {
+						throw new Exception(validationResult.get());
+					}
+				}
 				return forSyDeSystemGraph;
 			}
 		}
@@ -131,6 +142,12 @@ public final class ForSyDeModelHandler {
 	}
 
 	public void writeModel(ForSyDeSystemGraph model, Path outPath) throws Exception {
+		for (SystemGraphValidation validation : registesteredValidators) {
+			final Optional<String> validationResult = validation.validate(model);
+			if (validationResult.isPresent()) {
+				throw new Exception(validationResult.get());
+			}
+		}
 		for (int i = 0; i < registeredDrivers.size(); i++) {
 			if (registeredDriversOutputMatchers.get(i).matches(outPath)) {
 				registeredDrivers.get(i).writeModel(model, outPath);
