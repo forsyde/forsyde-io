@@ -133,18 +133,16 @@ subprojects {
 
   signing {
     // small hack to work offline or online
-    if (rootProject.hasProperty('signing.keyId')) {
+    if (rootProject.hasProperty('signing.keyId') && rootProject.findProperty("signing.useGpgCommand") == true) {
       useGpgCmd()
-      sign publishing.publications.mavenJava
-      sign configurations.archives
     } else if (System.getenv('GPG_SIGNING_KEY') != null || rootProject.findProperty('signing.key') != null) {
       useInMemoryPgpKeys(
               System.getenv('GPG_SIGNING_KEY') ?: rootProject.findProperty('signing.key'),
               System.getenv('GPG_SIGNING_PASSWORD') ?: rootProject.findProperty('signing.password') ?: '' //default to an empty password
       )
-      sign publishing.publications.mavenJava
-      sign configurations.archives
     }
+    sign publishing.publications.mavenJava
+    sign configurations.archives
   }
 
   tasks.publish.dependsOn tasks.signArchives

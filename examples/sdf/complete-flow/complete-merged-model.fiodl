@@ -1,697 +1,696 @@
-systemgraph {
-   vertex Array1000OfArrayOfDouble
-   [typing::datatypes::Array]
-   (innerType)
-   {
-      "maximumElems": 1000_i
-   }
-   vertex Array1000OfDouble
-   [typing::datatypes::Array]
-   (innerType)
-   {
-      "maximumElems": 1000_i
-   }
-   vertex Double
-   [typing::datatypes::Double]
-   ()
-   {}
-   vertex getPx
-   [decision::sdf::PASSedSDFComb, moc::sdf::SDFActor, moc::sdf::SDFComb, visualization::Visualizable]
-   (combFunctions, combinator, copyX, copyY, gray, gx, gy, imgInput)
-   {
-      "production": {
-         "gx": 6_i
-         "gy": 6_i
-         "copyY": 6_i
-         "copyX": 6_i
+systemgraph {  vertex Array1000OfArrayOfDouble
+  [typing::datatypes::Array]
+  (innerType)
+  {
+    "maximumElems": 1000_i
+  }
+  vertex Array1000OfDouble
+  [typing::datatypes::Array]
+  (innerType)
+  {
+    "maximumElems": 1000_i
+  }
+  vertex Double
+  [typing::datatypes::Double]
+  ()
+  {}
+  vertex getPx
+  [decision::sdf::PASSedSDFComb, moc::sdf::SDFActor, moc::sdf::SDFComb, visualization::Visualizable]
+  (combFunctions, combinator, copyX, copyY, gray, gx, gy, imgInput)
+  {
+    "production": {
+      "gx": 6_i,
+      "gy": 6_i,
+      "copyY": 6_i,
+      "copyX": 6_i
+    },
+    "dataTakenPerExecution": {
+      "system_img_source": 384_l
+    },
+    "firingSlots": [
+      1_i
+    ],
+    "consumption": {
+      "gray": 6_i
+    }
+  }
+  vertex Gx
+  [decision::sdf::PASSedSDFComb, moc::sdf::SDFActor, moc::sdf::SDFComb, visualization::Visualizable]
+  (combFunctions, combinator, gx, imgBlockX, resx)
+  {
+    "production": {
+      "resx": 1_i
+    },
+    "consumption": {
+      "gx": 6_i
+    },
+    "firingSlots": [
+      2_i
+    ]
+  }
+  vertex Gy
+  [decision::sdf::PASSedSDFComb, moc::sdf::SDFActor, moc::sdf::SDFComb, visualization::Visualizable]
+  (combFunctions, combinator, gy, imgBlockY, resy)
+  {
+    "production": {
+      "resy": 1_i
+    },
+    "consumption": {
+      "gy": 6_i
+    },
+    "firingSlots": [
+      3_i
+    ]
+  }
+  vertex Abs
+  [decision::sdf::PASSedSDFComb, moc::MoCSink, moc::sdf::SDFActor, moc::sdf::SDFComb, visualization::Visualizable]
+  (combFunctions, combinator, dimsIn, imgOutput, offsetXIn, offsetXOut, offsetYIn, offsetYOut, resx, resy, system_img_sink)
+  {
+    "production": {
+      "offsetYOut": 1_i,
+      "offsetXOut": 1_i
+    },
+    "consumption": {
+      "offsetXIn": 1_i,
+      "offsetYIn": 1_i,
+      "resy": 1_i,
+      "resx": 1_i,
+      "dimsIn": 2_i
+    },
+    "firingSlots": [
+      4_i
+    ],
+    "dataWritenPerExecution": {
+      "system_img_sink": 64_l
+    }
+  }
+  vertex inputImage
+  [impl::TokenizableDataBlock, impl::TypedDataBlock, visualization::Visualizable]
+  (dataType)
+  {
+    "maxSizeInBits": 32000000_l,
+    "tokenSizeInBits": 32_l
+  }
+  vertex outputImage
+  [impl::TokenizableDataBlock, impl::TypedDataBlock, visualization::Visualizable]
+  (dataType)
+  {
+    "maxSizeInBits": 31872128_l,
+    "tokenSizeInBits": 32_l
+  }
+  vertex gxsig
+  [decision::sdf::BoundedSDFChannel, impl::TokenizableDataBlock, impl::TypedDataBlock, moc::sdf::SDFChannel, visualization::Visualizable]
+  (consumer, dataType, producer)
+  {
+    "maxSizeInBits": 48_l,
+    "maximumTokens": 6_i,
+    "tokenSizeInBits": 8_l
+  }
+  vertex gysig
+  [decision::sdf::BoundedSDFChannel, impl::TokenizableDataBlock, impl::TypedDataBlock, moc::sdf::SDFChannel, visualization::Visualizable]
+  (consumer, dataType, producer)
+  {
+    "maxSizeInBits": 48_l,
+    "maximumTokens": 6_i,
+    "tokenSizeInBits": 8_l
+  }
+  vertex absxsig
+  [decision::sdf::BoundedSDFChannel, impl::TokenizableDataBlock, impl::TypedDataBlock, moc::sdf::SDFChannel, visualization::Visualizable]
+  (consumer, dataType, producer)
+  {
+    "maxSizeInBits": 8_l,
+    "maximumTokens": 1_i,
+    "tokenSizeInBits": 8_l
+  }
+  vertex absysig
+  [decision::sdf::BoundedSDFChannel, impl::TokenizableDataBlock, impl::TypedDataBlock, moc::sdf::SDFChannel, visualization::Visualizable]
+  (consumer, dataType, producer)
+  {
+    "maxSizeInBits": 8_l,
+    "maximumTokens": 1_i,
+    "tokenSizeInBits": 8_l
+  }
+  vertex order_1
+  [platform::runtime::TimeTriggeredScheduler, visualization::GreyBox]
+  (contained, slot_0, slot_1, slot_2, slot_3)
+  {}
+  vertex order_2
+  [platform::runtime::TimeTriggeredScheduler, visualization::GreyBox]
+  (contained, slot_0, slot_1, slot_2, slot_3)
+  {}
+  vertex order_3
+  [platform::runtime::TimeTriggeredScheduler, visualization::GreyBox]
+  (contained, slot_0, slot_1, slot_2, slot_3)
+  {}
+  vertex order_4
+  [platform::runtime::TimeTriggeredScheduler, visualization::GreyBox]
+  (contained, slot_0, slot_1, slot_2, slot_3)
+  {}
+  vertex order_5
+  [platform::runtime::RoundRobinScheduler, visualization::GreyBox]
+  (contained, slot_0, slot_1, slot_2, slot_3)
+  {}
+  vertex tile1
+  [platform::GenericProcessingModule, visualization::GreyBox, visualization::Visualizable]
+  (communication, contained, execution)
+  {}
+  vertex tile2
+  [platform::GenericProcessingModule, visualization::GreyBox, visualization::Visualizable]
+  (communication, contained, execution)
+  {}
+  vertex tile3
+  [platform::GenericProcessingModule, visualization::GreyBox, visualization::Visualizable]
+  (communication, contained, execution)
+  {}
+  vertex tile4
+  [platform::GenericProcessingModule, visualization::GreyBox, visualization::Visualizable]
+  (communication, contained, execution)
+  {}
+  vertex tdmabus1
+  [platform::RoundRobinCommunicationModule, visualization::GreyBox, visualization::Visualizable]
+  (communication, contained, requester, timeslots)
+  {
+    "slots": 4_i,
+    "maximumTimeSliceInCycles": -1_l,
+    "allocatedWeights": {
+      "tile2": 1_i,
+      "tile3": 1_i,
+      "tile4": 1_i,
+      "tile1": 1_i
+    },
+    "totalWeights": 4_i,
+    "minimumTimeSliceInCycles": 1_l
+  }
+  vertex getPxWCET
+  [WCET]
+  (application, platform, process, processor)
+  {
+    "time": 4356_i
+  }
+  vertex gxWCET
+  [WCET]
+  (application, platform, process, processor)
+  {
+    "time": 4147_i
+  }
+  vertex gyWCET
+  [WCET]
+  (application, platform, process, processor)
+  {
+    "time": 4146_i
+  }
+  vertex absWCET
+  [WCET]
+  (application, platform, process, processor)
+  {
+    "time": 1411_i
+  }
+  vertex gxsigWCCT
+  [WCCT]
+  (reciever, sender)
+  {
+    "time": 1_i
+  }
+  vertex gysigWCCT
+  [WCCT]
+  (reciever, sender)
+  {
+    "time": 1_i
+  }
+  vertex absxsigWCCT
+  [WCCT]
+  (reciever, sender)
+  {
+    "time": 1_i
+  }
+  vertex absysigWCCT
+  [WCCT]
+  (reciever, sender)
+  {
+    "time": 1_i
+  }
+  vertex min_throughput_obj
+  [MinimumThroughput]
+  ()
+  {
+    "apriori_importance": 1_i
+  }
+  vertex ZeroValue
+  [values::IntegerValue]
+  ()
+  {
+    "intValue": 0_i
+  }
+  vertex ArrayXOfArrayXOfDoubleType
+  [typing::datatypes::Array]
+  (innerType)
+  {
+    "maximumElems": -1_i
+  }
+  vertex ArrayXOfDoubleType
+  [typing::datatypes::Array]
+  (innerType)
+  {
+    "maximumElems": -1_i
+  }
+  vertex Array6OfDoubleType
+  [typing::datatypes::Array]
+  (innerType)
+  {
+    "maximumElems": 6_i
+  }
+  vertex DoubleType
+  [typing::datatypes::Double]
+  ()
+  {}
+  vertex UInt16
+  [typing::datatypes::Integer]
+  ()
+  {
+    "numberOfBits": 16_i
+  }
+  vertex Array2OfUInt16
+  [typing::datatypes::Array]
+  (innerType)
+  {
+    "maximumElems": 2_i
+  }
+  vertex system_img_source
+  [impl::TokenizableDataBlock, typing::TypedDataBlock]
+  (dataType)
+  {
+    "maxSizeInBits": 172000000_l,
+    "tokenSizeInBits": 64_l
+  }
+  vertex system_img_sink
+  [impl::TokenizableDataBlock, typing::TypedDataBlock]
+  (dataType)
+  {
+    "maxSizeInBits": 172000000_l,
+    "tokenSizeInBits": 64_l
+  }
+  vertex dimX
+  [impl::DataBlock, typing::TypedDataBlock]
+  (dataType)
+  {
+    "maxSizeInBits": 16_l
+  }
+  vertex dimY
+  [impl::DataBlock, typing::TypedDataBlock]
+  (dataType)
+  {
+    "maxSizeInBits": 16_l
+  }
+  vertex GrayScale
+  [decision::sdf::PASSedSDFComb, moc::ContinousMoCSource, moc::sdf::SDFActor, moc::sdf::SDFComb]
+  (combFunctions, dimX, dimY, dimsOut, gray, offsetXIn, offsetXOut, offsetYIn, offsetYOut, system_img_source)
+  {
+    "production": {
+      "dimsOut": 2_i,
+      "gray": 6_i,
+      "offsetYOut": 1_i,
+      "offsetXOut": 1_i
+    },
+    "dataTakenPerExecution": {
+      "system_img_source": 384_l,
+      "dimY": 16_l,
+      "dimX": 16_l
+    },
+    "consumption": {
+      "offsetXIn": 1_i,
+      "offsetYIn": 1_i
+    },
+    "firingSlots": [
+      0_i
+    ]
+  }
+  vertex GrayScaleImpl
+  [impl::ANSICBlackBoxExecutable, impl::InstrumentedExecutable, typing::TypedOperation]
+  (dimX, dimY, dimsOut, gray, offsetX, offsetY, portTypes, system_img_source_address)
+  {
+    "inlinedCode": "gray[0]=0.3125*system_img_source_address[offsetY+0][offsetX+0]+0.5625*system_img_source_address[offsetY+0][offsetX+1]+0.125*system_img_source_address[offsetY+0][offsetX+2];gray[1]=0.3125*system_img_source_address[offsetY+0][offsetX+2]+0.5625*system_img_source_address[offsetY+0][offsetX+3]+0.125*system_img_source_address[offsetY+0][offsetX+4];gray[2]=0.3125*system_img_source_address[offsetY+1][offsetX+0]+0.5625*system_img_source_address[offsetY+1][offsetX+1]+0.125*system_img_source_address[offsetY+1][offsetX+2];gray[3]=0.3125*system_img_source_address[offsetY+1][offsetX+2]+0.5625*system_img_source_address[offsetY+1][offsetX+3]+0.125*system_img_source_address[offsetY+1][offsetX+4];gray[4]=0.3125*system_img_source_address[offsetY+2][offsetX+0]+0.5625*system_img_source_address[offsetY+2][offsetX+1]+0.125*system_img_source_address[offsetY+2][offsetX+2];gray[5]=0.3125*system_img_source_address[offsetY+2][offsetX+2]+0.5625*system_img_source_address[offsetY+2][offsetX+3]+0.125*system_img_source_address[offsetY+2][offsetX+4];if(offsetX>=dimX-2){offsetY+=1;offsetX=0;}if(offsetY>=dimY-2){offsetY=0;}dimsOut[0]=dimX;dimsOut[1]=dimY;",
+    "outputPorts": [
+      "gray",
+      "offsetX",
+      "offsetY",
+      "dimsOut"
+    ],
+    "inputPorts": [
+      "system_img_source_address",
+      "dimX",
+      "dimY",
+      "offsetX",
+      "offsetY"
+    ],
+    "operationRequirements": {
+      "default": {
+        "boolean": 2_i,
+        "integer": 3_i,
+        "float": 18_i,
+        "assign": 8_i
       }
-      "dataTakenPerExecution": {
-         "system_img_source": 384_l
+    },
+    "sizeInBits": 100_l
+  }
+  vertex GrayScaleX
+  [moc::sdf::SDFChannel]
+  (consumer, initialTokenValues, producer)
+  {
+    "numOfInitialTokens": 1_i,
+    "__initialTokenValues_ordering__": {
+      "ZeroValue": 0_i
+    },
+    "tokenSizeInBits": 16_l
+  }
+  vertex GrayScaleY
+  [moc::sdf::SDFChannel]
+  (consumer, initialTokenValues, producer)
+  {
+    "numOfInitialTokens": 1_i,
+    "__initialTokenValues_ordering__": {
+      "ZeroValue": 0_i
+    },
+    "tokenSizeInBits": 16_l
+  }
+  vertex GrayScaleToAbs
+  [moc::sdf::SDFChannel]
+  (consumer, producer)
+  {
+    "numOfInitialTokens": 0_i
+  }
+  vertex getPxImpl1
+  [impl::ANSICBlackBoxExecutable, impl::InstrumentedExecutable, typing::TypedOperation]
+  (gray, imgBlockX, portTypes)
+  {
+    "inlinedCode": "imgBlockX[0]=gray[0];imgBlockX[1]=gray[1];imgBlockX[2]=gray[2];imgBlockX[3]=gray[3];imgBlockX[4]=gray[4];imgBlockX[5]=gray[5];",
+    "outputPorts": [
+      "imgBlockX"
+    ],
+    "inputPorts": [
+      "gray"
+    ],
+    "operationRequirements": {
+      "default": {
+        "assign": 6_i
       }
-      "firingSlots": [
-         1_i
-      ]
-      "consumption": {
-         "gray": 6_i
+    },
+    "sizeInBits": 100_l
+  }
+  vertex getPxImpl2
+  [impl::ANSICBlackBoxExecutable, impl::InstrumentedExecutable, typing::TypedOperation]
+  (gray, imgBlockY, portTypes)
+  {
+    "inlinedCode": "imgBlockY[0]=gray[0];imgBlockY[1]=gray[1];imgBlockY[2]=gray[2];imgBlockY[3]=gray[3];imgBlockY[4]=gray[4];imgBlockY[5]=gray[5];",
+    "outputPorts": [
+      "imgBlockY"
+    ],
+    "inputPorts": [
+      "gray"
+    ],
+    "operationRequirements": {
+      "default": {
+        "assign": 6_i
       }
-   }
-   vertex Gx
-   [decision::sdf::PASSedSDFComb, moc::sdf::SDFActor, moc::sdf::SDFComb, visualization::Visualizable]
-   (combFunctions, combinator, gx, imgBlockX, resx)
-   {
-      "production": {
-         "resx": 1_i
+    },
+    "sizeInBits": 100_l
+  }
+  vertex GxImpl
+  [impl::ANSICBlackBoxExecutable, impl::InstrumentedExecutable, typing::TypedOperation]
+  (gx, imgBlockX, portTypes)
+  {
+    "portToTypeName": {
+      "gx": "Double",
+      "imgBlockX": "Array6OfDoubleType"
+    },
+    "inlinedCode": "gx=gx-imgBlockX[0];gx=gx+imgBlockX[1];gx=gx-2.0*imgBlockX[2];gx=gx+2.0*imgBlockX[3];gx=gx-imgBlockX[4];gx=gx+imgBlockX[5];",
+    "outputPorts": [
+      "gx"
+    ],
+    "inputPorts": [
+      "imgBlockX"
+    ],
+    "operationRequirements": {
+      "default": {
+        "double": 8_i,
+        "assign": 6_i
       }
-      "consumption": {
-         "gx": 6_i
+    },
+    "sizeInBits": 100_l
+  }
+  vertex GyImpl
+  [impl::ANSICBlackBoxExecutable, impl::InstrumentedExecutable, typing::TypedOperation]
+  (gy, imgBlockY, portTypes)
+  {
+    "portToTypeName": {
+      "gy": "Double",
+      "imgBlockY": "Array6OfDoubleType"
+    },
+    "inlinedCode": "gy=gy+imgBlockY[0];gy=gy+2.0*imgBlockY[1];gy=gy+imgBlockY[2];gy=gy-imgBlockY[3];gy=gy-2.0*imgBlockY[4];gy=gy-imgBlockY[5];",
+    "outputPorts": [
+      "gy"
+    ],
+    "inputPorts": [
+      "imgBlockY"
+    ],
+    "operationRequirements": {
+      "default": {
+        "double": 8_i,
+        "assign": 6_i
       }
-      "firingSlots": [
-         2_i
-      ]
-   }
-   vertex Gy
-   [decision::sdf::PASSedSDFComb, moc::sdf::SDFActor, moc::sdf::SDFComb, visualization::Visualizable]
-   (combFunctions, combinator, gy, imgBlockY, resy)
-   {
-      "production": {
-         "resy": 1_i
+    },
+    "sizeInBits": 100_l
+  }
+  vertex AbsX
+  [moc::sdf::SDFChannel]
+  (consumer, initialTokenValues, producer)
+  {
+    "numOfInitialTokens": 1_i,
+    "__initialTokenValues_ordering__": {
+      "ZeroValue": 0_i
+    },
+    "tokenSizeInBits": 16_l
+  }
+  vertex AbsY
+  [moc::sdf::SDFChannel]
+  (consumer, initialTokenValues, producer)
+  {
+    "numOfInitialTokens": 1_i,
+    "__initialTokenValues_ordering__": {
+      "ZeroValue": 0_i
+    },
+    "tokenSizeInBits": 16_l
+  }
+  vertex AbsImpl
+  [impl::ANSICBlackBoxExecutable, impl::InstrumentedExecutable, typing::TypedOperation]
+  (dims, offsetXIn, offsetXOut, offsetYIn, offsetYOut, portTypes, resx, resy, system_img_sink_address)
+  {
+    "inlinedCode": "if(resx<0.0)resx=-resx;if(resy<0.0)resy=-resy;if(offsetX>=dims[0]-2){offsetY+=1;offsetX=0;}if(offsetY>=dims[1]-2){offsetY=0;}system_img_sink_address[offsetX][offsetY]=resx+resy;",
+    "outputPorts": [
+      "offsetXOut",
+      "offsetYOut"
+    ],
+    "inputPorts": [
+      "system_img_sink_address",
+      "resx",
+      "resy",
+      "dims",
+      "offsetXIn",
+      "offsetYIn"
+    ],
+    "operationRequirements": {
+      "default": {
+        "boolean": 5_i,
+        "double": 2_i,
+        "integer": 3_i,
+        "assign": 5_i
       }
-      "consumption": {
-         "gy": 6_i
-      }
-      "firingSlots": [
-         3_i
-      ]
-   }
-   vertex Abs
-   [decision::sdf::PASSedSDFComb, moc::MoCSink, moc::sdf::SDFActor, moc::sdf::SDFComb, visualization::Visualizable]
-   (combFunctions, combinator, dimsIn, imgOutput, offsetXIn, offsetXOut, offsetYIn, offsetYOut, resx, resy, system_img_sink)
-   {
-      "production": {
-         "offsetYOut": 1_i
-         "offsetXOut": 1_i
-      }
-      "consumption": {
-         "offsetXIn": 1_i
-         "offsetYIn": 1_i
-         "resy": 1_i
-         "resx": 1_i
-         "dimsIn": 2_i
-      }
-      "firingSlots": [
-         4_i
-      ]
-      "dataWritenPerExecution": {
-         "system_img_sink": 64_l
-      }
-   }
-   vertex inputImage
-   [impl::TokenizableDataBlock, impl::TypedDataBlock, visualization::Visualizable]
-   (dataType)
-   {
-      "maxSizeInBits": 32000000_l
-      "tokenSizeInBits": 32_l
-   }
-   vertex outputImage
-   [impl::TokenizableDataBlock, impl::TypedDataBlock, visualization::Visualizable]
-   (dataType)
-   {
-      "maxSizeInBits": 31872128_l
-      "tokenSizeInBits": 32_l
-   }
-   vertex gxsig
-   [decision::sdf::BoundedSDFChannel, impl::TokenizableDataBlock, impl::TypedDataBlock, moc::sdf::SDFChannel, visualization::Visualizable]
-   (consumer, dataType, producer)
-   {
-      "maxSizeInBits": 48_l
-      "maximumTokens": 6_i
-      "tokenSizeInBits": 8_l
-   }
-   vertex gysig
-   [decision::sdf::BoundedSDFChannel, impl::TokenizableDataBlock, impl::TypedDataBlock, moc::sdf::SDFChannel, visualization::Visualizable]
-   (consumer, dataType, producer)
-   {
-      "maxSizeInBits": 48_l
-      "maximumTokens": 6_i
-      "tokenSizeInBits": 8_l
-   }
-   vertex absxsig
-   [decision::sdf::BoundedSDFChannel, impl::TokenizableDataBlock, impl::TypedDataBlock, moc::sdf::SDFChannel, visualization::Visualizable]
-   (consumer, dataType, producer)
-   {
-      "maxSizeInBits": 8_l
-      "maximumTokens": 1_i
-      "tokenSizeInBits": 8_l
-   }
-   vertex absysig
-   [decision::sdf::BoundedSDFChannel, impl::TokenizableDataBlock, impl::TypedDataBlock, moc::sdf::SDFChannel, visualization::Visualizable]
-   (consumer, dataType, producer)
-   {
-      "maxSizeInBits": 8_l
-      "maximumTokens": 1_i
-      "tokenSizeInBits": 8_l
-   }
-   vertex order_1
-   [platform::runtime::TimeTriggeredScheduler, visualization::GreyBox]
-   (contained, slot_0, slot_1, slot_2, slot_3)
-   {}
-   vertex order_2
-   [platform::runtime::TimeTriggeredScheduler, visualization::GreyBox]
-   (contained, slot_0, slot_1, slot_2, slot_3)
-   {}
-   vertex order_3
-   [platform::runtime::TimeTriggeredScheduler, visualization::GreyBox]
-   (contained, slot_0, slot_1, slot_2, slot_3)
-   {}
-   vertex order_4
-   [platform::runtime::TimeTriggeredScheduler, visualization::GreyBox]
-   (contained, slot_0, slot_1, slot_2, slot_3)
-   {}
-   vertex order_5
-   [platform::runtime::RoundRobinScheduler, visualization::GreyBox]
-   (contained, slot_0, slot_1, slot_2, slot_3)
-   {}
-   vertex tile1
-   [platform::GenericProcessingModule, visualization::GreyBox, visualization::Visualizable]
-   (communication, contained, execution)
-   {}
-   vertex tile2
-   [platform::GenericProcessingModule, visualization::GreyBox, visualization::Visualizable]
-   (communication, contained, execution)
-   {}
-   vertex tile3
-   [platform::GenericProcessingModule, visualization::GreyBox, visualization::Visualizable]
-   (communication, contained, execution)
-   {}
-   vertex tile4
-   [platform::GenericProcessingModule, visualization::GreyBox, visualization::Visualizable]
-   (communication, contained, execution)
-   {}
-   vertex tdmabus1
-   [platform::RoundRobinCommunicationModule, visualization::GreyBox, visualization::Visualizable]
-   (communication, contained, requester, timeslots)
-   {
-      "slots": 4_i
-      "maximumTimeSliceInCycles": -1_l
-      "allocatedWeights": {
-         "tile2": 1_i
-         "tile3": 1_i
-         "tile4": 1_i
-         "tile1": 1_i
-      }
-      "totalWeights": 4_i
-      "minimumTimeSliceInCycles": 1_l
-   }
-   vertex getPxWCET
-   [WCET]
-   (application, platform, process, processor)
-   {
-      "time": 4356_i
-   }
-   vertex gxWCET
-   [WCET]
-   (application, platform, process, processor)
-   {
-      "time": 4147_i
-   }
-   vertex gyWCET
-   [WCET]
-   (application, platform, process, processor)
-   {
-      "time": 4146_i
-   }
-   vertex absWCET
-   [WCET]
-   (application, platform, process, processor)
-   {
-      "time": 1411_i
-   }
-   vertex gxsigWCCT
-   [WCCT]
-   (reciever, sender)
-   {
-      "time": 1_i
-   }
-   vertex gysigWCCT
-   [WCCT]
-   (reciever, sender)
-   {
-      "time": 1_i
-   }
-   vertex absxsigWCCT
-   [WCCT]
-   (reciever, sender)
-   {
-      "time": 1_i
-   }
-   vertex absysigWCCT
-   [WCCT]
-   (reciever, sender)
-   {
-      "time": 1_i
-   }
-   vertex min_throughput_obj
-   [MinimumThroughput]
-   ()
-   {
-      "apriori_importance": 1_i
-   }
-   vertex ZeroValue
-   [values::IntegerValue]
-   ()
-   {
-      "intValue": 0_i
-   }
-   vertex ArrayXOfArrayXOfDoubleType
-   [typing::datatypes::Array]
-   (innerType)
-   {
-      "maximumElems": -1_i
-   }
-   vertex ArrayXOfDoubleType
-   [typing::datatypes::Array]
-   (innerType)
-   {
-      "maximumElems": -1_i
-   }
-   vertex Array6OfDoubleType
-   [typing::datatypes::Array]
-   (innerType)
-   {
-      "maximumElems": 6_i
-   }
-   vertex DoubleType
-   [typing::datatypes::Double]
-   ()
-   {}
-   vertex UInt16
-   [typing::datatypes::Integer]
-   ()
-   {
-      "numberOfBits": 16_i
-   }
-   vertex Array2OfUInt16
-   [typing::datatypes::Array]
-   (innerType)
-   {
-      "maximumElems": 2_i
-   }
-   vertex system_img_source
-   [impl::TokenizableDataBlock, typing::TypedDataBlock]
-   (dataType)
-   {
-      "maxSizeInBits": 172000000_l
-      "tokenSizeInBits": 64_l
-   }
-   vertex system_img_sink
-   [impl::TokenizableDataBlock, typing::TypedDataBlock]
-   (dataType)
-   {
-      "maxSizeInBits": 172000000_l
-      "tokenSizeInBits": 64_l
-   }
-   vertex dimX
-   [impl::DataBlock, typing::TypedDataBlock]
-   (dataType)
-   {
-      "maxSizeInBits": 16_l
-   }
-   vertex dimY
-   [impl::DataBlock, typing::TypedDataBlock]
-   (dataType)
-   {
-      "maxSizeInBits": 16_l
-   }
-   vertex GrayScale
-   [decision::sdf::PASSedSDFComb, moc::ContinousMoCSource, moc::sdf::SDFActor, moc::sdf::SDFComb]
-   (combFunctions, dimX, dimY, dimsOut, gray, offsetXIn, offsetXOut, offsetYIn, offsetYOut, system_img_source)
-   {
-      "production": {
-         "dimsOut": 2_i
-         "gray": 6_i
-         "offsetYOut": 1_i
-         "offsetXOut": 1_i
-      }
-      "dataTakenPerExecution": {
-         "system_img_source": 384_l
-         "dimY": 16_l
-         "dimX": 16_l
-      }
-      "consumption": {
-         "offsetXIn": 1_i
-         "offsetYIn": 1_i
-      }
-      "firingSlots": [
-         0_i
-      ]
-   }
-   vertex GrayScaleImpl
-   [impl::ANSICBlackBoxExecutable, impl::InstrumentedExecutable, typing::TypedOperation]
-   (dimX, dimY, dimsOut, gray, offsetX, offsetY, portTypes, system_img_source_address)
-   {
-      "inlinedCode": "gray[0]=0.3125*system_img_source_address[offsetY+0][offsetX+0]+0.5625*system_img_source_address[offsetY+0][offsetX+1]+0.125*system_img_source_address[offsetY+0][offsetX+2];gray[1]=0.3125*system_img_source_address[offsetY+0][offsetX+2]+0.5625*system_img_source_address[offsetY+0][offsetX+3]+0.125*system_img_source_address[offsetY+0][offsetX+4];gray[2]=0.3125*system_img_source_address[offsetY+1][offsetX+0]+0.5625*system_img_source_address[offsetY+1][offsetX+1]+0.125*system_img_source_address[offsetY+1][offsetX+2];gray[3]=0.3125*system_img_source_address[offsetY+1][offsetX+2]+0.5625*system_img_source_address[offsetY+1][offsetX+3]+0.125*system_img_source_address[offsetY+1][offsetX+4];gray[4]=0.3125*system_img_source_address[offsetY+2][offsetX+0]+0.5625*system_img_source_address[offsetY+2][offsetX+1]+0.125*system_img_source_address[offsetY+2][offsetX+2];gray[5]=0.3125*system_img_source_address[offsetY+2][offsetX+2]+0.5625*system_img_source_address[offsetY+2][offsetX+3]+0.125*system_img_source_address[offsetY+2][offsetX+4];if(offsetX>=dimX-2){offsetY+=1;offsetX=0;}if(offsetY>=dimY-2){offsetY=0;}dimsOut[0]=dimX;dimsOut[1]=dimY;"
-      "outputPorts": [
-         "gray"
-         "offsetX"
-         "offsetY"
-         "dimsOut"
-      ]
-      "inputPorts": [
-         "system_img_source_address"
-         "dimX"
-         "dimY"
-         "offsetX"
-         "offsetY"
-      ]
-      "operationRequirements": {
-         "default": {
-            "boolean": 2_i
-            "integer": 3_i
-            "float": 18_i
-            "assign": 8_i
-         }
-      }
-      "sizeInBits": 100_l
-   }
-   vertex GrayScaleX
-   [moc::sdf::SDFChannel]
-   (consumer, initialTokenValues, producer)
-   {
-      "numOfInitialTokens": 1_i
-      "__initialTokenValues_ordering__": {
-         "ZeroValue": 0_i
-      }
-      "tokenSizeInBits": 16_l
-   }
-   vertex GrayScaleY
-   [moc::sdf::SDFChannel]
-   (consumer, initialTokenValues, producer)
-   {
-      "numOfInitialTokens": 1_i
-      "__initialTokenValues_ordering__": {
-         "ZeroValue": 0_i
-      }
-      "tokenSizeInBits": 16_l
-   }
-   vertex GrayScaleToAbs
-   [moc::sdf::SDFChannel]
-   (consumer, producer)
-   {
-      "numOfInitialTokens": 0_i
-   }
-   vertex getPxImpl1
-   [impl::ANSICBlackBoxExecutable, impl::InstrumentedExecutable, typing::TypedOperation]
-   (gray, imgBlockX, portTypes)
-   {
-      "inlinedCode": "imgBlockX[0]=gray[0];imgBlockX[1]=gray[1];imgBlockX[2]=gray[2];imgBlockX[3]=gray[3];imgBlockX[4]=gray[4];imgBlockX[5]=gray[5];"
-      "outputPorts": [
-         "imgBlockX"
-      ]
-      "inputPorts": [
-         "gray"
-      ]
-      "operationRequirements": {
-         "default": {
-            "assign": 6_i
-         }
-      }
-      "sizeInBits": 100_l
-   }
-   vertex getPxImpl2
-   [impl::ANSICBlackBoxExecutable, impl::InstrumentedExecutable, typing::TypedOperation]
-   (gray, imgBlockY, portTypes)
-   {
-      "inlinedCode": "imgBlockY[0]=gray[0];imgBlockY[1]=gray[1];imgBlockY[2]=gray[2];imgBlockY[3]=gray[3];imgBlockY[4]=gray[4];imgBlockY[5]=gray[5];"
-      "outputPorts": [
-         "imgBlockY"
-      ]
-      "inputPorts": [
-         "gray"
-      ]
-      "operationRequirements": {
-         "default": {
-            "assign": 6_i
-         }
-      }
-      "sizeInBits": 100_l
-   }
-   vertex GxImpl
-   [impl::ANSICBlackBoxExecutable, impl::InstrumentedExecutable, typing::TypedOperation]
-   (gx, imgBlockX, portTypes)
-   {
-      "portToTypeName": {
-         "gx": "Double"
-         "imgBlockX": "Array6OfDoubleType"
-      }
-      "inlinedCode": "gx=gx-imgBlockX[0];gx=gx+imgBlockX[1];gx=gx-2.0*imgBlockX[2];gx=gx+2.0*imgBlockX[3];gx=gx-imgBlockX[4];gx=gx+imgBlockX[5];"
-      "outputPorts": [
-         "gx"
-      ]
-      "inputPorts": [
-         "imgBlockX"
-      ]
-      "operationRequirements": {
-         "default": {
-            "double": 8_i
-            "assign": 6_i
-         }
-      }
-      "sizeInBits": 100_l
-   }
-   vertex GyImpl
-   [impl::ANSICBlackBoxExecutable, impl::InstrumentedExecutable, typing::TypedOperation]
-   (gy, imgBlockY, portTypes)
-   {
-      "portToTypeName": {
-         "gy": "Double"
-         "imgBlockY": "Array6OfDoubleType"
-      }
-      "inlinedCode": "gy=gy+imgBlockY[0];gy=gy+2.0*imgBlockY[1];gy=gy+imgBlockY[2];gy=gy-imgBlockY[3];gy=gy-2.0*imgBlockY[4];gy=gy-imgBlockY[5];"
-      "outputPorts": [
-         "gy"
-      ]
-      "inputPorts": [
-         "imgBlockY"
-      ]
-      "operationRequirements": {
-         "default": {
-            "double": 8_i
-            "assign": 6_i
-         }
-      }
-      "sizeInBits": 100_l
-   }
-   vertex AbsX
-   [moc::sdf::SDFChannel]
-   (consumer, initialTokenValues, producer)
-   {
-      "numOfInitialTokens": 1_i
-      "__initialTokenValues_ordering__": {
-         "ZeroValue": 0_i
-      }
-      "tokenSizeInBits": 16_l
-   }
-   vertex AbsY
-   [moc::sdf::SDFChannel]
-   (consumer, initialTokenValues, producer)
-   {
-      "numOfInitialTokens": 1_i
-      "__initialTokenValues_ordering__": {
-         "ZeroValue": 0_i
-      }
-      "tokenSizeInBits": 16_l
-   }
-   vertex AbsImpl
-   [impl::ANSICBlackBoxExecutable, impl::InstrumentedExecutable, typing::TypedOperation]
-   (dims, offsetXIn, offsetXOut, offsetYIn, offsetYOut, portTypes, resx, resy, system_img_sink_address)
-   {
-      "inlinedCode": "if(resx<0.0)resx=-resx;if(resy<0.0)resy=-resy;if(offsetX>=dims[0]-2){offsetY+=1;offsetX=0;}if(offsetY>=dims[1]-2){offsetY=0;}system_img_sink_address[offsetX][offsetY]=resx+resy;"
-      "outputPorts": [
-         "offsetXOut"
-         "offsetYOut"
-      ]
-      "inputPorts": [
-         "system_img_sink_address"
-         "resx"
-         "resy"
-         "dims"
-         "offsetXIn"
-         "offsetYIn"
-      ]
-      "operationRequirements": {
-         "default": {
-            "boolean": 5_i
-            "double": 2_i
-            "integer": 3_i
-            "assign": 5_i
-         }
-      }
-      "sizeInBits": 100_l
-   }
-   vertex GrayScaleToGetPx
-   [moc::sdf::SDFChannel]
-   (consumer, initialTokenValues, producer)
-   {
-      "numOfInitialTokens": 0_i
-   }
-   edge [typing::datatypes::DataDefinition] from Array1000OfArrayOfDouble port innerType to Array1000OfDouble 
-   edge [typing::datatypes::DataDefinition] from Array1000OfDouble port innerType to Double 
-   edge [typing::datatypes::DataDefinition] from inputImage port dataType to Array1000OfArrayOfDouble 
-   edge [impl::DataMovement] from inputImage to getPx port imgInput
-   edge [typing::datatypes::DataDefinition] from outputImage port dataType to Array1000OfArrayOfDouble 
-   edge [impl::DataMovement] from Abs port imgOutput to outputImage 
-   edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from getPx port gx to gxsig port producer
-   edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from getPx port gy to gysig port producer
-   edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from Gx port resx to absxsig port producer
-   edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from Gy port resy to absysig port producer
-   edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from gxsig port consumer to Gx port gx
-   edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from gysig port consumer to Gy port gy
-   edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from absxsig port consumer to Abs port resx
-   edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from absysig port consumer to Abs port resy
-   edge [decision::AbstractAllocation] from tile1 port execution to order_1 
-   edge [visualization::VisualContainment] from tile1 port contained to order_1 
-   edge [decision::AbstractAllocation] from tile2 port execution to order_2 
-   edge [visualization::VisualContainment] from tile2 port contained to order_2 
-   edge [decision::AbstractAllocation] from tile3 port execution to order_3 
-   edge [visualization::VisualContainment] from tile3 port contained to order_3 
-   edge [decision::AbstractAllocation] from tile4 port execution to order_4 
-   edge [visualization::VisualContainment] from tile4 port contained to order_4 
-   edge [decision::AbstractAllocation] from tdmabus1 port timeslots to order_5 
-   edge [visualization::VisualContainment] from tdmabus1 port contained to order_5 
-   edge [platform::PhysicalConnection] from tile1 port communication to tdmabus1 
-   edge [platform::PhysicalConnection] from tile2 port communication to tdmabus1 
-   edge [platform::PhysicalConnection] from tile3 port communication to tdmabus1 
-   edge [platform::PhysicalConnection] from tile4 port communication to tdmabus1 
-   edge [platform::PhysicalConnection] from tdmabus1 port communication to tile1 
-   edge [platform::PhysicalConnection] from tdmabus1 port communication to tile2 
-   edge [platform::PhysicalConnection] from tdmabus1 port communication to tile3 
-   edge [platform::PhysicalConnection] from tdmabus1 port communication to tile4 
-   edge [visualization::VisualConnection] from tile1 to tdmabus1 
-   edge [visualization::VisualConnection] from tile2 to tdmabus1 
-   edge [visualization::VisualConnection] from tile3 to tdmabus1 
-   edge [visualization::VisualConnection] from tile4 to tdmabus1 
-   edge [visualization::VisualConnection] from tdmabus1 to tile1 
-   edge [visualization::VisualConnection] from tdmabus1 to tile2 
-   edge [visualization::VisualConnection] from tdmabus1 to tile3 
-   edge [visualization::VisualConnection] from tdmabus1 to tile4 
-   edge [Annotation] from getPxWCET port application to getPx 
-   edge [Annotation] from getPxWCET port platform to tile1 
-   edge [Annotation] from getPxWCET port platform to tile2 
-   edge [Annotation] from getPxWCET port platform to tile3 
-   edge [Annotation] from getPxWCET port platform to tile4 
-   edge [Annotation] from gxWCET port application to Gx 
-   edge [Annotation] from gxWCET port platform to tile1 
-   edge [Annotation] from gxWCET port platform to tile2 
-   edge [Annotation] from gxWCET port platform to tile3 
-   edge [Annotation] from gxWCET port platform to tile4 
-   edge [Annotation] from gyWCET port application to Gy 
-   edge [Annotation] from gyWCET port platform to tile1 
-   edge [Annotation] from gyWCET port platform to tile2 
-   edge [Annotation] from gyWCET port platform to tile3 
-   edge [Annotation] from gyWCET port platform to tile4 
-   edge [Annotation] from absWCET port application to Abs 
-   edge [Annotation] from absWCET port platform to tile1 
-   edge [Annotation] from absWCET port platform to tile2 
-   edge [Annotation] from absWCET port platform to tile3 
-   edge [Annotation] from absWCET port platform to tile4 
-   edge [Annotation] from gxsigWCCT to gxsig 
-   edge [Annotation] from gxsigWCCT to tdmabus1 
-   edge [Annotation] from gysigWCCT to gysig 
-   edge [Annotation] from gysigWCCT to tdmabus1 
-   edge [Annotation] from absxsigWCCT to absxsig 
-   edge [Annotation] from absxsigWCCT to tdmabus1 
-   edge [Annotation] from absysigWCCT to tdmabus1 
-   edge [Annotation] from absysigWCCT to absysig 
-   edge [Annotation] from min_throughput_obj to getPx 
-   edge [Annotation] from min_throughput_obj to Gx 
-   edge [Annotation] from min_throughput_obj to Gy 
-   edge [Annotation] from min_throughput_obj to Abs 
-   edge [AbstractScheduling] from order_1 port slot_0 to getPx 
-   edge [AbstractScheduling] from order_2 port slot_0 to Abs 
-   edge [AbstractScheduling] from order_3 port slot_0 to Gx 
-   edge [AbstractScheduling] from order_4 port slot_0 to Gy 
-   edge [AbstractScheduling] from order_5 port slot_0 to gxsig 
-   edge [AbstractScheduling] from order_5 port slot_1 to gysig 
-   edge [AbstractScheduling] from order_5 port slot_2 to absxsig 
-   edge [AbstractScheduling] from order_5 port slot_3 to absysig 
-   edge [visualization::VisualContainment] from order_1 port contained to getPx 
-   edge [visualization::VisualContainment] from order_2 port contained to Abs 
-   edge [visualization::VisualContainment] from order_3 port contained to Gx 
-   edge [visualization::VisualContainment] from order_4 port contained to Gy 
-   edge [visualization::VisualContainment] from order_5 port contained to gxsig 
-   edge [visualization::VisualContainment] from order_5 port contained to gysig 
-   edge [visualization::VisualContainment] from order_5 port contained to absxsig 
-   edge [visualization::VisualContainment] from order_5 port contained to absysig 
-   edge [typing::datatypes::DataDefinition] from ArrayXOfArrayXOfDoubleType port innerType to ArrayXOfDoubleType 
-   edge [typing::datatypes::DataDefinition] from Array6OfDoubleType port innerType to DoubleType 
-   edge [typing::datatypes::DataDefinition] from ArrayXOfDoubleType port innerType to DoubleType 
-   edge [typing::datatypes::DataDefinition] from Array2OfUInt16 port innerType to UInt16 
-   edge [typing::datatypes::DataDefinition] from system_img_source port dataType to ArrayXOfArrayXOfDoubleType 
-   edge [typing::datatypes::DataDefinition] from system_img_sink port dataType to ArrayXOfArrayXOfDoubleType 
-   edge [typing::datatypes::DataDefinition] from dimX port dataType to UInt16 
-   edge [typing::datatypes::DataDefinition] from dimY port dataType to UInt16 
-   edge [typing::datatypes::DataDefinition] from GrayScaleImpl port system_img_source_address to ArrayXOfArrayXOfDoubleType 
-   edge [typing::datatypes::DataDefinition] from GrayScaleImpl port dimX to UInt16 
-   edge [typing::datatypes::DataDefinition] from GrayScaleImpl port dimY to UInt16 
-   edge [typing::datatypes::DataDefinition] from GrayScaleImpl port offsetX to UInt16 
-   edge [typing::datatypes::DataDefinition] from GrayScaleImpl port offsetY to UInt16 
-   edge [typing::datatypes::DataDefinition] from GrayScaleImpl port gray to Array6OfDoubleType 
-   edge [typing::datatypes::DataDefinition] from GrayScaleImpl port dimsOut to Array2OfUInt16 
-   edge [typing::datatypes::DataDefinition] from GrayScaleImpl port portTypes to UInt16 
-   edge [typing::datatypes::DataDefinition] from GrayScaleImpl port portTypes to Array6OfDoubleType 
-   edge [typing::datatypes::DataDefinition] from GrayScaleImpl port portTypes to Array2OfUInt16 
-   edge [] from GrayScaleX port initialTokenValues to ZeroValue 
-   edge [] from GrayScaleY port initialTokenValues to ZeroValue 
-   edge [moc::sdf::SDFDataEdge] from GrayScale port offsetXOut to GrayScaleX port producer
-   edge [moc::sdf::SDFDataEdge] from GrayScale port offsetYOut to GrayScaleY port producer
-   edge [moc::sdf::SDFDataEdge] from GrayScaleX port consumer to GrayScale port offsetXIn
-   edge [moc::sdf::SDFDataEdge] from GrayScaleY port consumer to GrayScale port offsetYIn
-   edge [impl::DataMovement] from system_img_source to GrayScale port system_img_source
-   edge [] from GrayScale port combFunctions to GrayScaleImpl 
-   edge [] from GrayScale port offsetXIn to GrayScaleImpl port offsetX
-   edge [] from GrayScale port system_img_source to GrayScaleImpl port system_img_source_address
-   edge [] from GrayScale port dimX to GrayScaleImpl port dimX
-   edge [] from GrayScale port dimY to GrayScaleImpl port dimY
-   edge [] from GrayScaleImpl port offsetX to GrayScale port offsetXOut
-   edge [] from GrayScale port offsetYIn to GrayScaleImpl port offsetY
-   edge [] from GrayScaleImpl port offsetY to GrayScale port offsetYOut
-   edge [] from GrayScaleImpl port gray to GrayScale port gray
-   edge [] from GrayScaleImpl port dimsOut to GrayScale port dimsOut
-   edge [moc::sdf::SDFDataEdge] from GrayScale port dimsOut to GrayScaleToAbs port producer
-   edge [typing::datatypes::DataDefinition] from getPxImpl1 port portTypes to Array6OfDoubleType 
-   edge [typing::datatypes::DataDefinition] from getPxImpl1 port gray to Array6OfDoubleType 
-   edge [typing::datatypes::DataDefinition] from getPxImpl1 port imgBlockX to Array6OfDoubleType 
-   edge [] from getPx port gray to getPxImpl1 port gray
-   edge [] from getPxImpl1 port imgBlockX to getPx port copyX
-   edge [] from getPx port gray to getPxImpl2 port gray
-   edge [] from getPxImpl2 port imgBlockY to getPx port copyY
-   edge [typing::datatypes::DataDefinition] from getPxImpl2 port portTypes to Array6OfDoubleType 
-   edge [typing::datatypes::DataDefinition] from getPxImpl2 port gray to Array6OfDoubleType 
-   edge [typing::datatypes::DataDefinition] from getPxImpl2 port imgBlockY to Array6OfDoubleType 
-   edge [] from getPx port combFunctions to getPxImpl1 
-   edge [] from getPx port combFunctions to getPxImpl2 
-   edge [typing::datatypes::DataDefinition] from GxImpl port portTypes to Array6OfDoubleType 
-   edge [typing::datatypes::DataDefinition] from GxImpl port portTypes to DoubleType 
-   edge [typing::datatypes::DataDefinition] from GxImpl port gx to DoubleType 
-   edge [typing::datatypes::DataDefinition] from GxImpl port imgBlockX to Array6OfDoubleType 
-   edge [] from Gx port combFunctions to GxImpl 
-   edge [] from Gx port imgBlockX to GxImpl port imgBlockX
-   edge [] from GxImpl port gx to Gx port gx
-   edge [typing::datatypes::DataDefinition] from GyImpl port portTypes to Array6OfDoubleType 
-   edge [typing::datatypes::DataDefinition] from GyImpl port portTypes to DoubleType 
-   edge [typing::datatypes::DataDefinition] from GyImpl port imgBlockY to Array6OfDoubleType 
-   edge [typing::datatypes::DataDefinition] from GyImpl port gy to DoubleType 
-   edge [] from Gy port imgBlockY to GyImpl port imgBlockY
-   edge [] from GyImpl port gy to Gy port gy
-   edge [] from Gy port combFunctions to GyImpl 
-   edge [impl::DataMovement] from Abs port system_img_sink to system_img_sink 
-   edge [] from AbsX port initialTokenValues to ZeroValue 
-   edge [] from AbsY port initialTokenValues to ZeroValue 
-   edge [moc::sdf::SDFDataEdge] from Abs port offsetXOut to AbsX port producer
-   edge [moc::sdf::SDFDataEdge] from Abs port offsetYOut to AbsY port producer
-   edge [moc::sdf::SDFDataEdge] from AbsX port consumer to Abs port offsetXIn
-   edge [moc::sdf::SDFDataEdge] from AbsY port consumer to Abs port offsetYIn
-   edge [moc::sdf::SDFDataEdge] from GrayScaleToAbs port consumer to Abs port dimsIn
-   edge [typing::datatypes::DataDefinition] from AbsImpl port portTypes to DoubleType 
-   edge [typing::datatypes::DataDefinition] from AbsImpl port portTypes to ArrayXOfArrayXOfDoubleType 
-   edge [typing::datatypes::DataDefinition] from AbsImpl port portTypes to UInt16 
-   edge [typing::datatypes::DataDefinition] from AbsImpl port system_img_sink_address to ArrayXOfArrayXOfDoubleType 
-   edge [typing::datatypes::DataDefinition] from AbsImpl port dims to Array2OfUInt16 
-   edge [typing::datatypes::DataDefinition] from AbsImpl port offsetXIn to UInt16 
-   edge [typing::datatypes::DataDefinition] from AbsImpl port offsetYIn to UInt16 
-   edge [typing::datatypes::DataDefinition] from AbsImpl port offsetXOut to UInt16 
-   edge [typing::datatypes::DataDefinition] from AbsImpl port offsetYOut to UInt16 
-   edge [typing::datatypes::DataDefinition] from AbsImpl port resx to DoubleType 
-   edge [typing::datatypes::DataDefinition] from AbsImpl port resy to DoubleType 
-   edge [] from Abs port combFunctions to AbsImpl 
-   edge [] from Abs port offsetXIn to AbsImpl port offsetXIn
-   edge [] from AbsImpl port offsetXOut to AbsImpl port offsetXOut
-   edge [] from Abs port system_img_sink to AbsImpl port system_img_sink_address
-   edge [] from Abs port dimsIn to AbsImpl port dims
-   edge [] from AbsImpl port offsetXIn to Abs port offsetXIn
-   edge [] from AbsImpl port offsetXOut to Abs port offsetXOut
-   edge [] from Abs port offsetYIn to AbsImpl port offsetYIn
-   edge [] from AbsImpl port offsetYOut to Abs port offsetYOut
-   edge [moc::sdf::SDFDataEdge] from GrayScale port gray to GrayScaleToGetPx port producer
-   edge [moc::sdf::SDFDataEdge] from GrayScaleToGetPx port consumer to getPx port gray
+    },
+    "sizeInBits": 100_l
+  }
+  vertex GrayScaleToGetPx
+  [moc::sdf::SDFChannel]
+  (consumer, initialTokenValues, producer)
+  {
+    "numOfInitialTokens": 0_i
+  }
+edge [typing::datatypes::DataDefinition] from Array1000OfArrayOfDouble port innerType to Array1000OfDouble 
+edge [typing::datatypes::DataDefinition] from Array1000OfDouble port innerType to Double 
+edge [typing::datatypes::DataDefinition] from inputImage port dataType to Array1000OfArrayOfDouble 
+edge [impl::DataMovement] from inputImage to getPx port imgInput
+edge [typing::datatypes::DataDefinition] from outputImage port dataType to Array1000OfArrayOfDouble 
+edge [impl::DataMovement] from Abs port imgOutput to outputImage 
+edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from getPx port gx to gxsig port producer
+edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from getPx port gy to gysig port producer
+edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from Gx port resx to absxsig port producer
+edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from Gy port resy to absysig port producer
+edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from gxsig port consumer to Gx port gx
+edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from gysig port consumer to Gy port gy
+edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from absxsig port consumer to Abs port resx
+edge [moc::sdf::SDFDataEdge,visualization::VisualConnection] from absysig port consumer to Abs port resy
+edge [decision::AbstractAllocation] from tile1 port execution to order_1 
+edge [visualization::VisualContainment] from tile1 port contained to order_1 
+edge [decision::AbstractAllocation] from tile2 port execution to order_2 
+edge [visualization::VisualContainment] from tile2 port contained to order_2 
+edge [decision::AbstractAllocation] from tile3 port execution to order_3 
+edge [visualization::VisualContainment] from tile3 port contained to order_3 
+edge [decision::AbstractAllocation] from tile4 port execution to order_4 
+edge [visualization::VisualContainment] from tile4 port contained to order_4 
+edge [decision::AbstractAllocation] from tdmabus1 port timeslots to order_5 
+edge [visualization::VisualContainment] from tdmabus1 port contained to order_5 
+edge [platform::PhysicalConnection] from tile1 port communication to tdmabus1 
+edge [platform::PhysicalConnection] from tile2 port communication to tdmabus1 
+edge [platform::PhysicalConnection] from tile3 port communication to tdmabus1 
+edge [platform::PhysicalConnection] from tile4 port communication to tdmabus1 
+edge [platform::PhysicalConnection] from tdmabus1 port communication to tile1 
+edge [platform::PhysicalConnection] from tdmabus1 port communication to tile2 
+edge [platform::PhysicalConnection] from tdmabus1 port communication to tile3 
+edge [platform::PhysicalConnection] from tdmabus1 port communication to tile4 
+edge [visualization::VisualConnection] from tile1 to tdmabus1 
+edge [visualization::VisualConnection] from tile2 to tdmabus1 
+edge [visualization::VisualConnection] from tile3 to tdmabus1 
+edge [visualization::VisualConnection] from tile4 to tdmabus1 
+edge [visualization::VisualConnection] from tdmabus1 to tile1 
+edge [visualization::VisualConnection] from tdmabus1 to tile2 
+edge [visualization::VisualConnection] from tdmabus1 to tile3 
+edge [visualization::VisualConnection] from tdmabus1 to tile4 
+edge [Annotation] from getPxWCET port application to getPx 
+edge [Annotation] from getPxWCET port platform to tile1 
+edge [Annotation] from getPxWCET port platform to tile2 
+edge [Annotation] from getPxWCET port platform to tile3 
+edge [Annotation] from getPxWCET port platform to tile4 
+edge [Annotation] from gxWCET port application to Gx 
+edge [Annotation] from gxWCET port platform to tile1 
+edge [Annotation] from gxWCET port platform to tile2 
+edge [Annotation] from gxWCET port platform to tile3 
+edge [Annotation] from gxWCET port platform to tile4 
+edge [Annotation] from gyWCET port application to Gy 
+edge [Annotation] from gyWCET port platform to tile1 
+edge [Annotation] from gyWCET port platform to tile2 
+edge [Annotation] from gyWCET port platform to tile3 
+edge [Annotation] from gyWCET port platform to tile4 
+edge [Annotation] from absWCET port application to Abs 
+edge [Annotation] from absWCET port platform to tile1 
+edge [Annotation] from absWCET port platform to tile2 
+edge [Annotation] from absWCET port platform to tile3 
+edge [Annotation] from absWCET port platform to tile4 
+edge [Annotation] from gxsigWCCT to gxsig 
+edge [Annotation] from gxsigWCCT to tdmabus1 
+edge [Annotation] from gysigWCCT to gysig 
+edge [Annotation] from gysigWCCT to tdmabus1 
+edge [Annotation] from absxsigWCCT to absxsig 
+edge [Annotation] from absxsigWCCT to tdmabus1 
+edge [Annotation] from absysigWCCT to tdmabus1 
+edge [Annotation] from absysigWCCT to absysig 
+edge [Annotation] from min_throughput_obj to getPx 
+edge [Annotation] from min_throughput_obj to Gx 
+edge [Annotation] from min_throughput_obj to Gy 
+edge [Annotation] from min_throughput_obj to Abs 
+edge [AbstractScheduling] from order_1 port slot_0 to getPx 
+edge [AbstractScheduling] from order_2 port slot_0 to Abs 
+edge [AbstractScheduling] from order_3 port slot_0 to Gx 
+edge [AbstractScheduling] from order_4 port slot_0 to Gy 
+edge [AbstractScheduling] from order_5 port slot_0 to gxsig 
+edge [AbstractScheduling] from order_5 port slot_1 to gysig 
+edge [AbstractScheduling] from order_5 port slot_2 to absxsig 
+edge [AbstractScheduling] from order_5 port slot_3 to absysig 
+edge [visualization::VisualContainment] from order_1 port contained to getPx 
+edge [visualization::VisualContainment] from order_2 port contained to Abs 
+edge [visualization::VisualContainment] from order_3 port contained to Gx 
+edge [visualization::VisualContainment] from order_4 port contained to Gy 
+edge [visualization::VisualContainment] from order_5 port contained to gxsig 
+edge [visualization::VisualContainment] from order_5 port contained to gysig 
+edge [visualization::VisualContainment] from order_5 port contained to absxsig 
+edge [visualization::VisualContainment] from order_5 port contained to absysig 
+edge [typing::datatypes::DataDefinition] from ArrayXOfArrayXOfDoubleType port innerType to ArrayXOfDoubleType 
+edge [typing::datatypes::DataDefinition] from Array6OfDoubleType port innerType to DoubleType 
+edge [typing::datatypes::DataDefinition] from ArrayXOfDoubleType port innerType to DoubleType 
+edge [typing::datatypes::DataDefinition] from Array2OfUInt16 port innerType to UInt16 
+edge [typing::datatypes::DataDefinition] from system_img_source port dataType to ArrayXOfArrayXOfDoubleType 
+edge [typing::datatypes::DataDefinition] from system_img_sink port dataType to ArrayXOfArrayXOfDoubleType 
+edge [typing::datatypes::DataDefinition] from dimX port dataType to UInt16 
+edge [typing::datatypes::DataDefinition] from dimY port dataType to UInt16 
+edge [typing::datatypes::DataDefinition] from GrayScaleImpl port system_img_source_address to ArrayXOfArrayXOfDoubleType 
+edge [typing::datatypes::DataDefinition] from GrayScaleImpl port dimX to UInt16 
+edge [typing::datatypes::DataDefinition] from GrayScaleImpl port dimY to UInt16 
+edge [typing::datatypes::DataDefinition] from GrayScaleImpl port offsetX to UInt16 
+edge [typing::datatypes::DataDefinition] from GrayScaleImpl port offsetY to UInt16 
+edge [typing::datatypes::DataDefinition] from GrayScaleImpl port gray to Array6OfDoubleType 
+edge [typing::datatypes::DataDefinition] from GrayScaleImpl port dimsOut to Array2OfUInt16 
+edge [typing::datatypes::DataDefinition] from GrayScaleImpl port portTypes to UInt16 
+edge [typing::datatypes::DataDefinition] from GrayScaleImpl port portTypes to Array6OfDoubleType 
+edge [typing::datatypes::DataDefinition] from GrayScaleImpl port portTypes to Array2OfUInt16 
+edge [] from GrayScaleX port initialTokenValues to ZeroValue 
+edge [] from GrayScaleY port initialTokenValues to ZeroValue 
+edge [moc::sdf::SDFDataEdge] from GrayScale port offsetXOut to GrayScaleX port producer
+edge [moc::sdf::SDFDataEdge] from GrayScale port offsetYOut to GrayScaleY port producer
+edge [moc::sdf::SDFDataEdge] from GrayScaleX port consumer to GrayScale port offsetXIn
+edge [moc::sdf::SDFDataEdge] from GrayScaleY port consumer to GrayScale port offsetYIn
+edge [impl::DataMovement] from system_img_source to GrayScale port system_img_source
+edge [] from GrayScale port combFunctions to GrayScaleImpl 
+edge [] from GrayScale port offsetXIn to GrayScaleImpl port offsetX
+edge [] from GrayScale port system_img_source to GrayScaleImpl port system_img_source_address
+edge [] from GrayScale port dimX to GrayScaleImpl port dimX
+edge [] from GrayScale port dimY to GrayScaleImpl port dimY
+edge [] from GrayScaleImpl port offsetX to GrayScale port offsetXOut
+edge [] from GrayScale port offsetYIn to GrayScaleImpl port offsetY
+edge [] from GrayScaleImpl port offsetY to GrayScale port offsetYOut
+edge [] from GrayScaleImpl port gray to GrayScale port gray
+edge [] from GrayScaleImpl port dimsOut to GrayScale port dimsOut
+edge [moc::sdf::SDFDataEdge] from GrayScale port dimsOut to GrayScaleToAbs port producer
+edge [typing::datatypes::DataDefinition] from getPxImpl1 port portTypes to Array6OfDoubleType 
+edge [typing::datatypes::DataDefinition] from getPxImpl1 port gray to Array6OfDoubleType 
+edge [typing::datatypes::DataDefinition] from getPxImpl1 port imgBlockX to Array6OfDoubleType 
+edge [] from getPx port gray to getPxImpl1 port gray
+edge [] from getPxImpl1 port imgBlockX to getPx port copyX
+edge [] from getPx port gray to getPxImpl2 port gray
+edge [] from getPxImpl2 port imgBlockY to getPx port copyY
+edge [typing::datatypes::DataDefinition] from getPxImpl2 port portTypes to Array6OfDoubleType 
+edge [typing::datatypes::DataDefinition] from getPxImpl2 port gray to Array6OfDoubleType 
+edge [typing::datatypes::DataDefinition] from getPxImpl2 port imgBlockY to Array6OfDoubleType 
+edge [] from getPx port combFunctions to getPxImpl1 
+edge [] from getPx port combFunctions to getPxImpl2 
+edge [typing::datatypes::DataDefinition] from GxImpl port portTypes to Array6OfDoubleType 
+edge [typing::datatypes::DataDefinition] from GxImpl port portTypes to DoubleType 
+edge [typing::datatypes::DataDefinition] from GxImpl port gx to DoubleType 
+edge [typing::datatypes::DataDefinition] from GxImpl port imgBlockX to Array6OfDoubleType 
+edge [] from Gx port combFunctions to GxImpl 
+edge [] from Gx port imgBlockX to GxImpl port imgBlockX
+edge [] from GxImpl port gx to Gx port gx
+edge [typing::datatypes::DataDefinition] from GyImpl port portTypes to Array6OfDoubleType 
+edge [typing::datatypes::DataDefinition] from GyImpl port portTypes to DoubleType 
+edge [typing::datatypes::DataDefinition] from GyImpl port imgBlockY to Array6OfDoubleType 
+edge [typing::datatypes::DataDefinition] from GyImpl port gy to DoubleType 
+edge [] from Gy port imgBlockY to GyImpl port imgBlockY
+edge [] from GyImpl port gy to Gy port gy
+edge [] from Gy port combFunctions to GyImpl 
+edge [impl::DataMovement] from Abs port system_img_sink to system_img_sink 
+edge [] from AbsX port initialTokenValues to ZeroValue 
+edge [] from AbsY port initialTokenValues to ZeroValue 
+edge [moc::sdf::SDFDataEdge] from Abs port offsetXOut to AbsX port producer
+edge [moc::sdf::SDFDataEdge] from Abs port offsetYOut to AbsY port producer
+edge [moc::sdf::SDFDataEdge] from AbsX port consumer to Abs port offsetXIn
+edge [moc::sdf::SDFDataEdge] from AbsY port consumer to Abs port offsetYIn
+edge [moc::sdf::SDFDataEdge] from GrayScaleToAbs port consumer to Abs port dimsIn
+edge [typing::datatypes::DataDefinition] from AbsImpl port portTypes to DoubleType 
+edge [typing::datatypes::DataDefinition] from AbsImpl port portTypes to ArrayXOfArrayXOfDoubleType 
+edge [typing::datatypes::DataDefinition] from AbsImpl port portTypes to UInt16 
+edge [typing::datatypes::DataDefinition] from AbsImpl port system_img_sink_address to ArrayXOfArrayXOfDoubleType 
+edge [typing::datatypes::DataDefinition] from AbsImpl port dims to Array2OfUInt16 
+edge [typing::datatypes::DataDefinition] from AbsImpl port offsetXIn to UInt16 
+edge [typing::datatypes::DataDefinition] from AbsImpl port offsetYIn to UInt16 
+edge [typing::datatypes::DataDefinition] from AbsImpl port offsetXOut to UInt16 
+edge [typing::datatypes::DataDefinition] from AbsImpl port offsetYOut to UInt16 
+edge [typing::datatypes::DataDefinition] from AbsImpl port resx to DoubleType 
+edge [typing::datatypes::DataDefinition] from AbsImpl port resy to DoubleType 
+edge [] from Abs port combFunctions to AbsImpl 
+edge [] from Abs port offsetXIn to AbsImpl port offsetXIn
+edge [] from AbsImpl port offsetXOut to AbsImpl port offsetXOut
+edge [] from Abs port system_img_sink to AbsImpl port system_img_sink_address
+edge [] from Abs port dimsIn to AbsImpl port dims
+edge [] from AbsImpl port offsetXIn to Abs port offsetXIn
+edge [] from AbsImpl port offsetXOut to Abs port offsetXOut
+edge [] from Abs port offsetYIn to AbsImpl port offsetYIn
+edge [] from AbsImpl port offsetYOut to Abs port offsetYOut
+edge [moc::sdf::SDFDataEdge] from GrayScale port gray to GrayScaleToGetPx port producer
+edge [moc::sdf::SDFDataEdge] from GrayScaleToGetPx port consumer to getPx port gray
 }

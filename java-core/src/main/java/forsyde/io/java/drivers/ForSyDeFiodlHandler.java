@@ -4,7 +4,6 @@ import forsyde.io.java.adapters.fiodl.ForSyDeFioDLBaseVisitor;
 import forsyde.io.java.adapters.fiodl.ForSyDeFioDLLexer;
 import forsyde.io.java.adapters.fiodl.ForSyDeFioDLParser;
 import forsyde.io.java.core.*;
-import org.ainslec.picocog.PicoWriter;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
@@ -56,37 +55,36 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
 
     @Override
     public void writeModel(ForSyDeSystemGraph model, OutputStream out) throws Exception {
-        final PicoWriter w = new PicoWriter();
-        w.writeln_r("systemgraph {");
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("systemgraph {");
         for (Vertex v: model.vertexSet()) {
-            w.writeln("vertex " + v.getIdentifier());
-            w.writeln("[" + v.vertexTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(", ")) + "]");
-            w.writeln("(" + v.ports.stream().sorted().collect(Collectors.joining(", " )) + ")");
+            stringBuilder.append("  vertex ").append(v.getIdentifier()).append("\n")
+                .append("  [").append(v.vertexTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(", "))).append("]\n")
+                .append("  (").append(v.ports.stream().sorted().collect(Collectors.joining(", "))).append(")\n");
             if (v.properties.isEmpty())
-                w.writeln("{}");
+                stringBuilder.append("  {}\n");
             else {
-                w.writeln_r("{");
-                v.properties.entrySet().stream().forEach(e -> {
-                    w.write("\"" + e.getKey() +"\": ");
-                    prettyPrintProperty(e.getValue(), w);
-                });
-                w.writeln_l("}");
+                stringBuilder.append("  {\n")
+                    .append(v.properties.entrySet().stream().map(e ->
+                    " ".repeat(4) + "\"" + e.getKey() +"\": " + writeVertexPropertyCode(e.getValue(), 4)
+                ).collect(Collectors.joining(",\n")))
+                    .append("\n  }\n");
             }
         }
         for (EdgeInfo e : model.edgeSet()) {
-            w.write("edge ");
-            w.write("[" + e.edgeTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(",")) + "] ");
-            w.write("from " + e.sourceId + " ");
-            e.sourcePort.ifPresent(p -> w.write("port " + p + " "));
-            w.write("to " + e.targetId + " ");
-            e.targetPort.ifPresent(p -> w.write("port " + p));
-            w.writeln("");
+            stringBuilder.append("edge ");
+            stringBuilder.append("[").append(e.edgeTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(","))).append("] ");
+            stringBuilder.append("from ").append(e.sourceId).append(" ");
+            e.sourcePort.ifPresent(p -> stringBuilder.append("port " + p + " "));
+            stringBuilder.append("to ").append(e.targetId).append(" ");
+            e.targetPort.ifPresent(p -> stringBuilder.append("port " + p));
+            stringBuilder.append("\n");
         }
-        w.writeln_l("}");
-        out.write(w.toString().getBytes(StandardCharsets.UTF_8));
+        stringBuilder.append("}");
+        out.write(stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
     }
 
-    public String writeVertexPropertyCode(VertexProperty property) {
+    public String writeVertexPropertyCode(VertexProperty property, int identLevel) {
         return VertexProperties.cases()
                 .StringVertexProperty(s -> "\"" + s + "\"")
                 .IntVertexProperty(i -> i + "_i")
@@ -95,17 +93,26 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
                 .DoubleVertexProperty(d -> d.toString() + "_64")
                 .LongVertexProperty(l -> l.toString() + "_l")
                 .ArrayVertexProperty(a ->
-                    "[" + a.stream().map(this::writeVertexPropertyCode).collect(Collectors.joining(",")) + "]"
+                    "[\n" +
+                    a.stream().map(v ->
+                            " ".repeat(identLevel + 2) + writeVertexPropertyCode(v, identLevel + 2)).collect(Collectors.joining(",\n")) +
+                    "\n" + " ".repeat(identLevel) + "]"
                 )
                 .IntMapVertexProperty(imap ->
-                    "{" + imap.entrySet().stream()
-                            .map(e -> e.getKey().toString() +": " + writeVertexPropertyCode(e.getValue()))
-                            .collect(Collectors.joining(",")) + "}"
+                    "{\n" +
+                    imap.entrySet().stream()
+                            .map(e ->
+                                    " ".repeat(identLevel + 2) + e.getKey().toString() +"_i: " + writeVertexPropertyCode(e.getValue(), identLevel + 2))
+                            .collect(Collectors.joining(",\n")) +
+                            "\n" + " ".repeat(identLevel) + "}"
                 )
                 .StringMapVertexProperty(smap ->
-                    "{" + smap.entrySet().stream()
-                            .map(e -> "\"" + e.getKey() +"\": " + writeVertexPropertyCode(e.getValue()))
-                            .collect(Collectors.joining(",")) + "}"
+                    "{\n" +
+                    smap.entrySet().stream()
+                            .map(e ->
+                                    " ".repeat(identLevel + 2) + "\"" + e.getKey() +"\": " + writeVertexPropertyCode(e.getValue(), identLevel + 2))
+                            .collect(Collectors.joining(",\n")) +
+                    "\n" + " ".repeat(identLevel) + "}"
                 )
                 .apply(property);
     }
@@ -255,37 +262,37 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         return edgeInfo;
     }
 
-    public void prettyPrintProperty(VertexProperty vertexProperty, PicoWriter picoWriter) {
-        VertexProperties.caseOf(vertexProperty)
-                .StringVertexProperty(s -> {picoWriter.writeln("\"" + s + "\""); return picoWriter;})
-                .IntVertexProperty(i ->  {picoWriter.writeln(i + "_i"); return picoWriter;})
-                .BooleanVertexProperty(b ->  {picoWriter.writeln(b.toString()); return picoWriter;})
-                .FloatVertexProperty(f ->  {picoWriter.writeln(f.toString() + "_32"); return picoWriter;})
-                .DoubleVertexProperty(d ->  {picoWriter.writeln(d.toString() + "_64"); return picoWriter;})
-                .LongVertexProperty(l ->  {picoWriter.writeln(l.toString() + "_l"); return picoWriter;})
-                .ArrayVertexProperty(a -> {
-                            picoWriter.writeln_r("[");
-                            a.forEach(v -> prettyPrintProperty(v, picoWriter));
-                            picoWriter.writeln_l("]");
-                            return picoWriter;
-                })
-                .IntMapVertexProperty(imap -> {
-                    picoWriter.writeln_r("{");
-                    imap.forEach((key, value) -> {
-                        picoWriter.write(key.toString() + "_i: ");
-                        prettyPrintProperty(value, picoWriter);
-                    });
-                    picoWriter.writeln_l("}");
-                    return picoWriter;
-                })
-                .StringMapVertexProperty(smap -> {
-                    picoWriter.writeln_r("{");
-                    smap.forEach((key, value) -> {
-                        picoWriter.write("\"" + key + "\": ");
-                        prettyPrintProperty(value, picoWriter);
-                    });
-                    picoWriter.writeln_l("}");
-                    return picoWriter;
-                });
-    }
+//    public StringBuilder prettyPrintProperty(VertexProperty vertexProperty, PicoWriter picoWriter) {
+//        VertexProperties.caseOf(vertexProperty)
+//                .StringVertexProperty(s -> {picoWriter.writeln("\"" + s + "\""); return picoWriter;})
+//                .IntVertexProperty(i ->  {picoWriter.writeln(i + "_i"); return picoWriter;})
+//                .BooleanVertexProperty(b ->  {picoWriter.writeln(b.toString()); return picoWriter;})
+//                .FloatVertexProperty(f ->  {picoWriter.writeln(f.toString() + "_32"); return picoWriter;})
+//                .DoubleVertexProperty(d ->  {picoWriter.writeln(d.toString() + "_64"); return picoWriter;})
+//                .LongVertexProperty(l ->  {picoWriter.writeln(l.toString() + "_l"); return picoWriter;})
+//                .ArrayVertexProperty(a -> {
+//                    picoWriter.writeln_r("[");
+//                    a.forEach(v -> prettyPrintProperty(v, picoWriter));
+//                    picoWriter.writeln_l("]");
+//                    return picoWriter;
+//                })
+//                .IntMapVertexProperty(imap -> {
+//                    picoWriter.writeln_r("{");
+//                    imap.forEach((key, value) -> {
+//                        picoWriter.write(key.toString() + "_i: ");
+//                        prettyPrintProperty(value, picoWriter);
+//                    });
+//                    picoWriter.writeln_l("}");
+//                    return picoWriter;
+//                })
+//                .StringMapVertexProperty(smap -> {
+//                    picoWriter.writeln_r("{");
+//                    smap.forEach((key, value) -> {
+//                        picoWriter.write("\"" + key + "\": ");
+//                        prettyPrintProperty(value, picoWriter);
+//                    });
+//                    picoWriter.writeln_l("}");
+//                    return picoWriter;
+//                });
+//    }
 }
