@@ -60,15 +60,27 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         w.writeln_r("systemgraph {");
         for (Vertex v: model.vertexSet()) {
             w.writeln("vertex " + v.getIdentifier());
-            w.writeln("[" + v.vertexTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(",")) + "]");
-            w.writeln("(" + v.ports.stream().sorted().collect(Collectors.joining("," )) + ")");
+            w.writeln("[" + v.vertexTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(", ")) + "]");
+            w.writeln("(" + v.ports.stream().sorted().collect(Collectors.joining(", " )) + ")");
             if (v.properties.isEmpty())
                 w.writeln("{}");
             else {
-                w.writeln("{" + v.properties.entrySet().stream()
-                        .map(e -> "\"" + e.getKey() +"\": " + writeVertexPropertyCode(e.getValue()))
-                        .collect(Collectors.joining(",")) + "}");
+                w.writeln_r("{");
+                v.properties.entrySet().stream().forEach(e -> {
+                    w.write("\"" + e.getKey() +"\": ");
+                    prettyPrintProperty(e.getValue(), w);
+                });
+                w.writeln_l("}");
             }
+        }
+        for (EdgeInfo e : model.edgeSet()) {
+            w.write("edge ");
+            w.write("[" + e.edgeTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(",")) + "] ");
+            w.write("from " + e.sourceId + " ");
+            e.sourcePort.ifPresent(p -> w.write("port " + p + " "));
+            w.write("to " + e.targetId + " ");
+            e.targetPort.ifPresent(p -> w.write("port " + p));
+            w.writeln("");
         }
         w.writeln_l("}");
         out.write(w.toString().getBytes(StandardCharsets.UTF_8));
@@ -241,5 +253,39 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
             edgeInfo.addTraits(EdgeTrait.fromName(traitToken.getText()));
         }
         return edgeInfo;
+    }
+
+    public void prettyPrintProperty(VertexProperty vertexProperty, PicoWriter picoWriter) {
+        VertexProperties.caseOf(vertexProperty)
+                .StringVertexProperty(s -> {picoWriter.writeln("\"" + s + "\""); return picoWriter;})
+                .IntVertexProperty(i ->  {picoWriter.writeln(i + "_i"); return picoWriter;})
+                .BooleanVertexProperty(b ->  {picoWriter.writeln(b.toString()); return picoWriter;})
+                .FloatVertexProperty(f ->  {picoWriter.writeln(f.toString() + "_32"); return picoWriter;})
+                .DoubleVertexProperty(d ->  {picoWriter.writeln(d.toString() + "_64"); return picoWriter;})
+                .LongVertexProperty(l ->  {picoWriter.writeln(l.toString() + "_l"); return picoWriter;})
+                .ArrayVertexProperty(a -> {
+                            picoWriter.writeln_r("[");
+                            a.forEach(v -> prettyPrintProperty(v, picoWriter));
+                            picoWriter.writeln_l("]");
+                            return picoWriter;
+                })
+                .IntMapVertexProperty(imap -> {
+                    picoWriter.writeln_r("{");
+                    imap.forEach((key, value) -> {
+                        picoWriter.write(key.toString() + "_i: ");
+                        prettyPrintProperty(value, picoWriter);
+                    });
+                    picoWriter.writeln_l("}");
+                    return picoWriter;
+                })
+                .StringMapVertexProperty(smap -> {
+                    picoWriter.writeln_r("{");
+                    smap.forEach((key, value) -> {
+                        picoWriter.write("\"" + key + "\": ");
+                        prettyPrintProperty(value, picoWriter);
+                    });
+                    picoWriter.writeln_l("}");
+                    return picoWriter;
+                });
     }
 }

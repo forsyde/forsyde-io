@@ -4,12 +4,12 @@ systemgraph {
     [platform::RoundRobinCommunicationModule]
     ()
     {
-        allocatedWeights: {
-            tile1: 1_i,
-            tile2: 1_i,
-            tile3: 1_i,
-            tile4: 1_i
+        "allocatedWeights": {
+            "tile1": 1_i,
+            "tile2": 1_i,
+            "tile3": 1_i,
+            "tile4": 1_i
         },
-        totalWeights: 4_i
+        "totalWeights": 4_i
     }
 }
