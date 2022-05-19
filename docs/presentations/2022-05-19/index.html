@@ -1,0 +1,402 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="/forsyde-io/assets/css/reset.css">
+		<link rel="stylesheet" href="/forsyde-io/assets/css/reveal.css">
+		<link rel="stylesheet" href="/forsyde-io/assets/css/theme/white.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="/forsyde-io/assets/js/plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h3>ForSyDe IO: a MDE framework for multi-view integrated tooling</h3>
+					<h5>Rodolfo Jordao</h5>
+				</section>
+				<section>
+					<section>
+						<h3>What is ForSyDe IO?</h3>
+						<p class="fragment">From conceptual to practical:</p>
+						<ol class="fragment">
+							<li>A formalism based on system graphs and trait heirarchies</li>
+							<li>DSL definitions to exchange models between tools and languages</li>
+							<li>Set of supporting libraries to ease development</li>
+						</ol>
+					</section>
+					<section>
+						<h5>How does it look like conceptually?</h5>
+						<img src="/forsyde-io/assets/images/svg/forsydeio-contrib-after.svg" width="2000" alt="">
+					</section>
+				</section>
+				<section>
+					<section><h2>The (Syntactical) formalism</h2></section>
+					<section>
+						<h5>Model Description</h5>
+						<ol>
+							<li class="fragment">A system graph
+								<ul class="fragment">
+									<li><a href="https://en.wikipedia.org/wiki/Graph_labeling">labelled graph (mathematically)</a></li>
+									<li><a href="https://www.dataversity.net/what-is-a-property-graph/">property graph (pragmatically)</a></li>
+								</ul>
+							</li>
+							<li class="fragment">A trait hierarchy (a là OOP)</li>
+						</ol>
+					</section>
+					<section>
+						<h5>System graph example</h5>
+						<p>Software, hardware, constraints... all contained in the system graph.</p>
+						<img src="/forsyde-io/assets/images/svg/systemmodel.plain.svg" alt=""/>
+						<div class="container">
+							<div class="col-1">
+								<!-- <p>A visual redition</p> -->
+							</div>
+							<div class="col-3">
+							</div>
+						</div>
+					</section>
+					<section>
+						<h5>Multi-viewing example</h5>
+						<p>The underlying common model is the same!</p>
+						<img height="500" src="/forsyde-io/assets/images/svg/systemmodel.svg" alt=""/>
+					</section>
+					<section>
+						<h5>Trait hierarchy</h5>
+						<img height="200" src="/forsyde-io/assets/images/svg/examplehierarchy.svg" alt="">
+						<ul>
+							<li>A trait is an interface for vertexes and edges.</li>
+							<li>Specifies connectivity for edges and vertex. And data for vertexes.</li>
+						</ul>
+					</section>
+					<section>
+						<h5>multi-viewing and the trait hierarchy</h5>
+						<p>Enables tool development on static typed languages</p>
+						<img height="200" src="/forsyde-io/assets/images/svg/viewerdiagram.svg" alt="">
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>DSLs for the model</h2>
+					</section>
+					<section>
+						<h5>System graph XMI</h5>
+						<p>An XML format complaint to EMF, OMG and XMI.</p>
+						<div class="container">
+							<div class="col-1">
+								<pre style="width: 450px; font-size: small; tab-size: 2pt;">
+									<code data-trim>
+										<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+										<systemgraph:ForSyDeSystemGraph 
+											xmlns:systemgraph="systemgraph" ...>
+											<nodes identifier="Platform">
+												<traits>VISUALIZATION_GREYBOX</traits>
+												<traits>PLATFORM_ABSTRACTSTRUCTURE</traits>
+												<ports>contained</ports>
+												<ports>submodules</ports>
+											</nodes>
+											<nodes identifier="Platform.CPM1.core1">
+												<traits>PLATFORM_INSTRUMENTEDPROCESSINGMODULE</traits>
+												<traits>PLATFORM_GENERICPROCESSINGMODULE</traits>
+												<traits>VISUALIZATION_VISUALIZABLE</traits>
+												<traits>PLATFORM_DIGITALMODULE</traits>
+												<traits>PLATFORM_SYNTHETIZABLEDIGITALPORTS</traits>
+												<ports>core1Port1</ports>
+												<propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty"/>
+												<propertiesNames>portIsInitiator</propertiesNames>
+												<propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty"/>
+												<propertiesNames>portWidthInBits</propertiesNames>
+												<propertiesValues longValue="600000000" xsi:type="forsyde.io.eclipse.systemgraph:LongVertexProperty"/>
+												<propertiesNames>operatingFrequencyInHertz</propertiesNames>
+												<propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty"/>
+												<propertiesNames>portProtocolAcronym</propertiesNames>
+												<propertiesValues xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
+													<values xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
+														<values/>
+														<indexes>tick</indexes>
+													</values>
+													<indexes>defaultTicks</indexes>
+													<values xsi:type="forsyde.io.eclipse.systemgraph:StringMapVertexProperty">
+														<values/>
+														<indexes>FloatOp</indexes>
+														<values/>
+														<indexes>NonFloatOp</indexes>
+													</values>
+													<indexes>defaultNeeds</indexes>
+												</propertiesValues>
+												<propertiesNames>modalInstructionsPerCycle</propertiesNames>
+											</nodes>
+											...
+											<edges source="Platform.CPM1" sourceport="submodules" target="Platform.CPM1.core1">
+												<traits>PLATFORM_STRUCTURALCONNECTION</traits>
+											</edges>
+											...
+										</systemgraph:ForSyDeSystemGraph>
+									</code>
+								</pre>
+							</div>
+							<div class="col-2">
+								<img src="/forsyde-io/assets/images/svg/systemmodel.svg" alt="">
+							</div>
+						</div>
+					</section>
+					<section>
+						<h5>System graph DSL</h5>
+						<p>Defined by a small standalone DSL.</p>
+						<pre style="font-size: small; tab-size: 2pt;">
+							<code data-trim>
+								systemgraph {
+
+									vertex ZeroValue [values::IntegerValue] () {
+										"intValue": 0_i
+									}
+								
+									vertex ArrayXOfArrayXOfDoubleType [typing::datatypes::Array] (innerType) {
+										"maximumElems": -1_i
+									}
+									...
+
+									vertex dimX [impl::DataBlock, typing::TypedDataBlock] (dataType) {
+										"maxSizeInBits": 16_l
+									}
+								
+									edge [typing::datatypes::DataDefinition] from dimX port dataType to UInt16
+								
+									vertex dimY [impl::DataBlock, typing::TypedDataBlock] (dataType) {
+										"maxSizeInBits": 16_l
+									}
+								
+									edge [typing::datatypes::DataDefinition] from dimY port dataType to UInt16
+								
+									vertex GrayScale [moc::sdf::SDFComb, moc::ContinousMoCSource, decision::sdf::PASSedSDFComb] 
+									(combFunctions, system_img_source, dimX, dimY, dimsOut, offsetXIn, offsetYIn, offsetXOut, offsetYOut, gray) {
+										"dataTakenPerExecution": {
+											"system_img_source": 384_l,
+											"dimX": 16_l,
+											"dimY": 16_l
+										},
+										"production": {
+											"offsetXOut": 1_i,
+											"offsetYOut": 1_i,
+											"gray": 6_i,
+											"dimsOut": 2_i
+										},
+										"consumption": {
+											"offsetXIn": 1_i,
+											"offsetYIn": 1_i
+										},
+										"firingSlots": [0_i]
+									}
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h5>Trait Hierarchy</h5>
+						<p>Defined by a small standalone DSL.</p>
+						<pre style="font-size: small; tab-size: 2pt;">
+							<code data-trim>
+								namespace moc {
+
+									vertex MoCElem
+								
+									namespace linguafranca {
+										vertex LinguaFrancaElem refines moc::MoCElem
+								
+										vertex LinguaFrancaTimer refines LinguaFrancaElem {
+											prop periodNumeratorPerSec is int
+											prop periodDenominatorPerSec is int
+										}
+										...
+									}
+									...
+								}
+
+								namespace platform {
+
+									vertex PlatformElem
+
+									vertex AbstractStructure refines PlatformElem {
+										port children is multiple PlatformElem
+									}
+
+									vertex DigitalModule refines PlatformElem {
+										prop operatingFrequencyInHertz is long
+									}
+									...
+
+									edge StructuralConnection
+
+									edge PhysicalConnection
+									...
+								}
+							</code>
+						</pre>
+						<!-- <p class="fragment">Each trait defines ports, properties and their types.</p> -->
+						<p class="fragment">A model where trait is not respected is a declaration error.</p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Set of supporting libraries</h2>
+					</section>
+					<section>
+						<h5>Overview</h5>
+						<img src="/forsyde-io/assets/images/svg/forsydeio-impl.svg" width="400" alt="">
+						<p class="fragment">Reuses graphing libraries in each language: - effort, + performance</p>
+					</section>
+					<section>
+						<h5>API across languages</h5>
+						<p>Details and plumbing hidden as much as possible.</p>
+						<div class="container">
+							<div class="col-1">
+								<small>Java</small>
+								<pre style="width: 460px; font-size: small; tab-size: 2pt;" class="java">
+									<code data-trim>
+										..
+										import forsyde.io.java.core.ForSyDeModel;
+										import forsyde.io.java.drivers.ForSyDeModelHandler;
+										..
+
+										ForSyDeModel model = ForSyDeModelHandler.loadModel("model_file.forsyde.xmi");
+										..
+										// analysize and modify the model
+										..
+										ForSyDeModelHandler.writeModel(model, "processed_model_file.forsyde.xmi");
+									</code>
+								</pre>
+							</div>
+							<div class="col-1">
+								<small>Python</small>
+								<pre style="width: 460px; font-size: small; tab-size: 2pt;" class="python">
+									<code data-trim>
+										..
+										from forsyde.io.python.api import load_model, write_model
+										..
+										
+										..
+										model_in = load_model("model_file.forsyde.xmi")
+										..
+										# analisys and modifications
+										..
+										write_model(model_out, "processed_model_file.forsyde.xmi")
+									</code>
+								</pre>
+							</div>
+						</div>
+						<p>Manipulation and analysis are idiomatic in each language.</p>
+					</section>
+					<section>
+						<h5>Using the viewers</h5>
+						<pre style="font-size: small; tab-size: 2pt;" class="java">
+							<code data-trim>
+								protected Vertex fromLFTimerToForsyDeTimer(ForSyDeSystemGraph model, Timer timer, String prefix, String suffix) {
+									Vertex timerVertex = new Vertex(prefix +  timer.getName() + suffix);
+									LinguaFrancaTimer linguaFrancaTimer = LinguaFrancaTimer.enforce(timerVertex);
+									model.addVertex(timerVertex);
+									if (timer.getPeriod().getTime() != null) {
+										linguaFrancaTimer.setPeriodNumeratorInSec(timer.getPeriod().getTime().getInterval());
+										linguaFrancaTimer.setPeriodDenominatorInSec(fromLFTimeUnitToSecondsDenominator(timer.getPeriod().getTime().getUnit()));
+									}
+									if (timer.getOffset().getTime() != null) {
+										linguaFrancaTimer.setOffsetNumeratorInSec(timer.getOffset().getTime().getInterval());
+										linguaFrancaTimer.setOffsetDenominatorInSec(fromLFTimeUnitToSecondsDenominator(timer.getOffset().getTime().getUnit()));
+									}
+									return timerVertex;
+								}
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h3>Wrap up</h3>
+						<ol>
+							<li class="fragment">The model is graphical with attachable traits.</li>
+							<li class="fragment">The system graph is saved with in a standalone DSL or a standards complaint format. The trait hierarchy has a standalone DSL.</li>
+							<li class="fragment">The supporting libraries don't reinvent the wheel and are available (open source) for easier usage of the framework and tool development.</li>
+						</ol>
+					</section>
+					<section>
+						<h1>Thank You!</h1>
+						<small><p>More details at <a href="https://forsyde.github.io/forsyde-io/">https://forsyde.github.io/forsyde-io/</a></p></small>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h1>PQnR</h1>
+					</section>
+					<section>
+						<h5>ForSyDe IO in the MDE field in general</h5>
+						<ul>
+							<li>Is also syntactic centric like EMF, UML, SysML among others</li>
+							<li>Is explicitly cross-platform conceptually. Famous MDE framework can overfit to OOP and/or Eclipse.</li>
+							<li>Could be implemented in other major OMG standard-compliant frameworks, e.g. EMF (repo has a stub).</li>
+						</ul>
+					</section>
+					<section>
+						<h5>How does it lowers the implementation effort?</h5>
+						<p>Two one-time engineering effort developments: system graph and trait viewers code generator</p>
+						<p>Effort of maintenance is harder to pin-point, at least as easy or hard as other approaches (EMF,UML,SysML etc).</p>
+					</section>
+					<section>
+						<h5>ForSyDe IO Compared to MoML</h5>
+						<ul>
+							<li >(+) includes platform, constraints, visual information etc in the model</li>
+							<li >(-) does not express "ports with typed values" directly</li>
+							<li >(?) is a flat hierarchy, but can be made hierarchical with traits</li>
+						</ul>
+						<p >ForSyDe IO fits better procedures that <b>need</b> all heterogeneous platform info. It might be induce development overhead otherwise.</p>
+					</section>
+					<section>
+						<h5>ForSyDe IO Compared to SysML</h5>
+						<ul>
+							<li >(+) components can have multiple aspects, not just callouts.</li>
+							<li >(-) not as mature or adopted</li>
+							<li >(?) leaves the definition of cross-cutting concerns to the user</li>
+						</ul>
+						<p >ForSyDe IO is better for flows that increment a lot of info. But also for ones where merging different models is crucial.</p>
+					</section>
+				</section>
+			</div>
+		</div>
+
+		<script src="/forsyde-io/assets/js/reveal.js"></script>
+		<script src="/forsyde-io/assets/js/plugin/notes/notes.js"></script>
+		<script src="/forsyde-io/assets/js/plugin/markdown/markdown.js"></script>
+		<script src="/forsyde-io/assets/js/plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				progress: true,
+				slideNumber: "c/t",
+				showSlideNumber: 'all',
+				transition: 'fade',
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+	<style>
+	.container{
+		display: flex;
+	}
+	.col-1{
+		flex: 1;
+	}
+	.col-2{
+		flex: 3;
+	}
+	.col-3{
+		flex: 3;
+	}
+	</style>
+</html>

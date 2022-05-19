@@ -21,8 +21,8 @@ ForSyDe IO can be defined in three stacking levels. They are,
 
 # Quick links
 
-1. If you wish to quickly transform between ForSyDe IO and other supported models, check [_ConverSyDe_]({{site.baseurl/usage/conversyde}}),
-2. If you wish to read and write ForSyDe IO models within your tool, check [reading and writing]({{site.baseurl/usage/read-write}}),
+1. If you wish to quickly transform between ForSyDe IO and other supported models, check [_ConverSyDe_]({{site.baseurl}}/usage/conversyde),
+2. If you wish to read and write ForSyDe IO models within your tool, check [reading and writing]({{site.baseurl}}/usage/read-write),
 3. If you wish to manipulate (or analyse) a ForSyDe IO model in a type-safe effective manner, check [type-safe vieweing]().
 4. For more information about the model concept, specification and its implementation, check [Concepts]({{ site.baseurl }}/concept).
 
