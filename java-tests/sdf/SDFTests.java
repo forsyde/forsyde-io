@@ -61,4 +61,9 @@ public class SDFTests {
 
     }
 
+    @Test
+    public void checkingFIODL() throws Exception {
+        final ForSyDeSystemGraph forSyDeSystemGraph = forSyDeModelHandler.loadModel("examples/sdf/complete-flow/sobel-application.fiodl");
+    }
+
 }
