@@ -47,7 +47,7 @@ public class SDFValidator implements SystemGraphValidation {
                         .anyMatch(e -> e.sourcePort.map(production::containsKey).orElse(false));
             }).orElse(false);
             if (!(producerPortOk || consumerPortOk)) {
-                return Optional.of("SDF Channel " + channel.getIdentifier() + " must have at least a consumer or a producer connected");
+                return Optional.of("SDF Channel " + channel.getIdentifier() + " must have at least a consumer or a producer correctly connected.");
             }
         }
         return Optional.empty();
