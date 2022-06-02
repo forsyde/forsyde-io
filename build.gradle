@@ -61,6 +61,7 @@ allprojects {
 }
 
 subprojects {
+
   apply plugin: 'java'
   apply plugin: 'idea'
   apply plugin: 'eclipse'
@@ -109,6 +110,9 @@ subprojects {
           }
         }
       }
+//      gpr(MavenPublication) {
+//        from(components.java)
+//      }
     }
     repositories {
       maven {
@@ -119,6 +123,14 @@ subprojects {
           password = rootProject.hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('MAVEN_PASSWORD') ?: System.getenv('OSSRH_PASSWORD') ?: ''
         }
       }
+//      maven {
+//        name = "GitHubPackages"
+//        url = uri("https://maven.pkg.github.com/forsyde/forsyde-io")
+//        credentials {
+//          username = System.getenv("GITHUB_ACTOR")
+//          password = System.getenv("GITHUB_TOKEN")
+//        }
+//      }
     }
   }
 
@@ -133,16 +145,16 @@ subprojects {
 
   signing {
     // small hack to work offline or online
-    if (rootProject.hasProperty('signing.keyId') && rootProject.findProperty("signing.useGpgCommand") == true) {
-      useGpgCmd()
-    } else if (System.getenv('GPG_SIGNING_KEY') != null || rootProject.findProperty('signing.key') != null) {
-      useInMemoryPgpKeys(
-              System.getenv('GPG_SIGNING_KEY') ?: rootProject.findProperty('signing.key'),
-              System.getenv('GPG_SIGNING_PASSWORD') ?: rootProject.findProperty('signing.password') ?: '' //default to an empty password
-      )
-    }
     sign publishing.publications.mavenJava
     sign configurations.archives
+    if (rootProject.hasProperty('signing.useGpgCommand')) {
+        useGpgCmd()
+    } else {
+        useInMemoryPgpKeys(
+                System.getenv('GPG_SIGNING_KEY') ?: rootProject.findProperty('signing.gnupg.key'),
+                System.getenv('GPG_SIGNING_PASSWORD') ?: rootProject.findProperty('signing.gnupg.password') ?: '' //default to an empty password
+        )
+    }
   }
 
   tasks.publish.dependsOn tasks.signArchives

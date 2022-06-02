@@ -4,6 +4,7 @@
 name:  Released Java Supporting Libraries
 
 on:
+  workflow_dispatch:
   release:
     types: [created]
 

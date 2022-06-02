@@ -4,6 +4,7 @@
 name:  Publish ConverSyDe tool
 
 on:
+  workflow_dispatch:
   release:
     types: [created]
 
