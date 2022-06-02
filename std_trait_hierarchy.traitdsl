@@ -1,6 +1,5 @@
-
-
 namespace impl {
+
     vertex Executable
 
     vertex InstrumentedExecutable refines Executable {
