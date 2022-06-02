@@ -20,8 +20,8 @@ final public class EdgeInfo {
 
 	public String sourceId;
 	public String targetId;
-	public Optional<String> sourcePort;
-	public Optional<String> targetPort;
+	public String sourcePort = null;
+	public String targetPort = null;
 	public Set<Trait> edgeTraits = new HashSet<Trait>();
 
 	/**
@@ -34,8 +34,6 @@ final public class EdgeInfo {
 	public EdgeInfo(Vertex source, Vertex target) {
 		this.targetId = target.getIdentifier();
 		this.sourceId = source.getIdentifier();
-		this.sourcePort = Optional.empty();
-		this.targetPort = Optional.empty();
 	}
 
 
@@ -49,8 +47,6 @@ final public class EdgeInfo {
 	public EdgeInfo(String sourceId, String targetId) {
 		this.targetId = targetId;
 		this.sourceId = sourceId;
-		this.sourcePort = Optional.empty();
-		this.targetPort = Optional.empty();
 	}
 
 	/**
@@ -65,25 +61,8 @@ final public class EdgeInfo {
 	public EdgeInfo(String sourceId, String targetId, String sourcePort, String targetPort) {
 		this.sourceId = sourceId;
 		this.targetId = targetId;
-		this.targetPort = targetPort == null ? Optional.empty() : Optional.ofNullable(targetPort);
-		this.sourcePort = sourcePort == null ? Optional.empty() : Optional.ofNullable(sourcePort);
-	}
-
-	/**
-	 * Complete constructor for the {@link EdgeInfo} class, passing the optional ports
-	 * that it might contain as well as the references for the source and target
-	 * vertexes.
-	 *
-	 * @param targetId     Target Vertex for this edge.
-	 * @param sourceId     Source vertex for this edge.
-	 * @param targetPort {@link Optional} target vertex port for this edge.
-	 * @param sourcePort {@link Optional} source vertex port for this edge.
-	 */
-	public EdgeInfo(String sourceId, String targetId, Optional<String> sourcePort, Optional<String> targetPort) {
-		this.sourceId = sourceId;
-		this.targetId = targetId;
-		this.sourcePort = sourcePort;
 		this.targetPort = targetPort;
+		this.sourcePort = sourcePort;
 	}
 
 	public Set<Trait> getTraits() {
@@ -123,11 +102,11 @@ final public class EdgeInfo {
 	public String toIDString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(sourceId);
-		sourcePort.ifPresent(s -> builder.append(".").append(s));
+		getSourcePort().ifPresent(s -> builder.append(".").append(s));
 		builder.append("[").append(
 				edgeTraits.stream().map(Trait::getName).collect(Collectors.joining(";"))
 		).append("]");
-		targetPort.ifPresent(s -> builder.append(".").append(s));
+		getTargetPort().ifPresent(s -> builder.append(".").append(s));
 		builder.append(targetId);
 		return builder.toString();
 	}
@@ -141,11 +120,11 @@ final public class EdgeInfo {
 	}
 
 	public Optional<String> getSourcePort() {
-		return sourcePort;
+		return Optional.ofNullable(sourcePort);
 	}
 
 	public Optional<String> getTargetPort() {
-		return targetPort;
+		return Optional.ofNullable(targetPort);
 	}
 
 	public void addTraits(Trait... traits) {

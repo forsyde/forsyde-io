@@ -20,11 +20,11 @@ public class NoMoreReactiveTaskMigration implements SystemGraphMigrator {
                 v.ports.add("activators");
                 for (EdgeInfo e : forSyDeSystemGraph.incomingEdgesOf(v)) {
                     final Vertex src = forSyDeSystemGraph.getEdgeSource(e);
-                    forSyDeSystemGraph.connect(src, v, e.sourcePort.orElse("activated"), "activators", "execution::EventEdge");
+                    forSyDeSystemGraph.connect(src, v, e.getSourcePort().orElse("activated"), "activators", "execution::EventEdge");
                 }
                 for (EdgeInfo e : forSyDeSystemGraph.outgoingEdgesOf(v)) {
                     final Vertex dst = forSyDeSystemGraph.getEdgeTarget(e);
-                    forSyDeSystemGraph.connect(v, dst, "activated", e.targetPort.orElse("activators"), "execution::EventEdge");
+                    forSyDeSystemGraph.connect(v, dst, "activated", e.getTargetPort().orElse("activators"), "execution::EventEdge");
                 }
             }
             if (v.hasTrait("execution::DownsampleReactiveStimulus")) {
@@ -33,11 +33,11 @@ public class NoMoreReactiveTaskMigration implements SystemGraphMigrator {
                 v.ports.add("activators");
                 for (EdgeInfo e : forSyDeSystemGraph.incomingEdgesOf(v)) {
                     final Vertex src = forSyDeSystemGraph.getEdgeSource(e);
-                    forSyDeSystemGraph.connect(src, v, e.sourcePort.orElse("activated"), "activators", "execution::EventEdge");
+                    forSyDeSystemGraph.connect(src, v, e.getSourcePort().orElse("activated"), "activators", "execution::EventEdge");
                 }
                 for (EdgeInfo e : forSyDeSystemGraph.outgoingEdgesOf(v)) {
                     final Vertex dst = forSyDeSystemGraph.getEdgeTarget(e);
-                    forSyDeSystemGraph.connect(v, dst, "activated", e.targetPort.orElse("activators"), "execution::EventEdge");
+                    forSyDeSystemGraph.connect(v, dst, "activated", e.getTargetPort().orElse("activators"), "execution::EventEdge");
                 }
             }
             if (v.hasTrait("execution::SimpleReactiveStimulus") || v.hasTrait("execution::MultiANDReactiveStimulus")) {
@@ -56,7 +56,7 @@ public class NoMoreReactiveTaskMigration implements SystemGraphMigrator {
                 v.addTraits("execution::Task");
                 for (EdgeInfo e : forSyDeSystemGraph.outgoingEdgesOf(v)) {
                     final Vertex dst = forSyDeSystemGraph.getEdgeTarget(e);
-                    forSyDeSystemGraph.connect(v, dst, "activated", e.targetPort.orElse("activators"), "execution::EventEdge");
+                    forSyDeSystemGraph.connect(v, dst, "activated", e.getTargetPort().orElse("activators"), "execution::EventEdge");
                 }
             }
         }

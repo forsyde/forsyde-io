@@ -155,4 +155,18 @@ public abstract class VertexProperty {
         return VertexProperty.mergeInPlace(this, other);
     }
 
+    @Override
+    public String toString() {
+        return VertexProperties.cases()
+                .StringVertexProperty(p -> p)
+                .IntVertexProperty(Object::toString)
+                .BooleanVertexProperty(Object::toString)
+                .FloatVertexProperty(Object::toString)
+                .DoubleVertexProperty(Object::toString)
+                .LongVertexProperty(Object::toString)
+                .ArrayVertexProperty(l -> "[" + l.stream().map(VertexProperty::toString).collect(Collectors.joining(", ")) + "]")
+                .IntMapVertexProperty(m -> "{" + m.entrySet().stream().map(e -> e.getKey().toString() + ": " + e.getValue().toString()).collect(Collectors.joining(", ")) + "}")
+                .StringMapVertexProperty(m -> "{" + m.entrySet().stream().map(e -> e.getKey() + ": " + e.getValue().toString()).collect(Collectors.joining(", ")) + "}")
+                .apply(this);
+    }
 }

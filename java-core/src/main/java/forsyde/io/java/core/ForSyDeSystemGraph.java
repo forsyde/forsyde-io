@@ -129,7 +129,7 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
      * @see #connect(Vertex, Vertex, EdgeTrait...)
      */
     public boolean connect(Vertex src, Vertex dst, String portSrc, EdgeTrait... traits) {
-        if (portSrc != null && !portSrc.isEmpty() && src.ports.contains(portSrc)) {
+        if (portSrc != null &&  src.ports.contains(portSrc)) {
             // check if some connection already exists
             final Set<EdgeInfo> present = Optional.ofNullable(getAllEdges(src, dst))
                     .map(set ->
@@ -139,7 +139,7 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
                                     .collect(Collectors.toSet()))
 					.orElse(Set.of());
             if (present.isEmpty()) {
-                EdgeInfo e = new EdgeInfo(src.getIdentifier(), dst.getIdentifier(), Optional.of(portSrc), Optional.empty());
+                EdgeInfo e = new EdgeInfo(src.getIdentifier(), dst.getIdentifier(), portSrc, null);
                 e.edgeTraits.addAll(Arrays.asList(traits.clone()));
                 return addEdge(src, dst, e);
             } else {
@@ -186,7 +186,7 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
      */
     public boolean connect(Vertex src, Vertex dst, String portSrc, String portDst, EdgeTrait... traits) {
         // portDst must not be null and 'if' portSrc is not null, it must be in src's ports
-        if (portDst != null && !portDst.isEmpty() && dst.ports.contains(portDst)) {
+        if (portDst != null && dst.ports.contains(portDst)) {
             // check if some connection already exists
             final Set<EdgeInfo> present = getAllEdges(src, dst).stream()
                     .filter(edgeInfo ->
@@ -194,7 +194,7 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
                                     edgeInfo.getTargetPort().equals(Optional.of(portDst)))
                     .collect(Collectors.toSet());
             if (present.isEmpty()) {
-                EdgeInfo e = new EdgeInfo(src.getIdentifier(), dst.getIdentifier(), portSrc != null && !portSrc.isEmpty() ? Optional.of(portSrc) : Optional.empty(), Optional.of(portDst));
+                EdgeInfo e = new EdgeInfo(src.getIdentifier(), dst.getIdentifier(), portSrc, portDst);
                 e.edgeTraits.addAll(Arrays.asList(traits.clone()));
                 return addEdge(src, dst, e);
             } else {
@@ -286,13 +286,13 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
         Set<EdgeInfo> edges = getAllEdges(src.getViewedVertex(), dst.getViewedVertex());
         Boolean isConnected = edges.size() > 0;
         if (isConnected && srcPort != null && !srcPort.isEmpty()) {
-            isConnected = isConnected && edges.stream().filter(e -> e.sourcePort.isPresent())
-                    .flatMap(e -> e.sourcePort.stream())
+            isConnected = isConnected && edges.stream().filter(e -> e.getSourcePort().isPresent())
+                    .flatMap(e -> e.getSourcePort().stream())
                     .anyMatch(p -> p.equals(srcPort));
         }
         if (isConnected && dstPort != null && !dstPort.isEmpty()) {
-            isConnected = isConnected && edges.stream().filter(e -> e.targetPort.isPresent())
-                    .flatMap(e -> e.targetPort.stream())
+            isConnected = isConnected && edges.stream().filter(e -> e.getTargetPort().isPresent())
+                    .flatMap(e -> e.getTargetPort().stream())
                     .anyMatch(p -> p.equals(dstPort));
         }
         return isConnected;
@@ -302,4 +302,11 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
         return vertexSet().stream().filter(v -> v.identifier.equals(vertexId)).findAny();
     }
 
+    @Override
+    public String toString() {
+        return "SystemGraph([" +
+                vertexSet().stream().map(Vertex::toString).collect(Collectors.joining(", ")) + "; " +
+                edgeSet().stream().map(EdgeInfo::toString).collect(Collectors.joining(", ")) +
+                "])";
+    }
 }

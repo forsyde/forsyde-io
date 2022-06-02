@@ -21,7 +21,7 @@ public class TaskCallSequenceSplit implements SystemGraphMigrator {
                         v.properties.getOrDefault("__callSequence_ordering__",
                                 VertexProperty.create(new HashMap<String, Integer>())));
                 forSyDeSystemGraph.outgoingEdgesOf(v).stream()
-                        .filter(e -> e.sourcePort.orElse("").equals("callSequence"))
+                        .filter(e -> e.getSourcePort().orElse("").equals("callSequence"))
                         .map(forSyDeSystemGraph::getEdgeTarget)
                         .forEach(dst -> {
                             forSyDeSystemGraph.connect(v, dst, "loopSequence", null, "execution::ExecutionEdge");

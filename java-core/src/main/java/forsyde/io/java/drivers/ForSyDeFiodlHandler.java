@@ -75,9 +75,9 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
             stringBuilder.append("edge ");
             stringBuilder.append("[").append(e.edgeTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(","))).append("] ");
             stringBuilder.append("from ").append(e.sourceId).append(" ");
-            e.sourcePort.ifPresent(p -> stringBuilder.append("port " + p + " "));
+            e.getSourcePort().ifPresent(p -> stringBuilder.append("port " + p + " "));
             stringBuilder.append("to ").append(e.targetId).append(" ");
-            e.targetPort.ifPresent(p -> stringBuilder.append("port " + p));
+            e.getTargetPort().ifPresent(p -> stringBuilder.append("port " + p));
             stringBuilder.append("\n");
         }
         stringBuilder.append("}");
@@ -165,14 +165,14 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
             final Vertex target = newModel.vertexSet().stream().filter(v -> v.getIdentifier().equals(edgeInfo.targetId)).findFirst().orElseThrow(() ->
                     new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
                             " declares target '" + edgeInfo.targetId +"' that does not exist."));
-            if (!edgeInfo.sourcePort.map(s -> source.ports.contains(s)).orElse(true)) {
+            if (!edgeInfo.getSourcePort().map(s -> source.ports.contains(s)).orElse(true)) {
                 throw new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
-                        " declares port '" + edgeInfo.sourcePort.get() +"' at source " +
+                        " declares port '" + edgeInfo.getSourcePort().get() +"' at source " +
                         source.getIdentifier() + " which it does not declare.");
             }
-            if (!edgeInfo.targetPort.map(s -> target.ports.contains(s)).orElse(true)) {
+            if (!edgeInfo.getTargetPort().map(s -> target.ports.contains(s)).orElse(true)) {
                 throw new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
-                        " declares port '" + edgeInfo.targetPort.get() +"' at target " +
+                        " declares port '" + edgeInfo.getTargetPort().get() +"' at target " +
                         target.getIdentifier() + " which it does not declare.");
             }
             newModel.addEdge(source, target, edgeInfo);
@@ -254,8 +254,8 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
 
     public EdgeInfo visitEdgeDirect(ForSyDeFioDLParser.EdgeContext ctx) {
         final EdgeInfo edgeInfo = new EdgeInfo(ctx.source.getText(), ctx.target.getText());
-        if (ctx.sourceport != null) edgeInfo.sourcePort = Optional.of(ctx.sourceport.getText());
-        if (ctx.targetport != null) edgeInfo.targetPort = Optional.of(ctx.targetport.getText());
+        if (ctx.sourceport != null) edgeInfo.sourcePort = ctx.sourceport.getText();
+        if (ctx.targetport != null) edgeInfo.targetPort = ctx.targetport.getText();
         for (Token traitToken : ctx.traits) {
             edgeInfo.addTraits(EdgeTrait.fromName(traitToken.getText()));
         }

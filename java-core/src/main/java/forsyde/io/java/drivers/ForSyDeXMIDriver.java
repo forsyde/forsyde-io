@@ -157,12 +157,12 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 			if (edgeElem.hasAttribute("sourceport")) {
 				String sourcePort = source.getPorts().stream()
 						.filter(p -> p.equals(edgeElem.getAttribute("sourceport"))).findFirst().get();
-				edge.sourcePort = Optional.of(sourcePort);
+				edge.sourcePort = sourcePort;
 			}
 			if (edgeElem.hasAttribute("targetport")) {
 				String targetPort = target.getPorts().stream()
 						.filter(p -> p.equals(edgeElem.getAttribute("targetport"))).findFirst().get();
-				edge.targetPort = Optional.of(targetPort);
+				edge.targetPort = targetPort;
 			}
 			model.addEdge(source, target, edge);
 		}

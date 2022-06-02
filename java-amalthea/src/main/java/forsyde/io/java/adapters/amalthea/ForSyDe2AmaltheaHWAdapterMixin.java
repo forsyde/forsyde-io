@@ -192,7 +192,7 @@ public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMi
             if (e.edgeTraits.contains(EdgeTrait.PLATFORM_PHYSICALCONNECTION) &&
                 (AbstractStructure.conforms(sourceV) || DigitalModule.conforms(sourceV)) &&
                 (AbstractStructure.conforms(targetV) || DigitalModule.conforms(targetV)) &&
-                e.sourcePort.isPresent() && e.targetPort.isPresent()) {
+                e.getSourcePort().isPresent() && e.getTargetPort().isPresent()) {
                 // the vertices are supposed to be generated
                 final INamed source = equivalent(sourceV).get();
                 final INamed target = equivalent(targetV).get();
@@ -216,11 +216,11 @@ public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMi
                 //System.out.println(commonLeastParent);
                 // create the connection
                 HwPort sourcePort = source instanceof HwModule ?
-                        ((HwModule) source).getPorts().stream().filter(p -> p.getName().equals(e.sourcePort.get())).findAny().get() :
-                        ((HwStructure) source).getPorts().stream().filter(p -> p.getName().equals(e.sourcePort.get())).findAny().get();
+                        ((HwModule) source).getPorts().stream().filter(p -> p.getName().equals(e.getSourcePort().get())).findAny().get() :
+                        ((HwStructure) source).getPorts().stream().filter(p -> p.getName().equals(e.getSourcePort().get())).findAny().get();
                 HwPort targetPort = target instanceof HwModule ?
-                        ((HwModule) target).getPorts().stream().filter(p -> p.getName().equals(e.targetPort.get())).findAny().get() :
-                        ((HwStructure) target).getPorts().stream().filter(p -> p.getName().equals(e.targetPort.get())).findAny().get();
+                        ((HwModule) target).getPorts().stream().filter(p -> p.getName().equals(e.getTargetPort().get())).findAny().get() :
+                        ((HwStructure) target).getPorts().stream().filter(p -> p.getName().equals(e.getTargetPort().get())).findAny().get();
                 // look for source port
                 /*if (source instanceof HwModule && e.getSourcePort().isPresent()) {
                     HwModule sourceModule = (HwModule) source;

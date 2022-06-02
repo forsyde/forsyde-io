@@ -38,11 +38,11 @@ public final class VertexAcessor {
     static public Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait trait, VertexPortDirection direction) {
         //Trait t = traitFromString(traitName);
         Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
-                .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.getSourcePort().map(p -> p.equals(portName)).orElse(false))
                 .map(model::getEdgeTarget)
                 .filter(vv -> vv.hasTrait(trait));
         Stream<Vertex> inStream = model.incomingEdgesOf(v).stream()
-                .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.getTargetPort().map(p -> p.equals(portName)).orElse(false))
                 .map(model::getEdgeSource)
                 .filter(vv -> vv.hasTrait(trait));
         switch (direction) {
@@ -59,12 +59,12 @@ public final class VertexAcessor {
     static public Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait trait, VertexPortDirection direction, EdgeTrait edgeTrait) {
         //Trait t = traitFromString(traitName);
         Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
-                .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.getSourcePort().map(p -> p.equals(portName)).orElse(false))
                 .filter(e -> e.hasTrait(edgeTrait))
                 .map(model::getEdgeTarget)
                 .filter(vv -> vv.hasTrait(trait));
         Stream<Vertex> inStream = model.incomingEdgesOf(v).stream()
-                .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.getTargetPort().map(p -> p.equals(portName)).orElse(false))
                 .filter(e -> e.hasTrait(edgeTrait))
                 .map(model::getEdgeSource)
                 .filter(vv -> vv.hasTrait(trait));
@@ -98,11 +98,11 @@ public final class VertexAcessor {
 
     static public Set<Vertex> getMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait trait, VertexPortDirection direction) {
         Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
-                .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.getSourcePort().map(p -> p.equals(portName)).orElse(false))
                 .map(model::getEdgeTarget)
                 .filter(vv -> vv.hasTrait(trait));
         Stream<Vertex> inStream = model.incomingEdgesOf(v).stream()
-                .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.getTargetPort().map(p -> p.equals(portName)).orElse(false))
                 .map(model::getEdgeSource)
                 .filter(vv -> vv.hasTrait(trait));
         switch (direction) {
@@ -118,12 +118,12 @@ public final class VertexAcessor {
 
     static public Set<Vertex> getMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait trait, VertexPortDirection direction, EdgeTrait edgeTrait) {
         Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
-                .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.getSourcePort().map(p -> p.equals(portName)).orElse(false))
                 .filter(e -> e.hasTrait(edgeTrait))
                 .map(model::getEdgeTarget)
                 .filter(vv -> vv.hasTrait(trait));
         Stream<Vertex> inStream = model.incomingEdgesOf(v).stream()
-                .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.getTargetPort().map(p -> p.equals(portName)).orElse(false))
                 .filter(e -> e.hasTrait(edgeTrait))
                 .map(model::getEdgeSource)
                 .filter(vv -> vv.hasTrait(trait));
@@ -162,11 +162,11 @@ public final class VertexAcessor {
                 .get("__" + portName + "_ordering__")
                 .unwrap();
         Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
-                .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.getSourcePort().map(p -> p.equals(portName)).orElse(false))
                 .map(model::getEdgeTarget)
                 .filter(vv -> vv.hasTrait(t));
         Stream<Vertex> inStream = model.incomingEdgesOf(v).stream()
-                .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.getTargetPort().map(p -> p.equals(portName)).orElse(false))
                 .map(model::getEdgeSource)
                 .filter(vv -> vv.hasTrait(t));
         switch (direction) {
@@ -186,12 +186,12 @@ public final class VertexAcessor {
                 .get("__" + portName + "_ordering__")
                 .unwrap();
         Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
-                .filter(e -> e.sourcePort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.getSourcePort().map(p -> p.equals(portName)).orElse(false))
                 .filter(e -> e.hasTrait(edgeTrait))
                 .map(model::getEdgeTarget)
                 .filter(vv -> vv.hasTrait(t));
         Stream<Vertex> inStream = model.incomingEdgesOf(v).stream()
-                .filter(e -> e.targetPort.map(p -> p.equals(portName)).orElse(false))
+                .filter(e -> e.getTargetPort().map(p -> p.equals(portName)).orElse(false))
                 .filter(e -> e.hasTrait(edgeTrait))
                 .map(model::getEdgeSource)
                 .filter(vv -> vv.hasTrait(t));
