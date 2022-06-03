@@ -253,7 +253,7 @@ namespace platform {
         vertex AbstractScheduler
 
         vertex CyclicExecutiveScheduler refines AbstractScheduler {
-
+            prop entries is array<string>
         }
 
         vertex StaticCyclicScheduler refines CyclicExecutiveScheduler {
