@@ -112,23 +112,23 @@ public class SDFTests {
 
         // since we only want the SDF actor, we can do it in 1 line
         // as the vertex is still accessible by the viewer
-        var p1 = SDFActor.enforce(model.newVertex("p1"));
+        final SDFActor p1 = SDFActor.enforce(model.newVertex("p1"));
         p1.getPorts().addAll(Set.of("s_in_port", "s1_port"));
         p1.setProduction(Map.of("s1_port", 1));
         p1.setConsumption(Map.of("s_in_port", 1));
 
         // this could be the way it both as always accessible
-        var p2Vertex = new Vertex("p2");
-        var p2 = SDFActor.enforce(p2Vertex);
+        final Vertex p2Vertex = new Vertex("p2");
+        final SDFActor p2 = SDFActor.enforce(p2Vertex);
         model.addVertex(p2Vertex); // same as using the viewer as above
         p2.getPorts().add("s1_port");
         p2.setConsumption(Map.of("s1_port", 1));
 
         // or a mix of both previous syntaxes
-        var s1 = SDFChannel.enforce(new Vertex("s1"));
+        final SDFChannel s1 = SDFChannel.enforce(new Vertex("s1"));
         model.addVertex(s1.getViewedVertex());
 
-        var sIn = SDFChannel.enforce(model.newVertex("s_in"));
+        final SDFChannel sIn = SDFChannel.enforce(model.newVertex("s_in"));
 
         // you can use the veiwer setters to connect the vertexes, which
         // also takes care of edge traits.
@@ -146,28 +146,28 @@ public class SDFTests {
         s1.setConsumerPort(model, p2, "s1_port");
 
         // this model admits a sime schedule
-        var p1pass = PASSedSDFActor.enforce(p1);
+        final PASSedSDFActor p1pass = PASSedSDFActor.enforce(p1);
         p1pass.setFiringSlots(List.of(0));
 
-        var p2pass = PASSedSDFActor.enforce(p2);
+        final PASSedSDFActor p2pass = PASSedSDFActor.enforce(p2);
         p2pass.setFiringSlots(List.of(1));
 
-        var sInBounded = BoundedSDFChannel.enforce(sIn);
+        final BoundedSDFChannel sInBounded = BoundedSDFChannel.enforce(sIn);
         sInBounded.setMaximumTokens(1);
 
-        var s1Bounded = BoundedSDFChannel.enforce(s1);
+        final BoundedSDFChannel s1Bounded = BoundedSDFChannel.enforce(s1);
         s1Bounded.setMaximumTokens(1);
 
         // now lets put some types and code
-        var uint32Type = Integer.enforce(model.newVertex("UInt32"));
+        final Integer uint32Type = Integer.enforce(model.newVertex("UInt32"));
         uint32Type.setNumberOfBits(32);
 
         // the body for p1
-        var p1Body = ANSICBlackBoxExecutable.enforce(model.newVertex("p1Body"));
+        final ANSICBlackBoxExecutable p1Body = ANSICBlackBoxExecutable.enforce(model.newVertex("p1Body"));
         p1Body.getPorts().add("s1");
         p1Body.setInlinedCode("s1 = 5;");
         // its types
-        var p1TypedOp = TypedOperation.enforce(p1Body);
+        final TypedOperation p1TypedOp = TypedOperation.enforce(p1Body);
         p1TypedOp.setOutputPorts(List.of("s1"));
         p1TypedOp.setOutputPortTypesPort(model, List.of(uint32Type));
         // and we connect it to the actual SDF actor
@@ -176,11 +176,11 @@ public class SDFTests {
         model.connect(p1Body, p1,"s1", "s1_port", EdgeTrait.MOC_ABSTRACTIONEDGE); //output
 
         // now we do the same for p2
-        var p2Body = ANSICBlackBoxExecutable.enforce(model.newVertex("p2Body"));
+        final ANSICBlackBoxExecutable p2Body = ANSICBlackBoxExecutable.enforce(model.newVertex("p2Body"));
         p2Body.getPorts().add("s1");
         p2Body.setInlinedCode("int c = s1;");
         // its types
-        var p2TypedOp = TypedOperation.enforce(p2Body);
+        final TypedOperation p2TypedOp = TypedOperation.enforce(p2Body);
         p2TypedOp.setInputPorts(List.of("s1"));
         p2TypedOp.setInputPortTypesPort(model, List.of(uint32Type));
         // and we connect it to the actual SDF actor
@@ -191,7 +191,7 @@ public class SDFTests {
         Assertions.assertTrue(validator.validate(model).stream().peek(System.out::println).findAny().isEmpty());
 
         // lets also make the input token be a tokenizeable datablock
-        var sInDB = TokenizableDataBlock.enforce(sIn);
+        final TokenizableDataBlock sInDB = TokenizableDataBlock.enforce(sIn);
         sInDB.setTokenSizeInBits(32L);
         sInDB.setMaxSizeInBits(32L);
 

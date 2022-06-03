@@ -6,7 +6,7 @@ name:  Released Java Supporting Libraries
 on:
   workflow_dispatch:
   release:
-    types: [created]
+    types: [published]
 
 env:
     MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
