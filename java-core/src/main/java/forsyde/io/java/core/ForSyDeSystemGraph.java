@@ -302,11 +302,37 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
         return vertexSet().stream().filter(v -> v.identifier.equals(vertexId)).findAny();
     }
 
+    /**
+     * This is convenience function that enables a vertex to be created (if it does not exist in the model)
+     * and to be immediately returned for usage. The vertex is guaranteed to be part of the system graph
+     * after this function is called.
+     *
+     * @param vertexId the identifier for the new or existing vertex.
+     * @return a vertex with the ID specified. If the vertex exists in the model, the existing one is returned.
+     */
+    public Vertex newVertex(String vertexId) {
+        return queryVertex(vertexId).orElseGet(() -> {
+            final Vertex v = new Vertex(vertexId);
+            addVertex(v);
+            return v;
+        });
+    }
+
     @Override
     public String toString() {
         return "SystemGraph([" +
                 vertexSet().stream().map(Vertex::toString).collect(Collectors.joining(", ")) + "; " +
                 edgeSet().stream().map(EdgeInfo::toString).collect(Collectors.joining(", ")) +
                 "])";
+    }
+
+    /**
+     * This equality check does not go deep into the vertexes properties, but stops
+     * at their identities
+     * @param obj the other ForSyDeSystemGraph
+     * @return true if the system graphs are equals except for the vertexes propertie and ports
+     */
+    public boolean shallowEquals(ForSyDeSystemGraph obj) {
+        return vertexSet().equals(obj.vertexSet()) && edgeSet().equals(obj.edgeSet());
     }
 }

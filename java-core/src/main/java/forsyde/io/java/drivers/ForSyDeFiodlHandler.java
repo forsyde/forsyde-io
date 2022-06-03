@@ -56,7 +56,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
     @Override
     public void writeModel(ForSyDeSystemGraph model, OutputStream out) throws Exception {
         final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("systemgraph {");
+        stringBuilder.append("systemgraph {\n");
         for (Vertex v: model.vertexSet()) {
             stringBuilder.append("  vertex ").append(v.getIdentifier()).append("\n")
                 .append("  [").append(v.vertexTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(", "))).append("]\n")
@@ -72,7 +72,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
             }
         }
         for (EdgeInfo e : model.edgeSet()) {
-            stringBuilder.append("edge ");
+            stringBuilder.append("  edge ");
             stringBuilder.append("[").append(e.edgeTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(","))).append("] ");
             stringBuilder.append("from ").append(e.sourceId).append(" ");
             e.getSourcePort().ifPresent(p -> stringBuilder.append("port " + p + " "));

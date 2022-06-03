@@ -38,13 +38,20 @@ dependencies {
   //testImplementation 'junit:junit:4.13.2'
 
   testImplementation project(":java-core")
+  testImplementation project(":java-graphviz")
 }
 
 test {
   useJUnitPlatform()
 }
 
-sourceCompatibility = 1.11
+compileJava {
+  sourceCompatibility = JavaVersion.VERSION_11
+}
+
+compileTestJava {
+  sourceCompatibility = JavaVersion.VERSION_17
+}
 
 sourceSets {
   test {
@@ -73,8 +80,6 @@ subprojects {
   group = 'io.github.forsyde'
   archivesBaseName = rootProject.name + '-' + project.name
   version = rootProject.version
-
-  sourceCompatibility = 1.11
 
   repositories {
     mavenCentral()

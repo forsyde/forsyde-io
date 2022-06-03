@@ -60,11 +60,12 @@ public final class ForSyDeModelHandler {
 		}
 	}
 
-	public void registerSystemGraphMigrator(SystemGraphMigrator systemGraphMigrator, int applyOrder) {
+	public ForSyDeModelHandler registerSystemGraphMigrator(SystemGraphMigrator systemGraphMigrator, int applyOrder) {
 		registeredMigrators.add(applyOrder, systemGraphMigrator);
+		return this;
 	}
 
-	public void registerDriver(ForSyDeModelDriver extraDriver, int loadOrder) {
+	public ForSyDeModelHandler registerDriver(ForSyDeModelDriver extraDriver, int loadOrder) {
 		if (!registeredDrivers.contains(extraDriver)) {
 			final String inExtensions = "{" + String.join(",", extraDriver.inputExtensions()) + "}";
 			final String outExtensions = "{" + String.join(",", extraDriver.outputExtensions()) + "}";
@@ -76,10 +77,11 @@ public final class ForSyDeModelHandler {
 					FileSystems.getDefault().getPathMatcher("glob:**." + outExtensions)
 			);
 		}
+		return this;
 	}
 
-	public void registerDriver(ForSyDeModelDriver extraDriver) {
-		registerDriver(extraDriver, registeredDrivers.size());
+	public ForSyDeModelHandler registerDriver(ForSyDeModelDriver extraDriver) {
+		return registerDriver(extraDriver, registeredDrivers.size());
 	}
 
 	public boolean canLoadModel(Path path) {

@@ -27,7 +27,7 @@ public class ForSyDeGraphVizDriver implements ForSyDeModelDriver {
 
     @Override
     public List<String> outputExtensions() {
-        return List.of("dot", "gv", "graphviz");
+        return List.of("gv", "graphviz");
     }
 
     @Override

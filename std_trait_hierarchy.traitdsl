@@ -40,8 +40,9 @@ namespace values {
 namespace typing {
 
     vertex TypedOperation refines impl::Executable {
-        port portTypes is multiple typing::datatypes::DataType with typing::datatypes::DataDefinition
+        port inputPortTypes is ordered multiple typing::datatypes::DataType with typing::datatypes::DataDefinition
         prop inputPorts is array<string>
+        port outputPortTypes is ordered multiple typing::datatypes::DataType with typing::datatypes::DataDefinition
         prop outputPorts is array<string>
     }
 
@@ -71,6 +72,8 @@ namespace typing {
 namespace moc {
 
     vertex MoCElem
+
+    edge AbstractionEdge
 
     vertex MoCSource refines MoCElem {
         prop dataTakenPerExecution is strmap<long>
@@ -118,7 +121,7 @@ namespace moc {
             prop propagationDelayInSecsDenominator is long
         }
 
-        edge ContainmentEdge
+        edge ContainmentEdge refines moc::AbstractionEdge
 
         edge EventEdge
     }
@@ -131,7 +134,7 @@ namespace moc {
             prop consumption is strmap<int>
             prop production is strmap<int>
 
-            port combFunctions is multiple out impl::Executable
+            port combFunctions is multiple out impl::Executable with moc::AbstractionEdge
         }
 
         vertex SDFChannel refines SDFElem {
