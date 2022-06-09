@@ -41,13 +41,16 @@ public class SDFValidator implements SystemGraphValidation {
                 return forSyDeSystemGraph.getAllEdges(channel.getViewedVertex(), c.getViewedVertex()).stream()
                         .anyMatch(e -> e.getTargetPort().map(consumption::containsKey).orElse(false));
             }).orElse(false);
+            if (!consumerPortOk) {
+                return Optional.of("SDF Channel " + channel.getIdentifier() + " is not connected to a consumption port.");
+            }
             final boolean producerPortOk = channel.getProducerPort(forSyDeSystemGraph).map(c -> {
                 final Map<String, Integer> production = c.getProduction();
                 return forSyDeSystemGraph.getAllEdges(c.getViewedVertex(), channel.getViewedVertex()).stream()
                         .anyMatch(e -> e.getSourcePort().map(production::containsKey).orElse(false));
             }).orElse(false);
-            if (!(producerPortOk || consumerPortOk)) {
-                return Optional.of("SDF Channel " + channel.getIdentifier() + " must have at least a consumer or a producer correctly connected.");
+            if (!producerPortOk) {
+                return Optional.of("SDF Channel " + channel.getIdentifier() + " is not connected to a production port.");
             }
         }
         return Optional.empty();
