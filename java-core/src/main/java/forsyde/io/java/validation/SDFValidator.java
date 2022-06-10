@@ -40,7 +40,7 @@ public class SDFValidator implements SystemGraphValidation {
                 final Map<String, Integer> consumption = c.getConsumption();
                 return forSyDeSystemGraph.getAllEdges(channel.getViewedVertex(), c.getViewedVertex()).stream()
                         .anyMatch(e -> e.getTargetPort().map(consumption::containsKey).orElse(false));
-            }).orElse(false);
+            }).orElse(true);
             if (!consumerPortOk) {
                 return Optional.of("SDF Channel " + channel.getIdentifier() + " is not connected to a consumption port.");
             }
@@ -48,7 +48,7 @@ public class SDFValidator implements SystemGraphValidation {
                 final Map<String, Integer> production = c.getProduction();
                 return forSyDeSystemGraph.getAllEdges(c.getViewedVertex(), channel.getViewedVertex()).stream()
                         .anyMatch(e -> e.getSourcePort().map(production::containsKey).orElse(false));
-            }).orElse(false);
+            }).orElse(true);
             if (!producerPortOk) {
                 return Optional.of("SDF Channel " + channel.getIdentifier() + " is not connected to a production port.");
             }
