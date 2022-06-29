@@ -9,6 +9,7 @@ import forsyde.io.java.typed.viewers.impl.ANSICBlackBoxExecutable;
 import forsyde.io.java.typed.viewers.impl.TokenizableDataBlock;
 import forsyde.io.java.typed.viewers.moc.sdf.SDFChannel;
 import forsyde.io.java.typed.viewers.moc.sdf.SDFActor;
+import forsyde.io.java.typed.viewers.nonfunctional.ChristianNewVertex;
 import forsyde.io.java.typed.viewers.typing.TypedOperation;
 import forsyde.io.java.typed.viewers.typing.datatypes.Integer;
 import forsyde.io.java.typed.viewers.visualization.Visualizable;
@@ -75,6 +76,13 @@ public class SDFTests {
     @Test
     public void checkingFIODL() throws Exception {
         final ForSyDeSystemGraph forSyDeSystemGraph = forSyDeModelHandler.loadModel("examples/sdf/complete-flow/sobel-application.fiodl");
+        final Set<Vertex> christianNewVertices = forSyDeSystemGraph.vertexSet().stream()
+                .filter(v -> ChristianNewVertex.conforms(v))
+                .collect(Collectors.toSet());
+        final Set<ChristianNewVertex> awesomeVertexes = christianNewVertices
+                .stream().map(v -> ChristianNewVertex.safeCast(v).get())
+                .collect(Collectors.toSet());
+        forSyDeModelHandler.writeModel(forSyDeSystemGraph, "test.fiodl");
     }
 
     @Test

@@ -154,6 +154,20 @@ namespace moc {
 
 }
 
+namespace parallel {
+    vertex ParallelSkeleton refines impl::Executable
+
+    edge ParallelContainerEdge
+
+    vertex Map refines ParallelSkeleton {
+        port kernel is single output impl::Executable with ParallelContainerEdge
+    }
+
+    vertex Reduce refines ParallelSkeleton {
+        port kernel is single output impl::Executable with ParallelContainerEdge
+    }
+}
+
 namespace execution {
     vertex Stimulatable {
         prop hasORSemantics is bool = 0_b
@@ -183,9 +197,16 @@ namespace execution {
         prop repetitivePredecessorHolds is long = 0_l
     }
 
-    vertex Task refines Stimulatable {
+    vertex Task refines Stimulatable, Stimulator
+
+    vertex LoopingTask refines Task {
         port initSequence is multiple ordered out impl::Executable with ExecutionEdge
         port loopSequence is multiple ordered out impl::Executable with ExecutionEdge
+    }
+
+    vertex CommunicatingTask refines Task {
+        prop portDataReadSize is strmap<long>
+        prop portDataWrittenSize is strmap<long>
     }
 
     vertex ConstrainedTask refines Task {
@@ -301,15 +322,15 @@ namespace decision {
     edge AbstractScheduling
 
     vertex Allocated {
-        port allocationHost is out platform::DigitalModule
+        port allocationHosts is out multiple unordered platform::DigitalModule
     }
 
     vertex MemoryMapped refines Allocated {
-        port mappingHost is out platform::GenericMemoryModule
+        port mappingHosts is out multiple unordered platform::GenericMemoryModule
     }
 
     vertex Scheduled {
-        port scheduler is out platform::runtime::AbstractScheduler
+        port schedulers is out multiple unordered platform::runtime::AbstractScheduler
     }
 
     namespace sdf {

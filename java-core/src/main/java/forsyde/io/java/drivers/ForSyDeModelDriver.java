@@ -3,9 +3,8 @@
  */
 package forsyde.io.java.drivers;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,6 +14,9 @@ import java.util.List;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 
 /**
+ * Interface for reading and writing different formats from and to ForSyDe IO.
+ * The strings are always assuemd to be UTF8 unless otherwise noted. The loading mechanisms
+ * might crash for some special loading cases if the encoding is different!!
  * @author rjordao
  *
  */
@@ -34,6 +36,18 @@ public interface ForSyDeModelDriver {
 
 	default ForSyDeSystemGraph loadModel(Path inPath) throws Exception {
 		return loadModel(Files.newInputStream(inPath));
+	}
+
+	default ForSyDeSystemGraph loadModel(Reader inReader) throws Exception {
+		char[] charBuffer = new char[8 * 1024];
+		final StringBuilder stringBuilder = new StringBuilder();
+		int numCharsRead;
+		while ((numCharsRead = inReader.read(charBuffer, 0, charBuffer.length)) != -1) {
+			stringBuilder.append(charBuffer, 0, numCharsRead);
+		}
+		try(final InputStream inputStream = new ByteArrayInputStream(stringBuilder.toString().getBytes(StandardCharsets.UTF_8))) {
+			return loadModel(inputStream);
+		}
 	}
 	
 	ForSyDeSystemGraph loadModel(InputStream in) throws Exception;

@@ -269,7 +269,7 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
 
     default void fromVertexToTasks(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
         forSyDeSystemGraph.vertexSet().forEach(vertex -> {
-            Task.safeCast(vertex).ifPresent(task -> {
+            LoopingTask.safeCast(vertex).ifPresent(task -> {
                 final org.eclipse.app4mc.amalthea.model.Task aTask = AmaltheaFactory.eINSTANCE.createTask();
                 aTask.setName(task.getIdentifier());
 

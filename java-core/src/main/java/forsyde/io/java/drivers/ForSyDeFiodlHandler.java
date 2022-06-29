@@ -254,8 +254,8 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
 
     public EdgeInfo visitEdgeDirect(ForSyDeFioDLParser.EdgeContext ctx) {
         final EdgeInfo edgeInfo = new EdgeInfo(ctx.source.getText(), ctx.target.getText());
-        if (ctx.sourceport != null) edgeInfo.sourcePort = ctx.sourceport.getText();
-        if (ctx.targetport != null) edgeInfo.targetPort = ctx.targetport.getText();
+        if (ctx.sourceport != null) edgeInfo.setSourcePort(ctx.sourceport.getText());
+        if (ctx.targetport != null) edgeInfo.setTargetPort(ctx.targetport.getText());
         for (Token traitToken : ctx.traits) {
             edgeInfo.addTraits(EdgeTrait.fromName(traitToken.getText()));
         }

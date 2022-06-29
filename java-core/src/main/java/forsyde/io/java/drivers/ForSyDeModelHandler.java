@@ -4,10 +4,13 @@
 package forsyde.io.java.drivers;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.*;
 import java.util.*;
 
 import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.inference.PopulateTaskCommunications;
+import forsyde.io.java.inference.SystemGraphInference;
 import forsyde.io.java.migrations.NoMoreReactiveTaskMigration;
 import forsyde.io.java.migrations.SDFCombToSDFActorConversion;
 import forsyde.io.java.migrations.SystemGraphMigrator;
@@ -23,6 +26,7 @@ public final class ForSyDeModelHandler {
 
 	private final List<SystemGraphMigrator> registeredMigrators = new ArrayList<>();
 	private final List<SystemGraphValidation> registesteredValidators = new ArrayList<>();
+	private final List<SystemGraphInference> registeredInferences = new ArrayList<>();
 	private final List<ForSyDeModelDriver> registeredDrivers = new ArrayList<>();
 	private final List<PathMatcher> registeredDriversInputMatchers = new ArrayList<>();
 	private final List<PathMatcher> registeredDriversOutputMatchers = new ArrayList<>();
@@ -33,6 +37,8 @@ public final class ForSyDeModelHandler {
 //	PathMatcher amaltheaMatcher;
 
 	public ForSyDeModelHandler(ForSyDeModelDriver... extraDrivers) {
+		// register default inferences
+		registeredInferences.add(new PopulateTaskCommunications());
 		// register default migrators
 		registeredMigrators.add(new NoMoreReactiveTaskMigration());
         registeredMigrators.add(new TaskCallSequenceSplit());
@@ -119,6 +125,7 @@ public final class ForSyDeModelHandler {
 						throw new Exception(validationResult.get());
 					}
 				}
+				registeredInferences.forEach(inference -> inference.infer(forSyDeSystemGraph));
 				return forSyDeSystemGraph;
 			}
 		}
@@ -144,6 +151,7 @@ public final class ForSyDeModelHandler {
 	}
 
 	public void writeModel(ForSyDeSystemGraph model, Path outPath) throws Exception {
+		registeredInferences.forEach(inference -> inference.infer(model));
 		for (SystemGraphValidation validation : registesteredValidators) {
 			final Optional<String> validationResult = validation.validate(model);
 			if (validationResult.isPresent()) {

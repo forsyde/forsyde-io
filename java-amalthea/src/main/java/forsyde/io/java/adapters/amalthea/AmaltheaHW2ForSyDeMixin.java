@@ -190,9 +190,9 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 final Vertex inVertex = forSyDeSystemGraph.getEdgeSource(inInfo);
                 for (EdgeInfo outInfo : forSyDeSystemGraph.outgoingEdgesOf(abstractStructure.getViewedVertex())) {
                     final Vertex outVertex = forSyDeSystemGraph.getEdgeTarget(outInfo);
-                    if (inInfo.targetPort.equals(outInfo.sourcePort) && !AbstractStructure.conforms(inVertex)
+                    if (inInfo.getTargetPort().equals(outInfo.getSourcePort()) && !AbstractStructure.conforms(inVertex)
                             && !AbstractStructure.conforms(outVertex)) {
-                        final EdgeInfo edgeInfo = new EdgeInfo(inVertex.identifier, outVertex.identifier, inInfo.targetPort, outInfo.sourcePort);
+                        final EdgeInfo edgeInfo = new EdgeInfo(inVertex.identifier, outVertex.identifier, inInfo.getTargetPort(), outInfo.getSourcePort());
                         edgeInfo.edgeTraits.addAll(inInfo.edgeTraits);
                         edgeInfo.edgeTraits.addAll(outInfo.edgeTraits);
                         forSyDeSystemGraph.addEdge(inVertex, outVertex, edgeInfo);

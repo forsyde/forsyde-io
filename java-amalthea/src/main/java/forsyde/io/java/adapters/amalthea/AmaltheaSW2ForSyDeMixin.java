@@ -10,11 +10,13 @@ import forsyde.io.java.typed.viewers.execution.PeriodicStimulus;
 import forsyde.io.java.typed.viewers.execution.Task;
 import forsyde.io.java.typed.viewers.impl.*;
 import forsyde.io.java.typed.viewers.visualization.GreyBox;
+import org.antlr.v4.codegen.model.Loop;
 import org.eclipse.app4mc.amalthea.model.*;
 
 import java.lang.System;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
@@ -173,12 +175,13 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             final GreyBox taskGreyBox = GreyBox.enforce(taskVertex);
             forSyDeSystemGraph.addVertex(taskVertex);
             addEquivalence(aTask, taskVertex);
-            final Task task = Task.enforce(taskVertex);
+            final LoopingTask task = LoopingTask.enforce(taskVertex);
             // first, go in the activity graph and figure out if the task awaits for something
             if (aTask.getActivityGraph() != null) {
                 // do tree search due to possible nesting
                 aTask.getActivityGraph().eAllContents().forEachRemaining(item -> {
                     if (item instanceof RunnableCall) {
+                        final CommunicatingTask communicatingTask = CommunicatingTask.enforce(task);
                         final RunnableCall runnableCall = (RunnableCall) item;
                         equivalent(runnableCall.getRunnable()).ifPresent(runnableVertex -> {
                             forSyDeSystemGraph.connect(taskVertex, runnableVertex, "callSequence", EdgeTrait.EXECUTION_EXECUTIONEDGE);

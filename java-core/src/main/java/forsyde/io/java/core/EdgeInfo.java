@@ -20,8 +20,8 @@ final public class EdgeInfo {
 
 	public String sourceId;
 	public String targetId;
-	public String sourcePort = null;
-	public String targetPort = null;
+	private String sourcePort = null;
+	private String targetPort = null;
 	public Set<Trait> edgeTraits = new HashSet<Trait>();
 
 	/**
@@ -63,6 +63,13 @@ final public class EdgeInfo {
 		this.targetId = targetId;
 		this.targetPort = targetPort;
 		this.sourcePort = sourcePort;
+	}
+
+	public EdgeInfo(String sourceId, String targetId, Optional<String> sourcePort, Optional<String> targetPort) {
+		this.sourceId = sourceId;
+		this.targetId = targetId;
+		targetPort.ifPresent(t -> this.targetPort = t);
+		sourcePort.ifPresent(s -> this.sourcePort = s);
 	}
 
 	public Set<Trait> getTraits() {
@@ -125,6 +132,14 @@ final public class EdgeInfo {
 
 	public Optional<String> getTargetPort() {
 		return Optional.ofNullable(targetPort);
+	}
+
+	public void setSourcePort(String sourcePort) {
+		this.sourcePort = sourcePort;
+	}
+
+	public void setTargetPort(String targetPort) {
+		this.targetPort = targetPort;
 	}
 
 	public void addTraits(Trait... traits) {
