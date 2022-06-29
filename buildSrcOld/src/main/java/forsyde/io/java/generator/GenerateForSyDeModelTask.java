@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
@@ -160,7 +161,8 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
     }
 
     public MethodSpec generateRequiredPortGetter(VertexTraitSpec vertexTraitSpec) {
-        final String portsString = vertexTraitSpec.requiredPorts.stream()
+        final String portsString = Stream.concat(vertexTraitSpec.refinedTraits.stream().flatMap(t -> t.requiredPorts.stream()),
+                vertexTraitSpec.requiredPorts.stream())
                 .map(p -> "\"" + p.name + "\"")
                 .collect(Collectors.joining(", "));
         final MethodSpec.Builder getRequiredPortGetter = MethodSpec.methodBuilder("getRequiredPorts")
@@ -172,9 +174,6 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
     public MethodSpec generateRequiredPropertyGetter(VertexTraitSpec vertexTraitSpec) {
         final TypeName propClass = ClassName.get("forsyde.io.java.core", "VertexProperty");
-        final String portsString = vertexTraitSpec.requiredProperties.stream()
-                .map(p -> p.name)
-                .collect(Collectors.joining(", "));
         final MethodSpec.Builder getRequiredPropGetter = MethodSpec.methodBuilder("getRequiredProperties")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class), propClass))

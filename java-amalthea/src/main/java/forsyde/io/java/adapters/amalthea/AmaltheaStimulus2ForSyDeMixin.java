@@ -5,6 +5,7 @@ import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.typed.viewers.execution.*;
+import forsyde.io.java.typed.viewers.visualization.Visualizable;
 import org.eclipse.app4mc.amalthea.model.*;
 import org.eclipse.app4mc.amalthea.model.PeriodicStimulus;
 import org.eclipse.app4mc.amalthea.model.Task;
@@ -20,10 +21,8 @@ public interface AmaltheaStimulus2ForSyDeMixin extends EquivalenceModel2ModelMix
         amalthea.getStimuliModel().getStimuli().forEach((stimulus) -> {
             if (stimulus instanceof PeriodicStimulus) {
                 final PeriodicStimulus periodicStimulus = (PeriodicStimulus) stimulus;
-                final Vertex timerVertex = new Vertex(stimulus.getName(), VertexTrait.EXECUTION_PERIODICSTIMULUS);
-                timerVertex.ports.add("stimulated");
-                forSyDeSystemGraph.addVertex(timerVertex);
-                final forsyde.io.java.typed.viewers.execution.PeriodicStimulus periodicStimulusVertex = new PeriodicStimulusViewer(timerVertex);
+                final forsyde.io.java.typed.viewers.execution.PeriodicStimulus periodicStimulusVertex = forsyde.io.java.typed.viewers.execution.PeriodicStimulus.enforce(forSyDeSystemGraph.newVertex(stimulus.getName()));
+                Visualizable.enforce(periodicStimulusVertex);
                 if (periodicStimulus.getRecurrence() != null) {
                     periodicStimulusVertex.setPeriodNumerator(periodicStimulus.getRecurrence().getValue().longValue());
                     periodicStimulusVertex.setPeriodDenominator(fromTimeUnitToLong(periodicStimulus.getRecurrence().getUnit()));
@@ -38,7 +37,7 @@ public interface AmaltheaStimulus2ForSyDeMixin extends EquivalenceModel2ModelMix
                     periodicStimulusVertex.setOffsetNumerator(0L);
                     periodicStimulusVertex.setOffsetDenominator(1L);
                 }
-                addEquivalence(stimulus, timerVertex);
+                addEquivalence(stimulus, periodicStimulusVertex.getViewedVertex());
             }
 //            else if (stimulus instanceof InterProcessStimulus) {
 //                final InterProcessStimulus interProcessStimulus = (InterProcessStimulus) stimulus;

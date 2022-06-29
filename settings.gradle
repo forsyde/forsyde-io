@@ -21,6 +21,11 @@ include 'services:webservice'
 //    }
 //}
 
+pluginManagement {
+    includeBuild 'java-generator'
+}
+
+
 rootProject.name = 'forsyde-io'
 
 include 'java-amalthea'
@@ -30,5 +35,4 @@ include 'java-sdf3'
 include 'java-conversyde'
 include 'java-graphviz'
 include 'java-ods-reporting'
-includeBuild 'java-generator'
 

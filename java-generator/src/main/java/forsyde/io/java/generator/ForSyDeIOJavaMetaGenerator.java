@@ -16,5 +16,8 @@ public class ForSyDeIOJavaMetaGenerator implements Plugin<Project> {
 		Objects.requireNonNull(project.getTasks().findByName("compileJava"))
 				.dependsOn(project.getTasks().findByName("generateForSyDeModel"));
 
+		Objects.requireNonNull(project.getTasks().findByName("build"))
+				.dependsOn(project.getTasks().findByName("generateForSyDeModel"));
+
 	}
 }

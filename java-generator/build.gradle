@@ -3,6 +3,7 @@ plugins {
   id 'idea'
   id 'eclipse'
   id 'antlr'
+  id 'java-gradle-plugin'
 }
 
 repositories {
@@ -44,5 +45,14 @@ clean{
 idea {
   module {
     sourceDirs += file("src-gen/main/java/")
+  }
+}
+
+gradlePlugin {
+  plugins {
+    simplePlugin {
+      id = 'forsyde-io-java-generator'
+      implementationClass = 'forsyde.io.java.generator.ForSyDeIOJavaMetaGenerator'
+    }
   }
 }

@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.apache.commons.text.WordUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Task;
+import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.*;
 
 import javax.lang.model.element.Modifier;
@@ -21,14 +22,12 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class GenerateForSyDeModelTask extends DefaultTask implements Task {
+public abstract class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
     @InputFile
-    File inputModelDSL;// = getProject().file("traithierarchy.traitdsl");
-
-    @Input
-    String outputRootDirName = "src-gen/main/java";
+    abstract RegularFileProperty getInputModelDSL();// = getProject().file("traithierarchy.traitdsl");
 
     @OutputFiles
     List<File> outFiles = new ArrayList<>();
@@ -40,7 +39,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                 .registerModule(new Jdk8Module());
          */
         try {
-            final ForSyDeTraitDSLLexer forSyDeTraitDSLLexer = new ForSyDeTraitDSLLexer(CharStreams.fromPath(inputModelDSL.toPath()));
+            final ForSyDeTraitDSLLexer forSyDeTraitDSLLexer = new ForSyDeTraitDSLLexer(CharStreams.fromPath(getInputModelDSL().get().getAsFile().toPath()));
             final CommonTokenStream commonTokenStream = new CommonTokenStream(forSyDeTraitDSLLexer);
             final ForSyDeTraitDSLParser forSyDeTraitDSLParser = new ForSyDeTraitDSLParser(commonTokenStream);
             final ForSyDeIOTraitDSLVisitor forSyDeIOTraitDSLVisitor = new ForSyDeIOTraitDSLVisitor();
@@ -56,8 +55,8 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
 
 
     public void generateFiles(TraitHierarchy model) throws IOException {
-        final File rootOutDir = getProject().getProjectDir().toPath().resolve(Paths.get(outputRootDirName)).toFile();
-        Path root = rootOutDir.toPath();
+//        final File rootOutDir = getProject().getBuildDir().toPath(); //.resolve(Paths.get(outputRootDirName)).toFile();
+        Path root = getProject().getBuildDir().toPath().resolve("generated/forsyde-io/main/java");
         Path enumsPath = root.resolve(Paths.get("forsyde/io/java/core/"));
         Path viewersPath = root.resolve("forsyde/io/java/typed/viewers/");
         Files.createDirectories(enumsPath) ;
@@ -163,18 +162,24 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         final String portsString = vertexTraitSpec.requiredPorts.stream()
                 .map(p -> "\"" + p.name + "\"")
                 .collect(Collectors.joining(", "));
+        final String refinedPortsString = vertexTraitSpec.refinedTraits.stream().map(t -> ".addAll(" + t.getTraitLocalName() + ".getRequiredPorts())")
+                .collect(Collectors.joining());
         final MethodSpec.Builder getRequiredPortGetter = MethodSpec.methodBuilder("getRequiredPorts")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(Set.class, String.class))
-                .addStatement("return $T.of($L)", Set.class, portsString);
-        return getRequiredPortGetter.build();
+                .addStatement("final $T<$T> required = new $T<$T>($L)",
+                        Set.class, String.class, HashSet.class, String.class, vertexTraitSpec.requiredPorts.size());
+        for (PortSpec port: vertexTraitSpec.requiredPorts) {
+            getRequiredPortGetter.addStatement("required.add($S)", port.name);
+        }
+        for (VertexTraitSpec refined: vertexTraitSpec.refinedTraits) {
+            getRequiredPortGetter.addStatement("required.addAll($L.getRequiredPorts())", refined.getTraitLocalName());
+        }
+        return getRequiredPortGetter.addStatement("return required").build();
     }
 
     public MethodSpec generateRequiredPropertyGetter(VertexTraitSpec vertexTraitSpec) {
         final TypeName propClass = ClassName.get("forsyde.io.java.core", "VertexProperty");
-        final String portsString = vertexTraitSpec.requiredProperties.stream()
-                .map(p -> p.name)
-                .collect(Collectors.joining(", "));
         final MethodSpec.Builder getRequiredPropGetter = MethodSpec.methodBuilder("getRequiredProperties")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class), propClass))
@@ -188,7 +193,7 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
                         .BooleanVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), false))
                         .FloatVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), 0.0F))
                         .DoubleVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), 0.0))
-                        .LongVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), 0L))
+                        .LongVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($LL)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), 0L))
                         .ArrayVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, $T.create(new $T())", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), concreteMetaToJavaType(propertySpec.type)))
                         .IntMapVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, $T.create(new $T())", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), concreteMetaToJavaType(propertySpec.type)))
                         .StringMapVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, $T.create(new $T())", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), concreteMetaToJavaType(propertySpec.type)))
@@ -984,19 +989,4 @@ public class GenerateForSyDeModelTask extends DefaultTask implements Task {
         return outFiles;
     }
 
-    public File getInputModelDSL() {
-        return inputModelDSL;
-    }
-
-    public void setInputModelDSL(File inputModelDSL) {
-        this.inputModelDSL = inputModelDSL;
-    }
-
-    public String getOutputRootDirName() {
-        return outputRootDirName;
-    }
-
-    public void setOutputRootDirName(String outputRootDirName) {
-        this.outputRootDirName = outputRootDirName;
-    }
 }

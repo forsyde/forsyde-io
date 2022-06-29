@@ -191,19 +191,17 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final WaitEvent waitEvent = (WaitEvent) item;
                         if (waitEvent.getEventMask() != null && waitEvent.getEventMask().getEvents().size() > 0) {
                             final String eventNames = waitEvent.getEventMask().getEvents().stream().map(OsEvent::getName).collect(Collectors.joining("_"));
-                            final Vertex precedence = new Vertex(task.getIdentifier() + "_Wait_" + eventNames);
-                            final Stimulatable precedenceSti = Stimulatable.enforce(precedence);
-                            forSyDeSystemGraph.addVertex(precedence);
-                            addEquivalence(aTask, precedence);
-                            precedenceSti.setHasORSemantics(waitEvent.getMaskType() == WaitEventType.OR);
-                            if (waitEvent.getEventMask().getEvents().size() == 1) {
-                                final Downsample downsample = Downsample.enforce(precedence);
-                                forSyDeSystemGraph.connect(downsample, task, "activated", "activators", EdgeTrait.EXECUTION_EVENTEDGE);
-                                if (waitEvent.getCounter() != null) {
-                                    downsample.setInitialPredecessorSkips(waitEvent.getCounter().getOffset());
-                                    downsample.setRepetitivePredecessorSkips(waitEvent.getCounter().getPrescaler());
-                                }
+                            final Downsample downsample = Downsample.enforce(forSyDeSystemGraph.newVertex(task.getIdentifier() + "_Wait_" + eventNames));
+                            addEquivalence(aTask, downsample.getViewedVertex());
+                            downsample.setHasORSemantics(waitEvent.getMaskType() == WaitEventType.OR);
+                            forSyDeSystemGraph.connect(downsample, task, "activated", "activators", EdgeTrait.EXECUTION_EVENTEDGE);
+                            if (waitEvent.getCounter() != null) {
+                                downsample.setInitialPredecessorSkips(waitEvent.getCounter().getOffset());
+                                downsample.setRepetitivePredecessorSkips(waitEvent.getCounter().getPrescaler());
                             }
+//                            if (waitEvent.getEventMask().getEvents().size() == 1) {
+//
+//                            }
                         }
                     }
 //                    else if (item instanceof InterProcessTrigger) {
@@ -230,6 +228,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 aTask.getStimuli().forEach(stimulus -> {
                     equivalents(stimulus).flatMap(v -> PeriodicStimulus.safeCast(v).stream()).forEach(periodicStimulus -> {
                         forSyDeSystemGraph.connect(periodicStimulus, task, "activated", "activators", EdgeTrait.EXECUTION_EVENTEDGE);
+                        forSyDeSystemGraph.connect(periodicStimulus, task, "activated", "activators", EdgeTrait.VISUALIZATION_VISUALCONNECTION);
                     });
 //                    if (stimulus instanceof PeriodicStimulus) {
 //                        taskVertex.addTraits(VertexTrait.EXECUTION_PERIODICTASK);

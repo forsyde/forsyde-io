@@ -22,6 +22,7 @@ public interface VertexViewer {
     default Map<String, VertexProperty> getProperties() {
         return getViewedVertex().getProperties();
     }
+
     /*
     private Optional<Vertex> getNamedPort(ForSyDeSystemGraph model, String portName, String traitName) {
     	return getNamedPort(model, portName, traitName, "BIDIRECTIONAL");

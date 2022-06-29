@@ -1,8 +1,9 @@
 plugins {
     id 'antlr' // required for java core
+    id 'forsyde-io-java-generator'
 }
 
-import forsyde.io.java.generator.GenerateForSyDeModelTask
+//import forsyde.io.java.generator.GenerateForSyDeModelTask
 
 project.ext.niceName = "Java Core"
 
@@ -18,14 +19,18 @@ tasks.register("cleanForSyDeModel", Delete) {
 
 tasks.clean.dependsOn(tasks.cleanForSyDeModel)
 
-tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
+//tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
+//    inputModelDSL = project.ext.stdTraitHierarchyFile
+//}
+
+generateForSyDeModel {
     inputModelDSL = project.ext.stdTraitHierarchyFile
 }
 
 //tasks.generateForSyDeModel.dependsOn clearForSyDeModel
-tasks.build.dependsOn generateForSyDeModel
-tasks.compileJava.dependsOn generateForSyDeModel
-//tasks.sourcesJar.dependsOn generateForSyDeModel
+//tasks.build.dependsOn gradle.includedBuild('java-generator').task(':generateForSyDeModel')
+//tasks.compileJava.dependsOn gradle.includedBuild('java-generator').task(':generateForSyDeModel')
+tasks.sourcesJar.dependsOn generateGrammarSource
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
@@ -38,7 +43,7 @@ dependencies {
     //implementation 'commons-cli:commons-cli:1.5.0'
 
     implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
-    implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.0'
     antlr 'org.antlr:antlr4:4.10.1'
     implementation 'org.antlr:antlr4-runtime:4.10.1'
     //implementation 'org.ainslec:picocog:1.0.7'
@@ -51,13 +56,14 @@ dependencies {
 generateGrammarSource {
     maxHeapSize = "512m"
     arguments += ['-package', 'forsyde.io.java.adapters.fiodl', '-visitor']
-    outputDirectory file("src-gen/main/java/forsyde/io/java/adapters/fiodl")
+    outputDirectory layout.buildDirectory.dir("generated/${name}/main/java/forsyde/io/java/adapters/fiodl").get().getAsFile()
 }
 
 sourceSets {
     main {
         java {
-            srcDirs += ['src-gen/main/java']
+            srcDirs += layout.buildDirectory.dir("generated/generateGrammarSource/main/java")
+            srcDirs += layout.buildDirectory.dir("generated/forsyde-io/main/java")
         }
     }
 }

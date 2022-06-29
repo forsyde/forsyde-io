@@ -48,10 +48,10 @@ public abstract class VertexProperty {
         } else {
             if (obj instanceof Boolean) {
                 return VertexProperties.BooleanVertexProperty((Boolean) obj);
-            } else if (obj instanceof Integer) {
-                return VertexProperties.IntVertexProperty((Integer) obj);
             } else if (obj instanceof Long) {
                 return VertexProperties.LongVertexProperty((Long) obj);
+            } else if (obj instanceof Integer) {
+                return VertexProperties.IntVertexProperty((Integer) obj);
             } else if (obj instanceof Float) {
                 return VertexProperties.FloatVertexProperty((Float) obj);
             } else if (obj instanceof Double) {

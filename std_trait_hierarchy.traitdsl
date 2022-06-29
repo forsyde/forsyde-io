@@ -169,6 +169,7 @@ namespace parallel {
 }
 
 namespace execution {
+
     vertex Stimulatable {
         prop hasORSemantics is bool = 0_b
         port activators is multiple in Stimulator with EventEdge
@@ -259,6 +260,10 @@ namespace platform {
         prop maxCyclesPerFlit is int
         prop maxConcurrentFlits is int
         prop initialLatency is long
+    }
+
+    vertex DMALikeCommunicationModule refines GenericCommunicationModule {
+
     }
 
     vertex RoundRobinCommunicationModule refines InstrumentedCommunicationModule {

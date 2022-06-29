@@ -5,6 +5,8 @@ import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
+import forsyde.io.java.typed.viewers.decision.Allocated;
+import forsyde.io.java.typed.viewers.platform.GenericProcessingModule;
 import forsyde.io.java.typed.viewers.platform.runtime.FixedPriorityScheduler;
 import forsyde.io.java.typed.viewers.platform.runtime.StaticCyclicScheduler;
 import forsyde.io.java.typed.viewers.visualization.GreyBox;
@@ -12,7 +14,9 @@ import forsyde.io.java.typed.viewers.visualization.Visualizable;
 import org.eclipse.app4mc.amalthea.model.*;
 
 import java.lang.System;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface AmaltheaOS2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
@@ -53,9 +57,12 @@ public interface AmaltheaOS2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 for (SchedulerAllocation allocation : amalthea.getMappingModel().getSchedulerAllocation()) {
                     if (allocation.getScheduler().equals(taskScheduler)) {
                         equivalent(allocation.getExecutingPU()).ifPresent(puVertex -> {
-                            model.connect(runtimeVertex, puVertex, "allocationHost", EdgeTrait.DECISION_ABSTRACTALLOCATION);
-                            GreyBox.enforce(puVertex);
-                            model.connect(puVertex, runtimeVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
+                            GenericProcessingModule.safeCast(puVertex).ifPresent(pu -> {
+                                final Allocated allocated = Allocated.enforce(runtimeVertex);
+                                allocated.setAllocationHostsPort(model, Set.of(pu));
+                                GreyBox.enforce(puVertex);
+                                model.connect(puVertex, runtimeVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
+                            });
                         });
                     }
                 }
