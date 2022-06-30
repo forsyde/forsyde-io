@@ -184,7 +184,10 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
         final MethodSpec.Builder getRequiredPropGetter = MethodSpec.methodBuilder("getRequiredProperties")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class), propClass))
-                .addCode("return $T.of(\n", Map.class);
+                .addStatement("final $T<$T, $T> required = new $T<$T, $T>()",
+                        HashMap.class, String.class, ClassName.get("forsyde.io.java.core", "VertexProperty"),
+                        HashMap.class, String.class, ClassName.get("forsyde.io.java.core", "VertexProperty"))
+                .addCode("required.putAll($T.of(\n", Map.class);
         for (int i = 0; i < vertexTraitSpec.requiredProperties.size(); i++) {
             final PropertySpec propertySpec = vertexTraitSpec.requiredProperties.get(i);
             if (propertySpec.defaultValue == null) {
@@ -214,8 +217,11 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                 getRequiredPropGetter.addCode(",\n");
 
         }
-        getRequiredPropGetter.addStatement(")");
-        return getRequiredPropGetter.build();
+        getRequiredPropGetter.addStatement("))");
+        for (VertexTraitSpec refinedTrait : vertexTraitSpec.refinedTraits) {
+            getRequiredPropGetter.addStatement("required.putAll($L.getRequiredProperties())", refinedTrait.getTraitLocalName());
+        }
+        return getRequiredPropGetter.addStatement("return required").build();
     }
 
     public MethodSpec generateEnforce(VertexTraitSpec vertexTraitSpec) {
