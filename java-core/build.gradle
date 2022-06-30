@@ -63,7 +63,6 @@ sourceSets {
     main {
         java {
             srcDirs += layout.buildDirectory.dir("generated/generateGrammarSource/main/java")
-            srcDirs += layout.buildDirectory.dir("generated/forsyde-io/main/java")
         }
     }
 }

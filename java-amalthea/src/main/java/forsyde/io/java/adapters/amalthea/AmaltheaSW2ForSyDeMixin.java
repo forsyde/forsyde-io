@@ -10,6 +10,7 @@ import forsyde.io.java.typed.viewers.execution.PeriodicStimulus;
 import forsyde.io.java.typed.viewers.execution.Task;
 import forsyde.io.java.typed.viewers.impl.*;
 import forsyde.io.java.typed.viewers.visualization.GreyBox;
+import forsyde.io.java.typed.viewers.visualization.Visualizable;
 import org.antlr.v4.codegen.model.Loop;
 import org.eclipse.app4mc.amalthea.model.*;
 
@@ -181,11 +182,13 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 // do tree search due to possible nesting
                 aTask.getActivityGraph().eAllContents().forEachRemaining(item -> {
                     if (item instanceof RunnableCall) {
-                        final CommunicatingTask communicatingTask = CommunicatingTask.enforce(task);
+                        final LoopingTask loopingTask =LoopingTask.enforce(task);
                         final RunnableCall runnableCall = (RunnableCall) item;
-                        equivalent(runnableCall.getRunnable()).ifPresent(runnableVertex -> {
-                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "callSequence", EdgeTrait.EXECUTION_EXECUTIONEDGE);
-                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
+                        equivalent(runnableCall.getRunnable()).flatMap(Executable::safeCast).ifPresent(exec -> {
+                            loopingTask.insertLoopSequencePort(forSyDeSystemGraph, exec);
+                            taskGreyBox.insertContainedPort(forSyDeSystemGraph, Visualizable.enforce(exec));
+//                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "callSequence", EdgeTrait.EXECUTION_EXECUTIONEDGE);
+//                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                         });
                     } else if (item instanceof WaitEvent) {
                         final WaitEvent waitEvent = (WaitEvent) item;

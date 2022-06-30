@@ -248,6 +248,10 @@ public final class VertexAcessor {
         return insertOrderedMultipleNamedPort(model, src.getViewedVertex(),  dst.getViewedVertex(), srcPortName, dstPortName, 0, ts);
     }
 
+    public static<Tsrc extends VertexViewer, Tdst extends VertexViewer> boolean insertOrderedMultipleNamedPort(ForSyDeSystemGraph model, Tsrc src,  Tdst dst, String srcPortName, String dstPortName, int pos, EdgeTrait... ts) {
+        return insertOrderedMultipleNamedPort(model, src.getViewedVertex(),  dst.getViewedVertex(), srcPortName, dstPortName, pos, ts);
+    }
+
     public static<Tsrc extends VertexViewer, Tdst extends VertexViewer, TdstS extends Iterable<Tdst>> boolean insertOrderedMultipleNamedPort(ForSyDeSystemGraph model, Tsrc src,  TdstS dsts, String srcPortName, String dstPortName, EdgeTrait... ts) {
         boolean defined = true;
         int i = 0;

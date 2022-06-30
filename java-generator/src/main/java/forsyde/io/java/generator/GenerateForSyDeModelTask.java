@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.apache.commons.text.WordUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Task;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.*;
 
@@ -29,8 +30,8 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
     @InputFile
     abstract RegularFileProperty getInputModelDSL();// = getProject().file("traithierarchy.traitdsl");
 
-    @OutputFiles
-    List<File> outFiles = new ArrayList<>();
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDir();
 
     @TaskAction
     public void execute() {
@@ -56,14 +57,14 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
 
     public void generateFiles(TraitHierarchy model) throws IOException {
 //        final File rootOutDir = getProject().getBuildDir().toPath(); //.resolve(Paths.get(outputRootDirName)).toFile();
-        Path root = getProject().getBuildDir().toPath().resolve("generated/forsyde-io/main/java");
+        Path root = getOutputDir().get().getAsFile().toPath();
         Path enumsPath = root.resolve(Paths.get("forsyde/io/java/core/"));
         Path viewersPath = root.resolve("forsyde/io/java/typed/viewers/");
         Files.createDirectories(enumsPath) ;
         Files.createDirectories(viewersPath);
 
-        outFiles.add(JavaFile.builder("forsyde.io.java.core", generateEdgeTraitsEnum(model)).build().writeToFile(root.toFile()));
-        outFiles.add(JavaFile.builder("forsyde.io.java.core", generateVertexTraitEnum(model)).build().writeToFile(root.toFile()));
+        JavaFile.builder("forsyde.io.java.core", generateEdgeTraitsEnum(model)).build().writeToFile(root.toFile());
+        JavaFile.builder("forsyde.io.java.core", generateVertexTraitEnum(model)).build().writeToFile(root.toFile());
 
 //		Files.writeString(edgePath, edgeStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
 //		Files.writeString(vertexPath, vertexStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
@@ -75,8 +76,8 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
             final TypeSpec interfaceSpec = generateVertexInterface(trait);
             final String extraPackages = trait.getNamespaces().isEmpty() ?
                     "" : "." + String.join(".", trait.getNamespaces());
-            outFiles.add(JavaFile.builder("forsyde.io.java.typed.viewers" + extraPackages, interfaceSpec)
-                    .build().writeToFile(root.toFile()));
+            JavaFile.builder("forsyde.io.java.typed.viewers" + extraPackages, interfaceSpec)
+                    .build().writeToFile(root.toFile());
             // Files.writeString(interfacePath, interfaceStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         }
 
@@ -84,21 +85,21 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
             final TypeSpec viewerSpec = generateVertexViewer(trait);
             final String extraPackages = trait.getNamespaces().isEmpty() ?
                     "" : "." + String.join(".", trait.getNamespaces());
-            outFiles.add(JavaFile.builder("forsyde.io.java.typed.viewers" + extraPackages, viewerSpec)
-                    .build().writeToFile(root.toFile()));
+            JavaFile.builder("forsyde.io.java.typed.viewers" + extraPackages, viewerSpec)
+                    .build().writeToFile(root.toFile());
             // Files.writeString(interfacePath, interfaceStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         }
 
-        final Set<Path> outPaths = outFiles.stream().map(File::toPath).collect(Collectors.toSet());
-        Files.walk(root).forEach(s -> {
-            if (!outPaths.contains(s) && s.toFile().isFile()) {
-                try {
-                    Files.deleteIfExists(s);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+//        final Set<Path> outPaths = outFiles.stream().map(File::toPath).collect(Collectors.toSet());
+//        Files.walk(root).forEach(s -> {
+//            if (!outPaths.contains(s) && s.toFile().isFile()) {
+//                try {
+//                    Files.deleteIfExists(s);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
 
     }
 
@@ -370,17 +371,19 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
         return getPortMethod.build();
     }
 
-    public MethodSpec generatePortSetter(PortSpec port) {
+    public Set<MethodSpec> generatePortSetters(PortSpec port) {
         final String traitName = port.vertexTrait.name.replace("::", "_").toUpperCase();
         final String extraPackages = port.vertexTrait.getNamespaces().isEmpty() ?
                 "" : "." + String.join(".", port.vertexTrait.getNamespaces());
         final TypeName vertexClass = ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, port.vertexTrait.getTraitLocalName());
         final ParameterizedTypeName listOut = ParameterizedTypeName.get(ClassName.get(List.class), vertexClass);
         final ParameterizedTypeName setOut = ParameterizedTypeName.get(ClassName.get(Set.class), vertexClass);
+        final Set<MethodSpec.Builder> methodsBuilders = new HashSet<>();
         MethodSpec.Builder getPortMethod = MethodSpec.methodBuilder("set" + toCamelCase(port.name) + "Port")
                 .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
                 .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
                 .returns(TypeName.BOOLEAN);
+        methodsBuilders.add(getPortMethod);
         if (port.multiple.orElse(true)) {
             if (port.ordered.orElse(false)) {
                 getPortMethod.addParameter(listOut, "vertexes");
@@ -396,6 +399,29 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                                     ClassName.get("forsyde.io.java.core", "EdgeTrait"),
                                     port.edgeTraitSpec.name.replace("::", "_").toUpperCase()
                             );
+                            methodsBuilders.add(
+                                MethodSpec.methodBuilder("insert" + toCamelCase(port.name) + "Port")
+                                    .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                                    .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
+                                    .addParameter(vertexClass, "vertex")
+                                    .addParameter(Integer.class, "index")
+                                    .addStatement("return $T.insertOrderedMultipleNamedPort(model, this, vertex, $S, null, index, $T.$L)",
+                                            ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                            port.name,
+                                            ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                                            port.edgeTraitSpec.name.replace("::", "_").toUpperCase())
+                                    .returns(TypeName.BOOLEAN));
+                            methodsBuilders.add(
+                                    MethodSpec.methodBuilder("insert" + toCamelCase(port.name) + "Port")
+                                            .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                                            .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
+                                            .addParameter(vertexClass, "vertex")
+                                            .addStatement("return $T.insertOrderedMultipleNamedPort(model, this, vertex, $S, null, $T.$L)",
+                                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                                    port.name,
+                                                    ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                                                    port.edgeTraitSpec.name.replace("::", "_").toUpperCase())
+                                            .returns(TypeName.BOOLEAN));
                             break;
                         case INCOMING:
                             statement = "return $T.insertOrderedMultipleNamedPort(model, vertexes, this, null, $S, $T.$L)";
@@ -405,6 +431,29 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                                     ClassName.get("forsyde.io.java.core", "EdgeTrait"),
                                     port.edgeTraitSpec.name.replace("::", "_").toUpperCase()
                             );
+                            methodsBuilders.add(
+                                    MethodSpec.methodBuilder("insert" + toCamelCase(port.name) + "Port")
+                                            .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                                            .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
+                                            .addParameter(vertexClass, "vertex")
+                                            .addParameter(Integer.class, "index")
+                                            .addStatement("return $T.insertOrderedMultipleNamedPort(model, this, vertex, null, $S, index, $T.$L)",
+                                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                                    port.name,
+                                                    ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                                                    port.edgeTraitSpec.name.replace("::", "_").toUpperCase())
+                                            .returns(TypeName.BOOLEAN));
+                            methodsBuilders.add(
+                                    MethodSpec.methodBuilder("insert" + toCamelCase(port.name) + "Port")
+                                            .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                                            .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
+                                            .addParameter(vertexClass, "vertex")
+                                            .addStatement("return $T.insertOrderedMultipleNamedPort(model, this, vertex, null, $S, $T.$L)",
+                                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                                    port.name,
+                                                    ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                                                    port.edgeTraitSpec.name.replace("::", "_").toUpperCase())
+                                            .returns(TypeName.BOOLEAN));
                             break;
                     }
                 } else {
@@ -416,12 +465,50 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                             getPortMethod.addStatement(statement,
                                     ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                                     port.name);
+                            methodsBuilders.add(
+                                    MethodSpec.methodBuilder("insert" + toCamelCase(port.name) + "Port")
+                                            .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                                            .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
+                                            .addParameter(vertexClass, "vertex")
+                                            .addParameter(Integer.class, "index")
+                                            .addStatement("return $T.insertOrderedMultipleNamedPort(model, this, vertex, $S, null, index)",
+                                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                                    port.name)
+                                            .returns(TypeName.BOOLEAN));
+                            methodsBuilders.add(
+                                    MethodSpec.methodBuilder("insert" + toCamelCase(port.name) + "Port")
+                                            .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                                            .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
+                                            .addParameter(vertexClass, "vertex")
+                                            .addStatement("return $T.insertOrderedMultipleNamedPort(model, this, vertex, $S, null)",
+                                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                                    port.name)
+                                            .returns(TypeName.BOOLEAN));
                             break;
                         case INCOMING:
                             statement = "return $T.insertOrderedMultipleNamedPort(model, vertexes, this, null, $S)";
                             getPortMethod.addStatement(statement,
                                     ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                                     port.name);
+                            methodsBuilders.add(
+                                    MethodSpec.methodBuilder("insert" + toCamelCase(port.name) + "Port")
+                                            .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                                            .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
+                                            .addParameter(vertexClass, "vertex")
+                                            .addParameter(Integer.class, "index")
+                                            .addStatement("return $T.insertOrderedMultipleNamedPort(model, this, vertex, null, $S, index)",
+                                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                                    port.name)
+                                            .returns(TypeName.BOOLEAN));
+                            methodsBuilders.add(
+                                    MethodSpec.methodBuilder("insert" + toCamelCase(port.name) + "Port")
+                                            .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                                            .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
+                                            .addParameter(vertexClass, "vertex")
+                                            .addStatement("return $T.insertOrderedMultipleNamedPort(model, this, vertex, null, $S)",
+                                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                                    port.name)
+                                            .returns(TypeName.BOOLEAN));
                             break;
                     }
                 }
@@ -440,6 +527,17 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                                     ClassName.get("forsyde.io.java.core", "EdgeTrait"),
                                     port.edgeTraitSpec.name.replace("::", "_").toUpperCase()
                             );
+                            methodsBuilders.add(
+                                    MethodSpec.methodBuilder("insert" + toCamelCase(port.name) + "Port")
+                                            .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                                            .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
+                                            .addParameter(vertexClass, "vertex")
+                                            .addStatement("return $T.addMultipleNamedPort(model, this, vertex, $S, null, $T.$L)",
+                                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                                    port.name,
+                                                    ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                                                    port.edgeTraitSpec.name.replace("::", "_").toUpperCase())
+                                            .returns(TypeName.BOOLEAN));
                             break;
                         case INCOMING:
                             statement = "return $T.addMultipleNamedPort(model, vertexes, this, null, $S, $T.$L)";
@@ -449,6 +547,17 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                                     ClassName.get("forsyde.io.java.core", "EdgeTrait"),
                                     port.edgeTraitSpec.name.replace("::", "_").toUpperCase()
                             );
+                            methodsBuilders.add(
+                                    MethodSpec.methodBuilder("insert" + toCamelCase(port.name) + "Port")
+                                            .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                                            .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
+                                            .addParameter(vertexClass, "vertex")
+                                            .addStatement("return $T.addMultipleNamedPort(model, this, vertex, null, $S, $T.$L)",
+                                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                                    port.name,
+                                                    ClassName.get("forsyde.io.java.core", "EdgeTrait"),
+                                                    port.edgeTraitSpec.name.replace("::", "_").toUpperCase())
+                                            .returns(TypeName.BOOLEAN));
                             break;
                     }
                 } else {
@@ -459,12 +568,30 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                             getPortMethod.addStatement(statement,
                                     ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                                     port.name);
+                            methodsBuilders.add(
+                                    MethodSpec.methodBuilder("insert" + toCamelCase(port.name) + "Port")
+                                            .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                                            .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
+                                            .addParameter(vertexClass, "vertex")
+                                            .addStatement("return $T.addMultipleNamedPort(model, this, vertex, $S, null)",
+                                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                                    port.name)
+                                            .returns(TypeName.BOOLEAN));
                             break;
                         case INCOMING:
                             statement = "return $T.addMultipleNamedPort(model, vertexes, this, null, $S)";
                             getPortMethod.addStatement(statement,
                                     ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                                     port.name);
+                            methodsBuilders.add(
+                                    MethodSpec.methodBuilder("insert" + toCamelCase(port.name) + "Port")
+                                            .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                                            .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
+                                            .addParameter(vertexClass, "vertex")
+                                            .addStatement("return $T.addMultipleNamedPort(model, this, vertex, null, $S)",
+                                                    ClassName.get("forsyde.io.java.core", "VertexAcessor"),
+                                                    port.name)
+                                            .returns(TypeName.BOOLEAN));
                             break;
                     }
                 }
@@ -513,7 +640,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                 }
             }
         }
-        return getPortMethod.build();
+        return methodsBuilders.stream().map(MethodSpec.Builder::build).collect(Collectors.toSet());
     }
 
     public MethodSpec generatePortSetterToOtherPort(PortSpec port) {
@@ -848,7 +975,9 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
         }
         for (PortSpec port : trait.requiredPorts) {
             traitInterface.addMethod(generatePortGetter(port));
-            traitInterface.addMethod(generatePortSetter(port));
+            for (MethodSpec portSetter: generatePortSetters(port)) {
+                traitInterface.addMethod(portSetter);
+            }
             traitInterface.addMethod(generatePortSetterToOtherPort(port));
         }
         MethodSpec.Builder conformsMethod = MethodSpec.methodBuilder("conforms")
@@ -985,8 +1114,5 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
         }
     }
 
-    public List<File> getOutFiles() {
-        return outFiles;
-    }
 
 }
