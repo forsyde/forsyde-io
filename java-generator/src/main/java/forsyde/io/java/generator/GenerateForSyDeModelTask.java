@@ -290,6 +290,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
         ParameterizedTypeName setType = ParameterizedTypeName.get(ClassName.get(HashSet.class), vertexClass);
         MethodSpec.Builder getPortMethod = MethodSpec.methodBuilder("get" + toCamelCase(port.name) + "Port")
                 .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                .addComment("Returns the vertex(es) that declares $L, connected at port $L in the underlying model, in accordance to the trait hierarchy specification.", traitName,  port.name)
                 .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model");
         // .addParameter(vertexClass, "vertex");
         if (port.multiple.orElse(true)) {
@@ -387,6 +388,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
         final Set<MethodSpec.Builder> methodsBuilders = new HashSet<>();
         MethodSpec.Builder getPortMethod = MethodSpec.methodBuilder("set" + toCamelCase(port.name) + "Port")
                 .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                .addComment("Connects vertex(es) that declare(s) $L at port $L in the underlying model, in accordance to the trait hierarchy specification.", traitName,  port.name)
                 .addParameter(ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph"), "model")
                 .returns(TypeName.BOOLEAN);
         methodsBuilders.add(getPortMethod);

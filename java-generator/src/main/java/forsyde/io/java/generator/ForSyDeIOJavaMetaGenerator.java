@@ -20,6 +20,7 @@ public class ForSyDeIOJavaMetaGenerator implements Plugin<Project> {
 			generateForSyDeModelTask.getOutputDir().convention(project.getLayout().getBuildDirectory().dir("generated/forsyde-io/main/java"));
 			Objects.requireNonNull(project.getTasks().findByName("compileJava")).dependsOn(generateForSyDeModelTask);
 			Objects.requireNonNull(project.getTasks().findByName("build")).dependsOn(generateForSyDeModelTask);
+			Objects.requireNonNull(project.getTasks().findByName("sourcesJar")).dependsOn(generateForSyDeModelTask);
 
 			final SourceSetContainer sourceSetContainer = project.getExtensions().getByType(SourceSetContainer.class);
 			sourceSetContainer.forEach(sourceSet -> {

@@ -1,90 +1,93 @@
-grammar ForSyDeFioDL;
+parser grammar ForSyDeFioDL;
 
-fragment ALPHABETIC: [a-zA-Z];
+options { tokenVocab=ForSyDeFioDLLex; }
 
-NUMERIC: [0-9];
-
-fragment ALPHANUM: [a-zA-Z0-9];
-
-QUALIFIER: '::';
-
-CLARIFIER: ':';
-
-SEPARATOR: ',';
-
-QUOTE: '"';
-
-PORTS_START: '(';
-
-PORTS_END: ')';
-
-LIST_START: '[';
-
-LIST_END: ']';
-
-DICT_START: '{';
-
-DICT_END: '}';
-
-INTEGER: ('-')?NUMERIC+('_i')?;
-LONG: ('-')?NUMERIC+'_l';
-REAL: ('-')?(NUMERIC*'.'NUMERIC+ | NUMERIC+'.'NUMERIC*)'_'NUMERIC+;
-
-QUALIFIED_ID
-    :   ('::'|ALPHABETIC)('::'|'_'|ALPHANUM)*
-;
-
-INLINE_SYMBOLS: ('*'|'.'|'='|';'|'_'|'+'|'<'|'>'|'-');
-
-WS : [ \t\r\n]+ -> channel(HIDDEN) ;
+//fragment ALPHABETIC: [a-zA-Z];
+//
+//NUMERIC: [0-9];
+//
+//fragment ALPHANUM: [a-zA-Z0-9];
+//
+//QUALIFIER: '::';
+//
+//CLARIFIER: ':';
+//
+//SEPARATOR: ',';
+//
+//QUOTE: '"';
+//
+//PORTS_START: '(';
+//
+//PORTS_END: ')';
+//
+//LIST_START: '[';
+//
+//LIST_END: ']';
+//
+//DICT_START: '{';
+//
+//DICT_END: '}';
+//
+//INTEGER: ('-')?NUMERIC+('_i')?;
+//LONG: ('-')?NUMERIC+'_l';
+//REAL: ('-')?(NUMERIC*'.'NUMERIC+ | NUMERIC+'.'NUMERIC*)'_'NUMERIC+;
+//
+//QUALIFIED_STRING
+//    :   ('::'|ALPHABETIC)('::'|'_'|ALPHANUM)*
+//;
+//
+//INLINE_SYMBOLS: ('*'|'.'|'='|';'|'_'|'+'|'<'|'>'|'-');
+//
+//WS : [ \t\r\n]+ -> channel(HIDDEN) ;
 
 number: intVal=INTEGER | longVal=LONG | realVal=REAL;
 
-stringVal:
-    QUOTE  (
-       content+=QUALIFIED_ID |
-       content+=NUMERIC |
-       content+=INTEGER |
-       content+=LONG |
-       content+=REAL |
-       content+=INLINE_SYMBOLS |
-       content+=PORTS_START |
-       content+=PORTS_END |
-       content+=LIST_START |
-       content+=LIST_END |
-       content+=DICT_START |
-       content+=DICT_END |
-       content+=SEPARATOR  |
-       content+=WS
-   )* QUOTE
-;
+//stringVal:
+//    QUOTE  (
+//       content+=QUALIFIED_STRING |
+//       content+=NUMERIC |
+//       content+=INTEGER |
+//       content+=LONG |
+//       content+=REAL |
+//       content+=INLINE_SYMBOLS |
+//       content+=PORTS_START |
+//       content+=PORTS_END |
+//       content+=LIST_START |
+//       content+=LIST_END |
+//       content+=DICT_START |
+//       content+=DICT_END |
+//       content+=SEPARATOR  |
+//       content+=WS
+//   )* QUOTE
+//;
 
 systemGraph:
-    'systemgraph' DICT_START (vertexes+=vertex | edges+=edge)* DICT_END
+    SYSTEMGRAPH_LIT DICT_START (vertexes+=vertex | edges+=edge)* DICT_END
 ;
 
 vertex:
-    'vertex' name=QUALIFIED_ID
-    LIST_START (traits+=QUALIFIED_ID (SEPARATOR traits+=QUALIFIED_ID)*)? LIST_END
-    PORTS_START (ports+=QUALIFIED_ID (SEPARATOR ports+=QUALIFIED_ID)*)? PORTS_END
-    DICT_START (propertyNames+=stringVal CLARIFIER propertyValues+=vertexPropertyValue
-        (SEPARATOR propertyNames+=stringVal CLARIFIER propertyValues+=vertexPropertyValue)*)? DICT_END
+    VERTEX_LIT (name=QUALIFIED_STRING | QUOTE_START name=QUOTED_STRING QUOTE_END)
+    LIST_START (traits+=QUALIFIED_STRING (SEPARATOR traits+=QUALIFIED_STRING)*)? LIST_END
+    PORTS_START (ports+=QUALIFIED_STRING (SEPARATOR ports+=QUALIFIED_STRING)*)? PORTS_END
+    DICT_START (QUOTE_START propertyNames+=QUOTED_STRING QUOTE_END CLARIFIER propertyValues+=vertexPropertyValue
+        (SEPARATOR QUOTE_START propertyNames+=QUOTED_STRING QUOTE_END CLARIFIER propertyValues+=vertexPropertyValue)*)? DICT_END
 ;
 
 vertexPropertyValue:
     number |
-    stringVal |
+    booleanValue=BOOLEAN |
+    QUOTE_START stringValue=QUOTED_STRING QUOTE_END |
     vertexPropertyArray |
     vertexPropertyMap
 ;
 
 vertexPropertyArray:
-    '[' (arrayEntries+=vertexPropertyValue (SEPARATOR arrayEntries+=vertexPropertyValue)*)? ']'
+    LIST_START (arrayEntries+=vertexPropertyValue (SEPARATOR arrayEntries+=vertexPropertyValue)*)? LIST_END
 ;
 
 vertexPropertyMapKey:
     number |
-    stringVal
+    QUOTE_START stringValue=QUOTED_STRING QUOTE_END
 ;
 
 vertexPropertyMap:
@@ -92,22 +95,27 @@ vertexPropertyMap:
 ;
 
 edge:
-    'edge'
-    '[' (traits+=QUALIFIED_ID (SEPARATOR traits+=QUALIFIED_ID)*)? ']'
-    'from' source=QUALIFIED_ID ('port' sourceport=QUALIFIED_ID)? 'to' target=QUALIFIED_ID ('port' targetport=QUALIFIED_ID)?
+    EDGE_LIT
+    LIST_START (traits+=QUALIFIED_STRING (SEPARATOR traits+=QUALIFIED_STRING)*)? LIST_END
+    FROM_LIT
+    (source=QUALIFIED_STRING | QUOTE_START source=QUOTED_STRING QUOTE_END)
+    (PORT_LIT (sourceport=QUALIFIED_STRING | QUOTE_START sourceport=QUOTED_STRING QUOTE_END))?
+    TO_LIT
+    (target=QUALIFIED_STRING | QUOTE_START target=QUOTED_STRING QUOTE_END)
+    (PORT_LIT (targetport=QUALIFIED_STRING | QUOTE_START targetport=QUOTED_STRING QUOTE_END))?
 
 ;
 
 //edgeTrait:
-//	name=QUALIFIED_ID ('refines' refinedTraits+=QUALIFIED_ID (',' refinedTraits+=QUALIFIED_ID)?)?
+//	name=QUALIFIED_STRING ('refines' refinedTraits+=QUALIFIED_STRING (',' refinedTraits+=QUALIFIED_STRING)?)?
 //	('{'
-//        ('source' sourceVertexes+=QUALIFIED_ID | 'target' targetVertexes+=QUALIFIED_ID )*
+//        ('source' sourceVertexes+=QUALIFIED_STRING | 'target' targetVertexes+=QUALIFIED_STRING )*
 //	 '}')?
 //;
 //
 //
 //vertexPort:
-//	name=QUALIFIED_ID 'is' (modifiers+=QUALIFIED_ID)* connectedVertexTrait=QUALIFIED_ID ('with' connectingEdgeTrait=QUALIFIED_ID)?
+//	name=QUALIFIED_STRING 'is' (modifiers+=QUALIFIED_STRING)* connectedVertexTrait=QUALIFIED_STRING ('with' connectingEdgeTrait=QUALIFIED_STRING)?
 //;
 //
 //vertexPropertyType:
@@ -134,19 +142,19 @@ edge:
 //
 //
 //vertexProperty:
-//	name=QUALIFIED_ID 'is' propertyType=vertexPropertyType
+//	name=QUALIFIED_STRING 'is' propertyType=vertexPropertyType
 //;
 //
 //vertexTrait:
-//	name=QUALIFIED_ID
-//	('refines' refinedTraits+=QUALIFIED_ID (',' refinedTraits+=QUALIFIED_ID)?)?
+//	name=QUALIFIED_STRING
+//	('refines' refinedTraits+=QUALIFIED_STRING (',' refinedTraits+=QUALIFIED_STRING)?)?
 //	('{'
 //	('port' requiredPorts+=vertexPort | 'prop' requiredProperties+=vertexProperty | 'property' requiredProperties+=vertexProperty)*
 //	'}')?
 //;
 //
 //traitHierarchy:
-//	namespace=QUALIFIED_ID '{'
+//	namespace=QUALIFIED_STRING '{'
 //	('vertex' vertexTrait | 'edge' edgeTrait | 'namespace' traitHierarchy)*
 //	'}'
 //	;

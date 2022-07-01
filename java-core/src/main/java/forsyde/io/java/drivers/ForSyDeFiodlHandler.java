@@ -1,8 +1,8 @@
 package forsyde.io.java.drivers;
 
 import forsyde.io.java.adapters.fiodl.ForSyDeFioDLBaseVisitor;
-import forsyde.io.java.adapters.fiodl.ForSyDeFioDLLexer;
-import forsyde.io.java.adapters.fiodl.ForSyDeFioDLParser;
+import forsyde.io.java.adapters.fiodl.ForSyDeFioDLLex;
+import forsyde.io.java.adapters.fiodl.ForSyDeFioDL;
 import forsyde.io.java.core.*;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -47,10 +47,10 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
 
     @Override
     public ForSyDeSystemGraph loadModel(InputStream in) throws Exception {
-        final ForSyDeFioDLLexer forSyDeFioDLLexer = new ForSyDeFioDLLexer(CharStreams.fromStream(in));
-        final CommonTokenStream commonTokenStream = new CommonTokenStream(forSyDeFioDLLexer);
-        final ForSyDeFioDLParser forSyDeFioDLParser = new ForSyDeFioDLParser(commonTokenStream);
-        return visitSystemGraphDirect(forSyDeFioDLParser.systemGraph());
+        final ForSyDeFioDLLex ForSyDeFioDLLex = new ForSyDeFioDLLex(CharStreams.fromStream(in));
+        final CommonTokenStream commonTokenStream = new CommonTokenStream(ForSyDeFioDLLex);
+        final ForSyDeFioDL ForSyDeFioDL = new ForSyDeFioDL(commonTokenStream);
+        return visitSystemGraphDirect(ForSyDeFioDL.systemGraph());
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("systemgraph {\n");
         for (Vertex v: model.vertexSet()) {
-            stringBuilder.append("  vertex ").append(v.getIdentifier()).append("\n")
+            stringBuilder.append("  vertex ").append('"').append(v.getIdentifier()).append('"').append("\n")
                 .append("  [").append(v.vertexTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(", "))).append("]\n")
                 .append("  (").append(v.ports.stream().sorted().collect(Collectors.joining(", "))).append(")\n");
             if (v.properties.isEmpty())
@@ -74,10 +74,10 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         for (EdgeInfo e : model.edgeSet()) {
             stringBuilder.append("  edge ");
             stringBuilder.append("[").append(e.edgeTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(","))).append("] ");
-            stringBuilder.append("from ").append(e.sourceId).append(" ");
-            e.getSourcePort().ifPresent(p -> stringBuilder.append("port " + p + " "));
-            stringBuilder.append("to ").append(e.targetId).append(" ");
-            e.getTargetPort().ifPresent(p -> stringBuilder.append("port " + p));
+            stringBuilder.append("from ").append('"').append(e.sourceId).append('"').append(" ");
+            e.getSourcePort().ifPresent(p -> stringBuilder.append("port \"").append(p).append("\" "));
+            stringBuilder.append("to ").append('"').append(e.targetId).append('"').append(" ");
+            e.getTargetPort().ifPresent(p -> stringBuilder.append("port \"").append(p).append("\""));
             stringBuilder.append("\n");
         }
         stringBuilder.append("}");
@@ -88,7 +88,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         return VertexProperties.cases()
                 .StringVertexProperty(s -> "\"" + s + "\"")
                 .IntVertexProperty(i -> i + "_i")
-                .BooleanVertexProperty(b -> b.toString())
+                .BooleanVertexProperty(b -> b ? "1_b" : "0_b")
                 .FloatVertexProperty(f -> f.toString() + "_32")
                 .DoubleVertexProperty(d -> d.toString() + "_64")
                 .LongVertexProperty(l -> l.toString() + "_l")
@@ -117,7 +117,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
                 .apply(property);
     }
 
-    public Object visitNumberDirect(ForSyDeFioDLParser.NumberContext ctx) throws FioDLSyntaxException {
+    public Object visitNumberDirect(ForSyDeFioDL.NumberContext ctx) throws FioDLSyntaxException {
         if (ctx.intVal != null) {
             return Integer.parseInt(ctx.intVal.getText().replace("_i", ""));
         } else if (ctx.longVal != null) {
@@ -135,29 +135,29 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         }
     }
 
-    public String visitStringValDirect(ForSyDeFioDLParser.StringValContext ctx) throws FioDLSyntaxException {
-        if (ctx.content != null) {
-            return ctx.content.stream().map(Token::getText).collect(Collectors.joining());
-        }
-//        else if (ctx.multiLineContent != null) {
-//            System.out.println("multi");
-//            System.out.println(ctx.multiLineContent.stream().map(Token::getText).collect(Collectors.joining("\n")));
-//            return VertexProperty.create(
-//                    ctx.multiLineContent.stream().map(Token::getText).collect(Collectors.joining("\n"))
-//            );
+//    public String visitStringValDirect(ForSyDeFioDL.StringValContext ctx) throws FioDLSyntaxException {
+//        if (ctx.content != null) {
+//            return ctx.content.stream().map(Token::getText).collect(Collectors.joining());
 //        }
-        else {
-            throw new FioDLSyntaxException("Could not parse string property at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
-        }
-    }
+////        else if (ctx.multiLineContent != null) {
+////            System.out.println("multi");
+////            System.out.println(ctx.multiLineContent.stream().map(Token::getText).collect(Collectors.joining("\n")));
+////            return VertexProperty.create(
+////                    ctx.multiLineContent.stream().map(Token::getText).collect(Collectors.joining("\n"))
+////            );
+////        }
+//        else {
+//            throw new FioDLSyntaxException("Could not parse string property at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
+//        }
+//    }
 
-    public ForSyDeSystemGraph visitSystemGraphDirect(ForSyDeFioDLParser.SystemGraphContext ctx) throws FioDLSyntaxException, InconsistentModelException {
+    public ForSyDeSystemGraph visitSystemGraphDirect(ForSyDeFioDL.SystemGraphContext ctx) throws FioDLSyntaxException, InconsistentModelException {
         final ForSyDeSystemGraph newModel = new ForSyDeSystemGraph();
-        for (ForSyDeFioDLParser.VertexContext vertexContext : ctx.vertex()) {
+        for (ForSyDeFioDL.VertexContext vertexContext : ctx.vertex()) {
             final Vertex vertex = visitVertexDirect(vertexContext);
             newModel.addVertex(vertex);
         }
-        for (ForSyDeFioDLParser.EdgeContext edgeContext : ctx.edges) {
+        for (ForSyDeFioDL.EdgeContext edgeContext : ctx.edges) {
             final EdgeInfo edgeInfo = visitEdgeDirect(edgeContext);
             final Vertex source = newModel.vertexSet().stream().filter(v -> v.getIdentifier().equals(edgeInfo.sourceId)).findFirst().orElseThrow(() ->
                     new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
@@ -180,7 +180,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         return newModel;
     }
 
-    protected Vertex visitVertexDirect(ForSyDeFioDLParser.VertexContext ctx) throws FioDLSyntaxException {
+    protected Vertex visitVertexDirect(ForSyDeFioDL.VertexContext ctx) throws FioDLSyntaxException {
         final Vertex newVertex = new Vertex(ctx.name.getText());
         for (Token traitToken : ctx.traits) {
             newVertex.addTraits(VertexTrait.fromName(traitToken.getText()));
@@ -189,37 +189,41 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
             newVertex.ports.add(portToken.getText());
         }
         for (int i = 0; i < ctx.propertyNames.size(); i++) {
-            final String propName = visitStringValDirect(ctx.propertyNames.get(i));
+//            final String propName = visitStringValDirect(ctx.propertyNames.get(i));
+            final String propName = ctx.propertyNames.get(i).getText();
             final VertexProperty propVal = visitVertexPropertyValueDirect(ctx.propertyValues.get(i));
             newVertex.properties.put(propName, propVal);
         }
         return newVertex;
     }
 
-    public Object visitVertexPropertyKeyDirect(ForSyDeFioDLParser.VertexPropertyMapKeyContext ctx) throws FioDLSyntaxException {
+    public Object visitVertexPropertyKeyDirect(ForSyDeFioDL.VertexPropertyMapKeyContext ctx) throws FioDLSyntaxException {
         if (ctx.number() != null) {
             return visitNumberDirect(ctx.number());
-        } else if (ctx.stringVal() != null) {
-            return visitStringValDirect(ctx.stringVal());
+        } else if (ctx.stringValue != null) {
+            return ctx.stringValue.getText();
+//            return visitStringValDirect(ctx.stringVal());
         } else {
             throw new FioDLSyntaxException("Could not parse map key property at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
         }
     }
 
-    public VertexProperty visitVertexPropertyValueDirect(ForSyDeFioDLParser.VertexPropertyValueContext ctx) throws FioDLSyntaxException {
+    public VertexProperty visitVertexPropertyValueDirect(ForSyDeFioDL.VertexPropertyValueContext ctx) throws FioDLSyntaxException {
         if (ctx.number() != null) {
             return VertexProperty.create(visitNumberDirect(ctx.number()));
-        } else if (ctx.stringVal() != null) {
-            return VertexProperty.create(visitStringValDirect(ctx.stringVal()));
+        } else if (ctx.booleanValue != null) {
+            return VertexProperty.create(ctx.booleanValue.getText().equals("1_b"));
+        } else if (ctx.stringValue != null) {
+            return VertexProperty.create(ctx.stringValue.getText());
         } else if (ctx.vertexPropertyArray() != null) {
-            final ForSyDeFioDLParser.VertexPropertyArrayContext arrayContext = ctx.vertexPropertyArray();
+            final ForSyDeFioDL.VertexPropertyArrayContext arrayContext = ctx.vertexPropertyArray();
             final List<VertexProperty> props = new ArrayList<>(arrayContext.arrayEntries.size());
-            for (ForSyDeFioDLParser.VertexPropertyValueContext child : arrayContext.arrayEntries) {
+            for (ForSyDeFioDL.VertexPropertyValueContext child : arrayContext.arrayEntries) {
                 props.add(visitVertexPropertyValueDirect(child));
             }
             return VertexProperty.create(props);
         } else if (ctx.vertexPropertyMap() != null) {
-            final ForSyDeFioDLParser.VertexPropertyMapContext mapContext = ctx.vertexPropertyMap();
+            final ForSyDeFioDL.VertexPropertyMapContext mapContext = ctx.vertexPropertyMap();
             boolean isIntMap = true;
             Object firstKey = null;
             // we also catch index out of bounds exception because some dictionaries may be empty, just like {}
@@ -252,7 +256,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         }
     }
 
-    public EdgeInfo visitEdgeDirect(ForSyDeFioDLParser.EdgeContext ctx) {
+    public EdgeInfo visitEdgeDirect(ForSyDeFioDL.EdgeContext ctx) {
         final EdgeInfo edgeInfo = new EdgeInfo(ctx.source.getText(), ctx.target.getText());
         if (ctx.sourceport != null) edgeInfo.setSourcePort(ctx.sourceport.getText());
         if (ctx.targetport != null) edgeInfo.setTargetPort(ctx.targetport.getText());

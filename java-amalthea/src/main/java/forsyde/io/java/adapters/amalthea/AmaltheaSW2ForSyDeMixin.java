@@ -177,6 +177,8 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             forSyDeSystemGraph.addVertex(taskVertex);
             addEquivalence(aTask, taskVertex);
             final LoopingTask task = LoopingTask.enforce(taskVertex);
+            // since app4mc is basically activity based, all tasks have AND semantics
+            task.setHasORSemantics(false);
             // first, go in the activity graph and figure out if the task awaits for something
             if (aTask.getActivityGraph() != null) {
                 // do tree search due to possible nesting
