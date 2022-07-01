@@ -4,6 +4,7 @@ project.ext.niceName = "Java Graphviz Driver"
 dependencies {
 
     implementation 'guru.nidi:graphviz-java:0.18.1'
+    implementation 'org.ainslec:picocog:1.0.7'
 
     implementation project(":java-core")
 }

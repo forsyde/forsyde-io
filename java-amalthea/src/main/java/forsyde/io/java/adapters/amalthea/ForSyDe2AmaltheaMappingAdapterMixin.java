@@ -90,7 +90,7 @@ public interface ForSyDe2AmaltheaMappingAdapterMixin extends EquivalenceModel2Mo
         if (AbstractScheduler.conforms(source)) {
             equivalent(source).map(elem -> (OperatingSystem) elem).stream().flatMap(os -> os.getTaskSchedulers().stream())
                 .forEach(taskScheduler -> {
-                    equivalent(target).map(elem -> (ProcessingUnit) elem).ifPresent(targetPu -> {
+                    equivalent(target).filter(elem -> elem instanceof ProcessingUnit).map(elem -> (ProcessingUnit) elem).ifPresent(targetPu -> {
                         final SchedulerAllocation schedulerAllocation = AmaltheaFactory.eINSTANCE.createSchedulerAllocation();
                         schedulerAllocation.setScheduler(taskScheduler);
                         schedulerAllocation.setExecutingPU(targetPu);

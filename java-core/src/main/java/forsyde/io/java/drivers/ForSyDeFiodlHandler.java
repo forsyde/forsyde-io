@@ -89,8 +89,8 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
                 .StringVertexProperty(s -> "\"" + s + "\"")
                 .IntVertexProperty(i -> i + "_i")
                 .BooleanVertexProperty(b -> b ? "1_b" : "0_b")
-                .FloatVertexProperty(f -> f.toString() + "_32")
-                .DoubleVertexProperty(d -> d.toString() + "_64")
+                .FloatVertexProperty(f -> String.format(Locale.ENGLISH, "%17.9f", f) + "_32")
+                .DoubleVertexProperty(d -> String.format(Locale.ENGLISH, "%18.11f", d) + "_64")
                 .LongVertexProperty(l -> l.toString() + "_l")
                 .ArrayVertexProperty(a ->
                     "[\n" +

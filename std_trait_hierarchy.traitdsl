@@ -327,15 +327,15 @@ namespace decision {
     edge AbstractScheduling
 
     vertex Allocated {
-        port allocationHosts is out multiple unordered platform::DigitalModule
+        port allocationHosts is out multiple unordered platform::DigitalModule with AbstractAllocation
     }
 
     vertex MemoryMapped refines Allocated {
-        port mappingHosts is out multiple unordered platform::GenericMemoryModule
+        port mappingHosts is out multiple unordered platform::GenericMemoryModule with AbstractMapping
     }
 
     vertex Scheduled {
-        port schedulers is out multiple unordered platform::runtime::AbstractScheduler
+        port schedulers is out multiple unordered platform::runtime::AbstractScheduler with AbstractScheduling
     }
 
     namespace sdf {
@@ -381,7 +381,7 @@ namespace visualization {
     }
 
     vertex GreyBox refines Visualizable {
-        port contained is multiple out Visualizable
+        port contained is multiple out Visualizable with VisualContainment
     }
 
 }

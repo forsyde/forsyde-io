@@ -44,12 +44,11 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         profPu.setModalInstructionsPerCycle(provisions);
     }
 
-    default void fromCUIntoVertex(ForSyDeSystemGraph forSyDeSystemGraph, ConnectionHandler connectionHandler, Vertex v) {
+    default void fromCUIntoVertex(ForSyDeSystemGraph forSyDeSystemGraph, ConnectionHandler connectionHandler, Vertex connectionHandlerVertex) {
         switch (connectionHandler.getDefinition().getPolicy()) {
             case ROUND_ROBIN:
-                final Vertex rrVertex = new Vertex(v.getIdentifier() + "Scheduler");
-                final RoundRobinCommunicationModule roundRobinCommunicationModule = RoundRobinCommunicationModule.enforce(v);
-                final RoundRobinScheduler roundRobinScheduler = RoundRobinScheduler.enforce(rrVertex);
+                final RoundRobinScheduler roundRobinScheduler = RoundRobinScheduler.enforce(forSyDeSystemGraph.newVertex(connectionHandlerVertex.getIdentifier() + "Scheduler"));
+                final RoundRobinCommunicationModule roundRobinCommunicationModule = RoundRobinCommunicationModule.enforce(connectionHandlerVertex);
                 final List<HwConnection> outgoingConnections = connectionHandler.getPorts().stream().flatMap(p -> p.getConnections().stream())
                         .filter(p -> p.getPort1().getNamedContainer().equals(connectionHandler)).collect(Collectors.toList());
                 final List<HwConnection> incomingConnections = connectionHandler.getPorts().stream().flatMap(p -> p.getConnections().stream())
@@ -59,12 +58,10 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 incomingConnections.forEach(p -> allocation.put(p.getPort1().getNamedContainer().getName(), 1));
                 roundRobinCommunicationModule.setAllocatedWeights(allocation);
                 roundRobinCommunicationModule.setTotalWeights(allocation.size());
-                addEquivalence(connectionHandler, rrVertex);
-                forSyDeSystemGraph.addVertex(rrVertex);
-                forSyDeSystemGraph.connect(rrVertex, v, "allocationHost", EdgeTrait.DECISION_ABSTRACTALLOCATION);
-                Visualizable.enforce(rrVertex);
-                GreyBox.enforce(v);
-                forSyDeSystemGraph.connect(v, rrVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
+                addEquivalence(connectionHandler, roundRobinScheduler.getViewedVertex());
+                Allocated.enforce(roundRobinScheduler).insertAllocationHostsPort(forSyDeSystemGraph, roundRobinCommunicationModule);
+                GreyBox.enforce(connectionHandlerVertex).insertContainedPort(forSyDeSystemGraph, Visualizable.enforce(roundRobinScheduler));
+//                forSyDeSystemGraph.connect(v, rrVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                 break;
             default:
                 break;
@@ -77,17 +74,15 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
 
     default void fromStructureToVertex(ForSyDeSystemGraph model, HwStructure structure,
                                                       String prefix) {
-        final Vertex structureVertex = new Vertex(prefix + structure.getName(), VertexTrait.PLATFORM_ABSTRACTSTRUCTURE);
-        final GreyBox structureGreyBox = GreyBox.enforce(structureVertex);
-        addEquivalence(structure, structureVertex);
-        model.addVertex(structureVertex);
-        structureVertex.ports.add("submodules");
+        final AbstractStructure abstractStructure = AbstractStructure.enforce(model.newVertex(prefix + structure.getName()));
+//        final Vertex structureVertex = new Vertex(prefix + structure.getName(), VertexTrait.PLATFORM_ABSTRACTSTRUCTURE);
+        final GreyBox structureGreyBox = GreyBox.enforce(abstractStructure);
+        addEquivalence(structure, abstractStructure.getViewedVertex());
         for (HwStructure childStructure : structure.getStructures()) {
             fromStructureToVertex(model, childStructure, prefix + structure.getName() + ".");
-            equivalent(childStructure).ifPresent(childStructureVertex -> {
-                model.connect(structureVertex, childStructureVertex, "submodules",
-                        EdgeTrait.PLATFORM_STRUCTURALCONNECTION);
-                model.connect(structureVertex, childStructureVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
+            equivalent(childStructure).flatMap(PlatformElem::safeCast).ifPresent(childStructureVertex -> {
+                abstractStructure.insertSubmodulesPort(model, childStructureVertex);
+                structureGreyBox.insertContainedPort(model, Visualizable.enforce(childStructureVertex));
             });
         }
         for (HwModule module : structure.getModules()) {
@@ -128,11 +123,11 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         0L);
                 fromCUIntoVertex(model, connectionHandler, moduleVertex);
             }
-            model.connect(structureVertex, moduleVertex, "submodules", EdgeTrait.PLATFORM_STRUCTURALCONNECTION);
-            model.connect(structureVertex, moduleVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
+            model.connect(abstractStructure.getViewedVertex(), moduleVertex, "submodules", EdgeTrait.PLATFORM_STRUCTURALCONNECTION);
+            model.connect(abstractStructure.getViewedVertex(), moduleVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
         }
         for (HwPort port : structure.getPorts()) {
-            structureVertex.ports.add(port.getName());
+            abstractStructure.getPorts().add(port.getName());
         }
     }
 
