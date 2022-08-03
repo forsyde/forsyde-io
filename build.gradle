@@ -161,6 +161,7 @@ subprojects {
   }
 
   tasks.publish.dependsOn tasks.signArchives
+  tasks.publishMavenJavaPublicationToSonatypeRepository.dependsOn tasks.signArchives
   tasks.publishMavenJavaPublicationToOSSRHRepository.dependsOn tasks.signArchives
 
 }
