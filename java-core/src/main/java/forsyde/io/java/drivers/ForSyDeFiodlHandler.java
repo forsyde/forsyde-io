@@ -60,7 +60,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         for (Vertex v: model.vertexSet()) {
             stringBuilder.append("  vertex ").append('"').append(v.getIdentifier()).append('"').append("\n")
                 .append("  [").append(v.vertexTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(", "))).append("]\n")
-                .append("  (").append(v.ports.stream().sorted().collect(Collectors.joining(", "))).append(")\n");
+                .append("  (").append(v.getPorts().stream().sorted().collect(Collectors.joining(", "))).append(")\n");
             if (v.properties.isEmpty())
                 stringBuilder.append("  {}\n");
             else {
@@ -165,12 +165,12 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
             final Vertex target = newModel.vertexSet().stream().filter(v -> v.getIdentifier().equals(edgeInfo.targetId)).findFirst().orElseThrow(() ->
                     new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
                             " declares target '" + edgeInfo.targetId +"' that does not exist."));
-            if (!edgeInfo.getSourcePort().map(s -> source.ports.contains(s)).orElse(true)) {
+            if (!edgeInfo.getSourcePort().map(s -> source.hasPort(s)).orElse(true)) {
                 throw new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
                         " declares port '" + edgeInfo.getSourcePort().get() +"' at source " +
                         source.getIdentifier() + " which it does not declare.");
             }
-            if (!edgeInfo.getTargetPort().map(s -> target.ports.contains(s)).orElse(true)) {
+            if (!edgeInfo.getTargetPort().map(s -> target.hasPort(s)).orElse(true)) {
                 throw new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
                         " declares port '" + edgeInfo.getTargetPort().get() +"' at target " +
                         target.getIdentifier() + " which it does not declare.");
@@ -186,7 +186,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
             newVertex.addTraits(VertexTrait.fromName(traitToken.getText()));
         }
         for (Token portToken : ctx.ports) {
-            newVertex.ports.add(portToken.getText());
+            newVertex.addPort(portToken.getText());
         }
         for (int i = 0; i < ctx.propertyNames.size(); i++) {
 //            final String propName = visitStringValDirect(ctx.propertyNames.get(i));

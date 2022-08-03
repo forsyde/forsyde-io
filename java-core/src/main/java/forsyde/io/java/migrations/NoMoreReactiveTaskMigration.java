@@ -16,8 +16,8 @@ public class NoMoreReactiveTaskMigration implements SystemGraphMigrator {
         for (Vertex v : forSyDeSystemGraph.vertexSet()) {
             if (v.hasTrait("execution::UpsampleReactiveStimulus")) {
                 v.addTraits("execution::Upsample");
-                v.ports.add("activated");
-                v.ports.add("activators");
+                v.addPort("activated");
+                v.addPort("activators");
                 for (EdgeInfo e : forSyDeSystemGraph.incomingEdgesOf(v)) {
                     final Vertex src = forSyDeSystemGraph.getEdgeSource(e);
                     forSyDeSystemGraph.connect(src, v, e.getSourcePort().orElse("activated"), "activators", "execution::EventEdge");
@@ -29,8 +29,8 @@ public class NoMoreReactiveTaskMigration implements SystemGraphMigrator {
             }
             if (v.hasTrait("execution::DownsampleReactiveStimulus")) {
                 v.addTraits("execution::Downsample");
-                v.ports.add("activated");
-                v.ports.add("activators");
+                v.addPort("activated");
+                v.addPort("activators");
                 for (EdgeInfo e : forSyDeSystemGraph.incomingEdgesOf(v)) {
                     final Vertex src = forSyDeSystemGraph.getEdgeSource(e);
                     forSyDeSystemGraph.connect(src, v, e.getSourcePort().orElse("activated"), "activators", "execution::EventEdge");
@@ -44,15 +44,15 @@ public class NoMoreReactiveTaskMigration implements SystemGraphMigrator {
                 forSyDeSystemGraph.incomingEdgesOf(v).stream().map(forSyDeSystemGraph::getEdgeSource).forEach(src -> {
                     forSyDeSystemGraph.outgoingEdgesOf(v).stream().map(forSyDeSystemGraph::getEdgeTarget).forEach(dst -> {
                         if (src.hasTrait("execution::Task") && dst.hasTrait("execution::Task")) {
-                            src.ports.add("activated");
-                            dst.ports.add("activators");
+                            src.addPort("activated");
+                            dst.addPort("activators");
                             forSyDeSystemGraph.connect(src, dst, "activated", "activators", "execution::EventEdge");
                         }
                     });
                 });
             }
             if (v.hasTrait("execution::PeriodicTask")) {
-                v.ports.add("activated");
+                v.addPort("activated");
                 v.addTraits("execution::Task");
                 for (EdgeInfo e : forSyDeSystemGraph.outgoingEdgesOf(v)) {
                     final Vertex dst = forSyDeSystemGraph.getEdgeTarget(e);

@@ -49,7 +49,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         equivalents(((LabelAccess) item).getData()).flatMap(v -> DataBlock.safeCast(v).stream())
                                 .forEach(dataBlock -> {
                             final Label label = ((LabelAccess) item).getData();
-                            runnableVertex.ports.add(((LabelAccess) item).getData().getName());
+                            runnableVertex.addPort(((LabelAccess) item).getData().getName());
                             switch (labelAccess.getAccess()) {
                                 case READ:
                                     final Map<String, Long> reads = communicatingExecutable.getPortDataReadSize();
@@ -85,7 +85,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final Channel aChannel = channelReceive.getData();
                         final CommunicatingExecutable communicatingExecutable =
                                 CommunicatingExecutable.enforce(runnableVertex);
-                        runnableVertex.ports.add(aChannel.getName());
+                        runnableVertex.addPort(aChannel.getName());
                         equivalents(channelReceive.getData()).flatMap(v -> TokenizableDataBlock.safeCast(v).stream())
                                 .forEach(tokenizableDataBlock -> {
                                     final Map<String, Long> reads = communicatingExecutable.getPortDataReadSize();
@@ -105,7 +105,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final Channel aChannel = channelSend.getData();
                         final CommunicatingExecutable communicatingExecutable =
                                 CommunicatingExecutable.enforce(runnableVertex);
-                        runnableVertex.ports.add(aChannel.getName());
+                        runnableVertex.addPort(aChannel.getName());
                         equivalents(channelSend.getData()).flatMap(v -> TokenizableDataBlock.safeCast(v).stream())
                                 .forEach(tokenizableDataBlock -> {
                                     final Map<String, Long> writes = communicatingExecutable.getPortDataWrittenSize();
@@ -237,7 +237,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                     });
 //                    if (stimulus instanceof PeriodicStimulus) {
 //                        taskVertex.addTraits(VertexTrait.EXECUTION_PERIODICTASK);
-//                        taskVertex.ports.add("periodicStimulus");
+//                        taskVertex.addPort("periodicStimulus");
 //                        equivalent(stimulus).ifPresent(stimulusVertex -> {
 //                            forSyDeSystemGraph.connect(stimulusVertex, taskVertex, "stimulated", "periodicStimulus", EdgeTrait.EXECUTION_EVENTEDGE);
 //                        });

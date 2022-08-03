@@ -93,7 +93,7 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             digitalModule.setOperatingFrequencyInHertz(fromFrequencyToLong(module.getFrequencyDomain().getDefaultValue()));
             addEquivalence(module, moduleVertex);
             for (HwPort port : module.getPorts()) {
-                moduleVertex.ports.add(port.getName());
+                moduleVertex.addPort(port.getName());
             }
             if (module instanceof ProcessingUnit) {
                 ProcessingUnit processingUnit = (ProcessingUnit) module;

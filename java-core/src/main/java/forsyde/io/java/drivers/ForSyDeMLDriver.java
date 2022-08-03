@@ -79,15 +79,15 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 		for (int i = 0; i < vertexList.getLength(); i++) {
 			Element vertexElem = (Element) vertexList.item(i);
 			Vertex vertex = new Vertex(vertexElem.getAttribute("id"));
-			vertex.vertexTraits = Stream.of(vertexElem.getAttribute("traits").split(";"))
+			vertex.addTraits(Stream.of(vertexElem.getAttribute("traits").split(";"))
 					.map(s -> allowedVertexes.contains(s) ? VertexTrait.valueOf(s) : new OpaqueTrait(s))
-					.collect(Collectors.toSet());
+					.collect(Collectors.toSet()));
 			model.addVertex(vertex);
 			// iterate through ports and add them
 			NodeList portsList = (NodeList) xPath.compile("port").evaluate(vertexElem, XPathConstants.NODESET);
 			for (int j = 0; j < portsList.getLength(); j++) {
 				Element portElem = (Element) portsList.item(j);
-				vertex.ports.add(portElem.getAttribute("name"));
+				vertex.addPort(portElem.getAttribute("name"));
 			}
 			// iterate through properties and add them
 			NodeList propertyList = (NodeList) xPath.compile("data").evaluate(vertexElem, XPathConstants.NODESET);

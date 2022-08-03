@@ -23,10 +23,10 @@ final public class Vertex {
 
 	private volatile static long genSymSuffix = 0L;
 
-	public String identifier;
-	public Set<String> ports = new HashSet<>();
-	public Map<String, VertexProperty> properties = new HashMap<>();
-	public Set<Trait> vertexTraits = new HashSet<>();
+	final public String identifier;
+	final private Set<String> ports = new HashSet<>();
+	final public Map<String, VertexProperty> properties = new HashMap<>();
+	final public Set<Trait> vertexTraits = new HashSet<>();
 
 	/**
 	 * Utility constructor initializing all associated data as empty and the vertex
@@ -72,8 +72,8 @@ final public class Vertex {
 	 */
 	public Vertex(String identifier, Set<String> ports, Map<String, VertexProperty> properties) {
 		this.identifier = identifier;
-		this.ports = ports;
-		this.properties = properties;
+		this.ports.addAll(ports);
+		this.properties.replaceAll(properties::getOrDefault);
 	}
 
 	@Override
@@ -112,6 +112,29 @@ final public class Vertex {
 
 	public boolean putProperty(String propertyName, Object propertyValue) {
 		return properties.put(propertyName, VertexProperty.create(propertyValue)) == null;
+	}
+
+	public void addPort(String s) {
+		ports.add(s);
+	}
+	public void addPorts(String... strings) {
+		ports.addAll(Arrays.asList(strings));
+	}
+
+	public void addPorts(Collection<String> strings) {
+		ports.addAll(strings);
+	}
+
+	public boolean hasPort(String p) {
+		return ports.contains(p);
+	}
+
+	public boolean hasPorts(Collection<String> ps) {
+		return ports.containsAll(ps);
+	}
+
+	public boolean hasPorts(String... ps) {
+		return ports.containsAll(Arrays.asList(ps));
 	}
 
 	@Override
@@ -170,6 +193,10 @@ final public class Vertex {
 
 	public String getIdentifier() {
 		return identifier;
+	}
+
+	public void addTraits(Collection<Trait> col) {
+		vertexTraits.addAll(col);
 	}
 
 	public void addTraits(Trait... traits) {

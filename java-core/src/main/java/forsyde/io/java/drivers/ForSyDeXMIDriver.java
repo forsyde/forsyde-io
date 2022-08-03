@@ -128,7 +128,7 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 			NodeList portsList = (NodeList) xPath.compile("ports").evaluate(vertexElem, XPathConstants.NODESET);
 			for (int j = 0; j < portsList.getLength(); j++) {
 				Element portElem = (Element) portsList.item(j);
-				vertex.ports.add(portElem.getTextContent());
+				vertex.addPort(portElem.getTextContent());
 			}
 			// iterate through properties and add them
 			NodeList propertyValuesList = (NodeList) xPath.compile("propertiesValues").evaluate(vertexElem, XPathConstants.NODESET);
