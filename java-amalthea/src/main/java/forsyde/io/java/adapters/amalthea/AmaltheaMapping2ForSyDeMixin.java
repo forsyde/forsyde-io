@@ -17,10 +17,10 @@ public interface AmaltheaMapping2ForSyDeMixin extends EquivalenceModel2ModelMixi
                 equivalent(schedulerAllocation.getScheduler()).ifPresent(schedulerVertex -> {
                     equivalent(schedulerAllocation.getExecutingPU()).ifPresent(puVertex -> {
                         schedulerVertex.addTraits(VertexTrait.DECISION_ALLOCATED);
-                        schedulerVertex.ports.add("allocationHost");
+                        schedulerVertex.addPort("allocationHost");
                         forSyDeSystemGraph.connect(schedulerVertex, puVertex, "allocationHost", EdgeTrait.DECISION_ABSTRACTALLOCATION);
                         puVertex.addTraits(VertexTrait.VISUALIZATION_GREYBOX);
-                        puVertex.ports.add("contained");
+                        puVertex.addPort("contained");
                         forSyDeSystemGraph.connect(puVertex, schedulerVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                     });
                 });
@@ -30,10 +30,10 @@ public interface AmaltheaMapping2ForSyDeMixin extends EquivalenceModel2ModelMixi
                 equivalent(taskAllocation.getScheduler()).ifPresent(schedulerVertex -> {
                     equivalent(taskAllocation.getTask()).ifPresent(taskVertex -> {
                         taskVertex.addTraits(VertexTrait.DECISION_SCHEDULED);
-                        taskVertex.ports.add("scheduler");
+                        taskVertex.addPort("scheduler");
                         forSyDeSystemGraph.connect(taskVertex, schedulerVertex, "scheduler", EdgeTrait.DECISION_ABSTRACTSCHEDULING);
                         schedulerVertex.addTraits(VertexTrait.VISUALIZATION_GREYBOX);
-                        schedulerVertex.ports.add("contained");
+                        schedulerVertex.addPort("contained");
                         forSyDeSystemGraph.connect(schedulerVertex, taskVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                     });
                 });
@@ -44,12 +44,12 @@ public interface AmaltheaMapping2ForSyDeMixin extends EquivalenceModel2ModelMixi
                     equivalent(memoryMapping.getAbstractElement()).ifPresent(elementVertex -> {
                         elementVertex.addTraits(VertexTrait.DECISION_MEMORYMAPPED);
                         elementVertex.addTraits(VertexTrait.DECISION_ALLOCATED);
-                        elementVertex.ports.add("mappingHost");
-                        elementVertex.ports.add("allocationHost");
+                        elementVertex.addPort("mappingHost");
+                        elementVertex.addPort("allocationHost");
                         forSyDeSystemGraph.connect(elementVertex, memoryVertex, "mappingHost", EdgeTrait.DECISION_ABSTRACTMAPPING);
                         forSyDeSystemGraph.connect(elementVertex, memoryVertex, "allocationHost", EdgeTrait.DECISION_ABSTRACTALLOCATION);
                         memoryVertex.addTraits(VertexTrait.VISUALIZATION_GREYBOX);
-                        memoryVertex.ports.add("contained");
+                        memoryVertex.addPort("contained");
                         forSyDeSystemGraph.connect(memoryVertex, elementVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                     });
                 });

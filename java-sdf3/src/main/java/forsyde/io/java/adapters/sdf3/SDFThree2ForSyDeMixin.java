@@ -7,6 +7,7 @@ import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.typed.viewers.moc.sdf.*;
+import forsyde.io.java.typed.viewers.visualization.Visualizable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,9 +17,8 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
 
     default void fromActorsToVertexes(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getActor().forEach(a -> {
-            final Vertex v = new Vertex(a.getName());
-            systemGraph.addVertex(v);
-            final SDFActor sdfActor = SDFActor.enforce(v);
+            final SDFActor sdfActor = SDFActor.enforce(systemGraph.newVertex(a.getName()));
+            Visualizable.enforce(sdfActor);
             final HashMap<String, Integer> consumption = new HashMap<>();
             final HashMap<String, Integer> production = new HashMap<>();
             a.getPort().forEach(port -> {
@@ -37,12 +37,11 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
     default void fromChannelstoSignalsAndPrefix(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getChannel().forEach(channel -> {
             // initial channel if no initial token exists
-            final Vertex channelVertex = new Vertex(channel.getName());
-            final SDFChannel sdfChannel = SDFChannel.enforce(channelVertex);
-            systemGraph.addVertex(channelVertex);
+            final SDFChannel sdfChannel = SDFChannel.enforce(systemGraph.newVertex(channel.getName()));
+            Visualizable.enforce(sdfChannel);
             // channelVertex.ports.add("producer");
             // channelVertex.ports.add("consumer");
-            addEquivalence(channel, channelVertex);
+            addEquivalence(channel, sdfChannel.getViewedVertex());
             // additional tokens and prefixes until the prefixing chain is over
             if (channel.getInitialTokens() != null && channel.getInitialTokens().intValueExact() > 0) {
                 sdfChannel.setNumOfInitialTokens(channel.getInitialTokens().intValueExact());
@@ -107,7 +106,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                     // find the one without consumer, as it could be expanded with delays beforehand.
                     // find the equivalent signal to connect. Should not NPE.
                     if (sdfChannel.getConsumerPort(systemGraph).isEmpty()) {
-                        systemGraph.connect(srcActorV, sdfChannel.getViewedVertex(), channel.getSrcPort(), "producer", EdgeTrait.MOC_SDF_SDFDATAEDGE);
+                        systemGraph.connect(srcActorV, sdfChannel.getViewedVertex(), channel.getSrcPort(), "producer", EdgeTrait.MOC_SDF_SDFDATAEDGE, EdgeTrait.VISUALIZATION_VISUALCONNECTION);
                     }
                 });
                 sdf3.getApplicationGraph().getSdf().getActor().stream()
@@ -117,7 +116,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                     // find the one without consumer, as it could be expanded with delays beforehand.
                     // find the equivalent signal to connect. Should not NPE.
                     if (sdfChannel.getConsumerPort(systemGraph).isEmpty()) {
-                        systemGraph.connect(sdfChannel.getViewedVertex(), dstActorV, "consumer", channel.getDstPort(), EdgeTrait.MOC_SDF_SDFDATAEDGE);
+                        systemGraph.connect(sdfChannel.getViewedVertex(), dstActorV, "consumer", channel.getDstPort(), EdgeTrait.MOC_SDF_SDFDATAEDGE, EdgeTrait.VISUALIZATION_VISUALCONNECTION);
                     }
                 });
             });

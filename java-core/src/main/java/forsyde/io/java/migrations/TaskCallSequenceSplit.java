@@ -15,8 +15,8 @@ public class TaskCallSequenceSplit implements SystemGraphMigrator {
     public boolean effect(ForSyDeSystemGraph forSyDeSystemGraph) {
         for (Vertex v : forSyDeSystemGraph.vertexSet()) {
             if (v.hasTrait("execution::Task")) {
-                v.ports.add("initSequence");
-                v.ports.add("loopSequence");
+                v.addPort("initSequence");
+                v.addPort("loopSequence");
                 v.putProperty("__loopSequence_ordering__",
                         v.properties.getOrDefault("__callSequence_ordering__",
                                 VertexProperty.create(new HashMap<String, Integer>())));

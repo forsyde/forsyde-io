@@ -14,7 +14,7 @@ public class ForSyDeSDF3Driver implements ForSyDeModelDriver {
 
     @Override
     public List<String> inputExtensions() {
-        return List.of("sdf3.xml");
+        return List.of("sdf3.xml", "hsdf.xml", "sdf.xml");
     }
 
     @Override

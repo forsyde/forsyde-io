@@ -209,8 +209,8 @@ public final class VertexAcessor {
     }
 
     public static boolean setNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
-        if (srcPortName != null && !src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
-        if (dstPortName != null && !dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
+        if (srcPortName != null && !src.hasPort(srcPortName)) src.getPorts().add(srcPortName);
+        if (dstPortName != null && !dst.hasPort(dstPortName)) dst.getPorts().add(dstPortName);
         return model.connect(src, dst, srcPortName, dstPortName, ts);
     }
 
@@ -235,8 +235,8 @@ public final class VertexAcessor {
     }
 
     public static boolean addMultipleNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, EdgeTrait... ts) {
-        if (srcPortName != null && !src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
-        if (dstPortName != null && !dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
+        if (srcPortName != null && !src.hasPort(srcPortName)) src.getPorts().add(srcPortName);
+        if (dstPortName != null && !dst.hasPort(dstPortName)) dst.getPorts().add(dstPortName);
         return model.connect(src, dst, srcPortName, dstPortName, ts);
     }
 
@@ -276,8 +276,8 @@ public final class VertexAcessor {
         @SuppressWarnings("unchecked")
         final Map<String, Integer> order = Optional.ofNullable(src.getProperties().get("__" + srcPortName + "_ordering__"))
                 .map(m -> (Map<String, Integer>) m.unwrap()).orElse(new HashMap<>(1));
-        if (srcPortName != null && !src.ports.contains(srcPortName)) src.getPorts().add(srcPortName);
-        if (dstPortName != null && !dst.ports.contains(dstPortName)) dst.getPorts().add(dstPortName);
+        if (srcPortName != null && !src.hasPort(srcPortName)) src.getPorts().add(srcPortName);
+        if (dstPortName != null && !dst.hasPort(dstPortName)) dst.getPorts().add(dstPortName);
         order.put(dst.identifier, pos);
         src.properties.put("__" + srcPortName + "_ordering__", VertexProperty.create(order));
         return model.connect(src, dst, srcPortName, dstPortName, ts);

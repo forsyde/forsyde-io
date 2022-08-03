@@ -241,7 +241,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(vertexClass, "vertex")
                 .addStatement("vertex.addTraits($T.$L)", traitEnum, enumTraitName)
-                .addStatement("vertex.ports.addAll($T.getRequiredPorts())", traitInterface)
+                .addStatement("vertex.addPorts($T.getRequiredPorts())", traitInterface)
                 .addCode(propertyBlock)
                 .addStatement("return new $T(vertex)", viewerClass)
                 .returns(traitInterface)
