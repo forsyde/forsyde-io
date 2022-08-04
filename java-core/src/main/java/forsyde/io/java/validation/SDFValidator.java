@@ -13,8 +13,8 @@ public class SDFValidator implements SystemGraphValidation {
 
     @Override
     public Optional<String> validate(ForSyDeSystemGraph forSyDeSystemGraph) {
-        final List<SDFActor> actors = forSyDeSystemGraph.vertexSet().stream().flatMap(v -> SDFActor.safeCast(v).stream()).toList();
-        final List<SDFChannel> channels = forSyDeSystemGraph.vertexSet().stream().flatMap(v -> SDFChannel.safeCast(v).stream()).toList();
+        final List<SDFActor> actors = forSyDeSystemGraph.vertexSet().stream().flatMap(v -> SDFActor.safeCast(v).stream()).collect(Collectors.toList());
+        final List<SDFChannel> channels = forSyDeSystemGraph.vertexSet().stream().flatMap(v -> SDFChannel.safeCast(v).stream()).collect(Collectors.toList());
         // production and consumptio are disjoint
         for (SDFActor actor : actors) {
             Map<String, Boolean> visited = actor.getPorts().stream().collect(Collectors.toMap(p -> p, p -> false));
