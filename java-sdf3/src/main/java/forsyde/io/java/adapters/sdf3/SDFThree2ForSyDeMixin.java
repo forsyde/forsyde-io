@@ -1,16 +1,20 @@
 package forsyde.io.java.adapters.sdf3;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
+import forsyde.io.java.adapters.sdf3.elems.Processor;
 import forsyde.io.java.adapters.sdf3.elems.Sdf3;
 import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.core.VertexTrait;
+import forsyde.io.java.typed.viewers.impl.InstrumentedExecutable;
+import forsyde.io.java.typed.viewers.impl.TokenizableDataBlock;
 import forsyde.io.java.typed.viewers.moc.sdf.*;
 import forsyde.io.java.typed.viewers.visualization.Visualizable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Object, Vertex> {
 
@@ -39,55 +43,13 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
             // initial channel if no initial token exists
             final SDFChannel sdfChannel = SDFChannel.enforce(systemGraph.newVertex(channel.getName()));
             Visualizable.enforce(sdfChannel);
-            // channelVertex.ports.add("producer");
-            // channelVertex.ports.add("consumer");
             addEquivalence(channel, sdfChannel.getViewedVertex());
             // additional tokens and prefixes until the prefixing chain is over
             if (channel.getInitialTokens() != null && channel.getInitialTokens().intValueExact() > 0) {
                 sdfChannel.setNumOfInitialTokens(channel.getInitialTokens().intValueExact());
-                /*final Vertex extraPrefix = new Vertex(channel.getName() + "Prefix", VertexTrait.MOC_SDF_SDFDELAY);
-                final Vertex delayedChannel = new Vertex(channel.getName() + "Delayed", VertexTrait.MOC_SDF_SDFCHANNEL);
-                final SDFDelay sdfDelay = new SDFDelayViewer(extraPrefix);
-                systemGraph.addVertex(extraPrefix);
-                systemGraph.addVertex(delayedChannel);
-                delayedChannel.ports.add("producer");
-                delayedChannel.ports.add("consumer");
-                extraPrefix.ports.add("delayFunction");
-                extraPrefix.ports.add("notDelayedChannel");
-                extraPrefix.ports.add("delayedChannel");
-                sdfDelay.setDelayedTokens(channel.getInitialTokens().intValueExact());
-                systemGraph.connect(channelVertex, extraPrefix, "consumer", "notDelayedChannel", EdgeTrait.MOC_SDF_SDFDATAEDGE);
-                systemGraph.connect(extraPrefix, delayedChannel, "delayedChannel", "producer", EdgeTrait.MOC_SDF_SDFDATAEDGE);
-                addEquivalence(channel, extraPrefix);
-                addEquivalence(channel, delayedChannel);*/
             } else {
                 sdfChannel.setNumOfInitialTokens(0);
             }
-            /*
-            for (int i = 1; i < channel.getInitialTokens().intValueExact(); i++) {
-                endV.ports.add(channel.getDstPort() + "_delay_" + (i - 1));
-                final Vertex extraPrefix = new Vertex(channel.getName() + "_prefix_" + i);
-                extraPrefix.addTraits(VertexTrait.MOC_SDF_SDFDELAY);
-                extraPrefix.ports.add("delayFunction");
-                extraPrefix.ports.add("notDelayedChannel");
-                extraPrefix.ports.add("delayedChannel");
-                extraPrefix.ports.add(channel.getDstPort() + "_delay_" + (i + -1));
-                extraPrefix.ports.add(channel.getDstPort() + "_delay_" + i);
-                addEquivalence(channel, extraPrefix);
-                // connect signal and prefix
-                systemGraph.connect(endV, extraPrefix, channel.getDstPort() + "_delay_" + (i + -1), channel.getDstPort() + "_delay_" + i, EdgeTrait.MOC_SDF_SDFDATAEDGE);
-
-                // new signal
-                final Vertex extraV = new Vertex(channel.getName() + "_delay_" + i);
-                extraV.addTraits(VertexTrait.MOC_SDF_SDFCHANNEL);
-                extraV.ports.add(channel.getDstPort() + "_delay_" + i);
-                //connect again
-                systemGraph.connect(extraPrefix, extraV, channel.getDstPort() + "_delay_" + i, channel.getDstPort() + "_delay_" + i, EdgeTrait.MOC_SDF_SDFDATAEDGE);
-                addEquivalence(channel, extraV);
-
-            }
-            endV.ports.add(channel.getDstPort());
-            */
         });
     }
 
@@ -119,6 +81,31 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                         systemGraph.connect(sdfChannel.getViewedVertex(), dstActorV, "consumer", channel.getDstPort(), EdgeTrait.MOC_SDF_SDFDATAEDGE, EdgeTrait.VISUALIZATION_VISUALCONNECTION);
                     }
                 });
+            });
+        });
+    }
+
+    default void fromChannelPropertiesToSDFChannels(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
+        sdf3.getApplicationGraph().getSdfProperties().getChannelProperties().forEach(channelProperties -> {
+            systemGraph.queryVertex(channelProperties.getChannel()).flatMap(SDFChannel::safeCast).ifPresent(sdfChannel -> {
+                final TokenizableDataBlock tokenizableDataBlock = TokenizableDataBlock.enforce(sdfChannel);
+                tokenizableDataBlock.setTokenSizeInBits(channelProperties.getTokenSize().stream().mapToLong(t -> t.getSz().longValueExact()).sum());
+                if (channelProperties.getBufferSize() != null) {
+                    tokenizableDataBlock.setMaxSizeInBits(channelProperties.getBufferSize().getSz().longValueExact());
+                }
+            });
+        });
+    }
+
+    default void fromActorPropertiesToSDFActor(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
+        sdf3.getApplicationGraph().getSdfProperties().getActorProperties().forEach(actorProperties -> {
+            systemGraph.queryVertex(actorProperties.getActor()).flatMap(SDFActor::safeCast).ifPresent(sdfActor -> {
+                final InstrumentedExecutable instrumentedExecutable = InstrumentedExecutable.enforce(sdfActor);
+                final Map<String, Map<String, Long>> ops = actorProperties.getProcessor().stream().collect(Collectors.toMap(
+                        Processor::getType,
+                        p -> Map.of("all", p.getExecutionTime().getTime().longValueExact())
+                ));
+                instrumentedExecutable.setOperationRequirements(ops);
             });
         });
     }

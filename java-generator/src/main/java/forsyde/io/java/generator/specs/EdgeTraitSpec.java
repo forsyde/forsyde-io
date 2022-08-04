@@ -7,11 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
-public class EdgeTraitSpec implements SourceTraceableSpec {
+public class EdgeTraitSpec implements SourceTraceableSpec, NamespacedMixin {
 
     public transient int declaredLine = 0;
     public transient int declaredColumn = 0;
     public String name;
+    public String comment = "";
     public List<EdgeTraitSpec> refinedTraits = new ArrayList<>();
     public transient List<String> absoluteRefinedTraitNames = new ArrayList<>();
     public transient List<String> relativeRefinedTraitNames = new ArrayList<>();
@@ -32,4 +33,8 @@ public class EdgeTraitSpec implements SourceTraceableSpec {
     }
 
 
+    @Override
+    public String getName() {
+        return name;
+    }
 }

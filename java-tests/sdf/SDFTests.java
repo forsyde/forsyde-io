@@ -3,6 +3,7 @@ package sdf;
 import forsyde.io.java.core.*;
 import forsyde.io.java.drivers.ForSyDeModelHandler;
 import forsyde.io.java.graphviz.ForSyDeGraphVizDriver;
+import forsyde.io.java.typed.edges.moc.sdf.SDFDataEdge;
 import forsyde.io.java.typed.viewers.decision.sdf.BoundedSDFChannel;
 import forsyde.io.java.typed.viewers.decision.sdf.PASSedSDFActor;
 import forsyde.io.java.typed.viewers.impl.ANSICBlackBoxExecutable;
@@ -82,24 +83,18 @@ public class SDFTests {
     public void checkSDFValidation() throws Exception {
         final ForSyDeSystemGraph runningModel = new ForSyDeSystemGraph();
         final SDFValidator validator = new SDFValidator();
-        final Vertex actorVertex = new Vertex("actor");
-        final SDFActor actor = SDFActor.enforce(actorVertex);
-        actorVertex.ports.addAll(Set.of("in", "out"));
-        runningModel.addVertex(actorVertex);
+        final SDFActor actor = SDFActor.enforce(runningModel.newVertex("actor"));
+        actor.getViewedVertex().addPorts(Set.of("in", "out"));
 
-        final Vertex sourceChannel = new Vertex("pchannel");
-        SDFChannel.enforce(sourceChannel);
-        final Vertex sinkChannel = new Vertex("cchannel");
-        SDFChannel.enforce(sinkChannel);
+        final SDFChannel sourceChannel = SDFChannel.enforce(runningModel.newVertex("pchannel"));
+        final SDFChannel sinkChannel = SDFChannel.enforce(runningModel.newVertex("cchannel"));
 
-        runningModel.addVertex(sourceChannel);
-        runningModel.connect(sourceChannel, actorVertex, "consumer", "in", EdgeTrait.MOC_SDF_SDFDATAEDGE);
+        SDFDataEdge.create(runningModel, sourceChannel, actor, "consumer", "in");
         Assertions.assertTrue(validator.validate(runningModel).isPresent());
         actor.setConsumption(Map.of("in", 1));
         Assertions.assertFalse(validator.validate(runningModel).isPresent());
 
-        runningModel.addVertex(sinkChannel);
-        runningModel.connect(actorVertex, sinkChannel, "out", "producer", EdgeTrait.MOC_SDF_SDFDATAEDGE);
+        SDFDataEdge.create(runningModel, actor, sinkChannel, "out", "producer");
         Assertions.assertTrue(validator.validate(runningModel).isPresent());
         actor.setProduction(Map.of("out", 1));
         Assertions.assertFalse(validator.validate(runningModel).isPresent());

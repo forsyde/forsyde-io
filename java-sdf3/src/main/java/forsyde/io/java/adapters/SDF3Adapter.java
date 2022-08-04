@@ -20,6 +20,8 @@ public class SDF3Adapter implements ModelAdapter<Sdf3>, SDFThree2ForSyDeMixin {
         fromActorsToVertexes(inputModel, forSyDeSystemGraph);
         fromChannelstoSignalsAndPrefix(inputModel, forSyDeSystemGraph);
         fromChannelsToEdges(inputModel, forSyDeSystemGraph);
+        fromChannelPropertiesToSDFChannels(inputModel, forSyDeSystemGraph);
+        fromActorPropertiesToSDFActor(inputModel, forSyDeSystemGraph);
         return forSyDeSystemGraph;
     }
 
