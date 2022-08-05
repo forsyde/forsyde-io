@@ -27,7 +27,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         distribution: 'corretto' # See 'Supported distributions' for available options
-        java-version: '11'
+        java-version: '17'
     - name: Build with Gradle (All)
       # if: ${{ matrix.os != 'windows-latest' }}
       run: |
@@ -64,7 +64,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'corretto' # See 'Supported distributions' for available options
-          java-version: '11'
+          java-version: '17'
       - name: Build with Gradle (All)
         # if: ${{ matrix.os != 'windows-latest' }}
         run: |
