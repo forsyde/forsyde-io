@@ -14,6 +14,7 @@ plugins {
     id 'eclipse'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'org.beryx.jlink' version '2.25.0'
+//    id 'org.graalvm.buildtools.native' version '0.9.13'
 }
 
 // apply plugin: 'io.github.fvarrui.javapackager.plugin'
@@ -50,11 +51,24 @@ application {
     mainModule = "forsyde.io.java.conversyde"
 }
 
-
-
 jlink {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+
+    jpackage {
+        if (org.gradle.internal.os.OperatingSystem.current().windows) {
+            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
+            imageOptions += ['--win-console']
+        }
+    }
 }
+
+//graalvmNative {
+//    binaries {
+//        main {
+//            useFatJar = true
+//        }
+//    }
+//}
 
 // javapackager {
 //     mainClass = "io.github.forsyde.conversyde.ConverSyDeStandalone"
