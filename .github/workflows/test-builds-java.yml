@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        java: [1.11, 1.15],
+        java: [1.11, 1.15, 1.17]
         jdk: [temurin, corretto, zulu, microsoft]
     runs-on: ${{ matrix.os }}
     steps:
