@@ -42,7 +42,7 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
         final PicoWriter topWriter = new PicoWriter();
         // we make a fake top to make sure everything works even in the absence of a container for all elements
         topWriter.writeln_r("knode forsyde {");
-        topWriter.writeln("krectangle");
+//        topWriter.writeln("krectangle");
         topWriter.writeln("klabel \"ForSyDe Model\"");
         // first, we filter only the visualizable elements of the model
         final Graph<Vertex, EdgeInfo> visuGraph = new AsSubgraph<Vertex, EdgeInfo>(model,
@@ -73,7 +73,7 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
                     .replace(".", "_");
             // write the node
             vWriter.writeln_r("knode " + vId + " {");
-            vWriter.writeln("krectangle");
+//            vWriter.writeln("krectangle");
             // write its label
             vWriter.writeln("klabel \"" + v.getIdentifier() + "\"");
             // write all its ports, which is like node and label again
