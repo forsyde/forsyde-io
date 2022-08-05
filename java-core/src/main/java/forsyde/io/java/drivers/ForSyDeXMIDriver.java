@@ -4,6 +4,7 @@
 package forsyde.io.java.drivers;
 
 import forsyde.io.java.core.*;
+import forsyde.io.java.core.properties.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -287,72 +288,70 @@ public class ForSyDeXMIDriver implements ForSyDeModelDriver {
 
 	static protected Element writeData(Document doc, VertexProperty prop) {
 		final Element newElem = doc.createElement( "values");
-		return VertexProperties.cases()
-				.StringVertexProperty(s -> {
-					newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:StringVertexProperty");
-					newElem.setAttribute("string", s);
-					return newElem;
-				})
-				.IntVertexProperty(i -> {
-					newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:IntVertexProperty");
-					newElem.setAttribute("intValue", i.toString());
-					return newElem;
-				})
-				.BooleanVertexProperty(b -> {
-					newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:BooleanVertexProperty");
-					newElem.setAttribute("booleanValue", b.toString());
-					return newElem;
-				})
-				.FloatVertexProperty(f -> {
-					newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:FloatVertexProperty");
-					newElem.setAttribute("floatValue", f.toString());
-					return newElem;
-				})
-				.DoubleVertexProperty(d -> {
-					newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:DoubleVertexProperty");
-					newElem.setAttribute("doubleValue", d.toString());
-					return newElem;
-				})
-				.LongVertexProperty(l -> {
-					newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:LongVertexProperty");
-					newElem.setAttribute("longValue", l.toString());
-					return newElem;
-				})
-				.ArrayVertexProperty(array -> {
-					newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:ArrayVertexProperty");
-					for (VertexProperty vertexProperty : array) {
-						Element child = writeData(doc, vertexProperty);
-						//child.setAttribute("attr.name", String.valueOf(i));
-						newElem.appendChild(child);
-					}
-					return newElem;
-				})
-				.IntMapVertexProperty(intMap -> {
-					newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:IntMapVertexProperty");
-					// newElem.setAttribute("attr.type", "intMap");
-					for (Integer key : intMap.keySet()) {
-						Element child = writeData(doc, intMap.get(key));
-						final Element index = doc.createElement( "indexes");
-						index.setTextContent(key.toString());
-						//child.setAttribute("attr.name", key.toString());
-						newElem.appendChild(child);
-						newElem.appendChild(index);
-					}
-					return newElem;
-				})
-				.StringMapVertexProperty(stringMap -> {
-					newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:StringMapVertexProperty");
-					for (String key : stringMap.keySet()) {
-						Element child = writeData(doc, stringMap.get(key));
-						final Element index = doc.createElement( "indexes");
-						index.setTextContent(key.toString());
-						//child.setAttribute("attr.name", key);
-						newElem.appendChild(child);
-						newElem.appendChild(index);
-					}
-					return newElem;
-				})
-				.apply(prop);
+		if (prop instanceof StringVertexProperty) {
+				newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:StringVertexProperty");
+				newElem.setAttribute("string", ((StringVertexProperty) prop).string);
+		}
+		if (prop instanceof IntVertexProperty) {
+				newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:IntVertexProperty");
+				newElem.setAttribute("intValue", String.valueOf(((IntVertexProperty) prop).intValue));
+		}
+		if (prop instanceof BooleanVertexProperty) {
+				newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:BooleanVertexProperty");
+				newElem.setAttribute("booleanValue", String.valueOf(((BooleanVertexProperty) prop).boolValue));
+		}
+		if (prop instanceof FloatVertexProperty) {
+
+				newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:FloatVertexProperty");
+				newElem.setAttribute("floatValue", String.valueOf(((FloatVertexProperty) prop).floatValue));
+
+		}
+		if (prop instanceof DoubleVertexProperty) {
+				newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:DoubleVertexProperty");
+				newElem.setAttribute("doubleValue", String.valueOf(((DoubleVertexProperty) prop).doubleValue));
+		}
+		if (prop instanceof LongVertexProperty) {
+				newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:LongVertexProperty");
+				newElem.setAttribute("longValue", String.valueOf(((LongVertexProperty) prop).longValue));
+
+		}
+		if (prop instanceof ArrayVertexProperty) {
+
+				newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:ArrayVertexProperty");
+				final List<VertexProperty> array = ((ArrayVertexProperty) prop).values;
+				for (VertexProperty vertexProperty : array) {
+					Element child = writeData(doc, vertexProperty);
+					//child.setAttribute("attr.name", String.valueOf(i));
+					newElem.appendChild(child);
+				}
+
+		}
+		if (prop instanceof IntMapVertexProperty) {
+				newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:IntMapVertexProperty");
+				// newElem.setAttribute("attr.type", "intMap");
+				final Map<Integer, VertexProperty> intMap = ((IntMapVertexProperty) prop).intMap;
+				for (Integer key : intMap.keySet()) {
+					Element child = writeData(doc, intMap.get(key));
+					final Element index = doc.createElement( "indexes");
+					index.setTextContent(key.toString());
+					//child.setAttribute("attr.name", key.toString());
+					newElem.appendChild(child);
+					newElem.appendChild(index);
+				}
+		}
+		if (prop instanceof StringMapVertexProperty) {
+				newElem.setAttribute("xsi:type", "forsyde.io.eclipse.systemgraph:StringMapVertexProperty");
+				final Map<String, VertexProperty> stringMap = ((StringMapVertexProperty) prop).strMap;
+				for (String key : stringMap.keySet()) {
+					Element child = writeData(doc, stringMap.get(key));
+					final Element index = doc.createElement( "indexes");
+					index.setTextContent(key.toString());
+					//child.setAttribute("attr.name", key);
+					newElem.appendChild(child);
+					newElem.appendChild(index);
+				}
+		}
+		return newElem;
 	}
 
 }

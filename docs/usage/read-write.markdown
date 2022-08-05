@@ -115,7 +115,7 @@ And later register the downloaded module with your model handler,
     ..
     import forsyde.io.java.core.ForSyDeModel;
     import forsyde.io.java.drivers.ForSyDeModelHandler;
-    import forsyde.io.java.drivers.ForSyDeAmaltheaDriver;
+    import forsyde.io.java.amalthea.drivers.ForSyDeAmaltheaDriver;
     ..
 
     ForSyDeModelHandler forSyDeModelHandler = new ForSyDeModelHandler();

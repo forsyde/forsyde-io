@@ -2,7 +2,7 @@ package sdf;
 
 import forsyde.io.java.core.*;
 import forsyde.io.java.drivers.ForSyDeModelHandler;
-import forsyde.io.java.graphviz.ForSyDeGraphVizDriver;
+import forsyde.io.java.graphviz.drivers.ForSyDeGraphVizDriver;
 import forsyde.io.java.typed.edges.moc.sdf.SDFDataEdge;
 import forsyde.io.java.typed.viewers.decision.sdf.BoundedSDFChannel;
 import forsyde.io.java.typed.viewers.decision.sdf.PASSedSDFActor;

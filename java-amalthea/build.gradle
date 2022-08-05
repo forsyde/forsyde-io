@@ -14,5 +14,6 @@ dependencies {
     //implementation 'org.eclipse.app4mc.migration:parent:2.0.0'
     //implementation 'org.eclipse.app4mc.migration:org.eclipse.app4mc.amalthea.converters.082:2.0.0'
     //implementation name: 'amalthea_migration'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation project(':java-core')
 }

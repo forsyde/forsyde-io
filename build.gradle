@@ -2,6 +2,7 @@ plugins {
   id 'maven-publish'
   id 'signing'
   id 'java'
+  id 'java-library'
   id 'idea'
   id 'eclipse'
   id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
@@ -137,9 +138,16 @@ subprojects {
     }
   }
 
+//  plugins.withType(JavaPlugin).configureEach {
+//    java {
+//      modularity.inferModulePath = true
+//    }
+//  }
+
   java {
     withSourcesJar()
     withJavadocJar()
+    modularity.inferModulePath = true
   }
 
   artifacts {

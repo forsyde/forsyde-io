@@ -4,6 +4,7 @@ import forsyde.io.java.adapters.fiodl.ForSyDeFioDLBaseVisitor;
 import forsyde.io.java.adapters.fiodl.ForSyDeFioDLLex;
 import forsyde.io.java.adapters.fiodl.ForSyDeFioDL;
 import forsyde.io.java.core.*;
+import forsyde.io.java.core.properties.*;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
@@ -85,36 +86,29 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
     }
 
     public String writeVertexPropertyCode(VertexProperty property, int identLevel) {
-        return VertexProperties.cases()
-                .StringVertexProperty(s -> "\"" + s + "\"")
-                .IntVertexProperty(i -> i + "_i")
-                .BooleanVertexProperty(b -> b ? "1_b" : "0_b")
-                .FloatVertexProperty(f -> String.format(Locale.ENGLISH, "%17.9f", f) + "_32")
-                .DoubleVertexProperty(d -> String.format(Locale.ENGLISH, "%18.11f", d) + "_64")
-                .LongVertexProperty(l -> l.toString() + "_l")
-                .ArrayVertexProperty(a ->
-                    "[\n" +
-                    a.stream().map(v ->
-                            " ".repeat(identLevel + 2) + writeVertexPropertyCode(v, identLevel + 2)).collect(Collectors.joining(",\n")) +
-                    "\n" + " ".repeat(identLevel) + "]"
-                )
-                .IntMapVertexProperty(imap ->
-                    "{\n" +
-                    imap.entrySet().stream()
-                            .map(e ->
-                                    " ".repeat(identLevel + 2) + e.getKey().toString() +"_i: " + writeVertexPropertyCode(e.getValue(), identLevel + 2))
-                            .collect(Collectors.joining(",\n")) +
-                            "\n" + " ".repeat(identLevel) + "}"
-                )
-                .StringMapVertexProperty(smap ->
-                    "{\n" +
-                    smap.entrySet().stream()
-                            .map(e ->
-                                    " ".repeat(identLevel + 2) + "\"" + e.getKey() +"\": " + writeVertexPropertyCode(e.getValue(), identLevel + 2))
-                            .collect(Collectors.joining(",\n")) +
-                    "\n" + " ".repeat(identLevel) + "}"
-                )
-                .apply(property);
+        if (property instanceof StringVertexProperty) return  "\"" + ((StringVertexProperty) property).string + "\"";
+        if (property instanceof IntVertexProperty) return  ((IntVertexProperty) property).intValue + "_i";
+        if (property instanceof BooleanVertexProperty) return  ((BooleanVertexProperty) property).boolValue ? "1_b" : "0_b";
+        if (property instanceof FloatVertexProperty) return  String.format(Locale.ENGLISH, "%17.9f", ((FloatVertexProperty) property).floatValue) + "_32";
+        if (property instanceof DoubleVertexProperty) return  String.format(Locale.ENGLISH, "%18.11f", ((DoubleVertexProperty) property).doubleValue) + "_64";
+        if (property instanceof LongVertexProperty) return  ((LongVertexProperty) property).longValue + "_l";
+        if (property instanceof ArrayVertexProperty) return "[\n" +
+                ((ArrayVertexProperty) property).values.stream().map(v ->
+                        " ".repeat(identLevel + 2) + writeVertexPropertyCode(v, identLevel + 2)).collect(Collectors.joining(",\n")) +
+                "\n" + " ".repeat(identLevel) + "]";
+        if (property instanceof IntMapVertexProperty) return "{\n" +
+                ((IntMapVertexProperty) property).intMap.entrySet().stream()
+                        .map(e ->
+                                " ".repeat(identLevel + 2) + e.getKey().toString() +"_i: " + writeVertexPropertyCode(e.getValue(), identLevel + 2))
+                        .collect(Collectors.joining(",\n")) +
+                "\n" + " ".repeat(identLevel) + "}";
+        if (property instanceof StringMapVertexProperty) return "{\n" +
+                ((StringMapVertexProperty) property).strMap.entrySet().stream()
+                        .map(e ->
+                                " ".repeat(identLevel + 2) + "\"" + e.getKey() +"\": " + writeVertexPropertyCode(e.getValue(), identLevel + 2))
+                        .collect(Collectors.joining(",\n")) +
+                "\n" + " ".repeat(identLevel) + "}";
+        return property.toString();
     }
 
     public Object visitNumberDirect(ForSyDeFioDL.NumberContext ctx) throws FioDLSyntaxException {

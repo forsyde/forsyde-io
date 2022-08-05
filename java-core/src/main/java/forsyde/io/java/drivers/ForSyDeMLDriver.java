@@ -25,6 +25,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import forsyde.io.java.core.*;
+import forsyde.io.java.core.properties.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -224,61 +225,58 @@ public class ForSyDeMLDriver implements ForSyDeModelDriver {
 
 	static protected Element writeData(Document doc, VertexProperty prop) {
 		final Element newElem = doc.createElement("data");
-		return VertexProperties.cases()
-				.StringVertexProperty(s -> {
-					newElem.setAttribute("attr.type", "string");
-					newElem.setTextContent(s);
-					return newElem;
-				})
-				.IntVertexProperty(i -> {
-					newElem.setAttribute("attr.type", "double");
-					newElem.setTextContent(String.valueOf(i));
-					return newElem;
-				})
-				.BooleanVertexProperty(b -> {
-					newElem.setAttribute("attr.type", "boolean");
-					newElem.setTextContent(String.valueOf(b));
-					return newElem;
-				})
-				.FloatVertexProperty(f -> {
-					newElem.setAttribute("attr.type", "float");
-					newElem.setTextContent(String.valueOf(f));
-					return newElem;
-				})
-				.LongVertexProperty(l -> {
-					newElem.setAttribute("attr.type", "long");
-					newElem.setTextContent(String.valueOf(l));
-					return newElem;
-				})
-				.ArrayVertexProperty(array -> {
-					newElem.setAttribute("attr.type", "array");
-					for (int i = 0; i < array.size(); i++) {
-						Element child = writeData(doc, array.get(i));
-						child.setAttribute("attr.name", String.valueOf(i));
-						newElem.appendChild(child);
-					}
-					return newElem;
-				})
-				.IntMapVertexProperty(intMap -> {
-					newElem.setAttribute("attr.type", "intMap");
-					for (Integer key : intMap.keySet()) {
-						Element child = writeData(doc, intMap.get(key));
-						child.setAttribute("attr.name", key.toString());
-						newElem.appendChild(child);
-					}
-					return newElem;
-				})
-				.StringMapVertexProperty(stringMap -> {
-					newElem.setAttribute("attr.type", "stringMap");
-					for (String key : stringMap.keySet()) {
-						Element child = writeData(doc, stringMap.get(key));
-						child.setAttribute("attr.name", key);
-						newElem.appendChild(child);
-					}
-					return newElem;
-				})
-				.otherwise_(newElem)
-				.apply(prop);
+		if (prop instanceof StringVertexProperty) {
+			newElem.setAttribute("attr.type", "string");
+			newElem.setTextContent(((StringVertexProperty) prop).string);
+		}
+		else if (prop instanceof IntVertexProperty) {
+			newElem.setAttribute("attr.type", "int");
+			newElem.setTextContent(String.valueOf(((IntVertexProperty) prop).intValue));
+		}
+		else if (prop instanceof BooleanVertexProperty) {
+			newElem.setAttribute("attr.type", "boolean");
+			newElem.setTextContent(String.valueOf(((BooleanVertexProperty) prop).boolValue));
+		}
+		else if (prop instanceof FloatVertexProperty) {
+			newElem.setAttribute("attr.type", "float");
+			newElem.setTextContent(String.valueOf(((FloatVertexProperty) prop).floatValue));
+		}
+		else if (prop instanceof DoubleVertexProperty) {
+			newElem.setAttribute("attr.type", "double");
+			newElem.setTextContent(String.valueOf(((DoubleVertexProperty) prop).doubleValue));
+		}
+		else if (prop instanceof LongVertexProperty) {
+			newElem.setAttribute("attr.type", "long");
+			newElem.setTextContent(String.valueOf(((LongVertexProperty) prop).longValue));
+		}
+		else if (prop instanceof ArrayVertexProperty) {
+			newElem.setAttribute("attr.type", "array");
+			final List<VertexProperty> array = ((ArrayVertexProperty) prop).values;
+			for (int i = 0; i < array.size(); i++) {
+				Element child = writeData(doc, array.get(i));
+				child.setAttribute("attr.name", String.valueOf(i));
+				newElem.appendChild(child);
+			}
+		}
+		else if (prop instanceof IntMapVertexProperty) {
+			newElem.setAttribute("attr.type", "intMap");
+			final Map<Integer, VertexProperty> intMap = ((IntMapVertexProperty) prop).intMap;
+			for (Integer key : intMap.keySet()) {
+				Element child = writeData(doc, intMap.get(key));
+				child.setAttribute("attr.name", key.toString());
+				newElem.appendChild(child);
+			}
+		}
+		else if (prop instanceof StringMapVertexProperty) {
+			newElem.setAttribute("attr.type", "stringMap");
+			final Map<String, VertexProperty> stringMap = ((StringMapVertexProperty) prop).strMap;
+			for (String key : stringMap.keySet()) {
+				Element child = writeData(doc, stringMap.get(key));
+				child.setAttribute("attr.name", key);
+				newElem.appendChild(child);
+			}
+		}
+		return newElem;
 	}
 
 }
