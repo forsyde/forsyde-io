@@ -90,6 +90,14 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
             // Files.writeString(interfacePath, interfaceStr, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         }
 
+        for (EdgeTraitSpec trait : model.edgeTraits) {
+            final TypeSpec viewerSpec = generateEdgeAcessors(trait);
+            final String extraPackages = trait.getNamespaces().isEmpty() ?
+                    "" : "." + String.join(".", trait.getNamespaces());
+            JavaFile.builder("forsyde.io.java.typed.edges" + extraPackages, viewerSpec)
+                    .build().writeToFile(root.toFile());
+        }
+
 //        final Set<Path> outPaths = outFiles.stream().map(File::toPath).collect(Collectors.toSet());
 //        Files.walk(root).forEach(s -> {
 //            if (!outPaths.contains(s) && s.toFile().isFile()) {
@@ -1101,8 +1109,122 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                         .addStatement("return \"$L{\" + getViewedVertex().toString() + \"}\"", trait.getTraitLocalName() + "Viewer")
                         .returns(String.class)
                         .build());
-
         return viewerClass.build();
+        /*
+            viewersList.add(viewerClass.build());
+        }
+        return viewersList;
+
+         */
+    }
+
+    public TypeSpec generateEdgeAcessors(EdgeTraitSpec trait) {
+        /*
+        List<VertexTraitSpec> traits = model.vertexTraits.stream().collect(Collectors.toList());
+        List<TypeSpec> viewersList = new ArrayList<>(traits.size());
+        for (VertexTraitSpec trait : traits) {
+         */
+        final String enumTraitName = trait.name.replace("::", "_").toUpperCase();
+        final String extraPackages = trait.getNamespaces().isEmpty() ?
+                "" : "." + String.join(".", trait.getNamespaces());
+        final TypeName edgeTraitsType = ClassName.get("forsyde.io.java.core", "EdgeTrait");
+        final TypeName edgeAcessorInterface = ClassName.get("forsyde.io.java.core", "EdgeAcessor");
+        final ClassName edgeAcessorType = ClassName.get("forsyde.io.java.typed.edges" + extraPackages, trait.getTraitLocalName());
+        final ClassName systemGraphType = ClassName.get("forsyde.io.java.core", "ForSyDeSystemGraph");
+        final ClassName vertexType = ClassName.get("forsyde.io.java.core", "Vertex");
+        final ClassName vertexViewerType = ClassName.get("forsyde.io.java.core", "VertexViewer");
+
+        final TypeSpec.Builder edgeAcessorBuilder = TypeSpec.classBuilder(edgeAcessorType)
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addSuperinterface(edgeAcessorInterface)
+                //.superclass(ClassName.get("forsyde.io.java.core", "VertexViewer"))
+                .addJavadoc(trait.comment)
+                .addField(edgeAcessorType, "instance", Modifier.PRIVATE,
+                        Modifier.STATIC);
+
+        final MethodSpec.Builder constructorMethod = MethodSpec.constructorBuilder()
+//                .addParameter(ClassName.get("forsyde.io.java.core", "Vertex"), "vertex")
+                .addModifiers(Modifier.PRIVATE);
+//        constructorMethod.addStatement("viewedVertex = vertex");
+        edgeAcessorBuilder.addMethod(constructorMethod.build());
+        edgeAcessorBuilder.addMethod(MethodSpec.methodBuilder("getInstance")
+                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+                .returns(edgeAcessorType)
+                .addStatement("if (instance == null) instance = new $T()", edgeAcessorType)
+                .addStatement("return instance")
+                .build());
+
+        edgeAcessorBuilder.addField(FieldSpec.builder(ArrayTypeName.of(edgeTraitsType), "edgeTraits")
+                        .addModifiers(Modifier.FINAL, Modifier.STATIC)
+                        .initializer(" {$T.$L}", edgeTraitsType, enumTraitName)
+                .build());
+        edgeAcessorBuilder.addMethod(MethodSpec.methodBuilder("getEdgeTraits")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(ArrayTypeName.of(edgeTraitsType))
+                .addStatement("return edgeTraits")
+                .build());
+
+        edgeAcessorBuilder.addMethod(
+                MethodSpec.methodBuilder("create")
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .addParameter(systemGraphType, "model")
+                        .addParameter(vertexType, "src")
+                        .addParameter(vertexType, "dst")
+                        .addStatement("$T.createStatic(getInstance(), model, src, dst)", edgeAcessorInterface)
+                        .build());
+
+        edgeAcessorBuilder.addMethod(
+                MethodSpec.methodBuilder("create")
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .addParameter(systemGraphType, "model")
+                        .addParameter(vertexType, "src")
+                        .addParameter(vertexType, "dst")
+                        .addParameter(String.class, "srcPort")
+                        .addStatement("$T.createStatic(getInstance(), model, src, dst, srcPort)", edgeAcessorInterface)
+                        .build());
+
+        edgeAcessorBuilder.addMethod(
+                MethodSpec.methodBuilder("create")
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .addParameter(systemGraphType, "model")
+                        .addParameter(vertexType, "src")
+                        .addParameter(vertexType, "dst")
+                        .addParameter(String.class, "srcPort")
+                        .addParameter(String.class, "dstPort")
+                        .addStatement("$T.createStatic(getInstance(), model, src, dst, srcPort, dstPort)", edgeAcessorInterface)
+                        .build());
+
+        edgeAcessorBuilder.addMethod(
+                MethodSpec.methodBuilder("create")
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .addParameter(systemGraphType, "model")
+                        .addParameter(vertexViewerType, "src")
+                        .addParameter(vertexViewerType, "dst")
+                        .addStatement("$T.createStatic(getInstance(), model, src, dst)", edgeAcessorInterface)
+                        .build());
+
+        edgeAcessorBuilder.addMethod(
+                MethodSpec.methodBuilder("create")
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .addParameter(systemGraphType, "model")
+                        .addParameter(vertexViewerType, "src")
+                        .addParameter(vertexViewerType, "dst")
+                        .addParameter(String.class, "srcPort")
+                        .addStatement("$T.createStatic(getInstance(), model, src, dst, srcPort)", edgeAcessorInterface)
+                        .build());
+
+        edgeAcessorBuilder.addMethod(
+                MethodSpec.methodBuilder("create")
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .addParameter(systemGraphType, "model")
+                        .addParameter(vertexViewerType, "src")
+                        .addParameter(vertexViewerType, "dst")
+                        .addParameter(String.class, "srcPort")
+                        .addParameter(String.class, "dstPort")
+                        .addStatement("$T.createStatic(getInstance(), model, src, dst, srcPort, dstPort)", edgeAcessorInterface)
+                        .build());
+
+        return edgeAcessorBuilder.build();
         /*
             viewersList.add(viewerClass.build());
         }

@@ -1,9 +1,3 @@
-import io.github.forsyde.conversyde.ConverSyDeStandalone;
-import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.util.List;
-
 public class TestConversion {
 //
 //    @Test

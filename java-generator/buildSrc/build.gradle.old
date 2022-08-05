@@ -1,0 +1,14 @@
+plugins {
+    id "de.jjohannes.extra-java-module-info" version "0.15"
+}
+
+dependencies {
+    implementation("de.jjohannes.gradle:extra-java-module-info:0.15")
+}
+
+// add module information for all direct and transitive dependencies that are not modules
+extraJavaModuleInfo {
+    // failOnMissingModuleInfo.set(false)
+    module(gradleApi(), "transformed.gradle.api")
+}
+

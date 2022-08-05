@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
-public class VertexTraitSpec implements SourceTraceableSpec {
+public class VertexTraitSpec implements SourceTraceableSpec, NamespacedMixin {
 
     public transient int declaredLine = 0;
     public transient int declaredColumn = 0;
@@ -24,18 +24,9 @@ public class VertexTraitSpec implements SourceTraceableSpec {
     @JsonAlias("required_properties")
     public List<PropertySpec> requiredProperties = new ArrayList<>();
 
-    public List<String> getNamespaces() {
-        final List<String> names = name.startsWith("::") ?
-                Arrays.asList(name.replaceFirst("::", "").split("::")) :
-                Arrays.asList(name.split("::"));
-        return names.subList(0, names.size()-1);
-    }
-
-    public String getTraitLocalName() {
-        final List<String> names = name.startsWith("::") ?
-                Arrays.asList(name.replaceFirst("::", "").split("::")) :
-                Arrays.asList(name.split("::"));
-        return names.get(names.size()-1);
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

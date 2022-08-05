@@ -1,6 +1,7 @@
 plugins {
     id 'antlr' // required for java core
     id 'forsyde-io-java-generator'
+//    id "io.freefair.lombok" version "6.5.0.3"
 }
 
 //import forsyde.io.java.generator.GenerateForSyDeModelTask
@@ -31,6 +32,8 @@ generateForSyDeModel {
 //tasks.build.dependsOn gradle.includedBuild('java-generator').task(':generateForSyDeModel')
 //tasks.compileJava.dependsOn gradle.includedBuild('java-generator').task(':generateForSyDeModel')
 tasks.sourcesJar.dependsOn generateGrammarSource
+//tasks.getByName("generateEffectiveLombokConfig").dependsOn generateForSyDeModel
+//tasks.getByName("generateEffectiveLombokConfig").dependsOn generateGrammarSource
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
@@ -48,8 +51,8 @@ dependencies {
     implementation 'org.antlr:antlr4-runtime:4.10.1'
     //implementation 'org.ainslec:picocog:1.0.7'
 
-    compileOnly "org.derive4j:derive4j-annotation:1.1.1"
-    annotationProcessor "org.derive4j:derive4j:1.1.1"
+//    compileOnly "org.derive4j:derive4j-annotation:1.1.1"
+//    annotationProcessor "org.derive4j:derive4j:1.1.1"
 
 }
 
