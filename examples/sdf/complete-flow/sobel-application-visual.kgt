@@ -1,6 +1,3 @@
-properties:
-    org.eclipse.elk.edgeRouting=POLYLINE
-
 knode app {
     
     klabel "application"
