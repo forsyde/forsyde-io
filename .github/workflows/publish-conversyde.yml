@@ -35,7 +35,7 @@ jobs:
         ./gradlew jar shadowJar java-conversyde:jpackageImage
     - uses: montudor/action-zip@v1
       with:
-        args: zip -qq -r conversyde.zip ${{ github.workspace }}/java-conversyde/build/jpackage/java-conversyde/*
+        args: zip -qq -r conversyde.zip -i ${{ github.workspace }}/java-conversyde/build/jpackage/java-conversyde/*
     - name: Upload Jar to release
       uses: svenstaro/upload-release-action@v2
       with:
@@ -57,11 +57,11 @@ jobs:
   publish-conversyde-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: get_version
         uses: battila7/get-version-action@v2
       - name: Set up JDK 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'corretto' # See 'Supported distributions' for available options
           java-version: '17'
