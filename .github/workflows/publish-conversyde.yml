@@ -33,9 +33,11 @@ jobs:
       run: |
         cd ${{ github.workspace }}
         ./gradlew jar shadowJar java-conversyde:jpackageImage
-    - uses: montudor/action-zip@v1
+    - name: Zip Files jpackage files
+      uses: vimtor/action-zip@v1
       with:
-        args: zip -qq -r conversyde.zip -i ${{ github.workspace }}/java-conversyde/build/jpackage/java-conversyde/*
+        files: java-conversyde/build/jpackage/java-conversyde/*
+        dest: conversyde-linux.zip
     - name: Upload Jar to release
       uses: svenstaro/upload-release-action@v2
       with:
@@ -49,7 +51,7 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: conversyde.zip
+        file: ${{ github.workspace }}/conversyde-linux.zip
         asset_name: conversyde-linux-${{ steps.get_version.outputs.version }}.zip
         tag: "${{ github.ref }}"
         overwrite: true
@@ -70,15 +72,16 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           .\gradlew jar shadowJar java-conversyde:jpackageImage
-      - name: Zipping the image files
-        run: |
-          cd ${{ github.workspace }}/java-conversyde/build/jpackage
-          zip -q -r conversyde.zip java-conversyde/*
+      - name: Zip Files jpackage files
+        uses: vimtor/action-zip@v1
+        with:
+          files: java-conversyde/build/jpackage/java-conversyde/*
+          dest: conversyde-win.zip
       - name: Upload Bundle to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ github.workspace }}/java-conversyde/build/jpackage/conversyde.zip
+          file: ${{ github.workspace }}/conversyde-win.zip
           asset_name: conversyde-windows-${{ steps.get_version.outputs.version }}.jar
           tag: "${{ github.ref }}"
           overwrite: true
