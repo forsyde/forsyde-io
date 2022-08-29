@@ -279,7 +279,7 @@ namespace platform {
         vertex AbstractScheduler
 
         vertex CyclicExecutiveScheduler refines AbstractScheduler {
-            prop entries is array<string>
+
         }
 
         vertex StaticCyclicScheduler refines CyclicExecutiveScheduler {
@@ -336,6 +336,18 @@ namespace decision {
 
     vertex Scheduled {
         port schedulers is out multiple unordered platform::runtime::AbstractScheduler with AbstractScheduling
+    }
+
+    namespace platform {
+        namespace runtime {
+            vertex AllocatedSingleSlotSCS refines platform::runtime::StaticCyclicScheduler {
+                prop entries is array<string>
+            }
+
+            vertex AllocatedSharedSlotSCS refines platform::runtime::StaticCyclicScheduler {
+                prop entries is array<array<string>>
+            }
+        }
     }
 
     namespace sdf {

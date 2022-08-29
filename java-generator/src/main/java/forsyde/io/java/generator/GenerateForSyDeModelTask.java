@@ -980,8 +980,10 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
         for (VertexTraitSpec refinedTrait : trait.refinedTraits) {
             final String refinedExtraPackages = refinedTrait.getNamespaces().isEmpty() ?
                     "" : "." + String.join(".", refinedTrait.getNamespaces());
+            final ClassName superClass = ClassName.get("forsyde.io.java.typed.viewers" + refinedExtraPackages, refinedTrait.getTraitLocalName());
             traitInterface
-                    .addSuperinterface(ClassName.get("forsyde.io.java.typed.viewers" + refinedExtraPackages, refinedTrait.getTraitLocalName()));
+                    .addSuperinterface(superClass);
+//            conformsMethod.addStatement("if ($T.conforms(vertex)) return true", superClass);
         }
         traitInterface.addSuperinterface(ClassName.get("forsyde.io.java.core", "VertexViewer"));
 
@@ -996,6 +998,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
             }
             traitInterface.addMethod(generatePortSetterToOtherPort(port));
         }
+
         MethodSpec.Builder conformsMethod = MethodSpec.methodBuilder("conforms")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(ClassName.get("forsyde.io.java.core", "Vertex"), "vertex")
@@ -1012,12 +1015,12 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(ClassName.get("forsyde.io.java.core", "VertexViewer"), "viewer")
                 .returns(ClassName.get(Boolean.class));
-        conformsMethodViewer.beginControlFlow("for ($T t : viewer.getViewedVertex().getTraits())",
-                ClassName.get("forsyde.io.java.core", "Trait"));
-        conformsMethodViewer.addStatement("if(t.refines($T.$L)) return true",
-                ClassName.get("forsyde.io.java.core", "VertexTrait"), enumTraitName);
-        conformsMethodViewer.endControlFlow();
-        conformsMethodViewer.addStatement("return false");
+//        conformsMethodViewer.beginControlFlow("for ($T t : viewer.getViewedVertex().getTraits())",
+//                ClassName.get("forsyde.io.java.core", "Trait"));
+//        conformsMethodViewer.addStatement("if(t.refines($T.$L)) return true",
+//                ClassName.get("forsyde.io.java.core", "VertexTrait"), enumTraitName);
+//        conformsMethodViewer.endControlFlow();
+        conformsMethodViewer.addStatement("return conforms(viewer.getViewedVertex())");
         traitInterface.addMethod(conformsMethodViewer.build());
 
         MethodSpec.Builder safeCast = MethodSpec.methodBuilder("safeCast")

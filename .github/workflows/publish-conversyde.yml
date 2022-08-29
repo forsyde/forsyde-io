@@ -20,14 +20,14 @@ jobs:
   publish-conversyde-linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - id: get_version
       uses: battila7/get-version-action@v2
     - name: Set up JDK 11
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         distribution: 'corretto' # See 'Supported distributions' for available options
-        java-version: '11'
+        java-version: '17'
     - name: Build with Gradle (All)
       # if: ${{ matrix.os != 'windows-latest' }}
       run: |
@@ -64,7 +64,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'corretto' # See 'Supported distributions' for available options
-          java-version: '11'
+          java-version: '17'
       - name: Build with Gradle (All)
         # if: ${{ matrix.os != 'windows-latest' }}
         run: |

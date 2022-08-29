@@ -13,7 +13,7 @@ plugins {
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = project.name
-version = '0.5.12'
+version = '0.5.13'
 project.ext.niceName = "Java Parent"
 
 
@@ -169,6 +169,7 @@ subprojects {
   }
 
   tasks.publish.dependsOn tasks.signArchives
+//  tasks.publishMavenJavaPublicationToSonatypeRepository.dependsOn tasks.signArchives
   tasks.publishMavenJavaPublicationToOSSRHRepository.dependsOn tasks.signArchives
 
 }
