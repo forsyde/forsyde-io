@@ -35,6 +35,7 @@ module forsyde.io.java.core {
     exports forsyde.io.java.typed.viewers.platform;
     exports forsyde.io.java.typed.viewers.values;
     exports forsyde.io.java.typed.viewers.visualization;
+    exports forsyde.io.java.typed.viewers.decision.platform.runtime;
 
     exports forsyde.io.java.typed.edges.execution;
     exports forsyde.io.java.typed.edges.decision;
