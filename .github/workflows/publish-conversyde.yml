@@ -79,7 +79,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ github.workspace }}/java-conversyde/build/distributions/conversyde-${{ steps.get_version.outputs.version-without-v }}.zip
-          asset_name: conversyde-windows-${{ steps.get_version.outputs.version }}.jar
+          asset_name: conversyde-windows-${{ steps.get_version.outputs.version }}.zip
           tag: "${{ github.ref }}"
           overwrite: true
           body: "Executable ConverSyDe Windows"
