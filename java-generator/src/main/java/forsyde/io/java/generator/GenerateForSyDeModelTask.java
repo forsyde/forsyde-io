@@ -305,7 +305,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
             if (port.ordered.orElse(false)) {
                 getPortMethod.returns(listOut);
                 if (port.edgeTraitSpec != null) {
-                    String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L, $T.$L).stream().map(v -> $T.safeCast(v).get()).collect($T.toList())";
+                    String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L, $T.$L).stream().flatMap(v -> $T.safeCast(v).stream()).collect($T.toList())";
                     getPortMethod.addStatement(statement,
                             ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                             port.name,
@@ -318,7 +318,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                             vertexClass,
                             Collectors.class);
                 } else {
-                    String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).stream().map(v -> $T.safeCast(v).get()).collect($T.toList())";
+                    String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).stream().flatMap(v -> $T.safeCast(v).stream()).collect($T.toList())";
                     getPortMethod.addStatement(statement,
                             ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                             port.name,
@@ -333,7 +333,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
             } else {
                 getPortMethod.returns(setOut);
                 if (port.edgeTraitSpec != null) {
-                    String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L, $T.$L).stream().map(v -> $T.safeCast(v).get()).collect($T.toSet())";
+                    String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L, $T.$L).stream().flatMap(v -> $T.safeCast(v).stream()).collect($T.toSet())";
                     getPortMethod.addStatement(statement,
                             ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                             port.name,
@@ -346,7 +346,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                             vertexClass,
                             Collectors.class);
                 } else {
-                    String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).stream().map(v -> $T.safeCast(v).get()).collect($T.toSet())";
+                    String statement = "return $T.getMultipleNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).stream().flatMap(v -> $T.safeCast(v).stream()).collect($T.toSet())";
                     getPortMethod.addStatement(statement,
                             ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                             port.name,
@@ -362,7 +362,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
         } else {
             getPortMethod.returns(optionalOut);
             if (port.edgeTraitSpec != null) {
-                getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L, $T.$L).map(v -> $T.safeCast(v).get())",
+                getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L, $T.$L).flatMap(v -> $T.safeCast(v).stream())",
                         ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                         port.name,
                         ClassName.get("forsyde.io.java.core", "VertexTrait"),
@@ -373,7 +373,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                         port.edgeTraitSpec.name.replace("::", "_").toUpperCase(),
                         vertexClass);
             } else {
-                getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).map(v -> $T.safeCast(v).get())",
+                getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).flatMap(v -> $T.safeCast(v).stream())",
                         ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                         port.name,
                         ClassName.get("forsyde.io.java.core", "VertexTrait"),

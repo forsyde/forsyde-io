@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 public class PopulateTaskCommunications implements SystemGraphInference {
 
     @Override
-    public void infer(ForSyDeSystemGraph forSyDeSystemGraph) {
+    public void infer(final ForSyDeSystemGraph forSyDeSystemGraph) {
         forSyDeSystemGraph.vertexSet().stream().flatMap(v -> LoopingTask.safeCast(v).stream()).forEach(task -> {
             final Map<String, Long> writeMap = new HashMap<>();
             final Map<String, Long> readMap = new HashMap<>();

@@ -31,5 +31,8 @@ public class ForSyDeIOJavaMetaGenerator implements Plugin<Project> {
 				}
 			});
 		});
+
+		project.getTasks().register("getAllNamespaces", GetAllNamespaces.class, getAllNamespaces -> {
+		});
 	}
 }
