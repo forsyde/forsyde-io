@@ -12,9 +12,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 /**
- * ForSyDeGraphVizDriver is meant to produce diagrams in a more appealing than the
- * standard {@link forsyde.io.java.drivers.ForSyDeDOTDriver}, which simply spits out
- * the systems graph.
+ * ForSyDeGraphVizDriver is meant to produce diagrams the graphviz description language.
  *
  * This takes care of also processing 'visualization' traits.
  */

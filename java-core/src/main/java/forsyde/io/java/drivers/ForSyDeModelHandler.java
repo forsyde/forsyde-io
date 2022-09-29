@@ -49,7 +49,6 @@ public final class ForSyDeModelHandler {
 		registeredDrivers.add(new ForSyDeMLDriver());
 		registeredDrivers.add(new ForSyDeXMIDriver());
         registeredDrivers.add(new ForSyDeFiodlHandler());
-		registeredDrivers.add(new ForSyDeGraphMLDriver());
 		// register extra drivers
 		registeredDrivers.addAll(Arrays.asList(extraDrivers));
 		// make their

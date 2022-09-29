@@ -362,7 +362,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
         } else {
             getPortMethod.returns(optionalOut);
             if (port.edgeTraitSpec != null) {
-                getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L, $T.$L).flatMap(v -> $T.safeCast(v).stream())",
+                getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L, $T.$L).flatMap($T::safeCast)",
                         ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                         port.name,
                         ClassName.get("forsyde.io.java.core", "VertexTrait"),
@@ -373,7 +373,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                         port.edgeTraitSpec.name.replace("::", "_").toUpperCase(),
                         vertexClass);
             } else {
-                getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).flatMap(v -> $T.safeCast(v).stream())",
+                getPortMethod.addStatement("return $T.getNamedPort(model, getViewedVertex(), $S, $T.$L, $T.$L).flatMap($T::safeCast)",
                         ClassName.get("forsyde.io.java.core", "VertexAcessor"),
                         port.name,
                         ClassName.get("forsyde.io.java.core", "VertexTrait"),
