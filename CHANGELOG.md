@@ -1,12 +1,14 @@
 # Change Log
  
-## [Unreleased] - yyyy-mm-dd
+## [0.5.16] - 2022-09-29
   
 ### Added
  
 ### Changed
- 
+ - Dropped some unused output formats and improved the KGT output.
+
 ### Fixed
+ - Generator bugs with the added changes.
  
 ## [0.3.3] - 2021-05-24
    
