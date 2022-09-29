@@ -151,7 +151,7 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
                         if (!addedPorts.get(parent).contains(portString)) {
                             parentWriter.writeln("// port created by long-to-short translation");
                             parentWriter.writeln_r("kport " + portString + " {");
-                            parentWriter.writeln("klabel \"" + srcPort + "_transformed" + "\"");
+//                            parentWriter.writeln("klabel \"" + srcPort + "_transformed" + "\"");
                             parentWriter.writeln_l("}");
                             addedPorts.get(parent).add(portString);
                         }
@@ -185,7 +185,7 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
                         if (!addedPorts.get(parent).contains(portString)) {
                             parentWriter.writeln("// port created by long-to-short translation");
                             parentWriter.writeln_r("kport " + portString + " {");
-                            parentWriter.writeln("klabel \"" + dstPort + "_transformed" + "\"");
+//                            parentWriter.writeln("klabel \"" + dstPort + "_transformed" + "\"");
                             parentWriter.writeln_l("}");
                             addedPorts.get(parent).add(portString);
                         }

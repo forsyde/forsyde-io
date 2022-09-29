@@ -28,6 +28,11 @@ generateForSyDeModel {
     inputModelDSL = project.ext.stdTraitHierarchyFile
 }
 
+getAllNamespaces {
+    inputModelDSL = project.ext.stdTraitHierarchyFile
+}
+
+
 //tasks.generateForSyDeModel.dependsOn clearForSyDeModel
 //tasks.build.dependsOn gradle.includedBuild('java-generator').task(':generateForSyDeModel')
 //tasks.compileJava.dependsOn gradle.includedBuild('java-generator').task(':generateForSyDeModel')
@@ -40,7 +45,6 @@ dependencies {
     // The production code uses the SLF4J logging API at compile time
     //implementation 'org.slf4j:slf4j-api:1.7.32'
     api group: 'org.jgrapht', name: 'jgrapht-core', version: '[1.5.1,)'
-    api group: 'org.jgrapht', name: 'jgrapht-io', version: '[1.5.1,)'
     // these two are intrusive results of lingua franca
     //implementation 'org.eclipse.xtend:org.eclipse.xtend.lib:2.25.0'
     //implementation 'commons-cli:commons-cli:1.5.0'
