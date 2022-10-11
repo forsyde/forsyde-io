@@ -361,6 +361,11 @@ namespace decision {
     }
 
     namespace results {
+        vertex AnalyzedActor refines moc::sdf::SDFActor {
+            prop throughputNumeratorInSecs is long
+            prop throughputDenominatorInSecs is long
+        }
+
         vertex AnalysedTask refines execution::Task {
             prop worstCaseResponseTimeNumeratorInSecs is long
             prop worstCaseResponseTimeDenominatorInSecs is long
