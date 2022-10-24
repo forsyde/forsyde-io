@@ -366,7 +366,8 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
             final GraphProperties graphProperties = new GraphProperties();
             final TimeConstraints timeConstraints = new TimeConstraints();
             timeConstraints.setThroughput(
-                    BigDecimal.valueOf(analyzedActorList.stream().mapToDouble(v -> v.getThroughputInSecsNumerator().doubleValue() / v.getThroughputInSecsDenominator().doubleValue()).max().orElse(0.0))
+                    BigDecimal.valueOf(analyzedActorList.stream().mapToDouble(v -> (v.getThroughputInSecsNumerator() == null ? 0.0 : v.getThroughputInSecsNumerator().doubleValue())
+                            / (v.getThroughputInSecsDenominator() == null ? 1.0 : v.getThroughputInSecsDenominator().doubleValue())).max().orElse(0.0))
             );
             graphProperties.setTimeConstraints(timeConstraints);
             sdf3.getApplicationGraph().getSdfProperties().setGraphProperties(graphProperties);
