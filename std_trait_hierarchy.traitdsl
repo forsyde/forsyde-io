@@ -1,5 +1,11 @@
 namespace impl {
 
+    namespace moc {
+        namespace sdf {
+            InstrumentedSDFActor refines moc::sdf::SDFActor, impl::InstrumentedExecutable
+        }
+    }
+
     vertex Executable
 
     vertex InstrumentedExecutable refines Executable {
@@ -379,6 +385,11 @@ namespace decision {
 
         vertex AnalysedGenericProcessingModule refines platform::GenericProcessingModule {
             prop utilization is double
+        }
+
+        vertex AnalyzedActor refines moc::sdf::SDFActor {
+            prop throughputInSecsNumerator is long
+            prop throughputInSecsDenominator is long
         }
     }
 
