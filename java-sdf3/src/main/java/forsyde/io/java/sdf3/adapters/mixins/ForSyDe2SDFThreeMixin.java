@@ -33,7 +33,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
     /**
      *  This function was extracted from IDeSyDe's source code and adapted for this place generation.
      */
-    private double[][] computeWorstCaseDelays(ForSyDeSystemGraph model) {
+    private List<List<Double>> computeWorstCaseDelays(ForSyDeSystemGraph model) {
         final GraphBuilder<Vertex, org.jgrapht.graph.DefaultEdge, ? extends SimpleDirectedWeightedGraph<Vertex, org.jgrapht.graph.DefaultEdge>> gBuilder = SimpleDirectedWeightedGraph.createBuilder(DefaultEdge::new);
         model.edgeSet().forEach(e -> {
                 final Vertex src = model.getEdgeSource(e);
@@ -75,7 +75,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
         });
         final Graph<Vertex, DefaultEdge> directedAndConnectedMaxTimeGraph = gBuilder.buildAsUnmodifiable();
         final double maxWeight = directedAndConnectedMaxTimeGraph.edgeSet().stream()
-                .mapToDouble(e -> directedAndConnectedMaxTimeGraph.getEdgeWeight(e))
+                .mapToDouble(directedAndConnectedMaxTimeGraph::getEdgeWeight)
                 .max()
                 .orElse(0.0);
         final Graph<Vertex, DefaultEdge> reversedGraph = new AsWeightedGraph<>(
@@ -89,14 +89,14 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
         directedAndConnectedMaxTimeGraph.vertexSet().forEach(vertex -> {
             if (GenericProcessingModule.conforms(vertex)) cores.add(vertex);
         });
-        return (double[][]) cores.stream().map(src -> {
-                return cores.stream().mapToDouble(dst -> {
+        return cores.stream().map(src -> {
+                return cores.stream().map(dst -> {
                     if (src != dst && paths.getPath(src, dst) != null) {
-                        return ((maxWeight * paths.getPath(src, dst).getLength())-paths.getPathWeight(src, dst));
+                        return Double.valueOf((maxWeight * paths.getPath(src, dst).getLength())-paths.getPathWeight(src, dst));
                     } else
-                        return -1.0;
-                }).toArray();
-        }).toArray();
+                        return Double.valueOf(-1.0);
+                }).collect(Collectors.toList());
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -129,6 +129,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
         if (sdf3.getApplicationGraph().getSdf() == null) {
             final Sdf sdf = new Sdf();
             sdf.setName("allSdfGraphs");
+            sdf.setType("G");
             sdf3.getApplicationGraph().setSdf(sdf);
         }
         for (Vertex v : systemGraph.vertexSet()) {
@@ -171,7 +172,11 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
                         port.setName(edgeInfo.getSourcePort().orElse(sdfChannel.getIdentifier()));
                         final int rate = sdfActor.getProduction().getOrDefault(edgeInfo.getSourcePort().orElse(sdfChannel.getIdentifier()), 1);
                         port.setRate(new BigDecimal(rate));
+                        port.setType("out");
                         actor.getPort().add(port);
+                        equivalent(sdfChannel.getViewedVertex()).filter(o -> o instanceof Channel).map(o -> (Channel) o).ifPresent(channel -> {
+                            channel.setSrcPort(edgeInfo.getSourcePort().orElse(sdfChannel.getIdentifier()));
+                        });
                     });
                 });
             });
@@ -182,7 +187,11 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
                         port.setName(edgeInfo.getTargetPort().orElse(sdfChannel.getIdentifier()));
                         final int rate = sdfActor.getConsumption().getOrDefault(edgeInfo.getTargetPort().orElse(sdfChannel.getIdentifier()), 1);
                         port.setRate(new BigDecimal(rate));
+                        port.setType("in");
                         actor.getPort().add(port);
+                        equivalent(sdfChannel.getViewedVertex()).filter(o -> o instanceof Channel).map(o -> (Channel) o).ifPresent(channel -> {
+                            channel.setDstPort(edgeInfo.getTargetPort().orElse(sdfChannel.getIdentifier()));
+                        });
                     });
                 });
             });
@@ -205,6 +214,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
 
                 tile.setName(genericProcessingModule.getIdentifier() + "_tile");
                 processor.setName(genericProcessingModule.getIdentifier());
+                processor.setType(genericProcessingModule.getIdentifier());
 
                 arbitration.setType("TDMA");
                 arbitration.setWheelsize(new BigDecimal(100));
@@ -229,7 +239,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
                         });
                         GenericCommunicationModule.safeCast(neigh).ifPresent(genericCommunicationModule -> {
                             final NetworkInterface networkInterface = new NetworkInterface();
-                            networkInterface.setName(genericProcessingModule.getIdentifier());
+                            networkInterface.setName(genericCommunicationModule.getIdentifier());
                             InstrumentedCommunicationModule.safeCast(genericCommunicationModule).ifPresent(instrumentedCommunicationModule -> {
                                 networkInterface.setNrConnections(new BigDecimal(instrumentedCommunicationModule.getMaxConcurrentFlits()));
                                 networkInterface.setInBandwidth(
@@ -256,14 +266,14 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
             });
         }
 
-        final double[][] wccts = computeWorstCaseDelays(systemGraph);
+        final List<List<Double>> wccts = computeWorstCaseDelays(systemGraph);
         final List<GenericProcessingModule> cores = systemGraph.vertexSet().stream().flatMap(v -> GenericProcessingModule.safeCast(v).stream()).collect(Collectors.toList());
         for (int srci = 0; srci < cores.size(); srci++) {
             for (int dsti = 0; dsti < cores.size(); dsti++) {
-                if (srci != dsti && wccts[srci][dsti] > -1) {
+                if (srci != dsti && wccts.get(srci).get(dsti) > -1) {
                     final Connection connection = new Connection();
                     connection.setName(cores.get(srci).getIdentifier() + "_" + cores.get(dsti).getIdentifier());
-                    connection.setDelay(BigDecimal.valueOf(wccts[srci][dsti]));
+                    connection.setDelay(BigDecimal.valueOf(wccts.get(srci).get(dsti)));
                     connection.setSrcTile(cores.get(srci).getIdentifier() + "_tile");
                     connection.setDstTile(cores.get(dsti).getIdentifier() + "_tile");
                     sdf3.getArchitectureGraph().getConnection().add(connection);
@@ -280,7 +290,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
         network.setPacketHeaderSize(new BigDecimal(32));
         network.setReconfigurationTimeNI(new BigDecimal(1));
         network.setSlotTableSize(new BigDecimal(tileList.size()));
-        network.getTile().addAll(tileList);
+//        network.getTile().addAll(tileList);
         for (Vertex vertex : systemGraph.vertexSet()) {
             if(equivalents(vertex).noneMatch(networkInterfaceList::contains)) {
                 GenericCommunicationModule.safeCast(vertex).ifPresent(genericCommunicationModule -> {
@@ -321,8 +331,8 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
 
     default void convertParameters(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
         List<List<Double>> wcets = computeWCETTable(systemGraph);
-        final List<Actor> actors = systemGraph.vertexSet().stream().flatMap(this::equivalents).filter(o -> o instanceof Actor).map(o -> (Actor) o).collect(Collectors.toList());
-        final List<Processor> processors = systemGraph.vertexSet().stream().flatMap(this::equivalents).filter(o -> o instanceof Processor).map(o -> (Processor) o).collect(Collectors.toList());
+        final List<Actor> actors = systemGraph.vertexSet().stream().flatMap(this::equivalents).filter(o -> o instanceof Actor).map(o -> (Actor) o).distinct().collect(Collectors.toList());
+        final List<Processor> processors = systemGraph.vertexSet().stream().flatMap(this::equivalents).filter(o -> o instanceof Processor).map(o -> (Processor) o).distinct().collect(Collectors.toList());
         if (sdf3.getApplicationGraph().getSdfProperties() == null) {
             sdf3.getApplicationGraph().setSdfProperties(new SdfProperties());
         }
@@ -333,7 +343,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
             for (int j = 0; j < processors.size(); j++) {
                 final Processor processor = processors.get(j);
                 if (wcets.get(i).get(j) > -1.0) {
-                    // wow... they really tried to cut corners here. Reusing Processor might sound like a good idea
+                    // wow... they really tried to cut corners here. Reusing a Processor tag might sound like a good idea
                     // but it just leaks conceptually everywhere.
                     final Processor newProcessor = new Processor();
                     final Memory newMemory = new Memory();
@@ -345,11 +355,11 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
                     newProcessor.setExecutionTime(executionTime);
                     newProcessor.setMemory(newMemory);
                     newProcessor.setType(processor.getType());
+                    newProcessor.setDefault("true");
                     actorProperties.getProcessor().add(newProcessor);
-
                 }
-                sdf3.getApplicationGraph().getSdfProperties().getActorProperties().add(actorProperties);
             }
+            sdf3.getApplicationGraph().getSdfProperties().getActorProperties().add(actorProperties);
         }
         final List<AnalyzedActor> analyzedActorList = systemGraph.vertexSet().stream().flatMap(v -> AnalyzedActor.safeCast(v).stream()).collect(Collectors.toList());
         if (analyzedActorList.size() > 0) {
@@ -361,6 +371,21 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
             graphProperties.setTimeConstraints(timeConstraints);
             sdf3.getApplicationGraph().getSdfProperties().setGraphProperties(graphProperties);
         }
+
+        systemGraph.vertexSet().stream().flatMap(v -> TokenizableDataBlock.safeCast(v).stream()).forEach(tokenizableDataBlock -> {
+            final ChannelProperties channelProperties = new ChannelProperties();
+            final TokenSize tokenSize = new TokenSize();
+            tokenSize.setSz(new BigDecimal(tokenizableDataBlock.getTokenSizeInBits()));
+            channelProperties.setChannel(tokenizableDataBlock.getIdentifier());
+            channelProperties.getTokenSize().add(tokenSize);
+            if (tokenizableDataBlock.getMaxSizeInBits() > 0L) {
+                final BufferSize bufferSize = new BufferSize();
+                bufferSize.setSz(new BigDecimal(tokenizableDataBlock.getMaxSizeInBits()));
+                bufferSize.setMem(new BigDecimal(tokenizableDataBlock.getMaxSizeInBits()));
+                channelProperties.setBufferSize(bufferSize);
+            }
+            sdf3.getApplicationGraph().getSdfProperties().getChannelProperties().add(channelProperties);
+        });
     }
 
 }

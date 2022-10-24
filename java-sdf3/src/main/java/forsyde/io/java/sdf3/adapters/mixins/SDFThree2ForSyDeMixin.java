@@ -1,14 +1,16 @@
 package forsyde.io.java.sdf3.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.sdf3.adapters.mixins.elems.Processor;
-import forsyde.io.java.sdf3.adapters.mixins.elems.Sdf3;
 import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
+import forsyde.io.java.sdf3.adapters.mixins.elems.Processor;
+import forsyde.io.java.sdf3.adapters.mixins.elems.Sdf3;
 import forsyde.io.java.typed.viewers.impl.InstrumentedExecutable;
 import forsyde.io.java.typed.viewers.impl.TokenizableDataBlock;
-import forsyde.io.java.typed.viewers.moc.sdf.*;
+import forsyde.io.java.typed.viewers.moc.sdf.SDFActor;
+import forsyde.io.java.typed.viewers.moc.sdf.SDFChannel;
+import forsyde.io.java.typed.viewers.moc.sdf.SDFChannelViewer;
 import forsyde.io.java.typed.viewers.visualization.Visualizable;
 
 import java.util.HashMap;
@@ -55,33 +57,33 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
     default void fromChannelsToEdges(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
         // equivalent of 3 for loops
         sdf3.getApplicationGraph().getSdf().getChannel()
-        .forEach(channel -> {
-            equivalents(channel)
-            .filter(SDFChannel::conforms)
-            .map(SDFChannelViewer::new)
-            .forEach(sdfChannel -> {
-                sdf3.getApplicationGraph().getSdf().getActor().stream()
-                .filter(srcActor -> srcActor.getName().equals(channel.getSrcActor()))
-                .flatMap(this::equivalents)
-                .forEach(srcActorV -> {
-                    // find the one without consumer, as it could be expanded with delays beforehand.
-                    // find the equivalent signal to connect. Should not NPE.
-                    if (sdfChannel.getConsumerPort(systemGraph).isEmpty()) {
-                        systemGraph.connect(srcActorV, sdfChannel.getViewedVertex(), channel.getSrcPort(), "producer", EdgeTrait.MOC_SDF_SDFDATAEDGE, EdgeTrait.VISUALIZATION_VISUALCONNECTION);
-                    }
+                .forEach(channel -> {
+                    equivalents(channel)
+                            .filter(SDFChannel::conforms)
+                            .map(SDFChannelViewer::new)
+                            .forEach(sdfChannel -> {
+                                sdf3.getApplicationGraph().getSdf().getActor().stream()
+                                        .filter(srcActor -> srcActor.getName().equals(channel.getSrcActor()))
+                                        .flatMap(this::equivalents)
+                                        .forEach(srcActorV -> {
+                                            // find the one without consumer, as it could be expanded with delays beforehand.
+                                            // find the equivalent signal to connect. Should not NPE.
+                                            if (sdfChannel.getConsumerPort(systemGraph).isEmpty()) {
+                                                systemGraph.connect(srcActorV, sdfChannel.getViewedVertex(), channel.getSrcPort(), "producer", EdgeTrait.MOC_SDF_SDFDATAEDGE, EdgeTrait.VISUALIZATION_VISUALCONNECTION);
+                                            }
+                                        });
+                                sdf3.getApplicationGraph().getSdf().getActor().stream()
+                                        .filter(dstActor -> dstActor.getName().equals(channel.getDstActor()))
+                                        .flatMap(this::equivalents)
+                                        .forEach(dstActorV -> {
+                                            // find the one without consumer, as it could be expanded with delays beforehand.
+                                            // find the equivalent signal to connect. Should not NPE.
+                                            if (sdfChannel.getConsumerPort(systemGraph).isEmpty()) {
+                                                systemGraph.connect(sdfChannel.getViewedVertex(), dstActorV, "consumer", channel.getDstPort(), EdgeTrait.MOC_SDF_SDFDATAEDGE, EdgeTrait.VISUALIZATION_VISUALCONNECTION);
+                                            }
+                                        });
+                            });
                 });
-                sdf3.getApplicationGraph().getSdf().getActor().stream()
-                .filter(dstActor -> dstActor.getName().equals(channel.getDstActor()))
-                .flatMap(this::equivalents)
-                .forEach(dstActorV -> {
-                    // find the one without consumer, as it could be expanded with delays beforehand.
-                    // find the equivalent signal to connect. Should not NPE.
-                    if (sdfChannel.getConsumerPort(systemGraph).isEmpty()) {
-                        systemGraph.connect(sdfChannel.getViewedVertex(), dstActorV, "consumer", channel.getDstPort(), EdgeTrait.MOC_SDF_SDFDATAEDGE, EdgeTrait.VISUALIZATION_VISUALCONNECTION);
-                    }
-                });
-            });
-        });
     }
 
     default void fromChannelPropertiesToSDFChannels(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
@@ -105,6 +107,11 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                         p -> Map.of("all", p.getExecutionTime().getTime().longValueExact())
                 ));
                 instrumentedExecutable.setOperationRequirements(ops);
+
+                final Long stateSize = actorProperties.getProcessor().stream().map(Processor::getMemory)
+                        .mapToLong(m -> m != null ? m.getStateSize() != null ? m.getStateSize().getMax() != null ?
+                                m.getStateSize().getMax().longValueExact() : 0L : 0L : 0L).sum();
+                instrumentedExecutable.setSizeInBits(stateSize);
             });
         });
     }

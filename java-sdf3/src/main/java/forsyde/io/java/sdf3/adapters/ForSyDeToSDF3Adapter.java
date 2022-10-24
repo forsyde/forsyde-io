@@ -23,7 +23,7 @@ public class ForSyDeToSDF3Adapter implements ForSyDe2SDFThreeMixin {
 
     @Override
     public void addEquivalence(Vertex source, Object elem) {
-
+        equivalences.add(Pair.of(source, elem));
     }
 
     @Override
