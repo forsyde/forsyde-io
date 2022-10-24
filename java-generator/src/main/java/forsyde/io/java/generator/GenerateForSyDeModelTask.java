@@ -853,32 +853,36 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                 .addModifiers(Modifier.PUBLIC)
                 .addStatement("return canonicalName");
         List<VertexTraitSpec> traits = model.vertexTraits.stream().collect(Collectors.toList());
+        final Set<String> visitedtraits = new HashSet<>();
         for (VertexTraitSpec trait : traits) {
             final String enumTraitName = trait.name.replace("::", "_").toUpperCase();
-            vertexTraitEnumBuilder.addEnumConstant(enumTraitName,
-                    TypeSpec.anonymousClassBuilder("$S", trait.name).build());
+            if (!visitedtraits.contains(enumTraitName)) {
+                visitedtraits.add(enumTraitName);
+                vertexTraitEnumBuilder.addEnumConstant(enumTraitName,
+                        TypeSpec.anonymousClassBuilder("$S", trait.name).build());
 
 
-            refinesMethod.addCode("case " + enumTraitName + ":\n");
-            refinesMethod.beginControlFlow("switch (other)");
-            // def superIterator = new DepthFirstIterator<String, DefaultEdge>(traitGraph,
-            // vertexTrait.key)
-            Queue<VertexTraitSpec> refinedTraits = new LinkedList<>(List.of(trait));
-            while (!refinedTraits.isEmpty()) {
-                VertexTraitSpec refinedTrait = refinedTraits.poll();
-                final String refinedEnumTraitName = refinedTrait.name.replace("::", "_").toUpperCase();
-                refinesMethod.addCode("case " + refinedEnumTraitName + ": ");
-                refinesMethod.addStatement("return true");
-                refinedTraits.addAll(refinedTrait.refinedTraits);
+                refinesMethod.addCode("case " + enumTraitName + ":\n");
+                refinesMethod.beginControlFlow("switch (other)");
+                // def superIterator = new DepthFirstIterator<String, DefaultEdge>(traitGraph,
+                // vertexTrait.key)
+                Queue<VertexTraitSpec> refinedTraits = new LinkedList<>(List.of(trait));
+                while (!refinedTraits.isEmpty()) {
+                    VertexTraitSpec refinedTrait = refinedTraits.poll();
+                    final String refinedEnumTraitName = refinedTrait.name.replace("::", "_").toUpperCase();
+                    refinesMethod.addCode("case " + refinedEnumTraitName + ": ");
+                    refinesMethod.addStatement("return true");
+                    refinedTraits.addAll(refinedTrait.refinedTraits);
+                }
+                refinesMethod.addStatement("default: return false");
+                refinesMethod.endControlFlow();
+
+                //getNameMethod.addStatement("case $L: return $S", enumTraitName, trait.name);
+                //getNameMethod.addStatement("case $S: return \"" + trait.name + "\"");
+
+                fromNameMethod.addCode("case $S:\n", trait.name);
+                fromNameMethod.addStatement("case $S: return VertexTrait.$L", enumTraitName, enumTraitName);
             }
-            refinesMethod.addStatement("default: return false");
-            refinesMethod.endControlFlow();
-
-            //getNameMethod.addStatement("case $L: return $S", enumTraitName, trait.name);
-            //getNameMethod.addStatement("case $S: return \"" + trait.name + "\"");
-
-            fromNameMethod.addCode("case $S:\n", trait.name);
-            fromNameMethod.addStatement("case $S: return VertexTrait.$L", enumTraitName, enumTraitName);
         }
         refinesMethod.addStatement("default: return false");
         refinesMethod.endControlFlow();

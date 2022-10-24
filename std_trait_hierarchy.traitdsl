@@ -1,11 +1,5 @@
 namespace impl {
 
-    namespace moc {
-        namespace sdf {
-            InstrumentedSDFActor refines moc::sdf::SDFActor, impl::InstrumentedExecutable
-        }
-    }
-
     vertex Executable
 
     vertex InstrumentedExecutable refines Executable {
