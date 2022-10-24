@@ -1,4 +1,15 @@
 # Change Log
+
+## [0.5.17] - 2022-10-24
+
+### Added
+- A small SDF3 adapter to help perform experiments between IDeSyDe and the SDF3 tool chain.
+
+### Changed
+
+### Fixed
+- Small extraction oversights in the SDF3 to ForSyDe conversion direction.  
+
  
 ## [0.5.16] - 2022-09-29
   
