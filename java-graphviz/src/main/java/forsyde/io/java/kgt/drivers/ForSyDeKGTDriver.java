@@ -7,6 +7,7 @@ import forsyde.io.java.core.Vertex;
 import forsyde.io.java.drivers.ForSyDeModelDriver;
 import forsyde.io.java.typed.viewers.visualization.GreyBox;
 import forsyde.io.java.typed.viewers.visualization.Visualizable;
+import forsyde.io.java.typed.viewers.visualization.VisualizableWithProperties;
 import org.ainslec.picocog.PicoWriter;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.LowestCommonAncestorAlgorithm;
@@ -76,11 +77,22 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
 //            vWriter.writeln("krectangle");
             // write its label
             vWriter.writeln("klabel \"" + v.getIdentifier() + "\"");
+            VisualizableWithProperties.safeCast(v).ifPresent(visualizableWithProperties -> {
+                vWriter.writeln_r("knode vProperties {");
+                // TODO: until I figure out how to make the size of the node label be respected, this small sizing hack with width and height stays.
+                final int width = 3 * visualizableWithProperties.getVisualizedPropertiesNames().stream().mapToInt(p -> ("\\n " + p + ": " + v.getProperties().get(p).toString()).length()).sum();
+                final int height = 20 * visualizableWithProperties.getVisualizedPropertiesNames().size();
+                vWriter.writeln("size: width=" + width + " height=" + height);
+                vWriter.write("klabel \"properties:");
+                visualizableWithProperties.getVisualizedPropertiesNames().forEach(p -> vWriter.write("\\n " + p + ": " + v.getProperties().get(p).toString()));
+                vWriter.writeln("\"");
+                vWriter.writeln_l("}");
+            });
             // write all its ports, which is like node and label again
             // as long as tehre is any visualizable connection incoming or outgoing
             v.getPorts().stream().filter(p ->
-                model.incomingEdgesOf(v).stream().anyMatch(e -> e.getTargetPort().map(tp -> tp.equals(p)).orElse(false) && e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION)) ||
-                model.outgoingEdgesOf(v).stream().anyMatch(e -> e.getSourcePort().map(sp -> sp.equals(p)).orElse(false) && e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION))
+                    model.incomingEdgesOf(v).stream().anyMatch(e -> e.getTargetPort().map(tp -> tp.equals(p)).orElse(false) && e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION)) ||
+                            model.outgoingEdgesOf(v).stream().anyMatch(e -> e.getSourcePort().map(sp -> sp.equals(p)).orElse(false) && e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION))
             ).forEach(p -> {
                 final String portString = p.replace(" ", "_").replace(".", "_");
                 vWriter.writeln_r("kport " + portString + " {");
@@ -176,7 +188,7 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
                             childrenToParents.containsKey(it) && (childrenToParents.get(it) != ancestor || ancestor == null)
                     ) {
                         final Vertex parent = childrenToParents.get(it);
-    //                    final PicoWriter itWriter = extensionPoints.getOrDefault(it, topWriter);
+                        //                    final PicoWriter itWriter = extensionPoints.getOrDefault(it, topWriter);
                         final PicoWriter parentWriter = extensionPoints.getOrDefault(parent, topWriter);
                         final String itString = "v" + it.getIdentifier().replace(" ", "_")
                                 .replace(".", "_");

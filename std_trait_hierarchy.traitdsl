@@ -1,3 +1,4 @@
+
 namespace impl {
 
     vertex Executable
@@ -152,6 +153,36 @@ namespace moc {
 
     }
 
+    namespace sy {
+        edge SYDataEdge {
+            source SYElem
+            target SYElem
+        }
+
+        vertex SYElem refines moc::MoCElem
+
+        vertex SYProcess refines SYElem
+
+        vertex SYSignal refines SYElem {
+            port input is single in SYProcess with SYDataEdge
+            port output is single out SYProcess with SYDataEdge
+        }
+
+        vertex SYMap refines SYProcess {
+            prop inputPorts is array<str>
+            prop outputPorts is array<str>
+
+            port combFunction is single out impl::Executable with moc::AbstractionEdge
+        }
+
+        vertex SYDelay refines SYProcess {
+            prop numDelays is int
+
+            port normal is single in SYSignal with SYDataEdge
+            port delayed is single out SYSignal with SYDataEdge
+        }
+    }
+
 }
 
 namespace parallel {
@@ -159,11 +190,23 @@ namespace parallel {
 
     edge ParallelContainerEdge
 
+    edge ParallelComputationEdge
+
+    vertex Vectorizable {
+        prop dimensions is array<int> = []
+    }
+
     vertex Map refines ParallelSkeleton {
+        prop inputPorts is array<str>
+        prop outputPorts is array<str>
+
         port kernel is single output impl::Executable with ParallelContainerEdge
+
     }
 
     vertex Reduce refines ParallelSkeleton {
+        port inputArray is single in Vectorizable with ParallelComputationEdge
+        port outputScalar is single out Vectorizable with ParallelComputationEdge
         port kernel is single output impl::Executable with ParallelContainerEdge
     }
 }
@@ -404,6 +447,10 @@ namespace visualization {
 
     vertex GreyBox refines Visualizable {
         port contained is multiple out Visualizable with VisualContainment
+    }
+
+    vertex VisualizableWithProperties refines Visualizable {
+        prop visualizedPropertiesNames is array<str>
     }
 
 }
