@@ -201,7 +201,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
     default void convertArchitecture(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
         if (sdf3.getArchitectureGraph() == null) {
             final ArchitectureGraph architectureGraph = new ArchitectureGraph();
-            architectureGraph.setName("sdfGraphs");
+            architectureGraph.setName("sdfArchs");
             sdf3.setArchitectureGraph(architectureGraph);
         }
         final List<Tile> tileList = new ArrayList<>();
