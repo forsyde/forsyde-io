@@ -11,10 +11,7 @@ import java.util.*;
 import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.inference.PopulateTaskCommunications;
 import forsyde.io.java.inference.SystemGraphInference;
-import forsyde.io.java.migrations.NoMoreReactiveTaskMigration;
-import forsyde.io.java.migrations.SDFCombToSDFActorConversion;
-import forsyde.io.java.migrations.SystemGraphMigrator;
-import forsyde.io.java.migrations.TaskCallSequenceSplit;
+import forsyde.io.java.migrations.*;
 import forsyde.io.java.validation.SDFValidator;
 import forsyde.io.java.validation.SystemGraphValidation;
 
@@ -43,6 +40,8 @@ public final class ForSyDeModelHandler {
 		registeredMigrators.add(new NoMoreReactiveTaskMigration());
         registeredMigrators.add(new TaskCallSequenceSplit());
 		registeredMigrators.add(new SDFCombToSDFActorConversion());
+		registeredMigrators.add(new ParallelSkeletonsNameMigrator());
+		registeredMigrators.add(new MadeMocAndParallelPortsMultipleMigrator());
 		// default validators
 		registesteredValidators.add(new SDFValidator());
 		// register default drivers
