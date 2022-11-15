@@ -9,6 +9,9 @@ namespace impl {
     }
 
     vertex ANSICBlackBoxExecutable refines Executable {
+        prop inputArgumentPorts is array<str>
+        prop outputArgumentPorts is array<str>
+        prop returnPort is str = "void"
         prop inlinedCode is string
     }
 
