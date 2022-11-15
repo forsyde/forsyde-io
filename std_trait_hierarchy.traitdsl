@@ -172,7 +172,7 @@ namespace moc {
             prop inputPorts is array<str>
             prop outputPorts is array<str>
 
-            port combFunction is single out impl::Executable with moc::AbstractionEdge
+            port combFunction is multiple out impl::Executable with moc::AbstractionEdge
         }
 
         vertex SYDelay refines SYProcess {
@@ -196,18 +196,19 @@ namespace parallel {
         prop dimensions is array<int> = []
     }
 
-    vertex Map refines ParallelSkeleton {
+    vertex MapV refines ParallelSkeleton {
         prop inputPorts is array<str>
         prop outputPorts is array<str>
 
-        port kernel is single output impl::Executable with ParallelContainerEdge
+        port kernel is multiple output impl::Executable with ParallelContainerEdge
 
     }
 
-    vertex Reduce refines ParallelSkeleton {
-        port inputArray is single in Vectorizable with ParallelComputationEdge
-        port outputScalar is single out Vectorizable with ParallelComputationEdge
-        port kernel is single output impl::Executable with ParallelContainerEdge
+    vertex ReduceV refines ParallelSkeleton {
+        prop inputArray is str
+        prop outputScalar is str
+
+        port kernel is multiple output impl::Executable with ParallelContainerEdge
     }
 }
 
