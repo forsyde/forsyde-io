@@ -25,6 +25,7 @@ module forsyde.io.java.core {
     exports forsyde.io.java.typed.edges.moc;
     exports forsyde.io.java.typed.edges.decision;
     exports forsyde.io.java.typed.viewers.decision.sdf;
+    exports forsyde.io.java.typed.edges.moc.sy;
     exports forsyde.io.java.typed.viewers.impl;
     exports forsyde.io.java.typed.viewers.parallel;
     exports forsyde.io.java.typed.edges.platform;
@@ -34,6 +35,7 @@ module forsyde.io.java.core {
     exports forsyde.io.java.typed.edges.execution;
     exports forsyde.io.java.typed.viewers.moc.linguafranca;
     exports forsyde.io.java.typed.viewers.typing.datatypes;
+    exports forsyde.io.java.typed.viewers.moc.sy;
     exports forsyde.io.java.typed.edges.impl;
     exports forsyde.io.java.typed.edges.moc.sdf;
     exports forsyde.io.java.typed.viewers.nonfunctional;
