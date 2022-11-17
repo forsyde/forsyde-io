@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.6.1] - 2022-11-17
+
+### Added
+- Added the SY MoC and proper skeletons.
+
+### Changed
+- STD Trait hierarchy
+### Fixed
+- A small bug when the EdgeInfo was being printed.
+- the KGT rendering on cases that happen often due to conventions.
+
+
 ## [0.5.17] - 2022-10-24
 
 ### Added
