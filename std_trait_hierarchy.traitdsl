@@ -9,6 +9,9 @@ namespace impl {
     }
 
     vertex ANSICBlackBoxExecutable refines Executable {
+        prop inputArgumentPorts is array<str>
+        prop outputArgumentPorts is array<str>
+        prop returnPort is str = "void"
         prop inlinedCode is string
     }
 
@@ -172,7 +175,7 @@ namespace moc {
             prop inputPorts is array<str>
             prop outputPorts is array<str>
 
-            port combFunction is multiple out impl::Executable with moc::AbstractionEdge
+            port combFunctions is multiple out impl::Executable with moc::AbstractionEdge
         }
 
         vertex SYDelay refines SYProcess {
@@ -200,7 +203,7 @@ namespace parallel {
         prop inputPorts is array<str>
         prop outputPorts is array<str>
 
-        port kernel is multiple output impl::Executable with ParallelContainerEdge
+        port kernels is multiple output impl::Executable with ParallelContainerEdge
 
     }
 
@@ -208,7 +211,7 @@ namespace parallel {
         prop inputArray is str
         prop outputScalar is str
 
-        port kernel is multiple output impl::Executable with ParallelContainerEdge
+        port kernels is multiple output impl::Executable with ParallelContainerEdge
     }
 }
 

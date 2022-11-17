@@ -36,7 +36,6 @@ final public class EdgeInfo {
 		this.sourceId = source.getIdentifier();
 	}
 
-
 	/**
 	 * Utility constructor wrapping the source and target ports into empty optionals
 	 * for constructor.
@@ -53,8 +52,8 @@ final public class EdgeInfo {
 	 * Utility constructor wrapping the source and target ports into optionals for
 	 * constructor.
 	 *
-	 * @param targetId     Target Vertex for this edge.
-	 * @param sourceId     Source vertex for this edge.
+	 * @param targetId   Target Vertex for this edge.
+	 * @param sourceId   Source vertex for this edge.
 	 * @param targetPort target vertex port for this edge.
 	 * @param sourcePort source vertex port for this edge.
 	 */
@@ -101,7 +100,8 @@ final public class EdgeInfo {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Edge [traits=").append(edgeTraits).append(", source=").append(sourceId).append(", target=").append(targetId)
+		builder.append("Edge [traits=").append(edgeTraits).append(", source=").append(sourceId).append(", target=")
+				.append(targetId)
 				.append(", sourcePort=").append(sourcePort).append(", targetPort=").append(targetPort).append("]");
 		return builder.toString();
 	}
@@ -111,10 +111,9 @@ final public class EdgeInfo {
 		builder.append(sourceId);
 		getSourcePort().ifPresent(s -> builder.append(".").append(s));
 		builder.append("[").append(
-				edgeTraits.stream().map(Trait::getName).collect(Collectors.joining(";"))
-		).append("]");
-		getTargetPort().ifPresent(s -> builder.append(".").append(s));
+				edgeTraits.stream().map(Trait::getName).collect(Collectors.joining(";"))).append("]");
 		builder.append(targetId);
+		getTargetPort().ifPresent(s -> builder.append(".").append(s));
 		return builder.toString();
 	}
 
