@@ -12,13 +12,18 @@ import org.ainslec.picocog.PicoWriter;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.LowestCommonAncestorAlgorithm;
 import org.jgrapht.alg.lca.BinaryLiftingLCAFinder;
+import org.jgrapht.alg.shortestpath.FloydWarshallShortestPaths;
 import org.jgrapht.graph.AsSubgraph;
+import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ForSyDeKGTDriver implements ForSyDeModelDriver {
@@ -40,32 +45,56 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
 
     @Override
     public void writeModel(ForSyDeSystemGraph model, OutputStream out) throws Exception {
+        final ForSyDeSystemGraph modelCopy = new ForSyDeSystemGraph();
+        modelCopy.mergeInPlace(model);
         final PicoWriter topWriter = new PicoWriter();
-        // we make a fake top to make sure everything works even in the absence of a container for all elements
-        topWriter.writeln_r("knode forsyde {");
-//        topWriter.writeln("krectangle");
-        topWriter.writeln("klabel \"ForSyDe Model\"");
+        final Vertex forSyDeTopVertex = modelCopy.newVertex("ForSyDe Model");
+        final GreyBox forSyDeTop = GreyBox.enforce(forSyDeTopVertex);
+        // we make a fake top to make sure everything works even in the absence of a
+        // container for all elements
+        // topWriter.writeln_r("knode forsyde {");
+        // topWriter.writeln("krectangle");
+        // topWriter.writeln("klabel \"ForSyDe Model\"");
+        for (Vertex v : modelCopy.vertexSet()) {
+            Visualizable.safeCast(v).ifPresent(visual -> {
+                final boolean isRoot = modelCopy.incomingEdgesOf(v).stream()
+                        .noneMatch(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT));
+                if (isRoot && v.equals(forSyDeTopVertex) == false) {
+                    forSyDeTop.insertContainedPort(modelCopy, visual);
+                    // final EdgeInfo e = new EdgeInfo(forSyDeTopVertex.getIdentifier(),
+                    // v.getIdentifier(), "contained",
+                    // null);
+                    // e.addTraits(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
+                    // modelCopy.addEdge(forSyDeTopVertex, v, e);
+                }
+            });
+        }
         // first, we filter only the visualizable elements of the model
-        final Graph<Vertex, EdgeInfo> visuGraph = new AsSubgraph<Vertex, EdgeInfo>(model,
-                model.vertexSet().stream().filter(Visualizable::conforms).collect(Collectors.toSet()),
-                model.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION) || e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT)).collect(Collectors.toSet())
-        );
+        final Graph<Vertex, EdgeInfo> visuGraph = new AsSubgraph<Vertex, EdgeInfo>(modelCopy,
+                modelCopy.vertexSet().stream().filter(Visualizable::conforms).collect(Collectors.toSet()),
+                modelCopy.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION)
+                        || e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT)).collect(Collectors.toSet()));
+        visuGraph.addVertex(forSyDeTopVertex);
+
         final Graph<Vertex, EdgeInfo> containmentGraph = new AsSubgraph<Vertex, EdgeInfo>(visuGraph,
                 visuGraph.vertexSet(),
-                visuGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT)).collect(Collectors.toSet())
-        );
+                visuGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT))
+                        .collect(Collectors.toSet()));
         final Graph<Vertex, EdgeInfo> connectionGraph = new AsSubgraph<Vertex, EdgeInfo>(visuGraph,
                 visuGraph.vertexSet(),
-                visuGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION)).collect(Collectors.toSet())
-        );
+                visuGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION))
+                        .collect(Collectors.toSet()));
+        final FloydWarshallShortestPaths<Vertex, EdgeInfo> containmentPaths = new FloydWarshallShortestPaths<>(
+                new AsUndirectedGraph<>(containmentGraph));
         // keep a map of writer to make sure that we can write everything correctly
         final Map<Vertex, PicoWriter> writers = new HashMap<>();
-        final Map<Vertex, PicoWriter> extensionPoints = new HashMap<>();
+         final Map<Vertex, PicoWriter> extensionPoints = new HashMap<>();
         // keep a set of created ports,
         final Map<Vertex, Set<String>> addedPorts = new HashMap<>();
         // keep a map of children to parents
-        final Map<Vertex, Vertex> childrenToParents = new HashMap<>();
-        // we first follow a minimum spanning tree direction so that the parent-children relations are well respected.
+        // final Map<Vertex, Vertex> childrenToParents = new HashMap<>();
+        // we first follow a minimum spanning tree direction so that the parent-children
+        // relations are well respected.
         new TopologicalOrderIterator<Vertex, EdgeInfo>(containmentGraph).forEachRemaining(v -> {
             final PicoWriter vWriter = writers.getOrDefault(v, topWriter);
             // replace any special characters for ID generation
@@ -74,161 +103,162 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
                     .replace(".", "_");
             // write the node
             vWriter.writeln_r("knode " + vId + " {");
-//            vWriter.writeln("krectangle");
+            // vWriter.writeln("krectangle");
             // write its label
             vWriter.writeln("klabel \"" + v.getIdentifier() + "\"");
             VisualizableWithProperties.safeCast(v).ifPresent(visualizableWithProperties -> {
                 vWriter.writeln_r("knode vProperties {");
-                // TODO: until I figure out how to make the size of the node label be respected, this small sizing hack with width and height stays.
-                final int width = 3 * visualizableWithProperties.getVisualizedPropertiesNames().stream().mapToInt(p -> ("\\n " + p + ": " + v.getProperties().get(p).toString()).length()).sum();
-                final int height = 20 * visualizableWithProperties.getVisualizedPropertiesNames().size();
+                // TODO: until I figure out how to make the size of the node label be respected,
+                // this small sizing hack with width and height stays.
+                final int width = 5 * visualizableWithProperties.getVisualizedPropertiesNames().stream()
+                        .mapToInt(p -> ("\\n " + p + ": " + v.getProperties().get(p).toString()).length()).sum();
+                final int height = 35 * visualizableWithProperties.getVisualizedPropertiesNames().size();
                 vWriter.writeln("size: width=" + width + " height=" + height);
                 vWriter.write("klabel \"properties:");
-                visualizableWithProperties.getVisualizedPropertiesNames().forEach(p -> vWriter.write("\\n " + p + ": " + v.getProperties().get(p).toString()));
+                visualizableWithProperties.getVisualizedPropertiesNames()
+                        .forEach(p -> vWriter.write("\\n " + p + ": " + v.getProperties().get(p).toString()));
                 vWriter.writeln("\"");
                 vWriter.writeln_l("}");
             });
             // write all its ports, which is like node and label again
             // as long as tehre is any visualizable connection incoming or outgoing
-            v.getPorts().stream().filter(p ->
-                    model.incomingEdgesOf(v).stream().anyMatch(e -> e.getTargetPort().map(tp -> tp.equals(p)).orElse(false) && e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION)) ||
-                            model.outgoingEdgesOf(v).stream().anyMatch(e -> e.getSourcePort().map(sp -> sp.equals(p)).orElse(false) && e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION))
-            ).forEach(p -> {
-                final String portString = p.replace(" ", "_").replace(".", "_");
-                vWriter.writeln_r("kport " + portString + " {");
-                vWriter.writeln("klabel \"" + p + "\"");
-                vWriter.writeln_l("}");
-            });
-            // check edges and prepare for children that come in the iteration
-            // by defeering writers
-            visuGraph.outgoingEdgesOf(v).forEach(e -> {
-                final Vertex dst = model.getEdgeTarget(e);
-                // replace any special characters for ID generation
-                final String dstId = "v" + dst.getIdentifier()
-                        .replace(" ", "_")
-                        .replace(".", "_");
-                // first case: it has a child,
-                // second case: it just connects
-                if (e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT) && GreyBox.conforms(v)) {
-                    writers.put(dst, vWriter.createDeferredWriter());
-                    childrenToParents.put(dst, v);
-//                        vWriter.writeln("kedge (-> " + dstId + ")");
-                }
-                if (e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION)) {
-                    vWriter.writeln("kedge ( " +
-                            e.getSourcePort().map(s -> ":" + s).orElse("") +
-                            " -> " +
-                            dstId +
-                            e.getTargetPort().map(s -> ":" + s).orElse("") +
-                            ")");
+            v.getPorts().stream()
+                    .filter(p -> modelCopy.incomingEdgesOf(v).stream()
+                            .anyMatch(e -> e.getTargetPort().map(tp -> tp.equals(p)).orElse(false)
+                                    && e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION))
+                            ||
+                            modelCopy.outgoingEdgesOf(v).stream()
+                                    .anyMatch(e -> e.getSourcePort().map(sp -> sp.equals(p)).orElse(false)
+                                            && e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION)))
+                    .forEach(p -> {
+                        final String portString = p.replace(" ", "_").replace(".", "_");
+                        vWriter.writeln_r("kport " + portString + " {");
+                        vWriter.writeln("klabel \"" + p + "\"");
+                        vWriter.writeln_l("}");
+                    });
+
+            // take care to create children writers
+            GreyBox.safeCast(v).ifPresent(greyBox -> {
+                for (Visualizable child : greyBox.getContainedPort(modelCopy)) {
+                    vWriter.writeln("// for " + child.getIdentifier());
+                    writers.put(child.getViewedVertex(), vWriter.createDeferredWriter());
                 }
             });
-            extensionPoints.put(v, vWriter.createDeferredWriter());
+
+             extensionPoints.put(v, vWriter.createDeferredWriter());
             vWriter.writeln_l("}");
         });
 
-        // set up the LCA algorithm
-        final Set<Vertex> roots = containmentGraph.vertexSet().stream().filter(v -> containmentGraph.incomingEdgesOf(v).isEmpty()).collect(Collectors.toSet());
+        // now add the edges, both in the same and in different hierarchies
+        // check edges and prepare for children that come in the iteration
+        // by defeering writers
+        for (EdgeInfo e : connectionGraph.edgeSet()) {
 
-        // now we transform all long hierarchical nodes to short hierarchical nodes
-        if (!roots.isEmpty()) {
-            final LowestCommonAncestorAlgorithm<Vertex> lowestCommonAncestorAlgorithm = new BinaryLiftingLCAFinder<>(
-                    containmentGraph,
-                    containmentGraph.vertexSet().stream().filter(v -> containmentGraph.incomingEdgesOf(v).isEmpty()).collect(Collectors.toSet())
-            );
-
-            connectionGraph.edgeSet().forEach(e -> {
-                final Vertex src = connectionGraph.getEdgeSource(e);
-                final String srcPort = e.getSourcePort().orElse(src.getIdentifier());
-                final Vertex dst = connectionGraph.getEdgeTarget(e);
-                final String dstPort = e.getTargetPort().orElse(dst.getIdentifier());
-                // if both are not root elements themselves
-                if (childrenToParents.containsKey(src) || childrenToParents.containsKey(dst)) {
-                    final Vertex ancestor = lowestCommonAncestorAlgorithm.getLCA(src, dst);
-                    // create links and ports from the src to ancestor;
-                    Vertex it = src;
-                    String itPort = srcPort;
-                    // if there is no common ancestor, then the iteration should go all the way
-                    // to the top
-                    while (
-                            childrenToParents.containsKey(it) && (childrenToParents.get(it) != ancestor || ancestor == null)
-                    ) {
-                        final Vertex parent = childrenToParents.get(it);
-                        final PicoWriter itWriter = extensionPoints.getOrDefault(it, topWriter);
-                        final PicoWriter parentWriter = extensionPoints.getOrDefault(parent, topWriter);
-                        final String parentString = "v" + parent.getIdentifier().replace(" ", "_")
-                                .replace(".", "_");
-                        final String portString = srcPort.replace(" ", "_").replace(".", "_");
-                        if (!addedPorts.containsKey(parent)) addedPorts.put(parent, new HashSet<>());
-                        if (!addedPorts.get(parent).contains(portString)) {
-                            parentWriter.writeln("// port created by long-to-short translation");
-                            parentWriter.writeln_r("kport " + portString + " {");
-//                            parentWriter.writeln("klabel \"" + srcPort + "_transformed" + "\"");
-                            parentWriter.writeln_l("}");
-                            addedPorts.get(parent).add(portString);
-                        }
-                        itWriter.writeln("// translation from long to short hierarchy");
-                        itWriter.writeln("kedge ( " +
-                                (itPort.equals(src.getIdentifier()) ? "" : (":" + itPort)) +
-                                " -> " +
-                                parentString +
-                                ":" + portString +
-                                ")");
-                        it = parent;
-                        itPort = portString;
-                    }
-                    // save for a global connection later
-                    Vertex lowestSrc = it;
-                    String lowestSrcPort = itPort;
-                    // do the same for the ancestor to dst
-                    it = dst;
-                    itPort = dstPort;
-                    // the same logic for going up as before
-                    while (
-                            childrenToParents.containsKey(it) && (childrenToParents.get(it) != ancestor || ancestor == null)
-                    ) {
-                        final Vertex parent = childrenToParents.get(it);
-                        //                    final PicoWriter itWriter = extensionPoints.getOrDefault(it, topWriter);
-                        final PicoWriter parentWriter = extensionPoints.getOrDefault(parent, topWriter);
-                        final String itString = "v" + it.getIdentifier().replace(" ", "_")
-                                .replace(".", "_");
-                        final String portString = dstPort.replace(" ", "_").replace(".", "_");
-                        if (!addedPorts.containsKey(parent)) addedPorts.put(parent, new HashSet<>());
-                        if (!addedPorts.get(parent).contains(portString)) {
-                            parentWriter.writeln("// port created by long-to-short translation");
-                            parentWriter.writeln_r("kport " + portString + " {");
-//                            parentWriter.writeln("klabel \"" + dstPort + "_transformed" + "\"");
-                            parentWriter.writeln_l("}");
-                            addedPorts.get(parent).add(portString);
-                        }
-                        parentWriter.writeln("// translation from long to short hierarchy");
-                        parentWriter.writeln("kedge ( " +
-                                ":" + portString +
-                                " -> " +
-                                itString +
-                                (itPort.equals(dst.getIdentifier()) ? "" : (":" + itPort)) +
-                                ")");
-                        it = parent;
-                        itPort = portString;
-                    }
-                    // finally connect the elemsnts in the context of the common ancestor
-                    final PicoWriter ancestorSrcWriter = extensionPoints.getOrDefault(lowestSrc, extensionPoints.getOrDefault(ancestor, topWriter));
-                    ancestorSrcWriter.writeln("// translation from long to short hierarchy");
-                    ancestorSrcWriter.writeln("kedge ( " +
-                            (lowestSrcPort.equals(src.getIdentifier()) ? "" : (":" + lowestSrcPort)) +
-                            " -> " +
-                            "v" + it.getIdentifier().replace(" ", "_").replace(".", "_") +
-                            (itPort.equals(dst.getIdentifier()) ? "" : (":" + itPort)) +
-                            ")"
+            // // now we transform all long hierarchical nodes to short hierarchical nodes
+            // if (!roots.isEmpty()) {
+            final LowestCommonAncestorAlgorithm<Vertex> lowestCommonAncestorAlgorithm
+                    =
+                    new BinaryLiftingLCAFinder<>(
+                            containmentGraph,
+                            forSyDeTopVertex
                     );
+
+            // connectionGraph.edgeSet().forEach(e -> {
+            final Vertex src = connectionGraph.getEdgeSource(e);
+            final String srcPort = e.getSourcePort().orElse(src.getIdentifier());
+            final Vertex dst = connectionGraph.getEdgeTarget(e);
+            final String dstPort = e.getTargetPort().orElse(dst.getIdentifier());
+            // if both are not root elements themselves
+            // if (childrenToParents.containsKey(src) || childrenToParents.containsKey(dst))
+            // {
+            final Vertex ancestor = lowestCommonAncestorAlgorithm.getLCA(src, dst);
+            // create links and ports from the src to ancestor;
+
+            Vertex backwardsIt = dst;
+            String backwardsItPort = dstPort;
+            // the same logic for going up as before
+            while (backwardsIt != ancestor
+                    && (getParentInContainmentGraph(containmentGraph, backwardsIt) != ancestor)) {
+                final Vertex parent = getParentInContainmentGraph(containmentGraph, backwardsIt);
+                // final PicoWriter itWriter = extensionPoints.getOrDefault(it, topWriter);
+                final PicoWriter parentWriter = extensionPoints.getOrDefault(parent,
+                        topWriter);
+                final String childString = "v" + backwardsIt.getIdentifier().replace(" ", "_")
+                        .replace(".", "_");
+                final String portString = dstPort.replace(" ", "_").replace(".", "_");
+                if (!parent.hasPort(portString)) {
+                    parentWriter.writeln("// port created by long-to-short translation - backwards");
+                    parentWriter.writeln_r("kport " + portString + " {");
+                    // parentWriter.writeln("klabel \"" + dstPort + "_transformed" + "\"");
+                    parentWriter.writeln_l("}");
+                    parent.addPort(portString);
                 }
-            });
+                parentWriter.writeln("// translation from long to short hierarchy - backwards");
+                parentWriter.writeln("kedge ( " +
+                        ":" + portString +
+                        " -> " +
+                        childString +
+                        (backwardsItPort.equals(dst.getIdentifier()) ? "" : (":" + backwardsItPort)) +
+                        ")");
+                backwardsIt = parent;
+                backwardsItPort = portString;
+            }
+            // if there is no common ancestor, then the iteration should go all the way
+            // to the top
+            Vertex upwardsIt = src;
+            String upwardsItPort = srcPort;
+            while (upwardsIt != ancestor
+                    && (getParentInContainmentGraph(containmentGraph, upwardsIt) != ancestor)) {
+                final Vertex parent = getParentInContainmentGraph(containmentGraph, upwardsIt);
+                final PicoWriter itWriter = extensionPoints.getOrDefault(upwardsIt, topWriter);
+                final PicoWriter parentWriter = extensionPoints.getOrDefault(parent, topWriter);
+                final String parentString = "v" + parent.getIdentifier().replace(" ", "_")
+                        .replace(".", "_");
+                final String portString = srcPort.replace(" ", "_").replace(".", "_");
+                if (!parent.hasPort(portString)) {
+                    parentWriter.writeln("// port created by long-to-short translation - upwards");
+                    parentWriter.writeln_r("kport " + portString + " {");
+                    // parentWriter.writeln("klabel \"" + srcPort + "_transformed" + "\"");
+                    parentWriter.writeln_l("}");
+                    parent.addPort(portString);
+                }
+                itWriter.writeln("// translation from long to short hierarchy - upwards");
+                itWriter.writeln("kedge ( " +
+                        (upwardsItPort.equals(src.getIdentifier()) ? "" : (":" + upwardsItPort)) +
+                        " -> " +
+                        parentString +
+                        ":" + portString +
+                        ")");
+                upwardsIt = parent;
+                upwardsItPort = portString;
+            }
+            // // save for a global connection later
+            // Vertex lowestSrc = it;
+            // String lowestSrcPort = itPort;
+            // // do the same for the ancestor to dst
+            // finally connect the elemsnts in the context of the common ancestor
+            final PicoWriter ancestorSrcWriter = extensionPoints.getOrDefault(upwardsIt, topWriter);
+            ancestorSrcWriter.writeln("// translation from long to short hierarchy - horizontal");
+            ancestorSrcWriter.writeln("kedge ( " +
+                    (upwardsItPort.equals(src.getIdentifier()) ? "" : (":" + upwardsItPort)) +
+                    " -> " +
+                    "v" + backwardsIt.getIdentifier().replace(" ", "_").replace(".", "_") +
+                    (backwardsItPort.equals(dst.getIdentifier()) ? "" : (":" + backwardsItPort)) +
+                    ")");
         }
 
         // now we finally close the writers and close the "open" descriptions
-//        writers.values().forEach(w -> w.writeln_l("}"));
+        // writers.values().forEach(w -> w.writeln_l("}"));
         // now we close the top guy
-        topWriter.writeln_l("}");
+        // topWriter.writeln_l("}");
         out.write(topWriter.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    protected Vertex getParentInContainmentGraph(Graph<Vertex, EdgeInfo> containmentGraph, Vertex child) {
+        return containmentGraph.incomingEdgesOf(child).stream()
+                .filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT))
+                .map(e -> containmentGraph.getEdgeSource(e))
+                .filter(v -> GreyBox.conforms(v))
+                .findFirst().orElse(null);
     }
 }
