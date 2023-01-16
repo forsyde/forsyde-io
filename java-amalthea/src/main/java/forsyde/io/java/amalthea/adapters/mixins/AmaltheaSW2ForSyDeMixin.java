@@ -200,10 +200,10 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                             if (waitEvent.getCounter() != null) {
                                 downsample.setInitialPredecessorSkips(waitEvent.getCounter().getOffset());
                                 downsample.setRepetitivePredecessorSkips(waitEvent.getCounter().getPrescaler());
+                            } else {
+                                downsample.setInitialPredecessorSkips(0L);
+                                downsample.setRepetitivePredecessorSkips(1L);
                             }
-//                            if (waitEvent.getEventMask().getEvents().size() == 1) {
-//
-//                            }
                         }
                     }
 //                    else if (item instanceof InterProcessTrigger) {
