@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.6.3] - 2023-01-16
+
+### Added
+
+### Changed
+
+### Fixed
+- Adding correct default numbers for the AMALTEHA adapter.
+
+
 ## [0.6.2] - 2023-01-16
 
 ### Added
