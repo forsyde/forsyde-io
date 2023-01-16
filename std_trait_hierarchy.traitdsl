@@ -237,12 +237,12 @@ namespace execution {
 
     vertex Downsample refines Stimulatable, Stimulator {
         prop initialPredecessorSkips is long = 0_l
-        prop repetitivePredecessorSkips is long = 0_l
+        prop repetitivePredecessorSkips is long = 1_l
     }
 
     vertex Upsample refines Stimulatable, Stimulator {
         prop initialPredecessorHolds is long = 0_l
-        prop repetitivePredecessorHolds is long = 0_l
+        prop repetitivePredecessorHolds is long = 1_l
     }
 
     vertex Task refines Stimulatable, Stimulator
