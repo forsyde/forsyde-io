@@ -10,7 +10,16 @@
 ### Fixed
 - A small bug when the EdgeInfo was being printed.
 - the KGT rendering on cases that happen often due to conventions.
+## [0.6.0] - 2022-11-07
 
+### Added
+- SY MoC elements as part of the standard trait hierarchy.
+- New visualization trait that enables property drawing with KGT.
+
+### Changed
+- Refined skeleton to follow better the MoC abstractions.
+
+### Fixed
 
 ## [0.5.17] - 2022-10-24
 
