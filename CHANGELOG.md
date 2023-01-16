@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.6.2] - 2023-01-16
+
+### Added
+
+### Changed
+- standard trait hierarchy so that upsample and downsample default values are correct.
+
+### Fixed
+
+## [0.6.0] - 2022-11-07
+
 ## [0.6.1] - 2022-11-17
 
 ### Added
