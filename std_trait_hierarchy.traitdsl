@@ -330,7 +330,7 @@ namespace platform {
         }
 
         vertex StaticCyclicScheduler refines CyclicExecutiveScheduler {
-
+            
         }
 
         vertex FixedPriorityScheduler refines AbstractScheduler {
