@@ -70,7 +70,7 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
                 vWriter.writeln_r("knode " + vId + " {");
                 // vWriter.writeln("krectangle");
                 // write its label
-                vWriter.writeln("klabel \"" + v.getIdentifier() + " [" + v.getTraits().stream().filter(t -> t.refines(VertexTrait.VISUALIZATION_VISUALIZABLE)).map(Trait::getName).collect(Collectors.joining(", ")) + "]\"");
+                vWriter.writeln("klabel \"" + v.getIdentifier() + " [" + v.getTraits().stream().filter(t -> !t.refines(VertexTrait.VISUALIZATION_VISUALIZABLE)).map(Trait::getName).collect(Collectors.joining(", ")) + "]\"");
                 VisualizableWithProperties.safeCast(v).ifPresent(visualizableWithProperties -> {
                     vWriter.writeln_r("knode vProperties {");
                     // TODO: until I figure out how to make the size of the node label be respected,

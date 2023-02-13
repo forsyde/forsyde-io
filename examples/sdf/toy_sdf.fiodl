@@ -1,0 +1,122 @@
+systemgraph {
+
+    vertex p1 [moc::sdf::SDFActor, visualization::Visualizable, impl::InstrumentedExecutable] (sin, s1, s6) {
+        "sizeInBits": 800_l,
+        "operationRequirements": {
+            "default": {
+                "integer add": 2_i
+            }
+        },
+        "consumption": {
+            "sin": 2_i,
+            "s6": 1_i
+        },
+        "production": {
+            "s1": 1_i
+        }
+    }
+
+    vertex p2 [moc::sdf::SDFActor, visualization::Visualizable, impl::InstrumentedExecutable] (s1, s2, s3) {
+        "sizeInBits": 800_l,
+        "operationRequirements": {
+            "default": {
+                "integer add": 1_i
+            }
+        },
+        "consumption": {
+            "s1": 1_i
+        },
+        "production": {
+            "s2": 1_i,
+            "s3": 1_i
+        }
+    }
+
+    vertex p3 [moc::sdf::SDFActor, visualization::Visualizable, impl::InstrumentedExecutable] (s3, s5, s6) {
+        "sizeInBits": 800_l,
+        "operationRequirements": {
+            "default": {
+                "integer add": 2_i
+            }
+        },
+        "consumption": {
+            "s3": 2_i,
+            "s5": 2_i
+        },
+        "production": {
+            "s6": 2_i
+        }
+    }
+
+    vertex p4 [moc::sdf::SDFActor, visualization::Visualizable, impl::InstrumentedExecutable] (s2, s4, sout) {
+        "sizeInBits": 800_l,
+        "operationRequirements": {
+            "default": {
+                "integer add": 2_i
+            }
+        },
+        "consumption": {
+            "s2": 1_i
+        },
+        "production": {
+            "s4": 1_i,
+            "sout": 3_i
+        }
+    }
+
+    vertex p5 [moc::sdf::SDFActor, visualization::Visualizable, impl::InstrumentedExecutable] (s4, s5) {
+        "sizeInBits": 800_l,
+        "operationRequirements": {
+            "default": {
+                "integer add": 1_i
+            }
+        },
+        "consumption": {
+            "s4": 1_i
+        },
+        "production": {
+            "s5": 1_i
+        }
+    }
+
+    vertex s1Sig [moc::sdf::SDFChannel, visualization::Visualizable] (producer, consumer, initialTokenValues) {
+        "numOfInitialTokens": 0_i
+    }
+
+    vertex s2Sig [moc::sdf::SDFChannel, visualization::Visualizable] (producer, consumer, initialTokenValues) {
+        "numOfInitialTokens": 0_i
+    }
+
+    vertex s3Sig [moc::sdf::SDFChannel, visualization::Visualizable] (producer, consumer, initialTokenValues) {
+        "numOfInitialTokens": 0_i
+    }
+
+    vertex s4Sig [moc::sdf::SDFChannel, visualization::Visualizable] (producer, consumer, initialTokenValues) {
+        "numOfInitialTokens": 0_i
+    }
+
+    vertex s5Sig [moc::sdf::SDFChannel, visualization::Visualizable] (producer, consumer, initialTokenValues) {
+        "numOfInitialTokens": 0_i
+    }
+
+    vertex s6Sig [moc::sdf::SDFChannel, visualization::Visualizable] (producer, consumer, initialTokenValues) {
+        "numOfInitialTokens": 2_i
+    }
+
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from p1 port s1 to s1Sig port producer
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from s1Sig port consumer to p2 port s1
+
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from p2 port s2 to s2Sig port producer
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from p2 port s3 to s3Sig port producer
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from s2Sig port consumer to p4 port s2
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from s3Sig port consumer to p3 port s3
+
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from p4 port s4 to s4Sig port producer
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from s4Sig port consumer to p5 port s4
+
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from p5 port s5 to s5Sig port producer
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from s5Sig port consumer to p3 port s5
+
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from p3 port s6 to s6Sig port producer
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from s6Sig port consumer to p1 port s6
+}

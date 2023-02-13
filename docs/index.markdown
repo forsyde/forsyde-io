@@ -1,22 +1,22 @@
 ---
 layout: default
 title: Index
-nav_order: 1
+isHome: true
 ---
 Welcome to ForSyDe IO's documentation page! From here you can follow some links
 to know about this [ForSyDe]({{ site.projects.forsyde }}) subproject and find some useful quick facts.
 
 # Quick facts
 
-ForSyDe IO's has similar goals to what Intermediate Representations
-do to conventional programming language compilation, except for model-based engineering flows.
+ForSyDe IO has similar goals to what Intermediate Representations
+do to conventional programming language compilation, except for model-driven engineering flows.
 In particular, it has [ForSyDe]({{site.projects.forsyde}}) as the main target.
 
 ForSyDe IO can be defined in three stacking levels. They are,
-  1. A graph model that accepts loops and multiple edges between nodes 
-     [[1](https://en.wikipedia.org/wiki/Multigraph), [2](https://www.merriam-webster.com/dictionary/pseudograph),
-     [3](https://mathworld.wolfram.com/Pseudograph.html)], and has notions of interfaces,
-  2. An OMG complaint exchange format to save and load this graph model in-memory,
+  1. A graph-based meta-model that accepts loops and multiple edges between nodes 
+     and has notions of interfaces [[1](https://en.wikipedia.org/wiki/Multigraph), [2](https://www.merriam-webster.com/dictionary/pseudograph),
+     [3](https://mathworld.wolfram.com/Pseudograph.html)],
+  2. An exchange format to save and load this graph model in-memory,
   3. Supporting libraries implementing basic routines for a few languages.
 
 # Quick links
