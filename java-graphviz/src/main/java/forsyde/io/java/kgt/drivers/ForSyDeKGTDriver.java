@@ -1,9 +1,6 @@
 package forsyde.io.java.kgt.drivers;
 
-import forsyde.io.java.core.EdgeInfo;
-import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.core.Vertex;
+import forsyde.io.java.core.*;
 import forsyde.io.java.drivers.ForSyDeModelDriver;
 import forsyde.io.java.typed.viewers.visualization.GreyBox;
 import forsyde.io.java.typed.viewers.visualization.Visualizable;
@@ -20,10 +17,7 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ForSyDeKGTDriver implements ForSyDeModelDriver {
@@ -48,55 +42,118 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
         final ForSyDeSystemGraph modelCopy = new ForSyDeSystemGraph();
         modelCopy.mergeInPlace(model);
         final PicoWriter topWriter = new PicoWriter();
+        // keep a map of writer to make sure that we can write everything correctly
+        final Map<Vertex, PicoWriter> writers = new HashMap<>();
+        final Map<Vertex, PicoWriter> extensionPoints = new HashMap<>();
         final Vertex forSyDeTopVertex = modelCopy.newVertex("ForSyDe Model");
         final GreyBox forSyDeTop = GreyBox.enforce(forSyDeTopVertex);
         // we make a fake top to make sure everything works even in the absence of a
         // container for all elements
         // topWriter.writeln_r("knode forsyde {");
         // topWriter.writeln("krectangle");
-        // topWriter.writeln("klabel \"ForSyDe Model\"");
+        // topWriter.writeln("klabelt \"ForSyDe Model\"");
+        writers.put(forSyDeTopVertex, topWriter);
         for (Vertex v : modelCopy.vertexSet()) {
             Visualizable.safeCast(v).ifPresent(visual -> {
                 final boolean isRoot = modelCopy.incomingEdgesOf(v).stream()
                         .noneMatch(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT));
-                if (isRoot && v.equals(forSyDeTopVertex) == false) {
+                if (isRoot && !v.equals(forSyDeTopVertex)) {
                     forSyDeTop.insertContainedPort(modelCopy, visual);
-                    // final EdgeInfo e = new EdgeInfo(forSyDeTopVertex.getIdentifier(),
-                    // v.getIdentifier(), "contained",
-                    // null);
-                    // e.addTraits(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
-                    // modelCopy.addEdge(forSyDeTopVertex, v, e);
                 }
+                final PicoWriter vWriter = new PicoWriter();
+                writers.put(v, vWriter);
+                // replace any special characters for ID generation
+                final String vId = "v" + v.getIdentifier()
+                        .replace(" ", "_")
+                        .replace(".", "_");
+                // write the node
+                vWriter.writeln_r("knode " + vId + " {");
+                // vWriter.writeln("krectangle");
+                // write its label
+                vWriter.writeln("klabel \"" + v.getIdentifier() + " [" + v.getTraits().stream().filter(t -> t.refines(VertexTrait.VISUALIZATION_VISUALIZABLE)).map(Trait::getName).collect(Collectors.joining(", ")) + "]\"");
+                VisualizableWithProperties.safeCast(v).ifPresent(visualizableWithProperties -> {
+                    vWriter.writeln_r("knode vProperties {");
+                    // TODO: until I figure out how to make the size of the node label be respected,
+                    // this small sizing hack with width and height stays.
+                    final int width = 5 * visualizableWithProperties.getVisualizedPropertiesNames().stream()
+                            .mapToInt(p -> ("\\n " + p + ": " + v.getProperties().get(p).toString()).length()).sum();
+                    final int height = 35 * visualizableWithProperties.getVisualizedPropertiesNames().size();
+                    vWriter.writeln("size: width=" + width + " height=" + height);
+                    vWriter.write("klabel \"properties:");
+                    visualizableWithProperties.getVisualizedPropertiesNames()
+                            .forEach(p -> vWriter.write("\\n " + p + ": " + v.getProperties().get(p).toString()));
+                    vWriter.writeln("\"");
+                    vWriter.writeln_l("}");
+                });
+                // write all its ports, which is like node and label again
+                // as long as tehre is any visualizable connection incoming or outgoing
+                v.getPorts().stream()
+                        .filter(p -> modelCopy.incomingEdgesOf(v).stream()
+                                .anyMatch(e -> e.getTargetPort().map(tp -> tp.equals(p)).orElse(false)
+                                        && e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION))
+                                ||
+                                modelCopy.outgoingEdgesOf(v).stream()
+                                        .anyMatch(e -> e.getSourcePort().map(sp -> sp.equals(p)).orElse(false)
+                                                && e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION)))
+                        .forEach(p -> {
+                            final String portString = p.replace(" ", "_").replace(".", "_");
+                            vWriter.writeln_r("kport " + portString + " {");
+                            vWriter.writeln("klabel \"" + p + "\"");
+                            vWriter.writeln_l("}");
+                        });
+
+                extensionPoints.put(v, vWriter.createDeferredWriter());
+                vWriter.writeln_l("}");
             });
         }
-        // first, we filter only the visualizable elements of the model
+        // now add the edges, both in the same and in different hierarchies
+        // check edges and prepare for children that come in the iteration
+        // by defeering writers
         final Graph<Vertex, EdgeInfo> visuGraph = new AsSubgraph<Vertex, EdgeInfo>(modelCopy,
                 modelCopy.vertexSet().stream().filter(Visualizable::conforms).collect(Collectors.toSet()),
                 modelCopy.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION)
                         || e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT)).collect(Collectors.toSet()));
+        final Graph<Vertex, EdgeInfo> connectionGraph = new AsSubgraph<Vertex, EdgeInfo>(visuGraph,
+                visuGraph.vertexSet(),
+                visuGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION))
+                        .collect(Collectors.toSet()));
+        for (EdgeInfo e : connectionGraph.edgeSet()) {
+            final Vertex src = connectionGraph.getEdgeSource(e);
+            final String srcPort = e.getSourcePort().orElse(src.getIdentifier());
+            final Vertex dst = connectionGraph.getEdgeTarget(e);
+            final String dstPort = e.getTargetPort().orElse(dst.getIdentifier());
+            final PicoWriter srcWriter = extensionPoints.getOrDefault(src, topWriter);
+            srcWriter.writeln("kedge ( " +
+                    (srcPort.equals(src.getIdentifier()) ? "" : (":" + srcPort)) +
+                    " -> " +
+                    "v" + dst.getIdentifier().replace(" ", "_").replace(".", "_") +
+                    (dstPort.equals(dst.getIdentifier()) ? "" : (":" + dstPort)) +
+                    ")");
+        }
         visuGraph.addVertex(forSyDeTopVertex);
 
         final Graph<Vertex, EdgeInfo> containmentGraph = new AsSubgraph<Vertex, EdgeInfo>(visuGraph,
                 visuGraph.vertexSet(),
                 visuGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT))
                         .collect(Collectors.toSet()));
-        final Graph<Vertex, EdgeInfo> connectionGraph = new AsSubgraph<Vertex, EdgeInfo>(visuGraph,
-                visuGraph.vertexSet(),
-                visuGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION))
-                        .collect(Collectors.toSet()));
-        final FloydWarshallShortestPaths<Vertex, EdgeInfo> containmentPaths = new FloydWarshallShortestPaths<>(
-                new AsUndirectedGraph<>(containmentGraph));
-        // keep a map of writer to make sure that we can write everything correctly
-        final Map<Vertex, PicoWriter> writers = new HashMap<>();
-         final Map<Vertex, PicoWriter> extensionPoints = new HashMap<>();
+
         // keep a set of created ports,
-        final Map<Vertex, Set<String>> addedPorts = new HashMap<>();
+        // final Map<Vertex, Set<String>> addedPorts = new HashMap<>();
         // keep a map of children to parents
         // final Map<Vertex, Vertex> childrenToParents = new HashMap<>();
         // we first follow a minimum spanning tree direction so that the parent-children
         // relations are well respected.
-        new TopologicalOrderIterator<Vertex, EdgeInfo>(containmentGraph).forEachRemaining(v -> {
-            final PicoWriter vWriter = writers.getOrDefault(v, topWriter);
+        final ArrayDeque<Vertex> topoQueue = new ArrayDeque<>();
+        new TopologicalOrderIterator<Vertex, EdgeInfo>(containmentGraph).forEachRemaining(topoQueue::push);
+        while (!topoQueue.isEmpty()) {
+            final Vertex src = topoQueue.pop();
+            final PicoWriter srcExtensions = extensionPoints.get(src);
+            containmentGraph.outgoingEdgesOf(src).forEach(edgeInfo -> {
+                final Vertex dst = containmentGraph.getEdgeTarget(edgeInfo);
+                srcExtensions.writeln(writers.get(dst));
+            });
+        }
+            /*final PicoWriter vWriter = writers.getOrDefault(v, topWriter);
             // replace any special characters for ID generation
             final String vId = "v" + v.getIdentifier()
                     .replace(" ", "_")
@@ -105,7 +162,7 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
             vWriter.writeln_r("knode " + vId + " {");
             // vWriter.writeln("krectangle");
             // write its label
-            vWriter.writeln("klabel \"" + v.getIdentifier() + "\"");
+            vWriter.writeln("klabel \"" + v.getIdentifier() + " [" + v.getTraits().stream().filter(t -> t.refines(VertexTrait.VISUALIZATION_VISUALIZABLE)).map(Trait::getName).collect(Collectors.joining(", ")) + "]\"");
             VisualizableWithProperties.safeCast(v).ifPresent(visualizableWithProperties -> {
                 vWriter.writeln_r("knode vProperties {");
                 // TODO: until I figure out how to make the size of the node label be respected,
@@ -147,15 +204,27 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
 
              extensionPoints.put(v, vWriter.createDeferredWriter());
             vWriter.writeln_l("}");
-        });
+        });*/
 
         // now add the edges, both in the same and in different hierarchies
         // check edges and prepare for children that come in the iteration
         // by defeering writers
-        for (EdgeInfo e : connectionGraph.edgeSet()) {
+        /*for (EdgeInfo e : connectionGraph.edgeSet()) {
+            final Vertex src = connectionGraph.getEdgeSource(e);
+            final String srcPort = e.getSourcePort().orElse(src.getIdentifier());
+            final Vertex dst = connectionGraph.getEdgeTarget(e);
+            final String dstPort = e.getTargetPort().orElse(dst.getIdentifier());
+            final PicoWriter srcWriter = extensionPoints.getOrDefault(src, topWriter);
+            srcWriter.writeln("kedge ( " +
+                    (srcPort.equals(src.getIdentifier()) ? "" : (":" + srcPort)) +
+                    " -> " +
+                    "v" + dst.getIdentifier().replace(" ", "_").replace(".", "_") +
+                    (dstPort.equals(dst.getIdentifier()) ? "" : (":" + dstPort)) +
+                    ")");
 
             // // now we transform all long hierarchical nodes to short hierarchical nodes
             // if (!roots.isEmpty()) {
+            *//*
             final LowestCommonAncestorAlgorithm<Vertex> lowestCommonAncestorAlgorithm
                     =
                     new BinaryLiftingLCAFinder<>(
@@ -245,20 +314,21 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver {
                     "v" + backwardsIt.getIdentifier().replace(" ", "_").replace(".", "_") +
                     (backwardsItPort.equals(dst.getIdentifier()) ? "" : (":" + backwardsItPort)) +
                     ")");
-        }
+             *//*
+        }*/
 
         // now we finally close the writers and close the "open" descriptions
         // writers.values().forEach(w -> w.writeln_l("}"));
         // now we close the top guy
         // topWriter.writeln_l("}");
-        out.write(topWriter.toString().getBytes(StandardCharsets.UTF_8));
+        out.write(writers.get(forSyDeTopVertex).toString().getBytes(StandardCharsets.UTF_8));
     }
 
     protected Vertex getParentInContainmentGraph(Graph<Vertex, EdgeInfo> containmentGraph, Vertex child) {
         return containmentGraph.incomingEdgesOf(child).stream()
                 .filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT))
-                .map(e -> containmentGraph.getEdgeSource(e))
-                .filter(v -> GreyBox.conforms(v))
+                .map(containmentGraph::getEdgeSource)
+                .filter(GreyBox::conforms)
                 .findFirst().orElse(null);
     }
 }

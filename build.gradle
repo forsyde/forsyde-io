@@ -13,7 +13,7 @@ plugins {
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = project.name
-version = '0.6.3'
+version = '0.6.4'
 project.ext.niceName = "Java Parent"
 
 
