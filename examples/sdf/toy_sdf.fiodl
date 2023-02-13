@@ -4,7 +4,7 @@ systemgraph {
         "sizeInBits": 800_l,
         "operationRequirements": {
             "default": {
-                "integer add": 2_i
+                "integer add": 2_l
             }
         },
         "consumption": {
@@ -20,7 +20,7 @@ systemgraph {
         "sizeInBits": 800_l,
         "operationRequirements": {
             "default": {
-                "integer add": 1_i
+                "integer add": 1_l
             }
         },
         "consumption": {
@@ -36,7 +36,7 @@ systemgraph {
         "sizeInBits": 800_l,
         "operationRequirements": {
             "default": {
-                "integer add": 2_i
+                "integer add": 2_l
             }
         },
         "consumption": {
@@ -52,7 +52,7 @@ systemgraph {
         "sizeInBits": 800_l,
         "operationRequirements": {
             "default": {
-                "integer add": 2_i
+                "integer add": 2_l
             }
         },
         "consumption": {
@@ -68,7 +68,7 @@ systemgraph {
         "sizeInBits": 800_l,
         "operationRequirements": {
             "default": {
-                "integer add": 1_i
+                "integer add": 1_l
             }
         },
         "consumption": {

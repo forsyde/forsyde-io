@@ -1,7 +1,7 @@
 systemgraph {
   vertex "tile_0"
   [platform::AbstractStructure, visualization::GreyBox]
-  (contained, submodules)
+  (contained, external, submodules)
   {}
   vertex "micro_blaze_0"
   [platform::InstrumentedProcessingModule, visualization::GreyBox, visualization::Visualizable]
@@ -10,7 +10,7 @@ systemgraph {
     "operatingFrequencyInHertz": 50000000_l,
     "modalInstructionsPerCycle": {
       "eco": {
-        "all":      0.01538461538_64
+        "integer add":      0.01538461538_64
       },
       "default": {
         "integer add":      0.2_64
@@ -26,7 +26,7 @@ systemgraph {
   }
   vertex "micro_blaze_ni0"
   [platform::InstrumentedCommunicationModule, visualization::Visualizable]
-  (bus, tileMemory, tileProcessor)
+  (bus, external, tileMemory, tileProcessor)
   {
     "maxCyclesPerFlit": 2_i,
     "flitSizeInBits": 32_l,
@@ -44,7 +44,7 @@ systemgraph {
   {}
   vertex "tile_1"
   [platform::AbstractStructure, visualization::GreyBox]
-  (contained, submodules)
+  (contained, external, submodules)
   {}
   vertex "micro_blaze_1"
   [platform::InstrumentedProcessingModule, visualization::GreyBox, visualization::Visualizable]
@@ -53,10 +53,10 @@ systemgraph {
     "operatingFrequencyInHertz": 50000000_l,
     "modalInstructionsPerCycle": {
       "eco": {
-        "all":      0.01538461538_64
+        "integer add":      0.01538461538_64
       },
       "default": {
-        "all":      0.2_64
+        "integer add":      0.2_64
       }
     }
   }
@@ -69,7 +69,7 @@ systemgraph {
   }
   vertex "micro_blaze_ni1"
   [platform::InstrumentedCommunicationModule, visualization::Visualizable]
-  (bus, tileMemory, tileProcessor)
+  (bus, external, tileMemory, tileProcessor)
   {
     "maxCyclesPerFlit": 2_i,
     "flitSizeInBits": 32_l,
@@ -114,6 +114,8 @@ systemgraph {
   edge [visualization::VisualContainment] from "micro_blaze_0" port "contained" to "micro_blaze_os0" 
   edge [decision::AbstractAllocation] from "micro_blaze_os0" port "allocationHosts" to "micro_blaze_0" 
   edge [decision::AbstractAllocation] from "micro_blaze_ni_slots0" port "allocationHosts" to "micro_blaze_ni0" 
+  edge [visualization::VisualConnection] from "micro_blaze_ni0" port "external" to "tile_0" port "external"
+  edge [visualization::VisualConnection] from "tile_0" port "external" to "micro_blaze_ni0" port "external"
   edge [] from "tile_1" port "submodules" to "micro_blaze_1" 
   edge [visualization::VisualContainment] from "tile_1" port "contained" to "micro_blaze_1" 
   edge [] from "tile_1" port "submodules" to "micro_blaze_mem1" 
@@ -129,9 +131,13 @@ systemgraph {
   edge [visualization::VisualContainment] from "micro_blaze_1" port "contained" to "micro_blaze_os1" 
   edge [decision::AbstractAllocation] from "micro_blaze_os1" port "allocationHosts" to "micro_blaze_1" 
   edge [decision::AbstractAllocation] from "micro_blaze_ni_slots1" port "allocationHosts" to "micro_blaze_ni1" 
+  edge [visualization::VisualConnection] from "micro_blaze_ni1" port "external" to "tile_1" port "external"
+  edge [visualization::VisualConnection] from "tile_1" port "external" to "micro_blaze_ni1" port "external"
   edge [decision::AbstractAllocation] from "busSched" port "allocationHosts" to "TDMBus" 
   edge [platform::PhysicalConnection,visualization::VisualConnection] from "micro_blaze_ni0" port "bus" to "TDMBus" port "ni_0"
   edge [platform::PhysicalConnection,visualization::VisualConnection] from "TDMBus" port "ni_0" to "micro_blaze_ni0" port "bus"
+  edge [visualization::VisualConnection] from "micro_blaze_ni0" port "external" to "TDMBus" 
   edge [platform::PhysicalConnection,visualization::VisualConnection] from "micro_blaze_ni1" port "bus" to "TDMBus" port "ni_1"
   edge [platform::PhysicalConnection,visualization::VisualConnection] from "TDMBus" port "ni_1" to "micro_blaze_ni1" port "bus"
+  edge [visualization::VisualConnection] from "micro_blaze_ni1" port "external" to "TDMBus" 
 }
