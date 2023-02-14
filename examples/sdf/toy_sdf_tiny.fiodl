@@ -1,0 +1,42 @@
+systemgraph {
+
+    vertex p1 [moc::sdf::SDFActor, visualization::Visualizable, impl::InstrumentedExecutable] (sin, s1) {
+        "sizeInBits": 800_l,
+        "operationRequirements": {
+            "default": {
+                "integer add": 2_l
+            }
+        },
+        "consumption": {
+            "sin": 2_i
+        },
+        "production": {
+            "s1": 2_i
+        }
+    }
+
+    vertex p2 [moc::sdf::SDFActor, visualization::Visualizable, impl::InstrumentedExecutable] (s1, sout) {
+        "sizeInBits": 800_l,
+        "operationRequirements": {
+            "default": {
+                "integer add": 1_l
+            }
+        },
+        "consumption": {
+            "s1": 3_i
+        },
+        "production": {
+            "sout": 1_i
+        }
+    }
+
+
+    vertex s1Sig [moc::sdf::SDFChannel, visualization::Visualizable] (producer, consumer, initialTokenValues) {
+        "numOfInitialTokens": 0_i
+    }
+
+
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from p1 port s1 to s1Sig port producer
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from s1Sig port consumer to p2 port s1
+
+}
