@@ -1,0 +1,75 @@
+systemgraph {
+
+    vertex A [moc::sdf::SDFActor, visualization::Visualizable, impl::InstrumentedExecutable] (toB, toC) {
+        "sizeInBits": 800_l,
+        "operationRequirements": {
+            "default": {
+                "integer add": 10000_l
+            }
+        },
+        "consumption": {
+        },
+        "production": {
+            "toB": 2_i,
+            "toC": 1_i
+        }
+    }
+
+    vertex B [moc::sdf::SDFActor, visualization::Visualizable, impl::InstrumentedExecutable] (fromA, fromC) {
+        "sizeInBits": 800_l,
+        "operationRequirements": {
+            "default": {
+                "integer add": 10000_l
+            }
+        },
+        "consumption": {
+            "fromA": 3_i,
+            "fromC": 1_i
+        },
+        "production": {
+        }
+    }
+
+    vertex C [moc::sdf::SDFActor, visualization::Visualizable, impl::InstrumentedExecutable] (fromA, toB) {
+        "sizeInBits": 800_l,
+        "operationRequirements": {
+            "default": {
+                "integer add": 9000_l
+            }
+        },
+        "consumption": {
+            "fromA": 3_i
+        },
+        "production": {
+            "toB": 2_i
+        }
+    }
+
+
+    vertex abSig [moc::sdf::SDFChannel, impl::TokenizableDataBlock, visualization::Visualizable] (producer, consumer, initialTokenValues) {
+        "numOfInitialTokens": 1_i,
+        "maxSizeInBits": 0_l,
+        "tokenSizeInBits": 64_l
+    }
+    vertex acSig [moc::sdf::SDFChannel, impl::TokenizableDataBlock, visualization::Visualizable] (producer, consumer, initialTokenValues) {
+        "numOfInitialTokens": 0_i,
+        "maxSizeInBits": 0_l,
+        "tokenSizeInBits": 64_l
+    }
+    vertex cbSig [moc::sdf::SDFChannel, impl::TokenizableDataBlock, visualization::Visualizable] (producer, consumer, initialTokenValues) {
+        "numOfInitialTokens": 1_i,
+        "maxSizeInBits": 0_l,
+        "tokenSizeInBits": 64_l
+    }
+
+
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from A port toB to abSig port producer
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from abSig port consumer to B port fromA
+
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from A port toC to acSig port producer
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from acSig port consumer to C port fromA
+
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from C port toB to cbSig port producer
+    edge [moc::sdf::SDFDataEdge, visualization::VisualConnection] from cbSig port consumer to B port fromC
+
+}
