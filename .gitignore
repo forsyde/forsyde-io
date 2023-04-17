@@ -382,3 +382,8 @@ haskell/src/sql
 src/main/xtend-gen
 epsilon/gradle.properties
 java/gradle.properties
+
+# do not add generated things
+**/src-gen
+
+gradle.properties
