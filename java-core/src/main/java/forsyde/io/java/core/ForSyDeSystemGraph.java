@@ -335,4 +335,13 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
     public boolean shallowEquals(ForSyDeSystemGraph obj) {
         return vertexSet().equals(obj.vertexSet()) && edgeSet().equals(obj.edgeSet());
     }
+
+    /**
+     * Simple wrapper for vertex viewers.
+     * @param vertex
+     * @return
+     */
+    public Set<EdgeInfo> incomingEdgesOf(VertexViewer vertex) {
+        return super.incomingEdgesOf(vertex.getViewedVertex());
+    }
 }

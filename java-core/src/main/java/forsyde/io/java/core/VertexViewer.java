@@ -13,7 +13,11 @@ public interface VertexViewer {
 
     default Set<String> getPorts() {
         return getViewedVertex().getPorts();
-    };
+    }
+
+    default void addPorts(String... strings) {
+        getViewedVertex().addPorts(strings);
+    }
 
     default Set<Trait> getTraits() {
         return getViewedVertex().getTraits();
