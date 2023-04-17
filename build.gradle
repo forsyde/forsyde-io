@@ -7,13 +7,14 @@ plugins {
   id 'eclipse'
   id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
   id "com.github.mrsarm.jshell.plugin" version "1.1.0"
+  id "com.palantir.git-version" version "3.0.0"
 }
 
 // due to how maven central works, the groupId must be the same as the
 // website which we host
 group = 'io.github.forsyde'
 archivesBaseName = project.name
-version = '0.6.4'
+version = gitVersion()
 project.ext.niceName = "Java Parent"
 
 
@@ -65,6 +66,12 @@ sourceSets {
 def stdTraitHierarchyFile = file("std_trait_hierarchy.traitdsl")
 allprojects {
   project.ext.stdTraitHierarchyFile = stdTraitHierarchyFile
+}
+
+java {
+  withSourcesJar()
+  withJavadocJar()
+  modularity.inferModulePath = true
 }
 
 subprojects {
