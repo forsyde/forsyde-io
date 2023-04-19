@@ -46,7 +46,6 @@ public final class ForSyDeModelHandler {
 		registesteredValidators.add(new SDFValidator());
 		// register default drivers
 		registeredDrivers.add(new ForSyDeMLDriver());
-		registeredDrivers.add(new ForSyDeXMIDriver());
         registeredDrivers.add(new ForSyDeFiodlHandler());
 		// register extra drivers
 		registeredDrivers.addAll(Arrays.asList(extraDrivers));

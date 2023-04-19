@@ -60,13 +60,13 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         stringBuilder.append("systemgraph {\n");
         for (Vertex v: model.vertexSet()) {
             stringBuilder.append("  vertex ").append('"').append(v.getIdentifier()).append('"').append("\n")
-                .append("  [").append(v.vertexTraits.stream().map(Trait::getName).sorted().collect(Collectors.joining(", "))).append("]\n")
+                .append("  [").append(v.getTraits().stream().map(Trait::getName).sorted().collect(Collectors.joining(", "))).append("]\n")
                 .append("  (").append(v.getPorts().stream().sorted().collect(Collectors.joining(", "))).append(")\n");
-            if (v.properties.isEmpty())
+            if (v.getProperties().isEmpty())
                 stringBuilder.append("  {}\n");
             else {
                 stringBuilder.append("  {\n")
-                    .append(v.properties.entrySet().stream().map(e ->
+                    .append(v.getProperties().entrySet().stream().map(e ->
                     " ".repeat(4) + "\"" + e.getKey() +"\": " + writeVertexPropertyCode(e.getValue(), 4)
                 ).collect(Collectors.joining(",\n")))
                     .append("\n  }\n");
@@ -85,29 +85,33 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         out.write(stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
     }
 
-    public String writeVertexPropertyCode(VertexProperty property, int identLevel) {
-        if (property instanceof StringVertexProperty) return  "\"" + ((StringVertexProperty) property).string + "\"";
-        if (property instanceof IntVertexProperty) return  ((IntVertexProperty) property).intValue + "_i";
-        if (property instanceof BooleanVertexProperty) return  ((BooleanVertexProperty) property).boolValue ? "1_b" : "0_b";
-        if (property instanceof FloatVertexProperty) return  String.format(Locale.ENGLISH, "%17.9f", ((FloatVertexProperty) property).floatValue) + "_32";
-        if (property instanceof DoubleVertexProperty) return  String.format(Locale.ENGLISH, "%18.11f", ((DoubleVertexProperty) property).doubleValue) + "_64";
-        if (property instanceof LongVertexProperty) return  ((LongVertexProperty) property).longValue + "_l";
-        if (property instanceof ArrayVertexProperty) return "[\n" +
-                ((ArrayVertexProperty) property).values.stream().map(v ->
+    public String writeVertexPropertyCode(Object property, int identLevel) {
+        if (property instanceof String) return  "\"" + ((String) property) + "\"";
+        if (property instanceof Integer) return  ((Integer) property) + "_i";
+        if (property instanceof Boolean) return  ((Boolean) property) ? "1_b" : "0_b";
+        if (property instanceof Float) return  String.format(Locale.ENGLISH, "%17.9f", ((Float) property)) + "_32";
+        if (property instanceof Double) return  String.format(Locale.ENGLISH, "%18.11f", ((Double) property)) + "_64";
+        if (property instanceof Long) return  ((Long) property) + "_l";
+        if (property instanceof List<?>) return "[\n" +
+                ((List<Object>) property).stream().map(v ->
                         " ".repeat(identLevel + 2) + writeVertexPropertyCode(v, identLevel + 2)).collect(Collectors.joining(",\n")) +
                 "\n" + " ".repeat(identLevel) + "]";
-        if (property instanceof IntMapVertexProperty) return "{\n" +
-                ((IntMapVertexProperty) property).intMap.entrySet().stream()
-                        .map(e ->
-                                " ".repeat(identLevel + 2) + e.getKey().toString() +"_i: " + writeVertexPropertyCode(e.getValue(), identLevel + 2))
-                        .collect(Collectors.joining(",\n")) +
-                "\n" + " ".repeat(identLevel) + "}";
-        if (property instanceof StringMapVertexProperty) return "{\n" +
-                ((StringMapVertexProperty) property).strMap.entrySet().stream()
+        if (property instanceof Map<?, ?>) {
+            if (((Map<Object, ?>) property).keySet().stream().anyMatch(i -> i instanceof Integer)) {
+                return "{\n" +
+                        ((Map<Integer, Object>) property).entrySet().stream()
+                                .map(e ->
+                                        " ".repeat(identLevel + 2) + e.getKey().toString() +"_i: " + writeVertexPropertyCode(e.getValue(), identLevel + 2))
+                                .collect(Collectors.joining(",\n")) +
+                        "\n" + " ".repeat(identLevel) + "}";
+            } else if (((Map<Object, ?>) property).keySet().stream().anyMatch(i -> i instanceof String)) {
+                return ((Map<String, Object>) property).entrySet().stream()
                         .map(e ->
                                 " ".repeat(identLevel + 2) + "\"" + e.getKey() +"\": " + writeVertexPropertyCode(e.getValue(), identLevel + 2))
                         .collect(Collectors.joining(",\n")) +
-                "\n" + " ".repeat(identLevel) + "}";
+                        "\n" + " ".repeat(identLevel) + "}";
+            }
+        }
         return property.toString();
     }
 
@@ -186,7 +190,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
 //            final String propName = visitStringValDirect(ctx.propertyNames.get(i));
             final String propName = ctx.propertyNames.get(i).getText();
             final VertexProperty propVal = visitVertexPropertyValueDirect(ctx.propertyValues.get(i));
-            newVertex.properties.put(propName, propVal);
+            newVertex.putProperty(propName, propVal);
         }
         return newVertex;
     }

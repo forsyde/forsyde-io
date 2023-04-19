@@ -3,6 +3,9 @@
  */
 package forsyde.io.java.core;
 
+import forsyde.io.java.core.properties.*;
+import forsyde.io.java.typed.viewers.typing.datatypes.Integer;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,8 +28,8 @@ final public class Vertex {
 
 	final public String identifier;
 	final private Set<String> ports = new HashSet<>();
-	final public Map<String, VertexProperty> properties = new HashMap<>();
-	final public Set<Trait> vertexTraits = new HashSet<>();
+	final private Map<String, Object> properties = new HashMap<>();
+	final private Set<Trait> vertexTraits = new HashSet<>();
 
 	/**
 	 * Utility constructor initializing all associated data as empty and the vertex
@@ -70,7 +73,7 @@ final public class Vertex {
 	 *                   vertex. Remember that it should be a tree of primitive
 	 *                   types such as Integers, Floats, Strings etc.
 	 */
-	public Vertex(String identifier, Set<String> ports, Map<String, VertexProperty> properties) {
+	public Vertex(String identifier, Set<String> ports, Map<String, Object> properties) {
 		this.identifier = identifier;
 		this.ports.addAll(ports);
 		this.properties.replaceAll(properties::getOrDefault);
@@ -106,12 +109,29 @@ final public class Vertex {
 			VertexTrait trait = VertexTrait.valueOf(traitName);
 			return hasTrait(trait);
 		} catch (IllegalArgumentException e) {
-			return vertexTraits.stream().map(t -> t.getName()).anyMatch(t -> t.equals(traitName));
+			return vertexTraits.stream().map(Trait::getName).anyMatch(t -> t.equals(traitName));
 		}
 	}
 
-	public boolean putProperty(String propertyName, Object propertyValue) {
-		return properties.put(propertyName, VertexProperty.create(propertyValue)) == null;
+	public Object getProperty(String propertyName) throws NullPointerException {
+		return properties.get(propertyName);
+	}
+
+	public boolean putProperty(String propertyName, Object propertyValue) throws IllegalArgumentException {
+		if (
+				(propertyValue instanceof Integer) ||
+						(propertyValue instanceof Long) ||
+						(propertyValue instanceof String) ||
+						(propertyValue instanceof Float) ||
+						(propertyValue instanceof Double) ||
+						(propertyValue instanceof Map<?, ?>) ||
+						(propertyValue instanceof List<?>) ||
+						(propertyValue instanceof Boolean)
+		) {
+			return properties.put(propertyName, VertexProperty.create(propertyValue)) == null;
+		} else {
+			throw new IllegalArgumentException("Only allowed vertex properties types are (boxed) numeric values, strings, lists and maps.");
+		}
 	}
 
 	public void addPort(String s) {
@@ -162,12 +182,60 @@ final public class Vertex {
 		vertexTraits.addAll(other.getTraits());
 		for (String key : other.getProperties().keySet()) {
 			if (properties.containsKey(key)) {
-				mergeDefined = mergeDefined && properties.get(key).mergeInPlace(other.getProperties().get(key));
+				mergeDefined = mergeDefined && mergeInPlace(properties.get(key), other.getProperties().get(key));
 			} else {
 				properties.put(key, other.getProperties().get(key));
 			}
 		}
 		return mergeDefined;
+	}
+
+	protected boolean mergeInPlace(Object main, Object other) {
+		if (main instanceof List<?> && other instanceof List<?>) {
+			final Iterator<Object> otherIt = ((List<Object>) other).iterator();
+			final Iterator<Object> thisIt = ((List<Object>) main).iterator();
+			while (otherIt.hasNext() && thisIt.hasNext()) {
+				// until the sizes overlap, the elements should be mergeable
+				if (!mergeInPlace(thisIt.next(), otherIt.next()))
+					return false;
+			}
+			// if other is bigger than this
+			otherIt.forEachRemaining(((List<Object>) main)::add);
+			return true;
+		}
+		if (main instanceof Map<?, ?> && other instanceof Map<?, ?>) {
+			// check if the keys are integers or not
+			if (((Map<Object, ?>) main).keySet().stream().anyMatch(i -> i instanceof Integer)) {
+				// merge keys that overlap and just insert keys that don't
+				final Map<Integer, Object> m = ((Map<Integer, Object>) main);
+				final Map<Integer, Object> mOther = ((Map<Integer, Object>) other);
+				for (Integer key : mOther.keySet()) {
+					if (m.containsKey(key)) {
+						if(!mergeInPlace(m.get(key), mOther.get(key)))
+							return false;
+					} else {
+						m.put(key, mOther.get(key));
+					}
+				}
+				return true;
+			} else if (((Map<Object, ?>) main).keySet().stream().anyMatch(i -> i instanceof String)) {
+				final Map<String, Object> m = ((Map<String, Object>) main);
+				final Map<String, Object> mOther = ((Map<String, Object>) other);
+				for (String key : mOther.keySet()) {
+					if (m.containsKey(key)) {
+						if(!mergeInPlace(m.get(key), mOther.get(key)))
+							return false;
+					} else {
+						m.put(key, mOther.get(key));
+					}
+				}
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return main.equals(other);
+		}
 	}
 
 	public Optional<Vertex> merge(Vertex other) {
@@ -183,7 +251,7 @@ final public class Vertex {
 		}
 	}
 
-	public Map<String, VertexProperty> getProperties() {
+	public Map<String, Object> getProperties() {
 		return properties;
 	}
 
