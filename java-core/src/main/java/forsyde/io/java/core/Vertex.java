@@ -4,7 +4,6 @@
 package forsyde.io.java.core;
 
 import forsyde.io.java.core.properties.*;
-import forsyde.io.java.typed.viewers.typing.datatypes.Integer;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -113,6 +112,14 @@ final public class Vertex {
 		}
 	}
 
+	public boolean hasProperty(String propertyName){
+		return properties.containsKey(propertyName);
+	}
+
+	public Set<String> getPropertiesNames() {
+		return properties.keySet();
+	}
+
 	public Object getProperty(String propertyName) throws NullPointerException {
 		return properties.get(propertyName);
 	}
@@ -180,11 +187,11 @@ final public class Vertex {
 			return false;
 		ports.addAll(other.getPorts());
 		vertexTraits.addAll(other.getTraits());
-		for (String key : other.getProperties().keySet()) {
+		for (String key : other.getPropertiesNames()) {
 			if (properties.containsKey(key)) {
-				mergeDefined = mergeDefined && mergeInPlace(properties.get(key), other.getProperties().get(key));
+				mergeDefined = mergeDefined && mergeInPlace(properties.get(key), other.getProperty(key));
 			} else {
-				properties.put(key, other.getProperties().get(key));
+				properties.put(key, other.getProperty(key));
 			}
 		}
 		return mergeDefined;
@@ -251,9 +258,9 @@ final public class Vertex {
 		}
 	}
 
-	public Map<String, Object> getProperties() {
-		return properties;
-	}
+//	public Map<String, Object> getProperties() {
+//		return properties;
+//	}
 
 	public Set<String> getPorts() {
 		return ports;

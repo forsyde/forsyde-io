@@ -61,12 +61,12 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
             stringBuilder.append("  vertex ").append('"').append(v.getIdentifier()).append('"').append("\n")
                 .append("  [").append(v.getTraits().stream().map(Trait::getName).sorted().collect(Collectors.joining(", "))).append("]\n")
                 .append("  (").append(v.getPorts().stream().sorted().collect(Collectors.joining(", "))).append(")\n");
-            if (v.getProperties().isEmpty())
+            if (v.getPropertiesNames().isEmpty())
                 stringBuilder.append("  {}\n");
             else {
                 stringBuilder.append("  {\n")
-                    .append(v.getProperties().entrySet().stream().map(e ->
-                    " ".repeat(4) + "\"" + e.getKey() +"\": " + writeVertexPropertyCode(e.getValue(), 4)
+                    .append(v.getPropertiesNames().stream().map(name ->
+                    " ".repeat(4) + "\"" + name +"\": " + writeVertexPropertyCode(v.getProperty(name), 4)
                 ).collect(Collectors.joining(",\n")))
                     .append("\n  }\n");
             }
@@ -104,7 +104,8 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
                                 .collect(Collectors.joining(",\n")) +
                         "\n" + " ".repeat(identLevel) + "}";
             } else if (((Map<Object, ?>) property).keySet().stream().anyMatch(i -> i instanceof String)) {
-                return ((Map<String, Object>) property).entrySet().stream()
+                return "{\n" +
+                        ((Map<String, Object>) property).entrySet().stream()
                         .map(e ->
                                 " ".repeat(identLevel + 2) + "\"" + e.getKey() +"\": " + writeVertexPropertyCode(e.getValue(), identLevel + 2))
                         .collect(Collectors.joining(",\n")) +

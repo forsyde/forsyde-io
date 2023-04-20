@@ -158,7 +158,7 @@ public final class VertexAcessor {
 
     static public List<Vertex> getOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait t, VertexPortDirection direction) {
         @SuppressWarnings("unchecked")
-        Map<String, Integer> order = Optional.ofNullable(v.getProperties().get("__" + portName + "_ordering__"))
+        Map<String, Integer> order = Optional.ofNullable(v.getProperty("__" + portName + "_ordering__"))
                 .map(m -> (Map<String, Integer>) m).orElse(new HashMap<>(1));
         Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
                 .filter(e -> e.getSourcePort().map(p -> p.equals(portName)).orElse(false))
@@ -181,7 +181,7 @@ public final class VertexAcessor {
 
     static public List<Vertex> getOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait t, VertexPortDirection direction, EdgeTrait edgeTrait) {
         @SuppressWarnings("unchecked")
-        Map<String, Integer> order = Optional.ofNullable(v.getProperties().get("__" + portName + "_ordering__"))
+        Map<String, Integer> order = Optional.ofNullable(v.getProperty("__" + portName + "_ordering__"))
                 .map(m -> (Map<String, Integer>) m).orElse(new HashMap<>(1));
         Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
                 .filter(e -> e.getSourcePort().map(p -> p.equals(portName)).orElse(false))
@@ -274,7 +274,7 @@ public final class VertexAcessor {
 
     public static boolean insertOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, int pos, EdgeTrait... ts) {
         @SuppressWarnings("unchecked")
-        final Map<String, Integer> order = Optional.ofNullable(src.getProperties().get("__" + srcPortName + "_ordering__"))
+        final Map<String, Integer> order = Optional.ofNullable(src.getProperty("__" + srcPortName + "_ordering__"))
                 .map(m -> (Map<String, Integer>) m).orElse(new HashMap<>(1));
         if (srcPortName != null && !src.hasPort(srcPortName)) src.getPorts().add(srcPortName);
         if (dstPortName != null && !dst.hasPort(dstPortName)) dst.getPorts().add(dstPortName);

@@ -84,7 +84,7 @@ public class KlighDNodeView {
     public Map<String, String> getVisualizedProperties() {
         return VisualizableWithProperties.safeCast(viewed).map(VisualizableWithProperties::getVisualizedPropertiesNames).map(strings -> strings.stream().collect(Collectors.toMap(
                 s -> s,
-                s -> viewed.getProperties().get(s).toString()
+                s -> viewed.getViewedVertex().getProperty(s).toString()
         ))).orElse(Map.of());
     }
 }

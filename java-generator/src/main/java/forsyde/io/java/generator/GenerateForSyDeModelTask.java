@@ -158,8 +158,8 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                 .addJavadoc("@return \"$L\".\n\" property", prop.name)
                 .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT).returns(typeOut);
         prop.comment.ifPresent(comment -> getPropMethod.addJavadoc("$L", comment));
-        getPropMethod.addStatement("return getViewedVertex().getProperties().containsKey(\"$L\") ?\n" +
-                        "            ($T) getViewedVertex().getProperties().get(\"$L\") :\n" +
+        getPropMethod.addStatement("return getViewedVertex().hasProperty(\"$L\") ?\n" +
+                        "            ($T) getViewedVertex().getProperty(\"$L\") :\n" +
                         "            null",
                 prop.name,
                 typeOut,
@@ -241,7 +241,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
         final TypeName viewerClass = ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, vertexTraitSpec.getTraitLocalName()  + "Viewer");
         final CodeBlock propertyBlock = CodeBlock.builder()
                 .beginControlFlow("for(String key : $T.getRequiredProperties().keySet())", traitInterface)
-                .addStatement("vertex.putProperty(key, $T.getRequiredProperties().get(key))", traitInterface)
+                .addStatement("if (!vertex.hasProperty(key)) vertex.putProperty(key, $T.getRequiredProperties().get(key))", traitInterface)
                 .endControlFlow()
                 .build();
         return MethodSpec.methodBuilder("enforce")
@@ -278,7 +278,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                 .addJavadoc("setter for named required property \"$L\".\n", prop.name)
                 .addJavadoc("@param $L value for required property \"$L\".\n", WordUtils.uncapitalize(toCamelCase(prop.name)), prop.name)
                 .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT);
-        getPropMethod.addStatement("getViewedVertex().getProperties().put(\"$L\", $L)", prop.name,
+        getPropMethod.addStatement("getViewedVertex().putProperty(\"$L\", $L)", prop.name,
                 WordUtils.uncapitalize(toCamelCase(prop.name)));
 //		}
         return getPropMethod.build();
