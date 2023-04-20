@@ -34,7 +34,7 @@ jobs:
         cd ${{ github.workspace }}
         echo "::set-output name=localVersion::$(./gradlew -q getVersion)"
     - name: Build and publish with Gradle
-      if: ${{ steps.get_version.outputs.version-without-v == steps.localVersion.outputs.localVersion }}
+      if: ${{ steps.get_version.outputs.version == steps.localVersion.outputs.localVersion }}
       run: |
         cd ${{ github.workspace }}
         ./gradlew build publish closeAndReleaseSonatypeStagingRepository
