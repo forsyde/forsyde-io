@@ -298,6 +298,10 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
         return isConnected;
     }
 
+    public Set<EdgeInfo> getAllEdges(VertexViewer sourceVertex, VertexViewer targetVertex) {
+        return super.getAllEdges(sourceVertex.getViewedVertex(), targetVertex.getViewedVertex());
+    }
+
     public Optional<Vertex> queryVertex(String vertexId) {
         return vertexSet().stream().filter(v -> v.identifier.equals(vertexId)).findAny();
     }
@@ -343,5 +347,14 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
      */
     public Set<EdgeInfo> incomingEdgesOf(VertexViewer vertex) {
         return super.incomingEdgesOf(vertex.getViewedVertex());
+    }
+
+    /**
+     * Simple wrapper for vertex viewers.
+     * @param vertex
+     * @return
+     */
+    public Set<EdgeInfo> outgoingEdgesOf(VertexViewer vertex) {
+        return super.outgoingEdgesOf(vertex.getViewedVertex());
     }
 }

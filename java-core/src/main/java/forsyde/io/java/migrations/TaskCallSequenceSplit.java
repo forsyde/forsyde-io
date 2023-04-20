@@ -3,6 +3,7 @@ package forsyde.io.java.migrations;
 import forsyde.io.java.core.*;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 public class TaskCallSequenceSplit implements SystemGraphMigrator {
 
@@ -18,8 +19,8 @@ public class TaskCallSequenceSplit implements SystemGraphMigrator {
                 v.addPort("initSequence");
                 v.addPort("loopSequence");
                 v.putProperty("__loopSequence_ordering__",
-                        v.properties.getOrDefault("__callSequence_ordering__",
-                                VertexProperty.create(new HashMap<String, Integer>())));
+                        Optional.ofNullable(v.getProperty("__callSequence_ordering__")).orElse(
+                                new HashMap<String, Integer>()));
                 forSyDeSystemGraph.outgoingEdgesOf(v).stream()
                         .filter(e -> e.getSourcePort().orElse("").equals("callSequence"))
                         .map(forSyDeSystemGraph::getEdgeTarget)

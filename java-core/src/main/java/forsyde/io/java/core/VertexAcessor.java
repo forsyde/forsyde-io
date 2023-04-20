@@ -159,7 +159,7 @@ public final class VertexAcessor {
     static public List<Vertex> getOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait t, VertexPortDirection direction) {
         @SuppressWarnings("unchecked")
         Map<String, Integer> order = Optional.ofNullable(v.getProperties().get("__" + portName + "_ordering__"))
-                .map(m -> (Map<String, Integer>) m.unwrap()).orElse(new HashMap<>(1));
+                .map(m -> (Map<String, Integer>) m).orElse(new HashMap<>(1));
         Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
                 .filter(e -> e.getSourcePort().map(p -> p.equals(portName)).orElse(false))
                 .map(model::getEdgeTarget)
@@ -182,7 +182,7 @@ public final class VertexAcessor {
     static public List<Vertex> getOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex v, String portName, Trait t, VertexPortDirection direction, EdgeTrait edgeTrait) {
         @SuppressWarnings("unchecked")
         Map<String, Integer> order = Optional.ofNullable(v.getProperties().get("__" + portName + "_ordering__"))
-                .map(m -> (Map<String, Integer>) m.unwrap()).orElse(new HashMap<>(1));
+                .map(m -> (Map<String, Integer>) m).orElse(new HashMap<>(1));
         Stream<Vertex> outStream = model.outgoingEdgesOf(v).stream()
                 .filter(e -> e.getSourcePort().map(p -> p.equals(portName)).orElse(false))
                 .filter(e -> e.hasTrait(edgeTrait))
@@ -275,11 +275,11 @@ public final class VertexAcessor {
     public static boolean insertOrderedMultipleNamedPort(ForSyDeSystemGraph model, Vertex src,  Vertex dst, String srcPortName, String dstPortName, int pos, EdgeTrait... ts) {
         @SuppressWarnings("unchecked")
         final Map<String, Integer> order = Optional.ofNullable(src.getProperties().get("__" + srcPortName + "_ordering__"))
-                .map(m -> (Map<String, Integer>) m.unwrap()).orElse(new HashMap<>(1));
+                .map(m -> (Map<String, Integer>) m).orElse(new HashMap<>(1));
         if (srcPortName != null && !src.hasPort(srcPortName)) src.getPorts().add(srcPortName);
         if (dstPortName != null && !dst.hasPort(dstPortName)) dst.getPorts().add(dstPortName);
         order.put(dst.identifier, pos);
-        src.properties.put("__" + srcPortName + "_ordering__", VertexProperty.create(order));
+        src.putProperty("__" + srcPortName + "_ordering__", order);
         return model.connect(src, dst, srcPortName, dstPortName, ts);
     }
 

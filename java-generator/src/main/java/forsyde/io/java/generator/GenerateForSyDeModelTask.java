@@ -159,7 +159,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                 .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT).returns(typeOut);
         prop.comment.ifPresent(comment -> getPropMethod.addJavadoc("$L", comment));
         getPropMethod.addStatement("return getViewedVertex().getProperties().containsKey(\"$L\") ?\n" +
-                        "            ($T) getViewedVertex().getProperties().get(\"$L\").unwrap() :\n" +
+                        "            ($T) getViewedVertex().getProperties().get(\"$L\") :\n" +
                         "            null",
                 prop.name,
                 typeOut,
@@ -188,37 +188,36 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
     }
 
     public MethodSpec generateRequiredPropertyGetter(VertexTraitSpec vertexTraitSpec) {
-        final TypeName propClass = ClassName.get("forsyde.io.java.core", "VertexProperty");
         final MethodSpec.Builder getRequiredPropGetter = MethodSpec.methodBuilder("getRequiredProperties")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class), propClass))
+                .returns(ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class), ClassName.get(Object.class)))
                 .addStatement("final $T<$T, $T> required = new $T<$T, $T>()",
-                        HashMap.class, String.class, ClassName.get("forsyde.io.java.core", "VertexProperty"),
-                        HashMap.class, String.class, ClassName.get("forsyde.io.java.core", "VertexProperty"))
+                        HashMap.class, String.class, Object.class,
+                        HashMap.class, String.class, Object.class)
                 .addCode("required.putAll($T.of(\n", Map.class);
         for (int i = 0; i < vertexTraitSpec.requiredProperties.size(); i++) {
             final PropertySpec propertySpec = vertexTraitSpec.requiredProperties.get(i);
             if (propertySpec.defaultValue == null) {
                 PropertyTypeSpecs.cases()
-                        .StringVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($S)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), ""))
-                        .IntVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), 0))
-                        .BooleanVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), false))
-                        .FloatVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), 0.0F))
-                        .DoubleVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), 0.0))
-                        .LongVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $T.create($LL)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), 0L))
-                        .ArrayVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, $T.create(new $T())", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), concreteMetaToJavaType(propertySpec.type)))
-                        .IntMapVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, $T.create(new $T())", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), concreteMetaToJavaType(propertySpec.type)))
-                        .StringMapVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, $T.create(new $T())", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), concreteMetaToJavaType(propertySpec.type)))
+                        .StringVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $S", propertySpec.name, ""))
+                        .IntVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $L", propertySpec.name, 0))
+                        .BooleanVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $L", propertySpec.name, false))
+                        .FloatVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $L", propertySpec.name, 0.0F))
+                        .DoubleVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $L", propertySpec.name, 0.0))
+                        .LongVertexProperty(() -> getRequiredPropGetter.addCode("\t$S, $LL", propertySpec.name, 0L))
+                        .ArrayVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, new $T()", propertySpec.name, concreteMetaToJavaType(propertySpec.type)))
+                        .IntMapVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, new $T()", propertySpec.name, concreteMetaToJavaType(propertySpec.type)))
+                        .StringMapVertexProperty((p) -> getRequiredPropGetter.addCode("\t$S, new $T()", propertySpec.name, concreteMetaToJavaType(propertySpec.type)))
                         .apply(propertySpec.type);
             } else {
                 // TODO: support also definition of mappings and arrays as default values
                 VertexProperties.caseOf(propertySpec.defaultValue)
-                        .StringVertexProperty(s -> getRequiredPropGetter.addCode("\t$S, $T.create($S)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), s))
-                        .IntVertexProperty(in -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), in))
-                        .BooleanVertexProperty(b -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), b))
-                        .FloatVertexProperty(f -> getRequiredPropGetter.addCode("\t$S, $T.create($LF)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), f))
-                        .DoubleVertexProperty(f -> getRequiredPropGetter.addCode("\t$S, $T.create($L)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), f))
-                        .LongVertexProperty(l -> getRequiredPropGetter.addCode("\t$S, $T.create($LL)", propertySpec.name, ClassName.get("forsyde.io.java.core", "VertexProperty"), l))
+                        .StringVertexProperty(s -> getRequiredPropGetter.addCode("\t$S, $S", propertySpec.name, s))
+                        .IntVertexProperty(in -> getRequiredPropGetter.addCode("\t$S, $L", propertySpec.name, in))
+                        .BooleanVertexProperty(b -> getRequiredPropGetter.addCode("\t$S, $L", propertySpec.name, b))
+                        .FloatVertexProperty(f -> getRequiredPropGetter.addCode("\t$S, $LF", propertySpec.name, f))
+                        .DoubleVertexProperty(f -> getRequiredPropGetter.addCode("\t$S, $L", propertySpec.name, f))
+                        .LongVertexProperty(l -> getRequiredPropGetter.addCode("\t$S, $LL", propertySpec.name, l))
                         .otherwiseEmpty();
             }
             if (i < vertexTraitSpec.requiredProperties.size() -1)
@@ -242,7 +241,7 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
         final TypeName viewerClass = ClassName.get("forsyde.io.java.typed.viewers" + extraPackages, vertexTraitSpec.getTraitLocalName()  + "Viewer");
         final CodeBlock propertyBlock = CodeBlock.builder()
                 .beginControlFlow("for(String key : $T.getRequiredProperties().keySet())", traitInterface)
-                .addStatement("vertex.properties.putIfAbsent(key, $T.getRequiredProperties().get(key))", traitInterface)
+                .addStatement("vertex.putProperty(key, $T.getRequiredProperties().get(key))", traitInterface)
                 .endControlFlow()
                 .build();
         return MethodSpec.methodBuilder("enforce")
@@ -279,9 +278,8 @@ public abstract class GenerateForSyDeModelTask extends DefaultTask implements Ta
                 .addJavadoc("setter for named required property \"$L\".\n", prop.name)
                 .addJavadoc("@param $L value for required property \"$L\".\n", WordUtils.uncapitalize(toCamelCase(prop.name)), prop.name)
                 .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT);
-        TypeName propClass = ClassName.get("forsyde.io.java.core", "VertexProperty");
-        getPropMethod.addStatement("getViewedVertex().getProperties().put(\"$L\", $T.create($L))", prop.name,
-                propClass, WordUtils.uncapitalize(toCamelCase(prop.name)));
+        getPropMethod.addStatement("getViewedVertex().getProperties().put(\"$L\", $L)", prop.name,
+                WordUtils.uncapitalize(toCamelCase(prop.name)));
 //		}
         return getPropMethod.build();
     }

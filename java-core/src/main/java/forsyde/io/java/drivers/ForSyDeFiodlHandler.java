@@ -4,7 +4,6 @@ import forsyde.io.java.adapters.fiodl.ForSyDeFioDLBaseVisitor;
 import forsyde.io.java.adapters.fiodl.ForSyDeFioDLLex;
 import forsyde.io.java.adapters.fiodl.ForSyDeFioDL;
 import forsyde.io.java.core.*;
-import forsyde.io.java.core.properties.*;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
@@ -86,12 +85,12 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
     }
 
     public String writeVertexPropertyCode(Object property, int identLevel) {
-        if (property instanceof String) return  "\"" + ((String) property) + "\"";
-        if (property instanceof Integer) return  ((Integer) property) + "_i";
+        if (property instanceof String) return  "\"" + property + "\"";
+        if (property instanceof Integer) return  property + "_i";
         if (property instanceof Boolean) return  ((Boolean) property) ? "1_b" : "0_b";
         if (property instanceof Float) return  String.format(Locale.ENGLISH, "%17.9f", ((Float) property)) + "_32";
         if (property instanceof Double) return  String.format(Locale.ENGLISH, "%18.11f", ((Double) property)) + "_64";
-        if (property instanceof Long) return  ((Long) property) + "_l";
+        if (property instanceof Long) return  property + "_l";
         if (property instanceof List<?>) return "[\n" +
                 ((List<Object>) property).stream().map(v ->
                         " ".repeat(identLevel + 2) + writeVertexPropertyCode(v, identLevel + 2)).collect(Collectors.joining(",\n")) +
@@ -163,12 +162,12 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
             final Vertex target = newModel.vertexSet().stream().filter(v -> v.getIdentifier().equals(edgeInfo.targetId)).findFirst().orElseThrow(() ->
                     new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
                             " declares target '" + edgeInfo.targetId +"' that does not exist."));
-            if (!edgeInfo.getSourcePort().map(s -> source.hasPort(s)).orElse(true)) {
+            if (!edgeInfo.getSourcePort().map(source::hasPort).orElse(true)) {
                 throw new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
                         " declares port '" + edgeInfo.getSourcePort().get() +"' at source " +
                         source.getIdentifier() + " which it does not declare.");
             }
-            if (!edgeInfo.getTargetPort().map(s -> target.hasPort(s)).orElse(true)) {
+            if (!edgeInfo.getTargetPort().map(target::hasPort).orElse(true)) {
                 throw new InconsistentModelException("edge at " + edgeContext.getStart().getLine() + ":" + edgeContext.getStart().getCharPositionInLine() +
                         " declares port '" + edgeInfo.getTargetPort().get() +"' at target " +
                         target.getIdentifier() + " which it does not declare.");
@@ -189,7 +188,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         for (int i = 0; i < ctx.propertyNames.size(); i++) {
 //            final String propName = visitStringValDirect(ctx.propertyNames.get(i));
             final String propName = ctx.propertyNames.get(i).getText();
-            final VertexProperty propVal = visitVertexPropertyValueDirect(ctx.propertyValues.get(i));
+            final Object propVal = visitVertexPropertyValueDirect(ctx.propertyValues.get(i));
             newVertex.putProperty(propName, propVal);
         }
         return newVertex;
@@ -206,24 +205,24 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         }
     }
 
-    public VertexProperty visitVertexPropertyValueDirect(ForSyDeFioDL.VertexPropertyValueContext ctx) throws FioDLSyntaxException {
+    public Object visitVertexPropertyValueDirect(ForSyDeFioDL.VertexPropertyValueContext ctx) throws FioDLSyntaxException {
         if (ctx.number() != null) {
-            return VertexProperty.create(visitNumberDirect(ctx.number()));
+            return visitNumberDirect(ctx.number());
         } else if (ctx.booleanValue != null) {
-            return VertexProperty.create(ctx.booleanValue.getText().equals("1_b"));
+            return ctx.booleanValue.getText().equals("1_b");
         } else if (ctx.stringValue != null) {
-            return VertexProperty.create(ctx.stringValue.getText());
+            return ctx.stringValue.getText();
         } else if (ctx.vertexPropertyArray() != null) {
             final ForSyDeFioDL.VertexPropertyArrayContext arrayContext = ctx.vertexPropertyArray();
-            final List<VertexProperty> props = new ArrayList<>(arrayContext.arrayEntries.size());
+            final List<Object> props = new ArrayList<>(arrayContext.arrayEntries.size());
             for (ForSyDeFioDL.VertexPropertyValueContext child : arrayContext.arrayEntries) {
                 props.add(visitVertexPropertyValueDirect(child));
             }
-            return VertexProperty.create(props);
+            return props;
         } else if (ctx.vertexPropertyMap() != null) {
             final ForSyDeFioDL.VertexPropertyMapContext mapContext = ctx.vertexPropertyMap();
             boolean isIntMap = true;
-            Object firstKey = null;
+            Object firstKey;
             // we also catch index out of bounds exception because some dictionaries may be empty, just like {}
             try {
                 firstKey = visitVertexPropertyKeyDirect(mapContext.mapKey.get(0));
@@ -233,9 +232,9 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
             } catch (NumberFormatException | IndexOutOfBoundsException e) {
                 isIntMap = false;
             }
-            final Map<Object, VertexProperty> props = new HashMap<>(mapContext.mapKey.size());
+            final Map<Object, Object> props = new HashMap<>(mapContext.mapKey.size());
             for (int i = 0; i < mapContext.mapKey.size(); i++) {
-                final VertexProperty value = visitVertexPropertyValueDirect(mapContext.mapValue.get(i));
+                final Object value = visitVertexPropertyValueDirect(mapContext.mapValue.get(i));
                 if (isIntMap) {
                     try {
                         final Integer key = (Integer) visitVertexPropertyKeyDirect(mapContext.mapKey.get(i));
@@ -248,7 +247,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
                     props.put(key, value);
                 }
             }
-            return VertexProperty.create(props);
+            return props;
         } else {
             throw new FioDLSyntaxException("Could not parse property at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
         }

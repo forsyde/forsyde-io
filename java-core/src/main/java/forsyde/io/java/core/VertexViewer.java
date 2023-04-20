@@ -23,7 +23,7 @@ public interface VertexViewer {
         return getViewedVertex().getTraits();
     };
 
-    default Map<String, VertexProperty> getProperties() {
+    default Map<String, Object> getProperties() {
         return getViewedVertex().getProperties();
     }
 

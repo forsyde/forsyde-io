@@ -128,7 +128,7 @@ final public class Vertex {
 						(propertyValue instanceof List<?>) ||
 						(propertyValue instanceof Boolean)
 		) {
-			return properties.put(propertyName, VertexProperty.create(propertyValue)) == null;
+			return properties.put(propertyName, propertyValue) == null;
 		} else {
 			throw new IllegalArgumentException("Only allowed vertex properties types are (boxed) numeric values, strings, lists and maps.");
 		}

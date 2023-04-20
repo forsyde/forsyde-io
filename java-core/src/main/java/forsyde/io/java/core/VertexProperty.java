@@ -5,6 +5,7 @@ import forsyde.io.java.core.properties.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Deprecated
 public interface VertexProperty {
 
     static VertexProperty create(float f) {
