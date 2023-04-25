@@ -2,64 +2,7 @@ parser grammar ForSyDeFioDL;
 
 options { tokenVocab=ForSyDeFioDLLex; }
 
-//fragment ALPHABETIC: [a-zA-Z];
-//
-//NUMERIC: [0-9];
-//
-//fragment ALPHANUM: [a-zA-Z0-9];
-//
-//QUALIFIER: '::';
-//
-//CLARIFIER: ':';
-//
-//SEPARATOR: ',';
-//
-//QUOTE: '"';
-//
-//PORTS_START: '(';
-//
-//PORTS_END: ')';
-//
-//LIST_START: '[';
-//
-//LIST_END: ']';
-//
-//DICT_START: '{';
-//
-//DICT_END: '}';
-//
-//INTEGER: ('-')?NUMERIC+('_i')?;
-//LONG: ('-')?NUMERIC+'_l';
-//REAL: ('-')?(NUMERIC*'.'NUMERIC+ | NUMERIC+'.'NUMERIC*)'_'NUMERIC+;
-//
-//QUALIFIED_STRING
-//    :   ('::'|ALPHABETIC)('::'|'_'|ALPHANUM)*
-//;
-//
-//INLINE_SYMBOLS: ('*'|'.'|'='|';'|'_'|'+'|'<'|'>'|'-');
-//
-//WS : [ \t\r\n]+ -> channel(HIDDEN) ;
-
 number: intVal=INTEGER | longVal=LONG | realVal=REAL;
-
-//stringVal:
-//    QUOTE  (
-//       content+=QUALIFIED_STRING |
-//       content+=NUMERIC |
-//       content+=INTEGER |
-//       content+=LONG |
-//       content+=REAL |
-//       content+=INLINE_SYMBOLS |
-//       content+=PORTS_START |
-//       content+=PORTS_END |
-//       content+=LIST_START |
-//       content+=LIST_END |
-//       content+=DICT_START |
-//       content+=DICT_END |
-//       content+=SEPARATOR  |
-//       content+=WS
-//   )* QUOTE
-//;
 
 systemGraph:
     SYSTEMGRAPH_LIT DICT_START (vertexes+=vertex | edges+=edge)* DICT_END
@@ -76,7 +19,7 @@ vertex:
 vertexPropertyValue:
     number |
     booleanValue=BOOLEAN |
-    QUOTE_START stringValue=QUOTED_STRING QUOTE_END |
+    QUOTE_START (stringValue=QUOTED_STRING)? QUOTE_END |
     vertexPropertyArray |
     vertexPropertyMap
 ;

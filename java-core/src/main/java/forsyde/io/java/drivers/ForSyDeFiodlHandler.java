@@ -211,8 +211,6 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
             return visitNumberDirect(ctx.number());
         } else if (ctx.booleanValue != null) {
             return ctx.booleanValue.getText().equals("1_b");
-        } else if (ctx.stringValue != null) {
-            return ctx.stringValue.getText();
         } else if (ctx.vertexPropertyArray() != null) {
             final ForSyDeFioDL.VertexPropertyArrayContext arrayContext = ctx.vertexPropertyArray();
             final List<Object> props = new ArrayList<>(arrayContext.arrayEntries.size());
@@ -250,7 +248,8 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
             }
             return props;
         } else {
-            throw new FioDLSyntaxException("Could not parse property at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
+            return ctx.stringValue != null ? ctx.stringValue.getText() : "";
+//            throw new FioDLSyntaxException("Could not parse property at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
         }
     }
 
