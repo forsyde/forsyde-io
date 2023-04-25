@@ -197,6 +197,9 @@ namespace parallel {
 
     vertex Vectorizable {
         prop dimensions is array<int> = []
+
+        port producer is single input ParallelSkeleton with ParallelContainerEdge
+        port consumers is multiple output ParallelSkeleton with ParallelContainerEdge
     }
 
     vertex MapV refines ParallelSkeleton {

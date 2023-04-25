@@ -357,4 +357,13 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
     public Set<EdgeInfo> outgoingEdgesOf(VertexViewer vertex) {
         return super.outgoingEdgesOf(vertex.getViewedVertex());
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ForSyDeSystemGraph) {
+            final ForSyDeSystemGraph osg = (ForSyDeSystemGraph) obj;
+            return vertexSet().equals(osg.vertexSet()) && edgeSet().equals(osg.edgeSet());
+        }
+        return false;
+    }
 }
