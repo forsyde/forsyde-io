@@ -21,6 +21,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -76,7 +79,10 @@ public class SDFTests {
     @Test
     public void checkingFIODL() throws Exception {
         final ForSyDeSystemGraph forSyDeSystemGraph = forSyDeModelHandler.loadModel("examples/sdf/complete-flow/sobel-application.fiodl");
-        forSyDeModelHandler.writeModel(forSyDeSystemGraph, "test.fiodl");
+        final Path path = Paths.get("test.fiodl");
+        forSyDeModelHandler.writeModel(forSyDeSystemGraph, path);
+        Assertions.assertTrue(Files.exists(path));
+        Files.deleteIfExists(path);
     }
 
     @Test
@@ -206,6 +212,8 @@ public class SDFTests {
         final ForSyDeSystemGraph reloaded = forSyDeModelHandler.loadModel("simple.fiodl");
 
         Assertions.assertTrue(model.shallowEquals(reloaded));
+
+        Files.deleteIfExists(Paths.get("simple.fiodl"));
 
     }
 
