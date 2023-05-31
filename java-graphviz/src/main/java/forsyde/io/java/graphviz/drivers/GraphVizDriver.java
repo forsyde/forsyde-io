@@ -1,8 +1,7 @@
 package forsyde.io.java.graphviz.drivers;
 
-import forsyde.io.java.graphviz.drivers.ForSyDeGraphVizAdapter;
-import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.drivers.ForSyDeModelDriver;
+import forsyde.io.java.core.SystemGraph;
+import forsyde.io.java.drivers.ModelDriver;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.Graph;
@@ -16,7 +15,7 @@ import java.util.List;
  *
  * This takes care of also processing 'visualization' traits.
  */
-public class ForSyDeGraphVizDriver implements ForSyDeModelDriver {
+public class GraphVizDriver implements ModelDriver {
 
     @Override
     public List<String> inputExtensions() {
@@ -29,12 +28,12 @@ public class ForSyDeGraphVizDriver implements ForSyDeModelDriver {
     }
 
     @Override
-    public ForSyDeSystemGraph loadModel(InputStream in) throws Exception {
+    public SystemGraph loadModel(InputStream in) throws Exception {
         throw new UnsupportedOperationException("'ForSyDeGraphVizDriver' does not support loading graphviz models.");
     }
 
     @Override
-    public void writeModel(ForSyDeSystemGraph model, OutputStream out) throws Exception {
+    public void writeModel(SystemGraph model, OutputStream out) throws Exception {
         final ForSyDeGraphVizAdapter forSyDeGraphVizAdapter = new ForSyDeGraphVizAdapter();
         final Graph vizGraph = forSyDeGraphVizAdapter.convert(model);
         Graphviz.fromGraph(vizGraph).render(Format.XDOT).toOutputStream(out);

@@ -1,8 +1,8 @@
 package sdf;
 
 import forsyde.io.java.core.*;
-import forsyde.io.java.drivers.ForSyDeModelHandler;
-import forsyde.io.java.graphviz.drivers.ForSyDeGraphVizDriver;
+import forsyde.io.java.drivers.ModelHandler;
+import forsyde.io.java.graphviz.drivers.GraphVizDriver;
 import forsyde.io.java.typed.edges.moc.sdf.SDFDataEdge;
 import forsyde.io.java.typed.viewers.decision.sdf.BoundedSDFChannel;
 import forsyde.io.java.typed.viewers.decision.sdf.PASSedSDFActor;
@@ -32,19 +32,19 @@ import java.util.stream.Collectors;
 public class SDFTests {
 
     // thread safe as it is only a function holder
-    final ForSyDeModelHandler forSyDeModelHandler = (new ForSyDeModelHandler()).registerDriver(new ForSyDeGraphVizDriver(), 0);
+    final ModelHandler modelHandler = (new ModelHandler()).registerDriver(new GraphVizDriver(), 0);
 
     @Test
     public void sobelSDFModel() throws Exception {
-        final ForSyDeSystemGraph forSyDeSystemGraph = forSyDeModelHandler.loadModel("examples/sdf/complete-flow/sobel-application.fiodl");
-        final Set<SDFActor> actors = forSyDeSystemGraph.vertexSet().stream().filter(SDFActor::conforms)
+        final SystemGraph systemGraph = modelHandler.loadModel("examples/sdf/complete-flow/sobel-application.fiodl");
+        final Set<SDFActor> actors = systemGraph.vertexSet().stream().filter(SDFActor::conforms)
                 .map(SDFActor::enforce).collect(Collectors.toSet());
         final Set<Vertex> actorsVertexes = actors.stream().map(VertexViewer::getViewedVertex)
                 .collect(Collectors.toSet());
-        final Set<SDFChannel> channels = forSyDeSystemGraph.vertexSet().stream()
+        final Set<SDFChannel> channels = systemGraph.vertexSet().stream()
                 .filter(SDFChannel::conforms)
                 .map(SDFChannel::enforce).collect(Collectors.toSet());
-        final Graph<Vertex, EdgeInfo> undirected = new AsUndirectedGraph<>(forSyDeSystemGraph);
+        final Graph<Vertex, EdgeInfo> undirected = new AsUndirectedGraph<>(systemGraph);
         final ConnectivityInspector<Vertex, EdgeInfo> inspector = new ConnectivityInspector<>(undirected);
         for (Vertex actorVertex: actorsVertexes) {
             Assertions.assertTrue(inspector.connectedSetOf(actorVertex).containsAll(actorsVertexes));
@@ -63,13 +63,13 @@ public class SDFTests {
 //        ));
 
         // check that sobel/getPx outputs 6
-        Assertions.assertTrue(forSyDeSystemGraph.edgeSet().stream().filter(e ->
+        Assertions.assertTrue(systemGraph.edgeSet().stream().filter(e ->
                     e.hasTrait(EdgeTrait.MOC_SDF_SDFDATAEDGE) &&
-                    forSyDeSystemGraph.getEdgeSource(e).getIdentifier().equals("getPx") &&
-                    SDFActor.conforms(forSyDeSystemGraph.getEdgeSource(e)) &&
-                    SDFChannel.conforms(forSyDeSystemGraph.getEdgeSource(e))
+                    systemGraph.getEdgeSource(e).getIdentifier().equals("getPx") &&
+                    SDFActor.conforms(systemGraph.getEdgeSource(e)) &&
+                    SDFChannel.conforms(systemGraph.getEdgeSource(e))
                 ).allMatch(e ->
-                    SDFActor.safeCast(forSyDeSystemGraph.getEdgeSource(e)).flatMap(sourceSDF ->
+                    SDFActor.safeCast(systemGraph.getEdgeSource(e)).flatMap(sourceSDF ->
                         e.getSourcePort().map(port -> sourceSDF.getProduction().get(port).equals(6))
                     ).orElse(false)
                 ));
@@ -78,16 +78,16 @@ public class SDFTests {
 
     @Test
     public void checkingFIODL() throws Exception {
-        final ForSyDeSystemGraph forSyDeSystemGraph = forSyDeModelHandler.loadModel("examples/sdf/complete-flow/sobel-application.fiodl");
+        final SystemGraph systemGraph = modelHandler.loadModel("examples/sdf/complete-flow/sobel-application.fiodl");
         final Path path = Paths.get("test.fiodl");
-        forSyDeModelHandler.writeModel(forSyDeSystemGraph, path);
+        modelHandler.writeModel(systemGraph, path);
         Assertions.assertTrue(Files.exists(path));
         Files.deleteIfExists(path);
     }
 
     @Test
     public void checkSDFValidation() throws Exception {
-        final ForSyDeSystemGraph runningModel = new ForSyDeSystemGraph();
+        final SystemGraph runningModel = new SystemGraph();
         final SDFValidator validator = new SDFValidator();
         final SDFActor actor = SDFActor.enforce(runningModel.newVertex("actor"));
         actor.getViewedVertex().addPorts(Set.of("in", "out"));
@@ -109,7 +109,7 @@ public class SDFTests {
     @Test
     public void compareSimpleInMemoryWithSertialized() throws Exception {
 
-        final ForSyDeSystemGraph model = new ForSyDeSystemGraph();
+        final SystemGraph model = new SystemGraph();
         final SDFValidator validator = new SDFValidator();
 
         // since we only want the SDF actor, we can do it in 1 line
@@ -207,9 +207,9 @@ public class SDFTests {
         model.connect(p1, s1, EdgeTrait.VISUALIZATION_VISUALCONNECTION);
         model.connect(s1, p2, EdgeTrait.VISUALIZATION_VISUALCONNECTION);
 
-        forSyDeModelHandler.writeModel(model, "simple.fiodl");
+        modelHandler.writeModel(model, "simple.fiodl");
 
-        final ForSyDeSystemGraph reloaded = forSyDeModelHandler.loadModel("simple.fiodl");
+        final SystemGraph reloaded = modelHandler.loadModel("simple.fiodl");
 
         Assertions.assertTrue(model.shallowEquals(reloaded));
 

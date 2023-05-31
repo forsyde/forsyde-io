@@ -186,35 +186,35 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
         return portSpec;
     }
 
-    public PropertyTypeSpec visitVertexPropertyTypeTyped(ForSyDeTraitDSLParser.VertexPropertyTypeContext ctx) {
-        return ctx.typeName.getText().equals("int") ? PropertyTypeSpecs.IntVertexProperty() :
-                ctx.typeName.getText().equals("integer") ? PropertyTypeSpecs.IntVertexProperty() :
-                        ctx.typeName.getText().equals("float") ? PropertyTypeSpecs.FloatVertexProperty() :
-                                ctx.typeName.getText().equals("bool") ? PropertyTypeSpecs.BooleanVertexProperty() :
-                                        ctx.typeName.getText().equals("boolean") ? PropertyTypeSpecs.BooleanVertexProperty() :
-                                                ctx.typeName.getText().equals("long") ? PropertyTypeSpecs.LongVertexProperty() :
-                                                        ctx.typeName.getText().equals("double") ? PropertyTypeSpecs.DoubleVertexProperty() :
-                                                                ctx.typeName.getText().equals("real") ? PropertyTypeSpecs.DoubleVertexProperty() :
-                                                                        ctx.typeName.getText().equals("str") ? PropertyTypeSpecs.StringVertexProperty() :
-                                                                                ctx.typeName.getText().equals("string") ? PropertyTypeSpecs.StringVertexProperty() :
-                                                                                        ctx.typeName.getText().equals("array") ? PropertyTypeSpecs.ArrayVertexProperty(visitVertexPropertyTypeTyped(ctx.arrayType)) :
-                                                                                                ctx.typeName.getText().equals("intmap") ? PropertyTypeSpecs.IntMapVertexProperty(visitVertexPropertyTypeTyped(ctx.intMapType)) :
-                                                                                                        ctx.typeName.getText().equals("integermap") ? PropertyTypeSpecs.IntMapVertexProperty(visitVertexPropertyTypeTyped(ctx.intMapType)) :
-                                                                                                                ctx.typeName.getText().equals("intMap") ? PropertyTypeSpecs.IntMapVertexProperty(visitVertexPropertyTypeTyped(ctx.intMapType)) :
-                                                                                                                        ctx.typeName.getText().equals("integerMap") ? PropertyTypeSpecs.IntMapVertexProperty(visitVertexPropertyTypeTyped(ctx.intMapType)) :
-                                                                                                                                ctx.typeName.getText().equals("strmap") ? PropertyTypeSpecs.StringMapVertexProperty(visitVertexPropertyTypeTyped(ctx.strMapType)) :
-                                                                                                                                        ctx.typeName.getText().equals("stringmap") ? PropertyTypeSpecs.StringMapVertexProperty(visitVertexPropertyTypeTyped(ctx.strMapType)) :
-                                                                                                                                                ctx.typeName.getText().equals("strMap") ? PropertyTypeSpecs.StringMapVertexProperty(visitVertexPropertyTypeTyped(ctx.strMapType)) :
-                                                                                                                                                        ctx.typeName.getText().equals("stringMap") ? PropertyTypeSpecs.StringMapVertexProperty(visitVertexPropertyTypeTyped(ctx.strMapType)) :
-                                                                                                                                                                PropertyTypeSpecs.StringVertexProperty();
-    }
+//    public PropertyTypeSpec visitVertexPropertyTypeTyped(ForSyDeTraitDSLParser.VertexPropertyTypeContext ctx) {
+//        return ctx.typeName.getText().equals("int") ? PropertyTypeSpecs.IntVertexProperty() :
+//                ctx.typeName.getText().equals("integer") ? PropertyTypeSpecs.IntVertexProperty() :
+//                        ctx.typeName.getText().equals("float") ? PropertyTypeSpecs.FloatVertexProperty() :
+//                                ctx.typeName.getText().equals("bool") ? PropertyTypeSpecs.BooleanVertexProperty() :
+//                                        ctx.typeName.getText().equals("boolean") ? PropertyTypeSpecs.BooleanVertexProperty() :
+//                                                ctx.typeName.getText().equals("long") ? PropertyTypeSpecs.LongVertexProperty() :
+//                                                        ctx.typeName.getText().equals("double") ? PropertyTypeSpecs.DoubleVertexProperty() :
+//                                                                ctx.typeName.getText().equals("real") ? PropertyTypeSpecs.DoubleVertexProperty() :
+//                                                                        ctx.typeName.getText().equals("str") ? PropertyTypeSpecs.StringVertexProperty() :
+//                                                                                ctx.typeName.getText().equals("string") ? PropertyTypeSpecs.StringVertexProperty() :
+//                                                                                        ctx.typeName.getText().equals("array") ? PropertyTypeSpecs.ArrayVertexProperty(visitVertexPropertyTypeTyped(ctx.arrayType)) :
+//                                                                                                ctx.typeName.getText().equals("intmap") ? PropertyTypeSpecs.IntMapVertexProperty(visitVertexPropertyTypeTyped(ctx.intMapType)) :
+//                                                                                                        ctx.typeName.getText().equals("integermap") ? PropertyTypeSpecs.IntMapVertexProperty(visitVertexPropertyTypeTyped(ctx.intMapType)) :
+//                                                                                                                ctx.typeName.getText().equals("intMap") ? PropertyTypeSpecs.IntMapVertexProperty(visitVertexPropertyTypeTyped(ctx.intMapType)) :
+//                                                                                                                        ctx.typeName.getText().equals("integerMap") ? PropertyTypeSpecs.IntMapVertexProperty(visitVertexPropertyTypeTyped(ctx.intMapType)) :
+//                                                                                                                                ctx.typeName.getText().equals("strmap") ? PropertyTypeSpecs.StringMapVertexProperty(visitVertexPropertyTypeTyped(ctx.strMapType)) :
+//                                                                                                                                        ctx.typeName.getText().equals("stringmap") ? PropertyTypeSpecs.StringMapVertexProperty(visitVertexPropertyTypeTyped(ctx.strMapType)) :
+//                                                                                                                                                ctx.typeName.getText().equals("strMap") ? PropertyTypeSpecs.StringMapVertexProperty(visitVertexPropertyTypeTyped(ctx.strMapType)) :
+//                                                                                                                                                        ctx.typeName.getText().equals("stringMap") ? PropertyTypeSpecs.StringMapVertexProperty(visitVertexPropertyTypeTyped(ctx.strMapType)) :
+//                                                                                                                                                                PropertyTypeSpecs.StringVertexProperty();
+//    }
 
-    public PropertySpec visitVertexPropertyTyped(ForSyDeTraitDSLParser.VertexPropertyContext ctx) {
-        final PropertySpec propertySpec = new PropertySpec();
-        propertySpec.name = ctx.name.getText();
-        propertySpec.type = visitVertexPropertyTypeTyped(ctx.vertexPropertyType());
-        return propertySpec;
-    }
+//    public PropertySpec visitVertexPropertyTyped(ForSyDeTraitDSLParser.VertexPropertyContext ctx) {
+//        final PropertySpec propertySpec = new PropertySpec();
+//        propertySpec.name = ctx.name.getText();
+//        propertySpec.type = visitVertexPropertyTypeTyped(ctx.vertexPropertyType());
+//        return propertySpec;
+//    }
 
     public VertexTraitSpec visitVertexTraitTyped(ForSyDeTraitDSLParser.VertexTraitContext ctx) {
         final VertexTraitSpec vertexTraitSpec = new VertexTraitSpec();
@@ -223,7 +223,7 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
         vertexTraitSpec.declaredLine = ctx.getStart().getLine();
         vertexTraitSpec.declaredColumn = ctx.getStart().getCharPositionInLine();
         vertexTraitSpec.requiredPorts.addAll(ctx.vertexPort().stream().map(this::visitVertexPortTyped).collect(Collectors.toList()));
-        vertexTraitSpec.requiredProperties.addAll(ctx.vertexProperty().stream().map(this::visitVertexPropertyTyped).collect(Collectors.toList()));
+//        vertexTraitSpec.requiredProperties.addAll(ctx.vertexProperty().stream().map(this::visitVertexPropertyTyped).collect(Collectors.toList()));
         for (final Token token : ctx.refinedTraits) {
             //vertexTraitSpec.absoluteRefinedTraitNames.add(token.getText());
             // absolute reference or local reference
@@ -314,52 +314,52 @@ public class ForSyDeIOTraitDSLVisitor extends ForSyDeTraitDSLBaseVisitor<TraitHi
         }
     }
 
-    public VertexProperty visitVertexPropertyValueDirect(ForSyDeTraitDSLParser.VertexPropertyValueContext ctx) throws InconsistentTraitHierarchyException {
-        if (ctx.number() != null) {
-            return VertexProperty.create(visitNumberDirect(ctx.number()));
-        } else if (ctx.stringVal() != null) {
-            return VertexProperty.create(visitStringValDirect(ctx.stringVal()));
-        //} else if (ctx.() != null) {
-        } else if (ctx.vertexPropertyArray() != null) {
-            final ForSyDeTraitDSLParser.VertexPropertyArrayContext arrayContext = ctx.vertexPropertyArray();
-            final List<VertexProperty> props = new ArrayList<>(arrayContext.arrayEntries.size());
-            for (ForSyDeTraitDSLParser.VertexPropertyValueContext child : arrayContext.arrayEntries) {
-                props.add(visitVertexPropertyValueDirect(child));
-            }
-            return VertexProperty.create(props);
-        } else if (ctx.vertexPropertyMap() != null) {
-            final ForSyDeTraitDSLParser.VertexPropertyMapContext mapContext = ctx.vertexPropertyMap();
-            boolean isIntMap = true;
-            Object firstKey = null;
-            // we also catch index out of bounds exception because some dictionaries may be empty, just like {}
-            try {
-                firstKey = visitVertexPropertyKeyDirect(mapContext.mapKey.get(0));
-                if (firstKey instanceof String) {
-                    isIntMap = false;
-                }
-            } catch (NumberFormatException | IndexOutOfBoundsException e) {
-                isIntMap = false;
-            }
-            final Map<Object, VertexProperty> props = new HashMap<>(mapContext.mapKey.size());
-            for (int i = 0; i < mapContext.mapKey.size(); i++) {
-                final VertexProperty value = visitVertexPropertyValueDirect(mapContext.mapValue.get(i));
-                if (isIntMap) {
-                    try {
-                        final Integer key = (Integer) visitVertexPropertyKeyDirect(mapContext.mapKey.get(i));
-                        props.put(key, value);
-                    } catch (NumberFormatException e) {
-                        throw new InconsistentTraitHierarchyException("Expected an integer key at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
-                    }
-                } else {
-                    final String key = (String) visitVertexPropertyKeyDirect(mapContext.mapKey.get(i));
-                    props.put(key, value);
-                }
-            }
-            return VertexProperty.create(props);
-        } else {
-            throw new InconsistentTraitHierarchyException("Could not parse property at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
-        }
-    }
+//    public VertexProperty visitVertexPropertyValueDirect(ForSyDeTraitDSLParser.VertexPropertyValueContext ctx) throws InconsistentTraitHierarchyException {
+//        if (ctx.number() != null) {
+//            return VertexProperty.create(visitNumberDirect(ctx.number()));
+//        } else if (ctx.stringVal() != null) {
+//            return VertexProperty.create(visitStringValDirect(ctx.stringVal()));
+//        //} else if (ctx.() != null) {
+//        } else if (ctx.vertexPropertyArray() != null) {
+//            final ForSyDeTraitDSLParser.VertexPropertyArrayContext arrayContext = ctx.vertexPropertyArray();
+//            final List<VertexProperty> props = new ArrayList<>(arrayContext.arrayEntries.size());
+//            for (ForSyDeTraitDSLParser.VertexPropertyValueContext child : arrayContext.arrayEntries) {
+//                props.add(visitVertexPropertyValueDirect(child));
+//            }
+//            return VertexProperty.create(props);
+//        } else if (ctx.vertexPropertyMap() != null) {
+//            final ForSyDeTraitDSLParser.VertexPropertyMapContext mapContext = ctx.vertexPropertyMap();
+//            boolean isIntMap = true;
+//            Object firstKey = null;
+//            // we also catch index out of bounds exception because some dictionaries may be empty, just like {}
+//            try {
+//                firstKey = visitVertexPropertyKeyDirect(mapContext.mapKey.get(0));
+//                if (firstKey instanceof String) {
+//                    isIntMap = false;
+//                }
+//            } catch (NumberFormatException | IndexOutOfBoundsException e) {
+//                isIntMap = false;
+//            }
+//            final Map<Object, VertexProperty> props = new HashMap<>(mapContext.mapKey.size());
+//            for (int i = 0; i < mapContext.mapKey.size(); i++) {
+//                final VertexProperty value = visitVertexPropertyValueDirect(mapContext.mapValue.get(i));
+//                if (isIntMap) {
+//                    try {
+//                        final Integer key = (Integer) visitVertexPropertyKeyDirect(mapContext.mapKey.get(i));
+//                        props.put(key, value);
+//                    } catch (NumberFormatException e) {
+//                        throw new InconsistentTraitHierarchyException("Expected an integer key at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
+//                    }
+//                } else {
+//                    final String key = (String) visitVertexPropertyKeyDirect(mapContext.mapKey.get(i));
+//                    props.put(key, value);
+//                }
+//            }
+//            return VertexProperty.create(props);
+//        } else {
+//            throw new InconsistentTraitHierarchyException("Could not parse property at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
+//        }
+//    }
 
     @Override
     public TraitHierarchy visitRootTraitHierarchy(ForSyDeTraitDSLParser.RootTraitHierarchyContext ctx) {

@@ -3,8 +3,8 @@
  */
 package forsyde.io.java.core;
 
-import forsyde.io.java.drivers.ForSyDeModelDriver;
-import forsyde.io.java.drivers.ForSyDeModelHandler;
+import forsyde.io.java.drivers.ModelDriver;
+import forsyde.io.java.drivers.ModelHandler;
 import org.jgrapht.graph.DirectedPseudograph;
 
 import java.util.Arrays;
@@ -16,31 +16,31 @@ import java.util.stream.Collectors;
 /**
  * @author rjordao
  *
- *         The main graph holder element representing a ForSyDe Model in memory.
+ *         The main graph holder element representing a system graph in memory.
  *
  *         A subclass of DirectedPseudograph from the jgrapht library, this
  *         class holds the model (a graph model therefore) which can be used for
  *         any purpose in the ForSyDe design flow.
  *
  *         to read and write this model, check subclasses of
- *         {@link ForSyDeModelDriver} or simply use the 'API' class
- *         {@link ForSyDeModelHandler} directly.
+ *         {@link ModelDriver} or simply use the 'API' class
+ *         {@link ModelHandler} directly.
  *
  * @see DirectedPseudograph
  * @see Vertex
  * @see Edge
  */
-public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
+public class SystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
 
     /**
      * Default constructor, returning an empty (system) model graph.
      */
-    public ForSyDeSystemGraph() {
+    public SystemGraph() {
         super(EdgeInfo.class);
 
     }
 
-    public boolean mergeInPlace(ForSyDeSystemGraph other) {
+    public boolean mergeInPlace(SystemGraph other) {
         boolean mergeDefined = true;
         // do the double for since we would need to
         // find the conflicting vertexInterface anyhow. Indexing/hashing
@@ -79,8 +79,8 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
         return mergeDefined;
     }
 
-    public ForSyDeSystemGraph merge(ForSyDeSystemGraph other) {
-        ForSyDeSystemGraph merged = new ForSyDeSystemGraph();
+    public SystemGraph merge(SystemGraph other) {
+        SystemGraph merged = new SystemGraph();
         merged.mergeInPlace(this);
         merged.mergeInPlace(other);
         return merged;
@@ -227,15 +227,15 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
         return connect(src.getViewedVertex(), dst.getViewedVertex(), portSrc, portDst, traits);
     }
 
-    public boolean connect(Vertex src, Vertex dst, String portSrc, String portDst, String... traitNames) {
-        return connect(src, dst, portSrc, portDst,
-                (EdgeTrait[]) Arrays.stream(traitNames).map(EdgeTrait::fromName).toArray());
-    }
+//    public boolean connect(Vertex src, Vertex dst, String portSrc, String portDst, String... traitNames) {
+//        return connect(src, dst, portSrc, portDst,
+//                (EdgeTrait[]) Arrays.stream(traitNames).map(EdgeTrait::fromName).toArray());
+//    }
 
-    public boolean connect(VertexViewer src, VertexViewer dst, String portSrc, String portDst, String... traitNames) {
-        return connect(src.getViewedVertex(), dst.getViewedVertex(), portSrc, portDst,
-                (EdgeTrait[]) Arrays.stream(traitNames).map(EdgeTrait::fromName).toArray());
-    }
+//    public boolean connect(VertexViewer src, VertexViewer dst, String portSrc, String portDst, String... traitNames) {
+//        return connect(src.getViewedVertex(), dst.getViewedVertex(), portSrc, portDst,
+//                (EdgeTrait[]) Arrays.stream(traitNames).map(EdgeTrait::fromName).toArray());
+//    }
 
     /**
      * Convenience method to check existence of an edge connecting two vertexes,
@@ -336,7 +336,7 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
      * @param obj the other ForSyDeSystemGraph
      * @return true if the system graphs are equals except for the vertexes propertie and ports
      */
-    public boolean shallowEquals(ForSyDeSystemGraph obj) {
+    public boolean shallowEquals(SystemGraph obj) {
         return vertexSet().equals(obj.vertexSet()) && edgeSet().equals(obj.edgeSet());
     }
 
@@ -360,8 +360,8 @@ public class ForSyDeSystemGraph extends DirectedPseudograph<Vertex, EdgeInfo> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ForSyDeSystemGraph) {
-            final ForSyDeSystemGraph osg = (ForSyDeSystemGraph) obj;
+        if (obj instanceof SystemGraph) {
+            final SystemGraph osg = (SystemGraph) obj;
             return vertexSet().equals(osg.vertexSet()) && edgeSet().equals(osg.edgeSet());
         }
         return false;

@@ -1,26 +1,21 @@
 package forsyde.io.java.kgt.drivers;
 
 import forsyde.io.java.core.*;
-import forsyde.io.java.drivers.ForSyDeModelDriver;
+import forsyde.io.java.drivers.ModelDriver;
 import forsyde.io.java.kgt.adapter.ForSyDe2KGTNode;
 import forsyde.io.java.kgt.adapter.KlighDContainer;
 import forsyde.io.java.kgt.adapter.KlighDEdge;
 import forsyde.io.java.kgt.adapter.KlighDNodeView;
 import forsyde.io.java.typed.viewers.visualization.GreyBox;
-import forsyde.io.java.typed.viewers.visualization.Visualizable;
-import forsyde.io.java.typed.viewers.visualization.VisualizableWithProperties;
 import org.ainslec.picocog.PicoWriter;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.AsSubgraph;
-import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class ForSyDeKGTDriver implements ForSyDeModelDriver, ForSyDe2KGTNode {
+public class KGTDriver implements ModelDriver, ForSyDe2KGTNode {
 
     @Override
     public List<String> inputExtensions() {
@@ -33,12 +28,12 @@ public class ForSyDeKGTDriver implements ForSyDeModelDriver, ForSyDe2KGTNode {
     }
 
     @Override
-    public ForSyDeSystemGraph loadModel(InputStream in) throws Exception {
+    public SystemGraph loadModel(InputStream in) throws Exception {
         throw new UnsupportedOperationException("'ForSyDeKGTDriver' does not support loading Kgraph models.");
     }
 
     @Override
-    public void writeModel(ForSyDeSystemGraph model, OutputStream out) throws Exception {
+    public void writeModel(SystemGraph model, OutputStream out) throws Exception {
         final KlighDContainer klighDContainer = convert(model);
         final PicoWriter topWriter = new PicoWriter();
         // keep a map of writer to make sure that we can write everything correctly

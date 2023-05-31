@@ -141,6 +141,14 @@ final public class EdgeInfo {
         this.targetPort = targetPort;
     }
 
+    public boolean connectsTargetPort(String p) {
+        return getTargetPort().stream().anyMatch(p::equals);
+    }
+
+    public boolean connectsSourcePort(String p) {
+        return getSourcePort().stream().anyMatch(p::equals);
+    }
+
     public void addTraits(Trait... traits) {
         edgeTraits.addAll(Arrays.asList(traits.clone()));
     }

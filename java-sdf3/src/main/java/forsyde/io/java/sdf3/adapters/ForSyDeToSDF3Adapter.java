@@ -1,11 +1,7 @@
 package forsyde.io.java.sdf3.adapters;
 
-import forsyde.io.java.adapters.ModelAdapter;
-import forsyde.io.java.core.ForSyDeSystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.sdf3.adapters.mixins.ForSyDe2SDFThreeMixin;
-import forsyde.io.java.sdf3.adapters.mixins.SDFThree2ForSyDeMixin;
-import forsyde.io.java.sdf3.adapters.mixins.elems.Sdf3;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashSet;

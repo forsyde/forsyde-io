@@ -1,17 +1,16 @@
 package forsyde.io.java.sdf3.drivers;
 
 import forsyde.io.java.sdf3.adapters.ForSyDeSDF3Adapter;
-import forsyde.io.java.sdf3.adapters.SDF3ToForSyDeAdapter;
 import forsyde.io.java.sdf3.adapters.mixins.elems.Sdf3;
-import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.drivers.ForSyDeModelDriver;
+import forsyde.io.java.core.SystemGraph;
+import forsyde.io.java.drivers.ModelDriver;
 import jakarta.xml.bind.JAXBContext;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-public class ForSyDeSDF3Driver implements ForSyDeModelDriver {
+public class SDF3Driver implements ModelDriver {
 
     @Override
     public List<String> inputExtensions() {
@@ -24,7 +23,7 @@ public class ForSyDeSDF3Driver implements ForSyDeModelDriver {
     }
 
     @Override
-    public ForSyDeSystemGraph loadModel(InputStream in) throws Exception {
+    public SystemGraph loadModel(InputStream in) throws Exception {
         final ForSyDeSDF3Adapter forSyDeSDF3Adapter = new ForSyDeSDF3Adapter();
         final JAXBContext jaxbContext = JAXBContext.newInstance(Sdf3.class);
         final Sdf3 sdf3 = (Sdf3) jaxbContext.createUnmarshaller().unmarshal(in);
@@ -32,7 +31,7 @@ public class ForSyDeSDF3Driver implements ForSyDeModelDriver {
     }
 
     @Override
-    public void writeModel(ForSyDeSystemGraph model, OutputStream out) throws Exception {
+    public void writeModel(SystemGraph model, OutputStream out) throws Exception {
         final ForSyDeSDF3Adapter forSyDeSDF3Adapter = new ForSyDeSDF3Adapter();
         final Sdf3 sdf3 = forSyDeSDF3Adapter.convert(model);
         final JAXBContext jaxbContext = JAXBContext.newInstance(Sdf3.class);

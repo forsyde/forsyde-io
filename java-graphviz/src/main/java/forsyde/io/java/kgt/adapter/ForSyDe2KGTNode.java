@@ -2,7 +2,7 @@ package forsyde.io.java.kgt.adapter;
 
 import forsyde.io.java.adapters.ModelAdapter;
 import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.core.SystemGraph;
 import forsyde.io.java.typed.viewers.visualization.GreyBox;
 import forsyde.io.java.typed.viewers.visualization.Visualizable;
 
@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 
 public interface ForSyDe2KGTNode extends ModelAdapter<KlighDContainer> {
     @Override
-    default ForSyDeSystemGraph convert(KlighDContainer inputModel) {
+    default SystemGraph convert(KlighDContainer inputModel) {
         return null;
     }
 
     @Override
-    default KlighDContainer convert(ForSyDeSystemGraph inputModel) {
+    default KlighDContainer convert(SystemGraph inputModel) {
         // first, figure out how many copies are necessary for each visualizable, since there is the "merge" pattern
         // a    b
         //  \  /

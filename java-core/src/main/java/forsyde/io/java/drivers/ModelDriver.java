@@ -11,34 +11,34 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
-import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.core.SystemGraph;
 
 /**
- * Interface for reading and writing different formats from and to ForSyDe IO.
- * The strings are always assuemd to be UTF8 unless otherwise noted. The loading mechanisms
- * might crash for some special loading cases if the encoding is different!!
+ * Interface for reading and writing different formats from and to models.
+ * The strings are always assumed to be UTF8 unless otherwise noted. The loading mechanisms
+ * might crash for some special loading cases if the encoding is different!
  * @author rjordao
  *
  */
-public interface ForSyDeModelDriver {
+public interface ModelDriver {
 
 	List<String> inputExtensions();
 
 	List<String> outputExtensions();
 	
-	default ForSyDeSystemGraph loadModel(String filePath) throws Exception {
+	default SystemGraph loadModel(String filePath) throws Exception {
 		return loadModel(Paths.get(filePath));
 	}
 
-	default ForSyDeSystemGraph loadModel(File file) throws Exception {
+	default SystemGraph loadModel(File file) throws Exception {
 		return loadModel(file.toPath());
 	}
 
-	default ForSyDeSystemGraph loadModel(Path inPath) throws Exception {
+	default SystemGraph loadModel(Path inPath) throws Exception {
 		return loadModel(Files.newInputStream(inPath));
 	}
 
-	default ForSyDeSystemGraph loadModel(Reader inReader) throws Exception {
+	default SystemGraph loadModel(Reader inReader) throws Exception {
 		char[] charBuffer = new char[8 * 1024];
 		final StringBuilder stringBuilder = new StringBuilder();
 		int numCharsRead;
@@ -50,20 +50,20 @@ public interface ForSyDeModelDriver {
 		}
 	}
 	
-	ForSyDeSystemGraph loadModel(InputStream in) throws Exception;
+	SystemGraph loadModel(InputStream in) throws Exception;
 	
-	default void writeModel(ForSyDeSystemGraph model, String filePath) throws Exception {
+	default void writeModel(SystemGraph model, String filePath) throws Exception {
 		writeModel(model, Paths.get(filePath));
 	}
 
-	default void writeModel(ForSyDeSystemGraph model, File file) throws Exception {
+	default void writeModel(SystemGraph model, File file) throws Exception {
 		writeModel(model, file.toPath());
 	}
 
-	default void writeModel(ForSyDeSystemGraph model, Path outPath) throws Exception {
+	default void writeModel(SystemGraph model, Path outPath) throws Exception {
 		writeModel(model, Files.newOutputStream(outPath, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE));
 	}
 	
-	void writeModel(ForSyDeSystemGraph model, OutputStream out) throws Exception;
+	void writeModel(SystemGraph model, OutputStream out) throws Exception;
 
 }

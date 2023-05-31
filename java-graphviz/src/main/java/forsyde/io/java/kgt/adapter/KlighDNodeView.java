@@ -1,7 +1,7 @@
 package forsyde.io.java.kgt.adapter;
 
 import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.core.SystemGraph;
 import forsyde.io.java.core.Trait;
 import forsyde.io.java.core.VertexTrait;
 import forsyde.io.java.typed.viewers.visualization.Visualizable;
@@ -48,7 +48,7 @@ public class KlighDNodeView {
         return viewed.getPorts();
     }
 
-    public Set<String> getActiveKports(ForSyDeSystemGraph m) {
+    public Set<String> getActiveKports(SystemGraph m) {
         return viewed.getPorts().stream()
                 .filter(p ->
                     m.incomingEdgesOf(viewed).stream()

@@ -1,13 +1,13 @@
 package forsyde.io.java.ods;
 
-import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.drivers.ForSyDeModelDriver;
+import forsyde.io.java.core.SystemGraph;
+import forsyde.io.java.drivers.ModelDriver;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-public class ForSyDeODSReportingDriver implements ForSyDeModelDriver {
+public class ODSReportingDriver implements ModelDriver {
 
     @Override
     public List<String> inputExtensions() {
@@ -20,12 +20,12 @@ public class ForSyDeODSReportingDriver implements ForSyDeModelDriver {
     }
 
     @Override
-    public ForSyDeSystemGraph loadModel(InputStream in) throws Exception {
+    public SystemGraph loadModel(InputStream in) throws Exception {
         return null;
     }
 
     @Override
-    public void writeModel(ForSyDeSystemGraph model, OutputStream out) throws Exception {
+    public void writeModel(SystemGraph model, OutputStream out) throws Exception {
 
     }
 }

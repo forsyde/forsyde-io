@@ -1,6 +1,6 @@
 plugins {
     id 'antlr' // required for java core
-    id 'forsyde-io-java-generator'
+//    id 'forsyde-io-java-generator'
 //    id "io.freefair.lombok" version "6.5.0.3"
 }
 
@@ -24,13 +24,13 @@ tasks.clean.dependsOn(tasks.cleanForSyDeModel)
 //    inputModelDSL = project.ext.stdTraitHierarchyFile
 //}
 
-generateForSyDeModel {
-    inputModelDSL = project.ext.stdTraitHierarchyFile
-}
-
-getAllNamespaces {
-    inputModelDSL = project.ext.stdTraitHierarchyFile
-}
+//generateForSyDeModel {
+//    inputModelDSL = project.ext.stdTraitHierarchyFile
+//}
+//
+//getAllNamespaces {
+//    inputModelDSL = project.ext.stdTraitHierarchyFile
+//}
 
 
 //tasks.generateForSyDeModel.dependsOn clearForSyDeModel

@@ -1,6 +1,6 @@
 package forsyde.io.java.inference;
 
-import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.core.SystemGraph;
 
 /**
  * This interface is very much in line with a validation, except the semantics are different.
@@ -9,7 +9,7 @@ import forsyde.io.java.core.ForSyDeSystemGraph;
  */
 public interface SystemGraphInference {
 
-    void infer(ForSyDeSystemGraph forSyDeSystemGraph);
+    void infer(SystemGraph systemGraph);
 
     String getName();
 }

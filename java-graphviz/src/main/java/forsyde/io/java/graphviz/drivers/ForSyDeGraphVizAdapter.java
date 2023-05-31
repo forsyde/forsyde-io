@@ -8,7 +8,6 @@ import guru.nidi.graphviz.attribute.Label;
 import guru.nidi.graphviz.attribute.Rank;
 import guru.nidi.graphviz.attribute.Records;
 import guru.nidi.graphviz.model.*;
-import org.jgrapht.graph.AsSubgraph;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,18 +20,18 @@ public class ForSyDeGraphVizAdapter implements ModelAdapter<Graph> {
     final Map<Vertex, Graph> clusters = new HashMap<>();
 
     @Override
-    public ForSyDeSystemGraph convert(Graph inputModel) {
+    public SystemGraph convert(Graph inputModel) {
         return null;
     }
 
     @Override
-    public Graph convert(ForSyDeSystemGraph inputModel) {
+    public Graph convert(SystemGraph inputModel) {
         //take only the visualizable subset
         //final AsSubgraph<Vertex, EdgeInfo> visuGSubset = new AsSubgraph<>(inputModel, visuVSet, visuESet);
         return buildHierarchical(inputModel);
     }
 
-    protected Graph buildHierarchical(final ForSyDeSystemGraph inputModel) {
+    protected Graph buildHierarchical(final SystemGraph inputModel) {
         // find the topmost containers
         final Set<Vertex> rootClusters = inputModel.vertexSet().stream()
                 .filter(GreyBox::conforms)
@@ -87,7 +86,7 @@ public class ForSyDeGraphVizAdapter implements ModelAdapter<Graph> {
         //return rootGraph.toImmutable();
     }
 
-    protected Graph buildRecursive(final ForSyDeSystemGraph inputModel, final GreyBox greyBox) {
+    protected Graph buildRecursive(final SystemGraph inputModel, final GreyBox greyBox) {
         return graph(greyBox.getViewedVertex().getIdentifier()).cluster().directed()
                 // first sub clusters
                 .with(

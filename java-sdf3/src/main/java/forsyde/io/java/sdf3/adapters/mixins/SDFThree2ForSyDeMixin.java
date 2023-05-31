@@ -2,7 +2,7 @@ package forsyde.io.java.sdf3.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.core.SystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.sdf3.adapters.mixins.elems.Processor;
 import forsyde.io.java.sdf3.adapters.mixins.elems.Sdf3;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Object, Vertex> {
 
 
-    default void fromActorsToVertexes(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
+    default void fromActorsToVertexes(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getActor().forEach(a -> {
             final SDFActor sdfActor = SDFActor.enforce(systemGraph.newVertex(a.getName()));
             Visualizable.enforce(sdfActor);
@@ -39,7 +39,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
         });
     }
 
-    default void fromChannelstoSignalsAndPrefix(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
+    default void fromChannelstoSignalsAndPrefix(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getChannel().forEach(channel -> {
             // initial channel if no initial token exists
             final SDFChannel sdfChannel = SDFChannel.enforce(systemGraph.newVertex(channel.getName()));
@@ -54,7 +54,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
         });
     }
 
-    default void fromChannelsToEdges(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
+    default void fromChannelsToEdges(final Sdf3 sdf3, final SystemGraph systemGraph) {
         // equivalent of 3 for loops
         sdf3.getApplicationGraph().getSdf().getChannel()
                 .forEach(channel -> {
@@ -86,7 +86,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                 });
     }
 
-    default void fromChannelPropertiesToSDFChannels(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
+    default void fromChannelPropertiesToSDFChannels(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdfProperties().getChannelProperties().forEach(channelProperties -> {
             systemGraph.queryVertex(channelProperties.getChannel()).flatMap(SDFChannel::safeCast).ifPresent(sdfChannel -> {
                 final TokenizableDataBlock tokenizableDataBlock = TokenizableDataBlock.enforce(sdfChannel);
@@ -98,7 +98,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
         });
     }
 
-    default void fromActorPropertiesToSDFActor(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
+    default void fromActorPropertiesToSDFActor(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdfProperties().getActorProperties().forEach(actorProperties -> {
             systemGraph.queryVertex(actorProperties.getActor()).flatMap(SDFActor::safeCast).ifPresent(sdfActor -> {
                 final InstrumentedExecutable instrumentedExecutable = InstrumentedExecutable.enforce(sdfActor);

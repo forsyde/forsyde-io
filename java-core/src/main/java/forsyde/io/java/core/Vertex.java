@@ -98,14 +98,15 @@ final public class Vertex {
         return vertexTraits.stream().anyMatch(t -> t.refines(trait));
     }
 
-    public Boolean hasTrait(String traitName) {
-        try {
-            VertexTrait trait = VertexTrait.valueOf(traitName);
-            return hasTrait(trait);
-        } catch (IllegalArgumentException e) {
-            return vertexTraits.stream().map(Trait::getName).anyMatch(t -> t.equals(traitName));
-        }
-    }
+//    public Boolean hasTrait(String traitName) {
+//        return vertexTraits.stream().map(Trait::getName).anyMatch(t -> t.equals(traitName))
+//        try {
+//            VertexTrait trait = VertexTrait.valueOf(traitName);
+//            return hasTrait(trait);
+//        } catch (IllegalArgumentException e) {
+//            return vertexTraits.stream().map(Trait::getName).anyMatch(t -> t.equals(traitName));
+//        }
+//    }
 
     public boolean hasProperty(String propertyName) {
         return properties.containsKey(propertyName);
@@ -277,8 +278,8 @@ final public class Vertex {
         vertexTraits.addAll(Arrays.asList(traits.clone()));
     }
 
-    public void addTraits(String... traitNames) {
-        vertexTraits.addAll(Arrays.stream(traitNames).map(VertexTrait::fromName).collect(Collectors.toList()));
-    }
+//    public void addTraits(String... traitNames) {
+//        vertexTraits.addAll(Arrays.stream(traitNames).map(VertexTrait::fromName).collect(Collectors.toList()));
+//    }
 
 }

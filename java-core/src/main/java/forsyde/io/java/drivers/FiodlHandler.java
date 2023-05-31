@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGraph> implements ForSyDeModelDriver {
+public class FiodlHandler extends ForSyDeFioDLBaseVisitor<SystemGraph> implements ModelDriver {
 
     public static class InconsistentModelException extends Exception {
         public InconsistentModelException(String message) {
@@ -46,7 +46,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
     }
 
     @Override
-    public ForSyDeSystemGraph loadModel(InputStream in) throws Exception {
+    public SystemGraph loadModel(InputStream in) throws Exception {
         final ForSyDeFioDLLex ForSyDeFioDLLex = new ForSyDeFioDLLex(CharStreams.fromStream(in));
         final CommonTokenStream commonTokenStream = new CommonTokenStream(ForSyDeFioDLLex);
         final ForSyDeFioDL ForSyDeFioDL = new ForSyDeFioDL(commonTokenStream);
@@ -54,7 +54,7 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
     }
 
     @Override
-    public void writeModel(ForSyDeSystemGraph model, OutputStream out) throws Exception {
+    public void writeModel(SystemGraph model, OutputStream out) throws Exception {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("systemgraph {\n");
         for (Vertex v: model.vertexSet()) {
@@ -149,8 +149,8 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
 //        }
 //    }
 
-    public ForSyDeSystemGraph visitSystemGraphDirect(ForSyDeFioDL.SystemGraphContext ctx) throws FioDLSyntaxException, InconsistentModelException {
-        final ForSyDeSystemGraph newModel = new ForSyDeSystemGraph();
+    public SystemGraph visitSystemGraphDirect(ForSyDeFioDL.SystemGraphContext ctx) throws FioDLSyntaxException, InconsistentModelException {
+        final SystemGraph newModel = new SystemGraph();
         for (ForSyDeFioDL.VertexContext vertexContext : ctx.vertex()) {
             final Vertex vertex = visitVertexDirect(vertexContext);
             newModel.addVertex(vertex);
@@ -181,7 +181,8 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
     protected Vertex visitVertexDirect(ForSyDeFioDL.VertexContext ctx) throws FioDLSyntaxException {
         final Vertex newVertex = new Vertex(ctx.name.getText());
         for (Token traitToken : ctx.traits) {
-            newVertex.addTraits(VertexTrait.fromName(traitToken.getText()));
+            // TODO: fix this!
+            newVertex.addTraits(new OpaqueTrait(traitToken.getText()));
         }
         for (Token portToken : ctx.ports) {
             newVertex.addPort(portToken.getText());
@@ -258,7 +259,8 @@ public class ForSyDeFiodlHandler extends ForSyDeFioDLBaseVisitor<ForSyDeSystemGr
         if (ctx.sourceport != null) edgeInfo.setSourcePort(ctx.sourceport.getText());
         if (ctx.targetport != null) edgeInfo.setTargetPort(ctx.targetport.getText());
         for (Token traitToken : ctx.traits) {
-            edgeInfo.addTraits(EdgeTrait.fromName(traitToken.getText()));
+            // TODO: fix this!
+            edgeInfo.addTraits(new OpaqueTrait(traitToken.getText()));
         }
         return edgeInfo;
     }

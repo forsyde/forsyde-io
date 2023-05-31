@@ -2,8 +2,7 @@ package forsyde.io.java.sdf3.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.EdgeInfo;
-import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.core.SystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.sdf3.adapters.mixins.elems.*;
 import forsyde.io.java.typed.viewers.decision.results.AnalyzedActor;
@@ -12,9 +11,7 @@ import forsyde.io.java.typed.viewers.impl.InstrumentedExecutable;
 import forsyde.io.java.typed.viewers.impl.TokenizableDataBlock;
 import forsyde.io.java.typed.viewers.moc.sdf.SDFActor;
 import forsyde.io.java.typed.viewers.moc.sdf.SDFChannel;
-import forsyde.io.java.typed.viewers.moc.sdf.SDFChannelViewer;
 import forsyde.io.java.typed.viewers.platform.*;
-import forsyde.io.java.typed.viewers.visualization.Visualizable;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.shortestpath.FloydWarshallShortestPaths;
 import org.jgrapht.graph.AsWeightedGraph;
@@ -23,7 +20,6 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.builder.GraphBuilder;
 
 import java.math.BigDecimal;
-import java.net.ConnectException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,7 +29,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
     /**
      *  This function was extracted from IDeSyDe's source code and adapted for this place generation.
      */
-    private List<List<Double>> computeWorstCaseDelays(ForSyDeSystemGraph model) {
+    private List<List<Double>> computeWorstCaseDelays(SystemGraph model) {
         final GraphBuilder<Vertex, org.jgrapht.graph.DefaultEdge, ? extends SimpleDirectedWeightedGraph<Vertex, org.jgrapht.graph.DefaultEdge>> gBuilder = SimpleDirectedWeightedGraph.createBuilder(DefaultEdge::new);
         model.edgeSet().forEach(e -> {
                 final Vertex src = model.getEdgeSource(e);
@@ -102,7 +98,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
     /**
      *  This function was extracted from IDeSyDe's source code and adapted for the experments generation.
      */
-    private List<List<Double>> computeWCETTable(ForSyDeSystemGraph model) {
+    private List<List<Double>> computeWCETTable(SystemGraph model) {
         final int actorCount = (int) model.vertexSet().stream().filter(InstrumentedExecutable::conforms).count();
         final int coresCount = (int) model.vertexSet().stream().filter(InstrumentedProcessingModule::conforms).count();
         return model.vertexSet().stream().flatMap(v -> InstrumentedExecutable.safeCast(v).stream()).map(iactor -> {
@@ -120,7 +116,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
         }).collect(Collectors.toList());
     }
 
-    default void convertApplications(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
+    default void convertApplications(final Sdf3 sdf3, final SystemGraph systemGraph) {
         if (sdf3.getApplicationGraph() == null) {
             final ApplicationGraph applicationGraph = new ApplicationGraph();
             applicationGraph.setName("sdfGraphs");
@@ -198,7 +194,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
         }
     }
 
-    default void convertArchitecture(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
+    default void convertArchitecture(final Sdf3 sdf3, final SystemGraph systemGraph) {
         if (sdf3.getArchitectureGraph() == null) {
             final ArchitectureGraph architectureGraph = new ArchitectureGraph();
             architectureGraph.setName("sdfArchs");
@@ -329,7 +325,7 @@ public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Verte
         sdf3.getArchitectureGraph().setNetwork(network);
     }
 
-    default void convertParameters(final Sdf3 sdf3, final ForSyDeSystemGraph systemGraph) {
+    default void convertParameters(final Sdf3 sdf3, final SystemGraph systemGraph) {
         List<List<Double>> wcets = computeWCETTable(systemGraph);
         final List<Actor> actors = systemGraph.vertexSet().stream().flatMap(this::equivalents).filter(o -> o instanceof Actor).map(o -> (Actor) o).distinct().collect(Collectors.toList());
         final List<Processor> processors = systemGraph.vertexSet().stream().flatMap(this::equivalents).filter(o -> o instanceof Processor).map(o -> (Processor) o).distinct().collect(Collectors.toList());

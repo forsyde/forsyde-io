@@ -1,11 +1,12 @@
 package forsyde.io.java.core;
 
-import java.util.Map;
 import java.util.Set;
 
 public interface VertexViewer {
 	
     Vertex getViewedVertex();
+
+    String getTraitName();
 
     default String getIdentifier() {
         return getViewedVertex().getIdentifier();
@@ -19,7 +20,7 @@ public interface VertexViewer {
         getViewedVertex().addPorts(strings);
     }
 
-    default Set<Trait> getTraits() {
+    default Set<Trait> getVertexTraitNames() {
         return getViewedVertex().getTraits();
     };
 

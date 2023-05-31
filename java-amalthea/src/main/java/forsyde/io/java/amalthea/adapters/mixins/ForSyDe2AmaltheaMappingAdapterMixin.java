@@ -7,7 +7,7 @@ import org.eclipse.app4mc.amalthea.model.*;
 
 public interface ForSyDe2AmaltheaMappingAdapterMixin extends EquivalenceModel2ModelMixin<Vertex, INamed> {
 
-    default void fromEdgesToMappings(ForSyDeSystemGraph model, Amalthea amalthea) {
+    default void fromEdgesToMappings(SystemGraph model, Amalthea amalthea) {
         amalthea.setMappingModel(AmaltheaFactory.eINSTANCE.createMappingModel());
         for (EdgeInfo e : model.edgeSet()) {
             final Vertex sourceV = model.getEdgeSource(e);
@@ -80,7 +80,7 @@ public interface ForSyDe2AmaltheaMappingAdapterMixin extends EquivalenceModel2Mo
         }
     }
 
-    default void fromAllocationToMapping(ForSyDeSystemGraph model, Amalthea amalthea, EdgeInfo e) {
+    default void fromAllocationToMapping(SystemGraph model, Amalthea amalthea, EdgeInfo e) {
         final Vertex source = model.getEdgeSource(e);
         final Vertex target = model.getEdgeTarget(e);
         if (AbstractScheduler.conforms(source)) {

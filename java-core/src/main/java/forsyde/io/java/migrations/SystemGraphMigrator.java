@@ -1,10 +1,10 @@
 package forsyde.io.java.migrations;
 
-import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.core.SystemGraph;
 
 public interface SystemGraphMigrator {
 
-    boolean effect(ForSyDeSystemGraph forSyDeSystemGraph);
+    boolean effect(SystemGraph systemGraph);
 
     String getName();
 }

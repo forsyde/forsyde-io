@@ -1,6 +1,6 @@
 package forsyde.io.java.validation;
 
-import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.core.SystemGraph;
 
 import java.util.Optional;
 
@@ -11,5 +11,5 @@ import java.util.Optional;
  */
 public interface SystemGraphValidation {
 
-    Optional<String> validate(ForSyDeSystemGraph forSyDeSystemGraph);
+    Optional<String> validate(SystemGraph systemGraph);
 }

@@ -1,7 +1,7 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.core.SystemGraph;
 import forsyde.io.java.core.Vertex;
 import forsyde.io.java.typed.viewers.visualization.Visualizable;
 import org.eclipse.app4mc.amalthea.model.*;
@@ -9,12 +9,12 @@ import org.eclipse.app4mc.amalthea.model.PeriodicStimulus;
 
 public interface AmaltheaStimulus2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
-    default void fromStimulusToForSyDe(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void fromStimulusToForSyDe(Amalthea amalthea, SystemGraph systemGraph) {
         if (amalthea.getStimuliModel() == null) return; // non null guard command
         amalthea.getStimuliModel().getStimuli().forEach((stimulus) -> {
             if (stimulus instanceof PeriodicStimulus) {
                 final PeriodicStimulus periodicStimulus = (PeriodicStimulus) stimulus;
-                final forsyde.io.java.typed.viewers.execution.PeriodicStimulus periodicStimulusVertex = forsyde.io.java.typed.viewers.execution.PeriodicStimulus.enforce(forSyDeSystemGraph.newVertex(stimulus.getName()));
+                final forsyde.io.java.typed.viewers.execution.PeriodicStimulus periodicStimulusVertex = forsyde.io.java.typed.viewers.execution.PeriodicStimulus.enforce(systemGraph.newVertex(stimulus.getName()));
                 Visualizable.enforce(periodicStimulusVertex);
                 if (periodicStimulus.getRecurrence() != null) {
                     periodicStimulusVertex.setPeriodNumerator(periodicStimulus.getRecurrence().getValue().longValue());

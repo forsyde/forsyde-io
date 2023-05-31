@@ -8,8 +8,8 @@ import java.util.Optional;
 public class PropertySpec {
 
     public String name;
-    @JsonProperty("default")
-    public VertexProperty defaultValue;
+//    @JsonProperty("default")
+//    public VertexProperty defaultValue;
     public PropertyTypeSpec type;
     public Optional<String> comment = Optional.empty();
 

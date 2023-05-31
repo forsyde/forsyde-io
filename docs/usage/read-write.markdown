@@ -65,7 +65,7 @@ Then, at any point in your code, you can load a model to memory and save it late
 
     ..
     import forsyde.io.java.core.ForSyDeModel;
-    import forsyde.io.java.drivers.ForSyDeModelHandler;
+    import forsyde.io.java.drivers.ModelHandler;
     ..
     
     ForSyDeModelHandler forSyDeModelHandler = new ForSyDeModelHandler();
@@ -114,8 +114,8 @@ And later register the downloaded module with your model handler,
 
     ..
     import forsyde.io.java.core.ForSyDeModel;
-    import forsyde.io.java.drivers.ForSyDeModelHandler;
-    import forsyde.io.java.amalthea.drivers.ForSyDeAmaltheaDriver;
+    import forsyde.io.java.drivers.ModelHandler;
+    import forsyde.io.java.amalthea.drivers.AmaltheaDriver;
     ..
 
     ForSyDeModelHandler forSyDeModelHandler = new ForSyDeModelHandler();

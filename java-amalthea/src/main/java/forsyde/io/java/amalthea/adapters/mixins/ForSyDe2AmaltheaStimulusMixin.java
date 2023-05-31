@@ -1,7 +1,7 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.ForSyDeSystemGraph;
+import forsyde.io.java.core.SystemGraph;
 import forsyde.io.java.core.Vertex;
 import org.eclipse.app4mc.amalthea.model.*;
 
@@ -11,10 +11,10 @@ import static org.eclipse.app4mc.amalthea.model.TimeUnit.*;
 
 public interface ForSyDe2AmaltheaStimulusMixin extends EquivalenceModel2ModelMixin<Vertex, INamed> {
 
-    default void fromStimulusToForSyDe(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
+    default void fromStimulusToForSyDe(SystemGraph systemGraph, Amalthea amalthea) {
         final StimuliModel stimuliModel = AmaltheaFactory.eINSTANCE.createStimuliModel();
         amalthea.setStimuliModel(stimuliModel);
-        forSyDeSystemGraph.vertexSet().stream().flatMap(v -> forsyde.io.java.typed.viewers.execution.PeriodicStimulus.safeCast(v).stream())
+        systemGraph.vertexSet().stream().flatMap(v -> forsyde.io.java.typed.viewers.execution.PeriodicStimulus.safeCast(v).stream())
                 .forEach(vPeriodicStimulus -> {
             // check periodic stimulus
                 final PeriodicStimulus periodicStimulus = AmaltheaFactory.eINSTANCE.createPeriodicStimulus();
