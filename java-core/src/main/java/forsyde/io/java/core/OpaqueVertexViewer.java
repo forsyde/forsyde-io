@@ -12,6 +12,11 @@ public class OpaqueVertexViewer implements VertexViewer {
     }
 
     @Override
+    public SystemGraph getViewedSystemGraph() {
+        return systemGraph;
+    }
+
+    @Override
     public String getTraitName() {
         return "";
     }

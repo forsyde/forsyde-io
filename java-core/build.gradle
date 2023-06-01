@@ -13,12 +13,12 @@ task clearForSyDeModel(type: Delete) {
     delete 'src-gen/main/java/forsyde/io/java/core', 'src-gen/main/java/forsyde/io/java/typed/viewers'
 }
 */
-
-tasks.register("cleanForSyDeModel", Delete) {
-    delete 'src-gen/main/java/forsyde/io/java'
-}
-
-tasks.clean.dependsOn(tasks.cleanForSyDeModel)
+//
+//tasks.register("cleanForSyDeModel", Delete) {
+//    delete 'src-gen/main/java/forsyde/io/java'
+//}
+//
+//tasks.clean.dependsOn(tasks.cleanForSyDeModel)
 
 //tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
 //    inputModelDSL = project.ext.stdTraitHierarchyFile

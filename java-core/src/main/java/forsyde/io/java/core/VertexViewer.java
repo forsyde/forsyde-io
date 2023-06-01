@@ -6,6 +6,8 @@ public interface VertexViewer {
 	
     Vertex getViewedVertex();
 
+    SystemGraph getViewedSystemGraph();
+
     String getTraitName();
 
     default String getIdentifier() {

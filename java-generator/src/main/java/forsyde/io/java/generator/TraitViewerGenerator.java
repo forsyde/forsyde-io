@@ -69,6 +69,12 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 .returns(Vertex.class)
                 .build();
         viewerClassBuilder.addMethod(getVertexMethod);
+        var getSystemGraphMethod = MethodSpec.methodBuilder("getViewedSystemGraph")
+                .addModifiers(Modifier.PUBLIC)
+                .addStatement("return systemGraph")
+                .returns(SystemGraph.class)
+                .build();
+        viewerClassBuilder.addMethod(getSystemGraphMethod);
         var getTraitNameMethod = MethodSpec.methodBuilder("getTraitName")
                 .addModifiers(Modifier.PUBLIC)
                 .addStatement("return $S", traitInterface.getQualifiedName().toString().replace(".", "::"))
@@ -82,10 +88,18 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 .addStatement("return Optional.of(new $L(systemGraph, vertex))", viewerClassSimpleName)
                 .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), TypeName.get(traitInterface.asType())))
                 .build();
+        viewerClassBuilder.addMethod(tryViewMethod);
+        var tryViewMethodFromViewer = MethodSpec.methodBuilder("tryView")
+                .addTypeVariable(TypeVariableName.get("T").withBounds(ClassName.get(VertexViewer.class)))
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(TypeVariableName.get("T"), "otherViewer")
+                .addStatement("return Optional.of(new $L(otherViewer.getViewedSystemGraph(), otherViewer.getViewedVertex()))", viewerClassSimpleName)
+                .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), TypeName.get(traitInterface.asType())))
+                .build();
+        viewerClassBuilder.addMethod(tryViewMethodFromViewer);
         for (var portGetter : generatePortGetters(traitInterface)) {
             viewerClassBuilder.addMethod(portGetter);
         }
-        viewerClassBuilder.addMethod(tryViewMethod);
         return viewerClassBuilder.build();
     }
 

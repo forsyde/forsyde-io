@@ -1,0 +1,26 @@
+plugins {
+    id 'antlr'
+}
+
+dependencies {
+    antlr 'org.antlr:antlr4:4.10.1'
+    implementation 'org.antlr:antlr4-runtime:4.10.1'
+    implementation project(":java-core")
+    implementation project(":java-libforsyde")
+    compileOnly project(":java-generator")
+    annotationProcessor project(":java-generator")
+}
+
+generateGrammarSource {
+    maxHeapSize = "512m"
+    arguments += ['-package', 'forsyde.io.java.bridge.forsyde.shallow.haskell', '-visitor']
+    outputDirectory layout.buildDirectory.dir("generated/${name}/main/java/forsyde/io/java/bridge/forsyde/shallow/haskell").get().getAsFile()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += layout.buildDirectory.dir("generated/generateGrammarSource/main/java")
+        }
+    }
+}
