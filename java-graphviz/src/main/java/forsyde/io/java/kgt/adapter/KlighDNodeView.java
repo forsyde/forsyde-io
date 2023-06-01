@@ -4,8 +4,7 @@ import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.SystemGraph;
 import forsyde.io.java.core.Trait;
 import forsyde.io.java.core.VertexTrait;
-import forsyde.io.java.typed.viewers.visualization.Visualizable;
-import forsyde.io.java.typed.viewers.visualization.VisualizableWithProperties;
+import forsyde.io.java.libforsyde.visualization.Visualizable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,7 +32,7 @@ public class KlighDNodeView {
     }
 
     public String getLabel() {
-        return viewed.getIdentifier() + " [" + viewed.getTraits().stream().filter(t -> !t.refines(VertexTrait.VISUALIZATION_VISUALIZABLE)).map(Trait::getName).collect(Collectors.joining(", ")) + "]";
+        return viewed.getIdentifier() + " [" + viewed.getVertexTraitNames().stream().filter(t -> t.getName().contains("visualization")).map(Trait::getName).collect(Collectors.joining(", ")) + "]";
     }
 
     public List<KlighDNodeView> getChildren() {
@@ -52,7 +51,7 @@ public class KlighDNodeView {
         return viewed.getPorts().stream()
                 .filter(p ->
                     m.incomingEdgesOf(viewed).stream()
-                        .filter(e -> e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONNECTION) && !e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT))
+                        .filter(e -> e.hasTrait() && !e.hasTrait(EdgeTrait.VISUALIZATION_VISUALCONTAINMENT))
                         .anyMatch(e -> e.getTargetPort().map(p::equals).orElse(false))
                         ||
                         m.outgoingEdgesOf(viewed).stream()

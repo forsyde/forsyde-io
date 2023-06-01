@@ -10,4 +10,5 @@ dependencies {
     implementation 'org.ainslec:picocog:1.0.7'
 
     implementation project(":java-core")
+    implementation project(":java-libforsyde")
 }

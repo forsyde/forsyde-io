@@ -40,6 +40,7 @@ dependencies {
 
   testImplementation project(":java-core")
   testImplementation project(":java-graphviz")
+  testImplementation project(":java-bridge-forsyde-shallow")
 }
 
 test {
@@ -47,11 +48,11 @@ test {
 }
 
 compileJava {
-  sourceCompatibility = JavaVersion.VERSION_11
+  sourceCompatibility = JavaVersion.VERSION_17
 }
 
 compileTestJava {
-  sourceCompatibility = JavaVersion.VERSION_11
+  sourceCompatibility = JavaVersion.VERSION_17
 }
 
 sourceSets {
