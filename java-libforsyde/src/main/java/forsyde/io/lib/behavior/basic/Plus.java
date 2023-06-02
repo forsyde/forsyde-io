@@ -4,11 +4,13 @@ import forsyde.io.java.core.VertexViewer;
 import forsyde.io.java.core.annotations.GenerateViewer;
 import forsyde.io.java.core.annotations.InPort;
 import forsyde.io.java.core.annotations.OutPort;
+import forsyde.io.java.core.annotations.RegisterTrait;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @GenerateViewer
+@RegisterTrait(hierarchy = "LibForSyDe")
 public interface Plus extends BasicOperation {
 
     @InPort
