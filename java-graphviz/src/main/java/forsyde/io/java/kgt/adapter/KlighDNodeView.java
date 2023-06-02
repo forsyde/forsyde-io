@@ -3,8 +3,7 @@ package forsyde.io.java.kgt.adapter;
 import forsyde.io.java.core.EdgeTrait;
 import forsyde.io.java.core.SystemGraph;
 import forsyde.io.java.core.Trait;
-import forsyde.io.java.core.VertexTrait;
-import forsyde.io.java.libforsyde.visualization.Visualizable;
+import forsyde.io.lib.visualization.Visualizable;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -4,6 +4,6 @@ module forsyde.io.java.libforsyde {
 
     requires static forsyde.io.java.generator;
 
-    exports forsyde.io.java.libforsyde.behavior.sdf;
-    exports forsyde.io.java.libforsyde.visualization;
+    exports forsyde.io.lib.behavior.sdf;
+    exports forsyde.io.lib.visualization;
 }
