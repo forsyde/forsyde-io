@@ -10,6 +10,5 @@ import java.util.Set;
 public interface GreyBox {
 
     @OutPort
-    @WithEdgeTrait(VisualContainment.class)
     Set<Visualizable> contained();
 }

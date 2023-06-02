@@ -5,12 +5,12 @@ import forsyde.io.java.core.annotations.GenerateViewer;
 import forsyde.io.java.core.annotations.InPort;
 import forsyde.io.java.core.annotations.OutPort;
 import forsyde.io.java.core.annotations.RegisterTrait;
+import forsyde.io.lib.ForSyDeHierarchy;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@GenerateViewer
-@RegisterTrait(hierarchy = "LibForSyDe")
+@RegisterTrait(ForSyDeHierarchy.class)
 public interface Plus extends BasicOperation {
 
     @InPort

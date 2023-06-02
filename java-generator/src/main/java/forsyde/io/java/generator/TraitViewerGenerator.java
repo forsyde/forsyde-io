@@ -1,13 +1,10 @@
 package forsyde.io.java.generator;
 
 import com.squareup.javapoet.*;
-import forsyde.io.java.core.OpaqueVertexViewer;
-import forsyde.io.java.core.SystemGraph;
-import forsyde.io.java.core.Vertex;
-import forsyde.io.java.core.VertexViewer;
-import forsyde.io.java.core.annotations.GenerateViewer;
+import forsyde.io.java.core.*;
 import forsyde.io.java.core.annotations.InPort;
 import forsyde.io.java.core.annotations.OutPort;
+import forsyde.io.java.core.annotations.RegisterTrait;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -18,25 +15,38 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@SupportedAnnotationTypes({"forsyde.io.java.core.annotations.GenerateViewer"})
+@SupportedAnnotationTypes({"forsyde.io.java.core.annotations.RegisterTrait"})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 public class TraitViewerGenerator extends AbstractProcessor {
+
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        final Map<TypeSpec, TypeMirror> traitsToHierarchy = new HashMap<>();
+        final Map<TypeMirror, TypeSpec> hierarchyToSpec = new HashMap<>();
         try {
-            var toGenerate = roundEnv.getElementsAnnotatedWith(GenerateViewer.class);
+            var toGenerate = roundEnv.getElementsAnnotatedWith(RegisterTrait.class);
             var typesToGenerate = ElementFilter.typesIn(toGenerate);
             for (var typeElement : typesToGenerate) {
+                var hierarchy = getRegisteredHierarchy(typeElement.getAnnotation(RegisterTrait.class));
+                var hierarchyElem = processingEnv.getTypeUtils().asElement(hierarchy);
+                hierarchyToSpec.putIfAbsent(hierarchy, TypeSpec.classBuilder( hierarchyElem.getSimpleName().toString() + "Gen").addSuperinterface(hierarchy).build());
                 var spec = makeViewer(typeElement);
+                traitsToHierarchy.put(spec, hierarchy);
                 var javaFile = JavaFile.builder(processingEnv.getElementUtils().getPackageOf(typeElement).toString(), spec).build();
+                javaFile.writeTo(processingEnv.getFiler());
+            }
+            var hierarchies = new HashSet<>(traitsToHierarchy.values());
+            for (var typeHierarchy: hierarchies) {
+                var genTH = hierarchyToSpec.get(typeHierarchy);
+                var typeElem = processingEnv.getTypeUtils().asElement(typeHierarchy);
+                var javaFile = JavaFile.builder(processingEnv.getElementUtils().getPackageOf(typeElem).toString(), genTH).build();
                 javaFile.writeTo(processingEnv.getFiler());
             }
         } catch (IOException e) {
@@ -200,6 +210,19 @@ public class TraitViewerGenerator extends AbstractProcessor {
             }
         }
         return methods;
+    }
+
+    // taken from https://stackoverflow.com/questions/7687829/java-6-annotation-processing-getting-a-class-from-an-annotation
+    protected TypeMirror getRegisteredHierarchy(RegisterTrait annotation) {
+        try
+        {
+            annotation.value(); // this should throw
+        }
+        catch( MirroredTypeException mte )
+        {
+            return mte.getTypeMirror();
+        }
+        return null;
     }
 
 }
