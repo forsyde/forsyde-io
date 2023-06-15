@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface WithEdgeTrait {
 
-    Class<? extends Trait> trait();
+    Class<? extends Trait> value();
 }

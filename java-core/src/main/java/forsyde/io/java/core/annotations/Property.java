@@ -6,7 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.TYPE)
-@Deprecated
-public @interface GenerateViewer {
+@Target({ElementType.METHOD, ElementType.FIELD})
+public @interface Property {
 }
