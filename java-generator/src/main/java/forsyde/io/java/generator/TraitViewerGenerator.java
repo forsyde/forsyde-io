@@ -28,25 +28,27 @@ public class TraitViewerGenerator extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        final Map<TypeSpec, TypeMirror> traitsToHierarchy = new HashMap<>();
-        final Map<TypeMirror, TypeSpec> hierarchyToSpec = new HashMap<>();
+        final Map<TypeElement, TypeElement> traitsToHierarchy = new HashMap<>();
+//        final Map<TypeElement, TypeSpec> traitToSpec = new HashMap<>();
+//        final Map<TypeElement, TypeSpec> hierarchyToSpec = new HashMap<>();
         try {
             var toGenerate = roundEnv.getElementsAnnotatedWith(RegisterTrait.class);
             var typesToGenerate = ElementFilter.typesIn(toGenerate);
             for (var typeElement : typesToGenerate) {
                 var hierarchy = getRegisteredHierarchy(typeElement.getAnnotation(RegisterTrait.class));
-                var hierarchyElem = processingEnv.getTypeUtils().asElement(hierarchy);
-                hierarchyToSpec.putIfAbsent(hierarchy, TypeSpec.classBuilder( hierarchyElem.getSimpleName().toString() + "Gen").addSuperinterface(hierarchy).build());
+//                hierarchyToSpec.putIfAbsent(hierarchy, makeHierarchy(hierarchy));
                 var spec = makeViewer(typeElement);
-                traitsToHierarchy.put(spec, hierarchy);
+                traitsToHierarchy.put(typeElement, hierarchy);
+//                traitToSpec.put(typeElement, spec);
                 var javaFile = JavaFile.builder(processingEnv.getElementUtils().getPackageOf(typeElement).toString(), spec).build();
                 javaFile.writeTo(processingEnv.getFiler());
             }
             var hierarchies = new HashSet<>(traitsToHierarchy.values());
             for (var typeHierarchy: hierarchies) {
-                var genTH = hierarchyToSpec.get(typeHierarchy);
-                var typeElem = processingEnv.getTypeUtils().asElement(typeHierarchy);
-                var javaFile = JavaFile.builder(processingEnv.getElementUtils().getPackageOf(typeElem).toString(), genTH).build();
+                var containedTraits = traitsToHierarchy.entrySet().stream().filter(e -> e.getValue().equals(typeHierarchy)).map(Map.Entry::getKey).collect(Collectors.toSet());
+//                hierarchyToSpec.putIfAbsent(hierarchy, makeHierarchy(hierarchy));
+                var genTH = makeHierarchy(typeHierarchy, containedTraits);
+                var javaFile = JavaFile.builder(processingEnv.getElementUtils().getPackageOf(typeHierarchy).toString(), genTH).build();
                 javaFile.writeTo(processingEnv.getFiler());
             }
         } catch (IOException e) {
@@ -213,17 +215,47 @@ public class TraitViewerGenerator extends AbstractProcessor {
     }
 
     // taken from https://stackoverflow.com/questions/7687829/java-6-annotation-processing-getting-a-class-from-an-annotation
-    protected TypeMirror getRegisteredHierarchy(RegisterTrait annotation) {
+    protected TypeElement getRegisteredHierarchy(RegisterTrait annotation) {
         try
         {
             annotation.value(); // this should throw
         }
         catch( MirroredTypeException mte )
         {
-            return mte.getTypeMirror();
+            var hierarchy = mte.getTypeMirror();
+            var t = processingEnv.getTypeUtils().asElement(hierarchy);
+            if (t instanceof TypeElement typeElement) {
+                return typeElement;
+            } else {
+                return null;
+            }
         }
         return null;
     }
+
+    protected TypeSpec makeHierarchy(TypeElement hierarchy, Set<TypeElement> containedTraits) {
+        var hierarchyElemName = hierarchy.getSimpleName().toString().startsWith("I") ? hierarchy.getSimpleName().toString().substring(1) : hierarchy.getSimpleName().toString() + "Gen";
+        var hierarchySpecBuilder = TypeSpec.classBuilder(hierarchyElemName).addSuperinterface(hierarchy.asType());
+        for (var trait : containedTraits) {
+            var traitInnerClassBuilder = TypeSpec.classBuilder(trait.getSimpleName().toString()).addModifiers(Modifier.PUBLIC).addSuperinterface(Trait.class);
+            traitInnerClassBuilder.addMethod(MethodSpec.methodBuilder("getName").returns(String.class).addModifiers(Modifier.PUBLIC).addStatement("return $S", trait.getQualifiedName().toString().replace(".", "::")).build());
+            var refinesSpec = MethodSpec.methodBuilder("refines").addParameter(Trait.class, "other").returns(TypeName.BOOLEAN).addModifiers(Modifier.PUBLIC);
+            var switchCodeBlock = CodeBlock.builder().beginControlFlow("switch (other.getName())");
+            for (var refinedTrait : trait.getInterfaces()) {
+                var elem = processingEnv.getTypeUtils().asElement(refinedTrait);
+                if (elem instanceof TypeElement typeElement) {
+                    switchCodeBlock.addStatement("case $S: return true", typeElement.getQualifiedName().toString().replace(".", "::"));
+                }
+            }
+            switchCodeBlock.addStatement("default: return false");
+            switchCodeBlock.endControlFlow();
+            traitInnerClassBuilder.addMethod(refinesSpec.addCode(switchCodeBlock.build()).build());
+            hierarchySpecBuilder.addType(traitInnerClassBuilder.build());
+        }
+        hierarchySpecBuilder.addMethod(MethodSpec.methodBuilder("fromName").addParameter(String.class, "traitName").addModifiers(Modifier.PUBLIC).returns(Trait.class).addStatement("return new $T($L)", OpaqueTrait.class, "traitName").build());
+        hierarchySpecBuilder.addMethod(MethodSpec.methodBuilder("traits").addModifiers(Modifier.PUBLIC).returns(ParameterizedTypeName.get(Set.class, Trait.class)).addStatement("return $T.of()", Set.class).build());
+        return hierarchySpecBuilder.build();
+    };
 
 }
 

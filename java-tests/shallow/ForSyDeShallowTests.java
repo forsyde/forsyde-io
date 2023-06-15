@@ -38,5 +38,6 @@ average [x1, x2, x3] = [(x1 + x2 + x3) / 3.0]
         var driver = new ForSyDeShallowDriver();
         var systemGraph = driver.loadModel(new ByteArrayInputStream(haskellText.getBytes()));
         System.out.println(systemGraph);
+
     }
 }

@@ -39,6 +39,7 @@ dependencies {
   //testImplementation 'junit:junit:4.13.2'
 
   testImplementation project(":java-core")
+  testImplementation project(":java-libforsyde")
   testImplementation project(":java-graphviz")
   testImplementation project(":java-bridge-forsyde-shallow")
 }

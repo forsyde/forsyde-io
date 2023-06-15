@@ -1,16 +1,15 @@
 package forsyde.io.lib.behavior.basic;
 
 import forsyde.io.java.core.VertexViewer;
-import forsyde.io.java.core.annotations.GenerateViewer;
 import forsyde.io.java.core.annotations.InPort;
 import forsyde.io.java.core.annotations.OutPort;
 import forsyde.io.java.core.annotations.RegisterTrait;
-import forsyde.io.lib.ForSyDeHierarchy;
+import forsyde.io.lib.IForSyDeHierarchy;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@RegisterTrait(ForSyDeHierarchy.class)
+@RegisterTrait(IForSyDeHierarchy.class)
 public interface Plus extends BasicOperation {
 
     @InPort
