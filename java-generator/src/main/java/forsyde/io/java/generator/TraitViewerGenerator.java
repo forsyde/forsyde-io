@@ -17,6 +17,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import java.io.IOException;
 import java.util.*;
@@ -29,6 +30,8 @@ public class TraitViewerGenerator extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        final TypeElement viewerT = processingEnv.getElementUtils().getTypeElement(VertexViewer.class.getCanonicalName());
+        final TypeElement edgeT = processingEnv.getElementUtils().getTypeElement(EdgeTrait.class.getCanonicalName());
         final Map<TypeElement, TypeElement> traitsToHierarchy = new HashMap<>();
         final Map<TypeElement, TypeSpec> traitToSpec = new HashMap<>();
 //        final Map<TypeElement, TypeSpec> hierarchyToSpec = new HashMap<>();
@@ -38,11 +41,13 @@ public class TraitViewerGenerator extends AbstractProcessor {
             for (var typeElement : typesToGenerate) {
                 var hierarchy = getRegisteredHierarchy(typeElement.getAnnotation(RegisterTrait.class));
 //                hierarchyToSpec.putIfAbsent(hierarchy, makeHierarchy(hierarchy));
-                var spec = makeViewer(hierarchy, typeElement);
+                if (processingEnv.getTypeUtils().isSubtype(typeElement.asType(), viewerT.asType())) {
+                    var spec = makeViewer(hierarchy, typeElement);
+                    traitToSpec.put(typeElement, spec);
+                    var javaFile = JavaFile.builder(processingEnv.getElementUtils().getPackageOf(typeElement).toString(), spec).build();
+                    javaFile.writeTo(processingEnv.getFiler());
+                }
                 traitsToHierarchy.put(typeElement, hierarchy);
-                traitToSpec.put(typeElement, spec);
-                var javaFile = JavaFile.builder(processingEnv.getElementUtils().getPackageOf(typeElement).toString(), spec).build();
-                javaFile.writeTo(processingEnv.getFiler());
             }
             var hierarchies = new HashSet<>(traitsToHierarchy.values());
             for (var typeHierarchy: hierarchies) {
@@ -100,7 +105,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 .addParameter(SystemGraph.class, "systemGraph")
                 .addParameter(Vertex.class, "vertex")
                 .addStatement("return Optional.of(new $L(systemGraph, vertex))", viewerClassSimpleName)
-                .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), TypeName.get(traitInterface.asType())))
+                .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), ClassName.get(processingEnv.getElementUtils().getPackageOf(traitInterface).toString(), traitInterface.getSimpleName().toString() + "Viewer")))
                 .build();
         viewerClassBuilder.addMethod(tryViewMethod);
         var tryViewMethodFromViewer = MethodSpec.methodBuilder("tryView")
@@ -108,7 +113,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(TypeVariableName.get("T"), "otherViewer")
                 .addStatement("return Optional.of(new $L(otherViewer.getViewedSystemGraph(), otherViewer.getViewedVertex()))", viewerClassSimpleName)
-                .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), TypeName.get(traitInterface.asType())))
+                .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), ClassName.get(processingEnv.getElementUtils().getPackageOf(traitInterface).toString(), traitInterface.getSimpleName().toString() + "Viewer")))
                 .build();
         viewerClassBuilder.addMethod(tryViewMethodFromViewer);
 
@@ -562,12 +567,15 @@ public class TraitViewerGenerator extends AbstractProcessor {
         return null;
     }
 
-    protected TypeSpec makeHierarchy(TypeElement hierarchy, Set<TypeElement> containedVertexTraits) {
+    protected TypeSpec makeHierarchy(TypeElement hierarchy, Set<TypeElement> containedTraits) {
+        final TypeElement viewerT = processingEnv.getElementUtils().getTypeElement(VertexViewer.class.getCanonicalName());
+        final TypeElement edgeT = processingEnv.getElementUtils().getTypeElement(EdgeTrait.class.getCanonicalName());
         var hierarchyElemName = hierarchyElemToName(hierarchy);
         var hierarchySpecBuilder = TypeSpec.classBuilder(hierarchyElemName).addModifiers(Modifier.PUBLIC).addSuperinterface(hierarchy.asType());
-        var containedEdgeTraits = containedVertexTraits.stream().flatMap(t ->
-            t.getEnclosedElements().stream()
-        ).filter(t -> t.getKind().equals(ElementKind.METHOD) && t.getAnnotation(WithEdgeTrait.class) != null).map(t -> getRegisteredEdge(t.getAnnotation(WithEdgeTrait.class))).collect(Collectors.toSet());
+        var containedVertexTraits = containedTraits.stream().filter(t -> processingEnv.getTypeUtils().isSubtype(t.asType(), viewerT.asType())).collect(Collectors.toSet());
+        var containedEdgeTraits = Stream.concat(
+                containedTraits.stream().filter(t -> processingEnv.getTypeUtils().isSubtype(t.asType(), edgeT.asType())),
+                containedTraits.stream().flatMap(t -> t.getEnclosedElements().stream()).filter(t -> t.getKind().equals(ElementKind.METHOD) && t.getAnnotation(WithEdgeTrait.class) != null).map(t -> getRegisteredEdge(t.getAnnotation(WithEdgeTrait.class)))).collect(Collectors.toSet());
         var vertexTraitEnumBuilder = TypeSpec.enumBuilder("VertexTraits").addSuperinterface(VertexTrait.class).addModifiers(Modifier.PUBLIC).addField(String.class, "name")
                 .addMethod(MethodSpec.constructorBuilder().addParameter(String.class, "name").addStatement("this.name = name").build());
         var vertexTraitEnumRefinesBuilder = CodeBlock.builder().beginControlFlow("switch (this)");
@@ -589,9 +597,17 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     .addParameter(SystemGraph.class, "systemGraph")
                     .addParameter(Vertex.class, "vertex")
                     .addStatement("return $T.tryView(systemGraph, vertex)", ClassName.get(processingEnv.getElementUtils().getPackageOf(trait).toString(), trait.getSimpleName() + "Viewer"))
-                    .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), TypeName.get(trait.asType())))
+                    .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), ClassName.get(processingEnv.getElementUtils().getPackageOf(trait).toString(), trait.getSimpleName().toString() + "Viewer")))
                     .build();
             traitInnerClassBuilder.addMethod(tryViewMethod);
+            var tryViewMethodFromViewer = MethodSpec.methodBuilder("tryView")
+                    .addTypeVariable(TypeVariableName.get("T").withBounds(ClassName.get(VertexViewer.class)))
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .addParameter(TypeVariableName.get("T"), "otherViewer")
+                    .addStatement("return $T.tryView(otherViewer)", ClassName.get(processingEnv.getElementUtils().getPackageOf(trait).toString(), trait.getSimpleName() + "Viewer"))
+                    .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), ClassName.get(processingEnv.getElementUtils().getPackageOf(trait).toString(), trait.getSimpleName().toString() + "Viewer")))
+                    .build();
+            traitInnerClassBuilder.addMethod(tryViewMethodFromViewer);
             var enforceMethod = MethodSpec.methodBuilder("enforce")
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .addParameter(SystemGraph.class, "systemGraph")

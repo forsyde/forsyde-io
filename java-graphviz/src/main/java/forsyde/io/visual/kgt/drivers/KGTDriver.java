@@ -1,6 +1,9 @@
 package forsyde.io.visual.kgt.drivers;
 
+import de.cau.cs.kieler.klighd.IDiagramExporter;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
+import de.cau.cs.kieler.klighd.krendering.KRenderingFactory;
+import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses;
 import forsyde.io.core.EdgeInfo;
 import forsyde.io.core.EdgeTrait;
 import forsyde.io.core.SystemGraph;
@@ -39,7 +42,7 @@ public class KGTDriver implements ModelDriver, ForSyDe2KGTNode {
     @Override
     public void writeModel(SystemGraph model, OutputStream out) throws Exception {
         final KNode kNode = convert(model);
-
+        
 //        final PicoWriter topWriter = new PicoWriter();
 //        // keep a map of writer to make sure that we can write everything correctly
 //        final Map<KlighDNodeView, PicoWriter> writers = new HashMap<>();
@@ -93,7 +96,6 @@ public class KGTDriver implements ModelDriver, ForSyDe2KGTNode {
 //                                ":" + dstPort +
 //                                ")");
 //                    }, () -> {
-//                        curWriter.writeln("kedge ( " +
 //                                ":" + srcPort +
 //                                " -> " +
 //                                edge.getTarget().getId().replace(" ", "_").replace(".", "_") +
