@@ -1,5 +1,6 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
+import forsyde.io.core.*;
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
 import forsyde.io.java.typed.viewers.decision.Allocated;

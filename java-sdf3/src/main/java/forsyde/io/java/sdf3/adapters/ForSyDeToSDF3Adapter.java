@@ -1,6 +1,6 @@
 package forsyde.io.java.sdf3.adapters;
 
-import forsyde.io.java.core.Vertex;
+import forsyde.io.core.Vertex;
 import forsyde.io.java.sdf3.adapters.mixins.ForSyDe2SDFThreeMixin;
 import org.apache.commons.lang3.tuple.Pair;
 

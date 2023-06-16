@@ -1,5 +1,5 @@
 module forsyde.io.java.generator {
-    requires transitive forsyde.io.java.core;
+    requires transitive forsyde.io.core;
 
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.annotation;

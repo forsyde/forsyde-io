@@ -30,6 +30,8 @@ sourceSets {
   }
 }
 
+tasks.sourcesJar.dependsOn generateGrammarSource
+
 clean{
   delete "src-gen"
 }

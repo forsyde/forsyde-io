@@ -1,7 +1,7 @@
 package forsyde.io.java.ods;
 
-import forsyde.io.java.core.SystemGraph;
-import forsyde.io.java.drivers.ModelDriver;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.drivers.ModelDriver;
 
 import java.io.InputStream;
 import java.io.OutputStream;

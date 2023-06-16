@@ -1,10 +1,10 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.SystemGraph;
-import forsyde.io.java.core.Vertex;
-import forsyde.io.java.core.VertexTrait;
+import forsyde.io.core.EdgeTrait;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
+import forsyde.io.core.VertexTrait;
 import org.eclipse.app4mc.amalthea.model.Amalthea;
 import org.eclipse.app4mc.amalthea.model.INamed;
 

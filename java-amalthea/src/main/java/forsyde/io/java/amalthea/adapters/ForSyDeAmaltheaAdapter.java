@@ -3,7 +3,7 @@ package forsyde.io.java.amalthea.adapters;
 import forsyde.io.java.adapters.ModelAdapter;
 import forsyde.io.java.amalthea.adapters.mixins.AmaltheaToForSyDeAdapter;
 import forsyde.io.java.amalthea.adapters.mixins.ForSyDeToAmaltheaAdapter;
-import forsyde.io.java.core.SystemGraph;
+import forsyde.io.core.SystemGraph;
 import org.eclipse.app4mc.amalthea.model.Amalthea;
 import org.eclipse.app4mc.amalthea.model.AmaltheaFactory;
 

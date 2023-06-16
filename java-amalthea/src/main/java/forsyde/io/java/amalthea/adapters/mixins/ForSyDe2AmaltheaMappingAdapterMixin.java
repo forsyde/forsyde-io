@@ -1,5 +1,9 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
+import forsyde.io.core.EdgeInfo;
+import forsyde.io.core.EdgeTrait;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
 import forsyde.io.java.typed.viewers.platform.runtime.AbstractScheduler;

@@ -1,21 +1,23 @@
 package forsyde.io.lib.behavior.sdf;
 
-import forsyde.io.java.core.VertexViewer;
-import forsyde.io.java.core.annotations.InPort;
-import forsyde.io.java.core.annotations.OutPort;
-import forsyde.io.java.core.annotations.Property;
-import forsyde.io.java.core.annotations.RegisterTrait;
+import forsyde.io.core.annotations.InPort;
+import forsyde.io.core.annotations.OutPort;
+import forsyde.io.core.annotations.Property;
+import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
+import forsyde.io.lib.behavior.MoCEntity;
+
+import java.util.Optional;
 
 @RegisterTrait(IForSyDeHierarchy.class)
-public interface SDFChannel extends VertexViewer {
+public interface SDFChannel extends MoCEntity {
 
     @Property
     default Integer numInitialTokens() {return 0;};
     @InPort
-    SDFActor producer();
+    Optional<SDFActor> producer();
 
     @OutPort
-    SDFActor consumer();
+    Optional<SDFActor> consumer();
 
 }

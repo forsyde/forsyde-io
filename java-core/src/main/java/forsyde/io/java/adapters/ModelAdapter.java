@@ -1,6 +1,6 @@
 package forsyde.io.java.adapters;
 
-import forsyde.io.java.core.SystemGraph;
+import forsyde.io.core.SystemGraph;
 
 public interface ModelAdapter<ModelT> {
 

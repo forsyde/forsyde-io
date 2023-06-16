@@ -1,10 +1,8 @@
 package forsyde.io.lib.visualization;
 
-import forsyde.io.java.core.VertexViewer;
-import forsyde.io.java.core.annotations.GenerateViewer;
-import forsyde.io.java.core.annotations.OutPort;
-import forsyde.io.java.core.annotations.RegisterTrait;
-import forsyde.io.java.core.annotations.WithEdgeTrait;
+import forsyde.io.core.annotations.OutPort;
+import forsyde.io.core.annotations.RegisterTrait;
+import forsyde.io.core.annotations.WithEdgeTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
 
 import java.util.Set;

@@ -1,8 +1,8 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.SystemGraph;
-import forsyde.io.java.core.Vertex;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
 import org.eclipse.app4mc.amalthea.model.*;
 
 import java.math.BigInteger;

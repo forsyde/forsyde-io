@@ -1,0 +1,32 @@
+package forsyde.io.core.migrations;
+
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.*;
+
+public class TaskCallSequenceSplit implements SystemGraphMigrator {
+
+    @Override
+    public String getName() {
+        return "TaskCallSequenceSplit";
+    }
+
+    @Override
+    public boolean effect(SystemGraph systemGraph) {
+//        for (Vertex v : systemGraph.vertexSet()) {
+//            if (v.hasTrait("execution::Task")) {
+//                v.addPort("initSequence");
+//                v.addPort("loopSequence");
+//                v.putProperty("__loopSequence_ordering__",
+//                        Optional.ofNullable(v.getProperty("__callSequence_ordering__")).orElse(
+//                                new HashMap<String, Integer>()));
+//                systemGraph.outgoingEdgesOf(v).stream()
+//                        .filter(e -> e.getSourcePort().orElse("").equals("callSequence"))
+//                        .map(systemGraph::getEdgeTarget)
+//                        .forEach(dst -> {
+//                            systemGraph.connect(v, dst, "loopSequence", null, "execution::ExecutionEdge");
+//                        });
+//            }
+//        }
+        return true;
+    }
+}

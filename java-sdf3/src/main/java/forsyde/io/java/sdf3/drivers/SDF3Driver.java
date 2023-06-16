@@ -2,8 +2,8 @@ package forsyde.io.java.sdf3.drivers;
 
 import forsyde.io.java.sdf3.adapters.ForSyDeSDF3Adapter;
 import forsyde.io.java.sdf3.adapters.mixins.elems.Sdf3;
-import forsyde.io.java.core.SystemGraph;
-import forsyde.io.java.drivers.ModelDriver;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.drivers.ModelDriver;
 import jakarta.xml.bind.JAXBContext;
 
 import java.io.InputStream;

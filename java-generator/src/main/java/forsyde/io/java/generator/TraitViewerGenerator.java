@@ -1,26 +1,29 @@
 package forsyde.io.java.generator;
 
 import com.squareup.javapoet.*;
-import forsyde.io.java.core.*;
-import forsyde.io.java.core.annotations.*;
+import forsyde.io.core.*;
+import forsyde.io.core.VertexTrait;
+import forsyde.io.core.annotations.*;
+import forsyde.io.core.*;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-@SupportedAnnotationTypes({"forsyde.io.java.core.annotations.RegisterTrait"})
+@SupportedAnnotationTypes({"forsyde.io.core.annotations.RegisterTrait"})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 public class TraitViewerGenerator extends AbstractProcessor {
 
@@ -35,7 +38,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
             for (var typeElement : typesToGenerate) {
                 var hierarchy = getRegisteredHierarchy(typeElement.getAnnotation(RegisterTrait.class));
 //                hierarchyToSpec.putIfAbsent(hierarchy, makeHierarchy(hierarchy));
-                var spec = makeViewer(typeElement);
+                var spec = makeViewer(hierarchy, typeElement);
                 traitsToHierarchy.put(typeElement, hierarchy);
                 traitToSpec.put(typeElement, spec);
                 var javaFile = JavaFile.builder(processingEnv.getElementUtils().getPackageOf(typeElement).toString(), spec).build();
@@ -45,7 +48,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
             for (var typeHierarchy: hierarchies) {
                 var containedTraits = traitsToHierarchy.entrySet().stream().filter(e -> e.getValue().equals(typeHierarchy)).map(Map.Entry::getKey).collect(Collectors.toSet());
 //                hierarchyToSpec.putIfAbsent(hierarchy, makeHierarchy(hierarchy));
-                var genTH = makeHierarchy(typeHierarchy, containedTraits, traitToSpec);
+                var genTH = makeHierarchy(typeHierarchy, containedTraits);
                 var javaFile = JavaFile.builder(processingEnv.getElementUtils().getPackageOf(typeHierarchy).toString(), genTH).build();
                 javaFile.writeTo(processingEnv.getFiler());
             }
@@ -56,7 +59,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
         return false;
     }
 
-    protected TypeSpec makeViewer(TypeElement traitInterface) {
+    protected TypeSpec makeViewer(TypeElement hierarchy, TypeElement traitInterface) {
         var viewerClassSimpleName = traitInterface.getSimpleName().toString() + "Viewer";
         final TypeSpec.Builder viewerClassBuilder = TypeSpec.classBuilder(ClassName.get(processingEnv.getElementUtils().getPackageOf(traitInterface).toString(), viewerClassSimpleName))
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
@@ -123,7 +126,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
         for (var portGetter : generatePortGetters(traitInterface)) {
             viewerClassBuilder.addMethod(portGetter);
         }
-        for (var portSetter : generatePortSetters(traitInterface)) {
+        for (var portSetter : generatePortSetters(hierarchy, traitInterface)) {
             viewerClassBuilder.addMethod(portSetter);
         }
         for (var propGetter: generatePropertyGetters(traitInterface)) {
@@ -132,16 +135,84 @@ public class TraitViewerGenerator extends AbstractProcessor {
         return viewerClassBuilder.build();
     }
 
-    protected Set<MethodSpec> generatePortSetters(TypeElement viewerInterface) {
+    protected Set<MethodSpec> generatePortSetters(TypeElement hierarchy, TypeElement viewerInterface) {
         var methods = new HashSet<MethodSpec>();
         var members = processingEnv.getElementUtils().getAllMembers(viewerInterface);
         for (var member : members) {
             if (member instanceof ExecutableElement execMember && (member.getAnnotation(InPort.class) != null || member.getAnnotation(OutPort.class) != null)) {
                 var name = execMember.getSimpleName().toString();
-                var getMethodBuilderWithoutPort = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
-                var getMethodBuilder = MethodSpec.methodBuilder(name).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
-                if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Set") || declaredType.asElement().getSimpleName().contentEquals("List"))) {
-//                    getMethodBuilder.addStatement("$T<$T> collected = new $T<>()", ArrayList.class, declaredType.getTypeArguments().get(0), ArrayList.class);
+                if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Set"))) {
+                    var capitalizedName = name.substring(0, 1).toUpperCase() + name.substring(1);
+                    var getMethodBuilderWithoutPort = MethodSpec.methodBuilder("add" + capitalizedName).addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
+                    var getMethodBuilder = MethodSpec.methodBuilder("add" + capitalizedName).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
+                    if (execMember.getAnnotation(InPort.class) != null) {
+                        var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
+                        getMethodBuilderWithoutPort.addParameter(portInputType, name);
+                        getMethodBuilder.addParameter(portInputType, name);
+                        if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
+                            getMethodBuilderWithoutPort.addStatement(
+                                    "getViewedSystemGraph().connect($L, this, null, $S, $T.EdgeTraits.$L)",
+                                    name,
+                                    name,
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                            );
+                            getMethodBuilder.addStatement(
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, $T.EdgeTraits.$L)",
+                                    name,
+                                    name,
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                            );
+                        } else {
+                            getMethodBuilderWithoutPort.addStatement(
+                                    "getViewedSystemGraph().connect($L, this, null, $S)",
+                                    name,
+                                    name
+
+                            );
+                            getMethodBuilder.addStatement(
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S)",
+                                    name,
+                                    name
+
+                            );
+                        }
+                    }
+                    if (execMember.getAnnotation(OutPort.class) != null) {
+                        // checking for what type of return type it is
+                        var portOutputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
+                        getMethodBuilderWithoutPort.addParameter(portOutputType, name);
+                        getMethodBuilder.addParameter(portOutputType, name);
+                        if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
+                            var edgeTrait = getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class));
+                            getMethodBuilderWithoutPort.addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, $S, $T.EdgeTraits.$L)",
+                                    name,
+                                    name,
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                            );
+                            getMethodBuilder.addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, $T.EdgeTraits.$L)",
+                                    name,
+                                    name,
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                            );
+                        } else {
+                            getMethodBuilderWithoutPort.addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, $S)",
+                                    name,
+                                    name
+                            );
+                            getMethodBuilder.addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, otherPort, $S)",
+                                    name,
+                                    name
+                            );
+                        }
+                    }
 //                    if (execMember.getAnnotation(InPort.class) != null) {
 //                        var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
 //                        if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
@@ -176,24 +247,103 @@ public class TraitViewerGenerator extends AbstractProcessor {
 //                    } else {
 //                        getMethodBuilder.addStatement("return collected");
 //                    }
-//                    methods.add(getMethodBuilder.build());
+                    getMethodBuilderWithoutPort.addStatement("return this");
+                    getMethodBuilder.addStatement("return this");
+                    methods.add(getMethodBuilderWithoutPort.build());
+                    methods.add(getMethodBuilder.build());
+                } else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("List"))) {
+                } else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Optional"))) {
+                    var getMethodBuilderWithoutPort = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
+                    var getMethodBuilder = MethodSpec.methodBuilder(name).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
+                    if (execMember.getAnnotation(InPort.class) != null) {
+                        var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
+                        getMethodBuilderWithoutPort.addParameter(portInputType, name);
+                        getMethodBuilder.addParameter(portInputType, name);
+                        if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
+                            var edgeTrait = getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class));
+                            getMethodBuilderWithoutPort.addStatement(
+                                    "getViewedSystemGraph().connect($L, this, null, $S, $T.instance)",
+                                    name,
+                                    name,
+                                    edgeTrait
+                            );
+                            getMethodBuilder.addStatement(
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, $T.instance)",
+                                    name,
+                                    name,
+                                    edgeTrait
+                            );
+                        } else {
+                            getMethodBuilderWithoutPort.addStatement(
+                                    "getViewedSystemGraph().connect($L, this, null, $S)",
+                                    name,
+                                    name
+
+                            );
+                            getMethodBuilder.addStatement(
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S)",
+                                    name,
+                                    name
+
+                            );
+                        }
+                    }
+                    if (execMember.getAnnotation(OutPort.class) != null) {
+                        // checking for what type of return type it is
+                        var portOutputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
+                        getMethodBuilderWithoutPort.addParameter(portOutputType, name);
+                        getMethodBuilder.addParameter(portOutputType, name);
+                        if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
+                            var edgeTrait = getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class));
+                            getMethodBuilderWithoutPort.addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, $S, $T)",
+                                    name,
+                                    name,
+                                    edgeTrait
+                            );
+                            getMethodBuilder.addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, $T)",
+                                    name,
+                                    name,
+                                    edgeTrait
+                            );
+                        } else {
+                            getMethodBuilderWithoutPort.addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, $S)",
+                                    name,
+                                    name
+                            );
+                            getMethodBuilder.addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, otherPort, $S)",
+                                    name,
+                                    name
+                            );
+                        }
+                    }
+                    getMethodBuilderWithoutPort.addStatement("return this");
+                    getMethodBuilder.addStatement("return this");
+                    methods.add(getMethodBuilderWithoutPort.build());
+                    methods.add(getMethodBuilder.build());
                 } else {
+                    var getMethodBuilderWithoutPort = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
+                    var getMethodBuilder = MethodSpec.methodBuilder(name).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
                     if (execMember.getAnnotation(InPort.class) != null) {
                         var portInputType = execMember.getReturnType().toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(execMember.getReturnType().toString() + "Viewer");
                         getMethodBuilderWithoutPort.addParameter(portInputType, name);
                         getMethodBuilder.addParameter(portInputType, name);
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
+                            var edgeTrait = getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class));
                             getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, null, $S, $S)",
+                                    "getViewedSystemGraph().connect($L, this, null, $S, $T.instance)",
                                     name,
                                     name,
-                                    execMember.getAnnotation(WithEdgeTrait.class).value().getCanonicalName().replace(".", "::")
+                                    edgeTrait
                             );
                             getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, $S)",
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, $T.instance)",
                                     name,
                                     name,
-                                    execMember.getAnnotation(WithEdgeTrait.class).value().getCanonicalName().replace(".", "::")
+                                    edgeTrait
                             );
                         } else {
                             getMethodBuilderWithoutPort.addStatement(
@@ -216,17 +366,18 @@ public class TraitViewerGenerator extends AbstractProcessor {
                         getMethodBuilderWithoutPort.addParameter(portOutputType, name);
                         getMethodBuilder.addParameter(portOutputType, name);
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
+                            var edgeTrait = getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class));
                             getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S, $S)",
+                                    "getViewedSystemGraph().connect(this, $L, $S, $T)",
                                     name,
                                     name,
-                                    execMember.getAnnotation(WithEdgeTrait.class).value().getCanonicalName().replace(".", "::")
+                                    edgeTrait
                             );
                             getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, $S)",
+                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, $T)",
                                     name,
                                     name,
-                                    execMember.getAnnotation(WithEdgeTrait.class).value().getCanonicalName().replace(".", "::")
+                                    edgeTrait
                             );
                         } else {
                             getMethodBuilderWithoutPort.addStatement(
@@ -295,6 +446,38 @@ public class TraitViewerGenerator extends AbstractProcessor {
                         getMethodBuilder.addStatement("return collected");
                     }
                     methods.add(getMethodBuilder.build());
+                } else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Optional"))) {
+                    if (execMember.getAnnotation(InPort.class) != null) {
+                        var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
+                        getMethodBuilder.addStatement(
+                                "final $T in = systemGraph.incomingEdgesOf(vertex).stream().filter(e -> e.connectsTargetPort($S)).map(systemGraph::getEdgeSource).flatMap(v -> $T.tryView(systemGraph, v).stream())",
+                                ParameterizedTypeName.get(ClassName.get(Stream.class), TypeName.get(declaredType.getTypeArguments().get(0))),
+                                name,
+                                portInputType
+                        );
+//                        getMethodBuilder.addStatement("if (in != null) return in");
+                    }
+                    if (execMember.getAnnotation(OutPort.class) != null) {
+                        // checking for what type of return type it is
+                        var portOutputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
+                        getMethodBuilder.addStatement(
+                                "final $T out = systemGraph.outgoingEdgesOf(vertex).stream().filter(e -> e.connectsSourcePort($S)).map(systemGraph::getEdgeTarget).flatMap(v -> $T.tryView(systemGraph, v).stream())",
+                                ParameterizedTypeName.get(ClassName.get(Stream.class), TypeName.get(declaredType.getTypeArguments().get(0))),
+                                name,
+                                portOutputType
+                        );
+//                        getMethodBuilder.addStatement("if (out != null) return out");
+                    }
+                    if (execMember.getAnnotation(InPort.class) != null && execMember.getAnnotation(OutPort.class) != null) {
+                        getMethodBuilder.addStatement("return $T.concat(in, out).findAny()", Stream.class);
+                    } else if (execMember.getAnnotation(InPort.class) == null && execMember.getAnnotation(OutPort.class) != null) {
+                        getMethodBuilder.addStatement("return out.findAny()");
+                    } else if (execMember.getAnnotation(InPort.class) != null && execMember.getAnnotation(OutPort.class) == null) {
+                        getMethodBuilder.addStatement("return in.findAny()");
+                    } else {
+                        getMethodBuilder.addStatement("return $T.empty()", Optional.class);
+                    }
+                    methods.add(getMethodBuilder.build());
                 } else {
                     if (execMember.getAnnotation(InPort.class) != null) {
                         var portInputType = execMember.getReturnType().toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(execMember.getReturnType().toString() + "Viewer");
@@ -361,24 +544,45 @@ public class TraitViewerGenerator extends AbstractProcessor {
         return null;
     }
 
-    protected TypeSpec makeHierarchy(TypeElement hierarchy, Set<TypeElement> containedTraits, Map<TypeElement, TypeSpec> traitToSpec) {
-        var hierarchyElemName = hierarchy.getSimpleName().toString().startsWith("I") ? hierarchy.getSimpleName().toString().substring(1) : hierarchy.getSimpleName().toString() + "Gen";
-        var hierarchySpecBuilder = TypeSpec.classBuilder(hierarchyElemName).addSuperinterface(hierarchy.asType());
-        for (var trait : containedTraits) {
-            var traitInnerClassBuilder = TypeSpec.classBuilder(trait.getSimpleName().toString()).addModifiers(Modifier.PUBLIC).addSuperinterface(Trait.class);
-            traitInnerClassBuilder.addField(FieldSpec.builder(String.class, "name").initializer("$S", trait.getQualifiedName().toString().replace(".", "::")).addModifiers(Modifier.FINAL, Modifier.STATIC, Modifier.PUBLIC).build());
-            traitInnerClassBuilder.addMethod(MethodSpec.methodBuilder("getName").returns(String.class).addModifiers(Modifier.PUBLIC).addStatement("return name").build());
-            var refinesSpec = MethodSpec.methodBuilder("refines").addParameter(Trait.class, "other").returns(TypeName.BOOLEAN).addModifiers(Modifier.PUBLIC);
-            var switchCodeBlock = CodeBlock.builder().beginControlFlow("switch (other.getName())");
+    protected TypeElement getRegisteredEdge(WithEdgeTrait annotation) {
+        try
+        {
+            annotation.value(); // this should throw
+        }
+        catch( MirroredTypeException mte )
+        {
+            var hierarchy = mte.getTypeMirror();
+            var t = processingEnv.getTypeUtils().asElement(hierarchy);
+            if (t instanceof TypeElement typeElement) {
+                return typeElement;
+            } else {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    protected TypeSpec makeHierarchy(TypeElement hierarchy, Set<TypeElement> containedVertexTraits) {
+        var hierarchyElemName = hierarchyElemToName(hierarchy);
+        var hierarchySpecBuilder = TypeSpec.classBuilder(hierarchyElemName).addModifiers(Modifier.PUBLIC).addSuperinterface(hierarchy.asType());
+        var containedEdgeTraits = containedVertexTraits.stream().flatMap(t ->
+            t.getEnclosedElements().stream()
+        ).filter(t -> t.getKind().equals(ElementKind.METHOD) && t.getAnnotation(WithEdgeTrait.class) != null).map(t -> getRegisteredEdge(t.getAnnotation(WithEdgeTrait.class))).collect(Collectors.toSet());
+        var vertexTraitEnumBuilder = TypeSpec.enumBuilder("VertexTraits").addSuperinterface(VertexTrait.class).addModifiers(Modifier.PUBLIC).addField(String.class, "name")
+                .addMethod(MethodSpec.constructorBuilder().addParameter(String.class, "name").addStatement("this.name = name").build());
+        var vertexTraitEnumRefinesBuilder = CodeBlock.builder().beginControlFlow("switch (this)");
+        for (var trait : containedVertexTraits) {
+            vertexTraitEnumBuilder.addEnumConstant(trait.getSimpleName().toString(), TypeSpec.anonymousClassBuilder("$S", trait.getQualifiedName().toString().replace(".", "::")).build());
+            vertexTraitEnumRefinesBuilder.beginControlFlow("case $L: switch(other.getName())", trait.getSimpleName().toString());
+            var traitInnerClassBuilder = TypeSpec.classBuilder(trait.getSimpleName().toString()).addModifiers(Modifier.PUBLIC);
             for (var refinedTrait : trait.getInterfaces()) {
                 var elem = processingEnv.getTypeUtils().asElement(refinedTrait);
                 if (elem instanceof TypeElement typeElement && !typeElement.getSimpleName().contentEquals("VertexViewer")) {
-                    switchCodeBlock.addStatement("case $S: return true", typeElement.getQualifiedName().toString().replace(".", "::"));
+                    vertexTraitEnumRefinesBuilder.addStatement("case $S: return true", typeElement.getQualifiedName().toString().replace(".", "::"));
                 }
             }
-            switchCodeBlock.addStatement("default: return false");
-            switchCodeBlock.endControlFlow();
-            traitInnerClassBuilder.addMethod(refinesSpec.addCode(switchCodeBlock.build()).build());
+            vertexTraitEnumRefinesBuilder.addStatement("default: return false");
+            vertexTraitEnumRefinesBuilder.endControlFlow();
             // add the viewing method
             var tryViewMethod = MethodSpec.methodBuilder("tryView")
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -404,10 +608,43 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     .returns(TypeName.get(trait.asType()))
                     .build();
             traitInnerClassBuilder.addMethod(enforceFromViewer);
+//            traitInnerClassBuilder.addField(FieldSpec.builder(ClassName.get(trait.getSimpleName().toString()), "instance").addModifiers(Modifier.FINAL, Modifier.PUBLIC, Modifier.STATIC).initializer("new $T()", ClassName.get(trait.getSimpleName().toString())).build());
             hierarchySpecBuilder.addType(traitInnerClassBuilder.build());
         }
+        vertexTraitEnumRefinesBuilder.addStatement("default: return false");
+        vertexTraitEnumRefinesBuilder.endControlFlow();
+        vertexTraitEnumBuilder.addMethod(MethodSpec.methodBuilder("refines").addParameter(Trait.class, "other").addModifiers(Modifier.PUBLIC).returns(TypeName.BOOLEAN).addCode(vertexTraitEnumRefinesBuilder.build()).build());
+        vertexTraitEnumBuilder.addMethod(MethodSpec.methodBuilder("getName").addModifiers(Modifier.PUBLIC).returns(String.class).addStatement("return name").build());
+        // edges now
+        var edgesTraitEnumBuilder = TypeSpec.enumBuilder("EdgeTraits").addSuperinterface(EdgeTrait.class).addModifiers(Modifier.PUBLIC).addField(String.class, "name")
+                .addMethod(MethodSpec.constructorBuilder().addParameter(String.class, "name").addStatement("this.name = name").build());
+        var edgesTraitEnumRefinesBuilder = CodeBlock.builder().beginControlFlow("switch (this)");
+        for (var trait : containedEdgeTraits) {
+            edgesTraitEnumBuilder.addEnumConstant(trait.getSimpleName().toString(), TypeSpec.anonymousClassBuilder("$S", trait.getQualifiedName().toString().replace(".", "::")).build());
+//            var traitInnerClassBuilder = TypeSpec.classBuilder(trait.getSimpleName().toString()).addModifiers(Modifier.PUBLIC);
+//            traitInnerClassBuilder.addField(FieldSpec.builder(String.class, "name").initializer("$S", trait.getQualifiedName().toString().replace(".", "::")).addModifiers(Modifier.FINAL, Modifier.STATIC, Modifier.PUBLIC).build());
+//            traitInnerClassBuilder.addMethod(MethodSpec.methodBuilder("getName").returns(String.class).addModifiers(Modifier.PUBLIC).addStatement("return name").build());
+//            var refinesSpec = MethodSpec.methodBuilder("refines").addParameter(Trait.class, "other").returns(TypeName.BOOLEAN).addModifiers(Modifier.PUBLIC);
+            edgesTraitEnumRefinesBuilder.beginControlFlow("case $L: switch (other.getName())", trait.getSimpleName().toString());
+            for (var refinedTrait : trait.getInterfaces()) {
+                var elem = processingEnv.getTypeUtils().asElement(refinedTrait);
+                if (elem instanceof TypeElement typeElement && !typeElement.getSimpleName().contentEquals("EdgeTrait")) {
+                    edgesTraitEnumRefinesBuilder.addStatement("case $S: return true", typeElement.getQualifiedName().toString().replace(".", "::"));
+                }
+            }
+            edgesTraitEnumRefinesBuilder.addStatement("default: return false");
+            edgesTraitEnumRefinesBuilder.endControlFlow();
+//            hierarchySpecBuilder.addType(traitInnerClassBuilder.build());
+        }
+        edgesTraitEnumRefinesBuilder.addStatement("default: return false");
+        edgesTraitEnumRefinesBuilder.endControlFlow();
+        edgesTraitEnumBuilder.addMethod(MethodSpec.methodBuilder("refines").addParameter(Trait.class, "other").addModifiers(Modifier.PUBLIC).returns(TypeName.BOOLEAN).addCode(edgesTraitEnumRefinesBuilder.build()).build());
+        edgesTraitEnumBuilder.addMethod(MethodSpec.methodBuilder("getName").addModifiers(Modifier.PUBLIC).returns(String.class).addStatement("return name").build());
+        // finishing
         hierarchySpecBuilder.addMethod(MethodSpec.methodBuilder("fromName").addParameter(String.class, "traitName").addModifiers(Modifier.PUBLIC).returns(Trait.class).addStatement("return new $T($L)", OpaqueTrait.class, "traitName").build());
         hierarchySpecBuilder.addMethod(MethodSpec.methodBuilder("traits").addModifiers(Modifier.PUBLIC).returns(ParameterizedTypeName.get(Set.class, Trait.class)).addStatement("return $T.of()", Set.class).build());
+        if (!containedVertexTraits.isEmpty()) hierarchySpecBuilder.addType(vertexTraitEnumBuilder.build());
+        if(!containedEdgeTraits.isEmpty()) hierarchySpecBuilder.addType(edgesTraitEnumBuilder.build());
         return hierarchySpecBuilder.build();
     };
 
@@ -446,6 +683,10 @@ public class TraitViewerGenerator extends AbstractProcessor {
         enforceMethodBuilder.addStatement("return viewer", viewerClassSimpleName);
 
         return enforceMethodBuilder.build();
+    }
+
+    protected String hierarchyElemToName(TypeElement hierarchy) {
+        return hierarchy.getSimpleName().toString().startsWith("I") ? hierarchy.getSimpleName().toString().substring(1) : hierarchy.getSimpleName().toString() + "Gen";
     }
 
 }

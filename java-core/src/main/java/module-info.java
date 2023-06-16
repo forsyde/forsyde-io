@@ -1,4 +1,4 @@
-module forsyde.io.java.core {
+module forsyde.io.core {
     requires java.base;
     requires java.xml;
 
@@ -12,11 +12,11 @@ module forsyde.io.java.core {
 
 //    requires static lombok;
 
-    exports forsyde.io.java.core;
+    exports forsyde.io.core;
     exports forsyde.io.java.adapters;
-    exports forsyde.io.java.drivers;
-    exports forsyde.io.java.migrations;
-    exports forsyde.io.java.validation;
-    exports forsyde.io.java.core.annotations;
+    exports forsyde.io.core.drivers;
+    exports forsyde.io.core.migrations;
+    exports forsyde.io.core.validation;
+    exports forsyde.io.core.annotations;
 
 }

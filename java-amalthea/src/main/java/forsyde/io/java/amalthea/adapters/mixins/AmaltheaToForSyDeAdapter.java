@@ -1,7 +1,7 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
-import forsyde.io.java.core.SystemGraph;
-import forsyde.io.java.core.Vertex;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.app4mc.amalthea.model.Amalthea;
 import org.eclipse.app4mc.amalthea.model.INamed;

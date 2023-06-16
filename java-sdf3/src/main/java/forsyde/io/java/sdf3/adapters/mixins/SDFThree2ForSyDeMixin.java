@@ -1,9 +1,9 @@
 package forsyde.io.java.sdf3.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.SystemGraph;
-import forsyde.io.java.core.Vertex;
+import forsyde.io.core.EdgeTrait;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
 import forsyde.io.java.sdf3.adapters.mixins.elems.Processor;
 import forsyde.io.java.sdf3.adapters.mixins.elems.Sdf3;
 import forsyde.io.java.typed.viewers.impl.InstrumentedExecutable;

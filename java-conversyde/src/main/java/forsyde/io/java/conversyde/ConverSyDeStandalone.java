@@ -1,12 +1,12 @@
 package forsyde.io.java.conversyde;
 
-import forsyde.io.java.core.SystemGraph;
+import forsyde.io.core.SystemGraph;
 import forsyde.io.java.amalthea.drivers.AmaltheaDriver;
 //import forsyde.io.java.drivers.ForSyDeLFDriver;
-import forsyde.io.java.drivers.ModelHandler;
+import forsyde.io.core.drivers.ModelHandler;
 import forsyde.io.java.sdf3.drivers.SDF3Driver;
-import forsyde.io.java.graphviz.drivers.GraphVizDriver;
-import forsyde.io.java.kgt.drivers.KGTDriver;
+import forsyde.io.visual.graphviz.GraphVizDriver;
+import forsyde.io.visual.kgt.drivers.KGTDriver;
 import picocli.CommandLine;
 
 import java.io.File;

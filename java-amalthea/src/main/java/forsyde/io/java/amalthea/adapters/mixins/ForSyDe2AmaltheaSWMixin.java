@@ -1,9 +1,9 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.SystemGraph;
-import forsyde.io.java.core.Vertex;
+import forsyde.io.core.EdgeTrait;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
 import forsyde.io.java.typed.viewers.execution.*;
 import forsyde.io.java.typed.viewers.execution.Task;
 import forsyde.io.java.typed.viewers.impl.*;
