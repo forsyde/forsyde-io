@@ -1,4 +1,4 @@
-package forsyde.io.java.bridge.forsyde.shallow.haskell;
+package forsyde.io.bridge.forsyde.shallow.haskell;
 
 /*
 BSD License
@@ -60,8 +60,8 @@ public abstract class HaskellBaseLexer extends Lexer {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof forsyde.io.java.bridge.forsyde.shallow.haskell.HaskellBaseLexer.Pair)) return false;
-            forsyde.io.java.bridge.forsyde.shallow.haskell.HaskellBaseLexer.Pair pairo = (forsyde.io.java.bridge.forsyde.shallow.haskell.HaskellBaseLexer.Pair) o;
+            if (!(o instanceof HaskellBaseLexer.Pair)) return false;
+            HaskellBaseLexer.Pair pairo = (HaskellBaseLexer.Pair) o;
             return this.left.equals(pairo.first()) &&
                     this.right.equals(pairo.second());
         }
@@ -74,7 +74,7 @@ public abstract class HaskellBaseLexer extends Lexer {
     // A queue where extra tokens are pushed on
     private LinkedList<Token> tokenQueue = new LinkedList<>();
     // The stack that keeps key word and indent after that
-    private Stack<forsyde.io.java.bridge.forsyde.shallow.haskell.HaskellBaseLexer.Pair<String, Integer>> indentStack = new Stack<>();
+    private Stack<HaskellBaseLexer.Pair<String, Integer>> indentStack = new Stack<>();
     // Pointer keeps last indent token
     private Token initialIndentToken = null;
     private String  lastKeyWord = "";
@@ -246,7 +246,7 @@ public abstract class HaskellBaseLexer extends Lexer {
                 && type !=  HaskellLexer.TAB
                 && type != HaskellLexer.OCURLY) {
             prevWasKeyWord = false;
-            indentStack.push(new forsyde.io.java.bridge.forsyde.shallow.haskell.HaskellBaseLexer.Pair<String, Integer>(lastKeyWord, next.getCharPositionInLine()));
+            indentStack.push(new HaskellBaseLexer.Pair<String, Integer>(lastKeyWord, next.getCharPositionInLine()));
             tokenQueue.offer(createToken(HaskellLexer.VOCURLY, "VOCURLY", next));
         }
 
@@ -331,7 +331,7 @@ public abstract class HaskellBaseLexer extends Lexer {
             prevWasKeyWord = false;
 
             if (prevWasEndl) {
-                indentStack.push(new forsyde.io.java.bridge.forsyde.shallow.haskell.HaskellBaseLexer.Pair<String, Integer>(lastKeyWord, indentCount));
+                indentStack.push(new HaskellBaseLexer.Pair<String, Integer>(lastKeyWord, indentCount));
                 prevWasEndl = false;
             }
 

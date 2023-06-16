@@ -1,4 +1,4 @@
-package forsyde.io.java.bridge.forsyde.shallow.haskell;
+package forsyde.io.bridge.forsyde.shallow.haskell;
 
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Vertex;
@@ -60,7 +60,7 @@ public class ForSyDeShallowHaskellVisitor extends HaskellParserBaseVisitor<Syste
 //            System.out.println("This files does not represent any legal model!");
 //            System.exit(1);
         }
-        return systemGraph;
+        return visitTopdecls(systemGraph, ctx.topdecls());
 
     }
 

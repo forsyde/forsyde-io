@@ -1,8 +1,8 @@
-package forsyde.io.java.bridge.forsyde.shallow.drivers;
+package forsyde.io.bridge.forsyde.shallow.drivers;
 
-import forsyde.io.java.bridge.forsyde.shallow.haskell.ForSyDeShallowHaskellVisitor;
-import forsyde.io.java.bridge.forsyde.shallow.haskell.HaskellLexer;
-import forsyde.io.java.bridge.forsyde.shallow.haskell.HaskellParser;
+import forsyde.io.bridge.forsyde.shallow.haskell.ForSyDeShallowHaskellVisitor;
+import forsyde.io.bridge.forsyde.shallow.haskell.HaskellLexer;
+import forsyde.io.bridge.forsyde.shallow.haskell.HaskellParser;
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.drivers.ModelDriver;
 import org.antlr.v4.runtime.CharStream;

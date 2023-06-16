@@ -42,7 +42,7 @@ public class KGTDriver implements ModelDriver, ForSyDe2KGTNode {
     @Override
     public void writeModel(SystemGraph model, OutputStream out) throws Exception {
         final KNode kNode = convert(model);
-        
+
 //        final PicoWriter topWriter = new PicoWriter();
 //        // keep a map of writer to make sure that we can write everything correctly
 //        final Map<KlighDNodeView, PicoWriter> writers = new HashMap<>();
