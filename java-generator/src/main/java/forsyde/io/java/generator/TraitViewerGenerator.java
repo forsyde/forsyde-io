@@ -128,7 +128,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 .build();
         viewerClassBuilder.addMethod(enforceFromViewer);
 
-        for (var portGetter : generatePortGetters(traitInterface)) {
+        for (var portGetter : generatePortGetters(hierarchy, traitInterface)) {
             viewerClassBuilder.addMethod(portGetter);
         }
         for (var portSetter : generatePortSetters(hierarchy, traitInterface)) {
@@ -407,7 +407,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
         return methods;
     }
 
-    protected Set<MethodSpec> generatePortGetters(TypeElement viewerInterface) {
+    protected Set<MethodSpec> generatePortGetters(TypeElement hierarchy, TypeElement viewerInterface) {
         var methods = new HashSet<MethodSpec>();
         var members = processingEnv.getElementUtils().getAllMembers(viewerInterface);
         for (var member : members) {
@@ -420,9 +420,10 @@ public class TraitViewerGenerator extends AbstractProcessor {
                         var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
                             getMethodBuilder.addStatement(
-                                    "collected.addAll(systemGraph.incomingEdgesOf(vertex).stream().filter(e -> e.connectsTargetPort($S)).filter(e -> e.hasTrait($S)).map(systemGraph::getEdgeSource).flatMap(v -> $T.tryView(systemGraph, v).stream()).collect($T.toList()))",
+                                    "collected.addAll(systemGraph.incomingEdgesOf(vertex).stream().filter(e -> e.connectsTargetPort($S)).filter(e -> e.hasTrait($T.EdgeTraits.$L)).map(systemGraph::getEdgeSource).flatMap(v -> $T.tryView(systemGraph, v).stream()).collect($T.toList()))",
                                     name,
-                                    viewerInterface.getAnnotation(WithEdgeTrait.class).value().getCanonicalName().replace(".", "::"),
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName(),
                                     portInputType,
                                     Collectors.class
                             );

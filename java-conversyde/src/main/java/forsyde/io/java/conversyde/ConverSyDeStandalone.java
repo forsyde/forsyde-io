@@ -4,7 +4,7 @@ import forsyde.io.core.SystemGraph;
 import forsyde.io.java.amalthea.drivers.AmaltheaDriver;
 //import forsyde.io.java.drivers.ForSyDeLFDriver;
 import forsyde.io.core.drivers.ModelHandler;
-import forsyde.io.java.sdf3.drivers.SDF3Driver;
+import forsyde.io.bridge.sdf3.drivers.SDF3Driver;
 import forsyde.io.visual.graphviz.GraphVizDriver;
 import forsyde.io.visual.kgt.drivers.KGTDriver;
 import picocli.CommandLine;

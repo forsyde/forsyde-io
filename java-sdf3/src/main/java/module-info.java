@@ -8,7 +8,7 @@ module forsyde.io.java.sdfThree {
 
     requires forsyde.io.core;
 
-    exports forsyde.io.java.sdf3.adapters;
-    exports forsyde.io.java.sdf3.adapters.mixins;
-    exports forsyde.io.java.sdf3.drivers;
+    exports forsyde.io.bridge.sdf3.adapters;
+    exports forsyde.io.bridge.sdf3.adapters.mixins;
+    exports forsyde.io.bridge.sdf3.drivers;
 }
