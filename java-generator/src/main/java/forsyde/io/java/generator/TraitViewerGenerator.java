@@ -137,6 +137,9 @@ public class TraitViewerGenerator extends AbstractProcessor {
         for (var propGetter: generatePropertyGetters(traitInterface)) {
             viewerClassBuilder.addMethod(propGetter);
         }
+        for (var propSetter: generatePropertySetters(traitInterface)) {
+            viewerClassBuilder.addMethod(propSetter);
+        }
         return viewerClassBuilder.build();
     }
 
@@ -516,17 +519,42 @@ public class TraitViewerGenerator extends AbstractProcessor {
 
     protected Set<MethodSpec> generatePropertyGetters(TypeElement viewerInterface) {
         var methods = new HashSet<MethodSpec>();
-        var members = viewerInterface.getEnclosedElements();
-        for (var member : members) {
-            if (member instanceof ExecutableElement execMember && (member.getAnnotation(Property.class) != null)) {
-                var name = execMember.getSimpleName().toString();
-                var getMethodBuilder = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(TypeName.get(execMember.getReturnType()));
-                if (execMember.isDefault()) {
-                    getMethodBuilder.addStatement("if (!getViewedVertex().hasProperty($S)) getViewedVertex().putProperty($S, $T.super.$L())", name, name, viewerInterface, name);
-                }
-                getMethodBuilder.addStatement("return ($T) vertex.getProperty($S)", execMember.getReturnType(), name);
-                methods.add(getMethodBuilder.build());
+        var members = Stream.concat(viewerInterface.getInterfaces().stream().map(t -> processingEnv.getTypeUtils().asElement(t))
+                                .flatMap(e -> e.getEnclosedElements().stream()),
+                        viewerInterface.getEnclosedElements().stream()
+                )
+                .filter(e -> e.getKind().equals(ElementKind.METHOD))
+                .map(e -> (ExecutableElement) e)
+                .filter(e -> e.getAnnotation(Property.class) != null)
+                .collect(Collectors.toSet());
+        for (var execMember : members) {
+            var name = execMember.getSimpleName().toString();
+            var getMethodBuilder = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(TypeName.get(execMember.getReturnType()));
+            if (execMember.isDefault()) {
+                getMethodBuilder.addStatement("if (!getViewedVertex().hasProperty($S)) getViewedVertex().putProperty($S, $T.super.$L())", name, name, viewerInterface, name);
             }
+            getMethodBuilder.addStatement("return ($T) vertex.getProperty($S)", execMember.getReturnType(), name);
+            methods.add(getMethodBuilder.build());
+        }
+        return methods;
+    }
+
+    protected Set<MethodSpec> generatePropertySetters(TypeElement viewerInterface) {
+        var methods = new HashSet<MethodSpec>();
+        var members = Stream.concat(viewerInterface.getInterfaces().stream().map(t -> processingEnv.getTypeUtils().asElement(t))
+                                .flatMap(e -> e.getEnclosedElements().stream()),
+                        viewerInterface.getEnclosedElements().stream()
+                )
+                .filter(e -> e.getKind().equals(ElementKind.METHOD))
+                .map(e -> (ExecutableElement) e)
+                .filter(e -> e.getAnnotation(Property.class) != null)
+                .collect(Collectors.toSet());
+        for (var member : members) {
+            var name = member.getSimpleName().toString();
+            var getMethodBuilder = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC)
+                    .addParameter(TypeName.get(member.getReturnType()), "value");
+            getMethodBuilder.addStatement("vertex.putProperty($S, value)", name);
+            methods.add(getMethodBuilder.build());
         }
         return methods;
     }
@@ -621,8 +649,8 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     .addTypeVariable(TypeVariableName.get("T").withBounds(ClassName.get(VertexViewer.class)))
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .addParameter(TypeVariableName.get("T"), "otherViewer")
-                    .addStatement("return $T.enforce(otherViewer.getViewedSystemGraph() , otherViewer.getViewedVertex())", ClassName.get(processingEnv.getElementUtils().getPackageOf(trait).toString(), trait.getSimpleName() + "Viewer"))
-                    .returns(TypeName.get(trait.asType()))
+                    .addStatement("return $T.enforce(otherViewer.getViewedSystemGraph(), otherViewer.getViewedVertex())", ClassName.get(processingEnv.getElementUtils().getPackageOf(trait).toString(), trait.getSimpleName() + "Viewer"))
+                    .returns(ClassName.get(processingEnv.getElementUtils().getPackageOf(trait).toString(), trait.getSimpleName().toString() + "Viewer"))
                     .build();
             traitInnerClassBuilder.addMethod(enforceFromViewer);
 //            traitInnerClassBuilder.addField(FieldSpec.builder(ClassName.get(trait.getSimpleName().toString()), "instance").addModifiers(Modifier.FINAL, Modifier.PUBLIC, Modifier.STATIC).initializer("new $T()", ClassName.get(trait.getSimpleName().toString())).build());

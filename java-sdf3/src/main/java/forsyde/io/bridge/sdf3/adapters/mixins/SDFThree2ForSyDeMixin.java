@@ -6,12 +6,11 @@ import forsyde.io.core.EdgeTrait;
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Vertex;
 import forsyde.io.bridge.sdf3.adapters.mixins.elems.Sdf3;
-import forsyde.io.java.typed.viewers.impl.InstrumentedExecutable;
-import forsyde.io.java.typed.viewers.impl.TokenizableDataBlock;
-import forsyde.io.java.typed.viewers.moc.sdf.SDFActor;
-import forsyde.io.java.typed.viewers.moc.sdf.SDFChannel;
-import forsyde.io.java.typed.viewers.moc.sdf.SDFChannelViewer;
-import forsyde.io.java.typed.viewers.visualization.Visualizable;
+import forsyde.io.lib.ForSyDeHierarchy;
+import forsyde.io.lib.behavior.sdf.SDFActor;
+import forsyde.io.lib.behavior.sdf.SDFActorViewer;
+import forsyde.io.lib.behavior.sdf.SDFChannelViewer;
+import forsyde.io.lib.visualization.Visualizable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +21,8 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
 
     default void fromActorsToVertexes(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getActor().forEach(a -> {
-            final SDFActor sdfActor = SDFActor.enforce(systemGraph.newVertex(a.getName()));
-            Visualizable.enforce(sdfActor);
+            var sdfActor = SDFActorViewer.enforce(systemGraph, systemGraph.newVertex(a.getName()));
+            ForSyDeHierarchy.Visualizable.enforce(sdfActor);
             final HashMap<String, Integer> consumption = new HashMap<>();
             final HashMap<String, Integer> production = new HashMap<>();
             a.getPort().forEach(port -> {
@@ -33,8 +32,8 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                 else if (port.getType().equals("out"))
                     production.put(port.getName(), port.getRate().intValueExact());
             });
-            sdfActor.setConsumption(consumption);
-            sdfActor.setProduction(production);
+            sdfActor.consumption(consumption);
+            sdfActor.production(production);
             addEquivalence(a, sdfActor.getViewedVertex());
         });
     }
@@ -42,14 +41,14 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
     default void fromChannelstoSignalsAndPrefix(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getChannel().forEach(channel -> {
             // initial channel if no initial token exists
-            final SDFChannel sdfChannel = SDFChannel.enforce(systemGraph.newVertex(channel.getName()));
-            Visualizable.enforce(sdfChannel);
+            var sdfChannel = SDFChannelViewer.enforce(systemGraph, systemGraph.newVertex(channel.getName()));
+            ForSyDeHierarchy.Visualizable.enforce(sdfChannel);
             addEquivalence(channel, sdfChannel.getViewedVertex());
             // additional tokens and prefixes until the prefixing chain is over
             if (channel.getInitialTokens() != null && channel.getInitialTokens().intValueExact() > 0) {
-                sdfChannel.setNumOfInitialTokens(channel.getInitialTokens().intValueExact());
+                sdfChannel.numInitialTokens(channel.getInitialTokens().intValueExact());
             } else {
-                sdfChannel.setNumOfInitialTokens(0);
+                sdfChannel.numInitialTokens(0);
             }
         });
     }
@@ -59,8 +58,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
         sdf3.getApplicationGraph().getSdf().getChannel()
                 .forEach(channel -> {
                     equivalents(channel)
-                            .filter(SDFChannel::conforms)
-                            .map(SDFChannelViewer::new)
+                            .flatMap(v -> ForSyDeHierarchy.SDFChannel.tryView(systemGraph, v).stream())
                             .forEach(sdfChannel -> {
                                 sdf3.getApplicationGraph().getSdf().getActor().stream()
                                         .filter(srcActor -> srcActor.getName().equals(channel.getSrcActor()))
@@ -68,8 +66,9 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                                         .forEach(srcActorV -> {
                                             // find the one without consumer, as it could be expanded with delays beforehand.
                                             // find the equivalent signal to connect. Should not NPE.
-                                            if (sdfChannel.getConsumerPort(systemGraph).isEmpty()) {
-                                                systemGraph.connect(srcActorV, sdfChannel.getViewedVertex(), channel.getSrcPort(), "producer", EdgeTrait.MOC_SDF_SDFDATAEDGE, EdgeTrait.VISUALIZATION_VISUALCONNECTION);
+                                            if (sdfChannel.producer().isEmpty()) {
+                                                sdfChannel.producer(ForSyDeHierarchy.SDFActor.enforce(systemGraph, srcActorV));
+                                                systemGraph.connect(srcActorV, sdfChannel.getViewedVertex(), channel.getSrcPort(), "producer", ForSyDeHierarchy.EdgeTraits.VisualConnection);
                                             }
                                         });
                                 sdf3.getApplicationGraph().getSdf().getActor().stream()
@@ -78,8 +77,9 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                                         .forEach(dstActorV -> {
                                             // find the one without consumer, as it could be expanded with delays beforehand.
                                             // find the equivalent signal to connect. Should not NPE.
-                                            if (sdfChannel.getConsumerPort(systemGraph).isEmpty()) {
-                                                systemGraph.connect(sdfChannel.getViewedVertex(), dstActorV, "consumer", channel.getDstPort(), EdgeTrait.MOC_SDF_SDFDATAEDGE, EdgeTrait.VISUALIZATION_VISUALCONNECTION);
+                                            if (sdfChannel.consumer().isEmpty()) {
+                                                sdfChannel.consumer(ForSyDeHierarchy.SDFActor.enforce(systemGraph, dstActorV));
+                                                systemGraph.connect(sdfChannel.getViewedVertex(), dstActorV, "consumer", channel.getDstPort(), ForSyDeHierarchy.EdgeTraits.VisualConnection);
                                             }
                                         });
                             });
@@ -88,11 +88,13 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
 
     default void fromChannelPropertiesToSDFChannels(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdfProperties().getChannelProperties().forEach(channelProperties -> {
-            systemGraph.queryVertex(channelProperties.getChannel()).flatMap(SDFChannel::safeCast).ifPresent(sdfChannel -> {
-                final TokenizableDataBlock tokenizableDataBlock = TokenizableDataBlock.enforce(sdfChannel);
-                tokenizableDataBlock.setTokenSizeInBits(channelProperties.getTokenSize().stream().mapToLong(t -> t.getSz().longValueExact()).sum());
+            systemGraph.queryVertex(channelProperties.getChannel()).flatMap(v -> ForSyDeHierarchy.SDFChannel.tryView(systemGraph, v)).ifPresent(sdfChannel -> {
                 if (channelProperties.getBufferSize() != null) {
-                    tokenizableDataBlock.setMaxSizeInBits(channelProperties.getBufferSize().getSz().longValueExact());
+                    var tokenizableDataBlock = ForSyDeHierarchy.ArrayBufferLike.enforce(sdfChannel);
+                    var max = channelProperties.getBufferSize().getSz().longValueExact();
+                    tokenizableDataBlock.maxBufferSize(max);
+                    var sz = channelProperties.getTokenSize().stream().mapToLong(t -> t.getSz().longValueExact()).sum();
+                    tokenizableDataBlock.maxElements((int) max / (int) sz);
                 }
             });
         });
@@ -100,18 +102,18 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
 
     default void fromActorPropertiesToSDFActor(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdfProperties().getActorProperties().forEach(actorProperties -> {
-            systemGraph.queryVertex(actorProperties.getActor()).flatMap(SDFActor::safeCast).ifPresent(sdfActor -> {
-                final InstrumentedExecutable instrumentedExecutable = InstrumentedExecutable.enforce(sdfActor);
+            systemGraph.queryVertex(actorProperties.getActor()).flatMap(v -> ForSyDeHierarchy.SDFActor.tryView(systemGraph, v)).ifPresent(sdfActor -> {
+                var instrumentedExecutable = ForSyDeHierarchy.InstrumentedOperation.enforce(sdfActor);
                 final Map<String, Map<String, Long>> ops = actorProperties.getProcessor().stream().collect(Collectors.toMap(
                         Processor::getType,
                         p -> Map.of("all", p.getExecutionTime().getTime().longValueExact())
                 ));
-                instrumentedExecutable.setOperationRequirements(ops);
+                instrumentedExecutable.computationalRequirements(ops);
 
                 final Long stateSize = actorProperties.getProcessor().stream().map(Processor::getMemory)
                         .mapToLong(m -> m != null ? m.getStateSize() != null ? m.getStateSize().getMax() != null ?
                                 m.getStateSize().getMax().longValueExact() : 0L : 0L : 0L).sum();
-                instrumentedExecutable.setSizeInBits(stateSize);
+                instrumentedExecutable.maxSizeInBits(Map.of("all", stateSize));
             });
         });
     }

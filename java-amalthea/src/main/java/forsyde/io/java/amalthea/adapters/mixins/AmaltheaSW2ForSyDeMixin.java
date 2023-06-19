@@ -83,7 +83,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final CommunicatingExecutable communicatingExecutable =
                                 CommunicatingExecutable.enforce(runnableVertex);
                         runnableVertex.addPort(aChannel.getName());
-                        equivalents(channelReceive.getData()).flatMap(v -> TokenizableDataBlock.safeCast(v).stream())
+                        equivalents(channelReceive.getData()).flatMap(v -> ForSyDeHiearchy.ArrayBufferLike.tryView(v).stream())
                                 .forEach(tokenizableDataBlock -> {
                                     final Map<String, Long> reads = communicatingExecutable.getPortDataReadSize();
                                     reads.put(aChannel.getName(), channelReceive.getElements() == 0 ? aChannel.getSize().getNumberBits() : tokenizableDataBlock.getTokenSizeInBits() * channelReceive.getElements());
@@ -103,7 +103,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final CommunicatingExecutable communicatingExecutable =
                                 CommunicatingExecutable.enforce(runnableVertex);
                         runnableVertex.addPort(aChannel.getName());
-                        equivalents(channelSend.getData()).flatMap(v -> TokenizableDataBlock.safeCast(v).stream())
+                        equivalents(channelSend.getData()).flatMap(v -> ForSyDeHiearchy.ArrayBufferLike.tryView(v).stream())
                                 .forEach(tokenizableDataBlock -> {
                                     final Map<String, Long> writes = communicatingExecutable.getPortDataWrittenSize();
                                     writes.put(aChannel.getName(), channelSend.getElements() == 0 ? aChannel.getSize().getNumberBits() : tokenizableDataBlock.getTokenSizeInBits() * channelSend.getElements());

@@ -1,5 +1,5 @@
-plugins {
-    id "java-library"
+repositories {
+    mavenCentral()
 }
 
 project.ext.niceName = "Java KGT Driver"

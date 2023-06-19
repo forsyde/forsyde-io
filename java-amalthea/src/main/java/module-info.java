@@ -6,7 +6,8 @@ module forsyde.io.java.amalthea {
     requires org.eclipse.emf.ecore;
     requires org.eclipse.emf.common;
 
-    requires forsyde.io.core;
+    requires transitive forsyde.io.core;
+    requires transitive forsyde.io.libforsyde;
     requires org.apache.commons.lang3;
 
     exports forsyde.io.java.amalthea.adapters;

@@ -1,4 +1,4 @@
-module forsyde.io.java.libforsyde {
+module forsyde.io.libforsyde {
 
     requires transitive forsyde.io.core;
 

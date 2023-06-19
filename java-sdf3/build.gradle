@@ -17,4 +17,5 @@ dependencies {
     implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
 
     implementation project(':java-core')
+    implementation project(':java-libforsyde')
 }

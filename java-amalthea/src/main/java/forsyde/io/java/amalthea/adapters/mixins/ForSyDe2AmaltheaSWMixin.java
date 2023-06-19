@@ -29,7 +29,7 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
     default void fromVertexToLabelAndChannels(SystemGraph systemGraph, Amalthea amalthea) {
         systemGraph.vertexSet().forEach(vertex -> {
             // decide if it is a label or a channel
-            TokenizableDataBlock.safeCast(vertex).ifPresentOrElse(tokenizableDataBlock -> {
+            ForSyDeHiearchy.ArrayBufferLike.tryView(vertex).ifPresentOrElse(tokenizableDataBlock -> {
                 final org.eclipse.app4mc.amalthea.model.Channel aChannel = AmaltheaFactory.eINSTANCE.createChannel();
                 aChannel.setName(vertex.getIdentifier());
 

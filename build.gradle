@@ -56,13 +56,13 @@ compileTestJava {
   sourceCompatibility = JavaVersion.VERSION_17
 }
 
-sourceSets {
-  test {
-    java {
-      srcDirs += ['java-tests']
-    }
-  }
-}
+//sourceSets {
+//  test {
+//    java {
+//      srcDirs += ['java-tests']
+//    }
+//  }
+//}
 
 // has to be outside so that all projects get the root trait hierarchy
 def stdTraitHierarchyFile = file("std_trait_hierarchy.traitdsl")

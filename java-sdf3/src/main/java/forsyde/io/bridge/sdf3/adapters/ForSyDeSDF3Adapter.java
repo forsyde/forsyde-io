@@ -24,9 +24,9 @@ public class ForSyDeSDF3Adapter implements ModelAdapter<Sdf3> {
         final Sdf3 sdf3 = new Sdf3();
         sdf3.setType("sdf");
         sdf3.setVersion("1.0");
-        forSyDeToSDF3Adapter.convertApplications(sdf3, inputModel);
-        forSyDeToSDF3Adapter.convertArchitecture(sdf3, inputModel);
-        forSyDeToSDF3Adapter.convertParameters(sdf3, inputModel);
+//        forSyDeToSDF3Adapter.convertApplications(sdf3, inputModel);
+//        forSyDeToSDF3Adapter.convertArchitecture(sdf3, inputModel);
+//        forSyDeToSDF3Adapter.convertParameters(sdf3, inputModel);
         return sdf3;
     }
 }

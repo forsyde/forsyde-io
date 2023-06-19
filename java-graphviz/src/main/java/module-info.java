@@ -10,7 +10,7 @@ module forsyde.io.java.graphviz {
     requires de.cau.cs.kieler.klighd.standalone;
 
     requires transitive forsyde.io.core;
-    requires transitive forsyde.io.java.libforsyde;
+    requires transitive forsyde.io.libforsyde;
 
 
     exports forsyde.io.visual.graphviz;
