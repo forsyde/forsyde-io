@@ -39,7 +39,9 @@ dependencies {
   //testImplementation 'junit:junit:4.13.2'
 
   testImplementation project(":java-core")
+  testImplementation project(":java-libforsyde")
   testImplementation project(":java-graphviz")
+  testImplementation project(":java-bridge-forsyde-shallow")
 }
 
 test {
@@ -47,11 +49,11 @@ test {
 }
 
 compileJava {
-  sourceCompatibility = JavaVersion.VERSION_11
+  sourceCompatibility = JavaVersion.VERSION_17
 }
 
 compileTestJava {
-  sourceCompatibility = JavaVersion.VERSION_11
+  sourceCompatibility = JavaVersion.VERSION_17
 }
 
 sourceSets {

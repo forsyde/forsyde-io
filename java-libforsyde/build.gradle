@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':java-core')
+    compileOnly project(":java-generator")
+    annotationProcessor project(':java-generator')
+}

@@ -4,9 +4,15 @@ module forsyde.io.java.graphviz {
 
     requires guru.nidi.graphviz;
     requires org.ainslec.picocog;
+    requires de.cau.cs.kieler.klighd;
+    requires de.cau.cs.kieler.klighd.kgraph;
+    requires de.cau.cs.kieler.klighd.krendering;
+    requires de.cau.cs.kieler.klighd.standalone;
 
-    requires forsyde.io.java.core;
+    requires transitive forsyde.io.core;
+    requires transitive forsyde.io.java.libforsyde;
 
-    exports forsyde.io.java.graphviz.drivers;
-    exports forsyde.io.java.kgt.drivers;
+
+    exports forsyde.io.visual.graphviz;
+    exports forsyde.io.visual.kgt.drivers;
 }

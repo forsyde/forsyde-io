@@ -1,8 +1,8 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.core.Vertex;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
 import forsyde.io.java.typed.viewers.platform.runtime.CyclicExecutiveScheduler;
 import forsyde.io.java.typed.viewers.platform.runtime.FixedPriorityScheduler;
 import forsyde.io.java.typed.viewers.platform.runtime.RoundRobinScheduler;
@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 
 public interface ForSyDe2AmaltheaOSAdapterMixin extends EquivalenceModel2ModelMixin<Vertex, INamed> {
 
-    default void fromVertexesToOSModel(ForSyDeSystemGraph model, Amalthea target) {
+    default void fromVertexesToOSModel(SystemGraph model, Amalthea target) {
         target.setOsModel(AmaltheaFactory.eINSTANCE.createOSModel());
 //        fromVertexesToModules(model, target, cache);
 //        fromVertexesToStructures(model, target, cache);

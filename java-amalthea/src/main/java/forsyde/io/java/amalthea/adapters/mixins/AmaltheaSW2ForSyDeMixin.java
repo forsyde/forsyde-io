@@ -1,10 +1,10 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.core.Vertex;
-import forsyde.io.java.core.VertexTrait;
+import forsyde.io.core.EdgeTrait;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
+import forsyde.io.core.VertexTrait;
 import forsyde.io.java.typed.viewers.execution.*;
 import forsyde.io.java.typed.viewers.execution.PeriodicStimulus;
 import forsyde.io.java.typed.viewers.execution.Task;
@@ -18,23 +18,23 @@ import java.util.stream.Collectors;
 
 public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
-    default void fromSWToForSyDe(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void fromSWToForSyDe(Amalthea amalthea, SystemGraph systemGraph) {
         if (amalthea.getSwModel() != null) {
-            convertActivations(amalthea, forSyDeSystemGraph);
-            fromLabelToVertex(amalthea, forSyDeSystemGraph);
-            fromChannelToVertex(amalthea, forSyDeSystemGraph);
-            fromRunnableToVertex(amalthea, forSyDeSystemGraph);
-            fromTaskToVertex(amalthea, forSyDeSystemGraph);
-            fromSetEventsToEdges(amalthea, forSyDeSystemGraph);
+            convertActivations(amalthea, systemGraph);
+            fromLabelToVertex(amalthea, systemGraph);
+            fromChannelToVertex(amalthea, systemGraph);
+            fromRunnableToVertex(amalthea, systemGraph);
+            fromTaskToVertex(amalthea, systemGraph);
+            fromSetEventsToEdges(amalthea, systemGraph);
             //convertProcessPrototype(amalthea, forSyDeSystemGraph);
         }
     }
 
-    default void fromRunnableToVertex(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void fromRunnableToVertex(Amalthea amalthea, SystemGraph systemGraph) {
         amalthea.getSwModel().getRunnables().forEach(runnable -> {
             final Vertex runnableVertex = new Vertex(runnable.getName(), VertexTrait.VISUALIZATION_VISUALIZABLE);
             final Executable executable = Executable.enforce(runnableVertex);
-            forSyDeSystemGraph.addVertex(runnableVertex);
+            systemGraph.addVertex(runnableVertex);
             if (runnable.getRunnableItems() != null) {
                 runnable.getRunnableItems().forEach(item -> {
                     // if it is read or write
@@ -51,7 +51,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                                 case READ:
                                     final Map<String, Long> reads = communicatingExecutable.getPortDataReadSize();
                                     reads.put(label.getName(), label.getSize() != null ? label.getSize().getNumberBits() : 0);
-                                    forSyDeSystemGraph.connect(
+                                    systemGraph.connect(
                                             dataBlock,
                                             executable,
                                             null,
@@ -64,7 +64,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                                 case WRITE:
                                     final Map<String, Long> writes = communicatingExecutable.getPortDataWrittenSize();
                                     writes.put(label.getName(), label.getSize() != null ? label.getSize().getNumberBits() : 0);
-                                    forSyDeSystemGraph.connect(
+                                    systemGraph.connect(
                                             executable,
                                             dataBlock,
                                             ((LabelAccess) item).getData().getName(),
@@ -88,7 +88,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                                     final Map<String, Long> reads = communicatingExecutable.getPortDataReadSize();
                                     reads.put(aChannel.getName(), channelReceive.getElements() == 0 ? aChannel.getSize().getNumberBits() : tokenizableDataBlock.getTokenSizeInBits() * channelReceive.getElements());
                                     communicatingExecutable.setPortDataReadSize(reads);
-                                    forSyDeSystemGraph.connect(
+                                    systemGraph.connect(
                                             tokenizableDataBlock,
                                             executable,
                                             null,
@@ -108,7 +108,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                                     final Map<String, Long> writes = communicatingExecutable.getPortDataWrittenSize();
                                     writes.put(aChannel.getName(), channelSend.getElements() == 0 ? aChannel.getSize().getNumberBits() : tokenizableDataBlock.getTokenSizeInBits() * channelSend.getElements());
                                     communicatingExecutable.setPortDataWrittenSize(writes);
-                                    forSyDeSystemGraph.connect(
+                                    systemGraph.connect(
                                             executable,
                                             tokenizableDataBlock,
                                             aChannel.getName(),
@@ -167,11 +167,11 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         });
     }
 
-    default void fromTaskToVertex(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void fromTaskToVertex(Amalthea amalthea, SystemGraph systemGraph) {
         amalthea.getSwModel().getTasks().forEach(aTask -> {
             final Vertex taskVertex = new Vertex(aTask.getName());
             final GreyBox taskGreyBox = GreyBox.enforce(taskVertex);
-            forSyDeSystemGraph.addVertex(taskVertex);
+            systemGraph.addVertex(taskVertex);
             addEquivalence(aTask, taskVertex);
             final LoopingTask task = LoopingTask.enforce(taskVertex);
             // since app4mc is basically activity based, all tasks have AND semantics
@@ -184,8 +184,8 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final LoopingTask loopingTask =LoopingTask.enforce(task);
                         final RunnableCall runnableCall = (RunnableCall) item;
                         equivalent(runnableCall.getRunnable()).flatMap(Executable::safeCast).ifPresent(exec -> {
-                            loopingTask.insertLoopSequencePort(forSyDeSystemGraph, exec);
-                            taskGreyBox.insertContainedPort(forSyDeSystemGraph, Visualizable.enforce(exec));
+                            loopingTask.insertLoopSequencePort(systemGraph, exec);
+                            taskGreyBox.insertContainedPort(systemGraph, Visualizable.enforce(exec));
 //                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "callSequence", EdgeTrait.EXECUTION_EXECUTIONEDGE);
 //                            forSyDeSystemGraph.connect(taskVertex, runnableVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                         });
@@ -193,10 +193,10 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                         final WaitEvent waitEvent = (WaitEvent) item;
                         if (waitEvent.getEventMask() != null && waitEvent.getEventMask().getEvents().size() > 0) {
                             final String eventNames = waitEvent.getEventMask().getEvents().stream().map(OsEvent::getName).collect(Collectors.joining("_"));
-                            final Downsample downsample = Downsample.enforce(forSyDeSystemGraph.newVertex(task.getIdentifier() + "_Wait_" + eventNames));
+                            final Downsample downsample = Downsample.enforce(systemGraph.newVertex(task.getIdentifier() + "_Wait_" + eventNames));
                             addEquivalence(aTask, downsample.getViewedVertex());
                             downsample.setHasORSemantics(waitEvent.getMaskType() == WaitEventType.OR);
-                            forSyDeSystemGraph.connect(downsample, task, "activated", "activators", EdgeTrait.EXECUTION_EVENTEDGE);
+                            systemGraph.connect(downsample, task, "activated", "activators", EdgeTrait.EXECUTION_EVENTEDGE);
                             if (waitEvent.getCounter() != null) {
                                 downsample.setInitialPredecessorSkips(waitEvent.getCounter().getOffset());
                                 downsample.setRepetitivePredecessorSkips(waitEvent.getCounter().getPrescaler());
@@ -229,8 +229,8 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
             if (aTask.getStimuli() != null) {
                 aTask.getStimuli().forEach(stimulus -> {
                     equivalents(stimulus).flatMap(v -> PeriodicStimulus.safeCast(v).stream()).forEach(periodicStimulus -> {
-                        forSyDeSystemGraph.connect(periodicStimulus, task, "activated", "activators", EdgeTrait.EXECUTION_EVENTEDGE);
-                        forSyDeSystemGraph.connect(periodicStimulus, task, "activated", "activators", EdgeTrait.VISUALIZATION_VISUALCONNECTION);
+                        systemGraph.connect(periodicStimulus, task, "activated", "activators", EdgeTrait.EXECUTION_EVENTEDGE);
+                        systemGraph.connect(periodicStimulus, task, "activated", "activators", EdgeTrait.VISUALIZATION_VISUALCONNECTION);
                     });
 //                    if (stimulus instanceof PeriodicStimulus) {
 //                        taskVertex.addTraits(VertexTrait.EXECUTION_PERIODICTASK);
@@ -266,7 +266,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         });
     }
 
-    default void fromSetEventsToEdges(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void fromSetEventsToEdges(Amalthea amalthea, SystemGraph systemGraph) {
         amalthea.getSwModel().getTasks().forEach(aTask -> {
             if (aTask.getActivityGraph() != null) {
                 equivalents(aTask).flatMap(v -> Task.safeCast(v).stream()).forEach(task -> {
@@ -276,7 +276,7 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                             final SetEvent setEvent = (SetEvent) item;
                             if (setEvent.getEventMask() != null && setEvent.getProcess() != null && setEvent.getEventMask().getEvents().size() > 0) {
                                 equivalents(setEvent.getProcess()).flatMap(v -> Downsample.safeCast(v).stream()).forEach(downsample -> {
-                                    forSyDeSystemGraph.connect(task, downsample, "activated", "activators", EdgeTrait.EXECUTION_EVENTEDGE);
+                                    systemGraph.connect(task, downsample, "activated", "activators", EdgeTrait.EXECUTION_EVENTEDGE);
 //                                    SimpleReactiveStimulus.safeCast(vertex).ifPresent(simpleReactiveStimulus -> {
 //                                        simpleReactiveStimulus.setPredecessorPort(forSyDeSystemGraph, task);
 //                                    });
@@ -294,11 +294,11 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         });
     }
 
-    default void fromLabelToVertex(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void fromLabelToVertex(Amalthea amalthea, SystemGraph systemGraph) {
         amalthea.getSwModel().getLabels().forEach(label -> {
             final Vertex channelVertex = new Vertex(label.getName(), VertexTrait.VISUALIZATION_VISUALIZABLE);
             final DataBlock dataBlock = DataBlock.enforce(channelVertex);
-            forSyDeSystemGraph.addVertex(channelVertex);
+            systemGraph.addVertex(channelVertex);
             // if the number of bits is not gigantic, it should be OK.
             if (label.getSize() != null) {
                 dataBlock.setMaxSizeInBits(label.getSize().getNumberBits());
@@ -307,10 +307,10 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         });
     }
 
-    default void fromChannelToVertex(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void fromChannelToVertex(Amalthea amalthea, SystemGraph systemGraph) {
         amalthea.getSwModel().getChannels().forEach(aChannel -> {
             final Vertex channelVertex = new Vertex(aChannel.getName(), VertexTrait.VISUALIZATION_VISUALIZABLE);
-            forSyDeSystemGraph.addVertex(channelVertex);
+            systemGraph.addVertex(channelVertex);
             final TokenizableDataBlock tokenizableDataBlock = TokenizableDataBlock.enforce(channelVertex);
             // if the number of bits is not gigantic, it should be OK.
             if (aChannel.getSize() != null) {
@@ -324,12 +324,12 @@ public interface AmaltheaSW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         });
     }
 
-    default void convertActivations(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void convertActivations(Amalthea amalthea, SystemGraph systemGraph) {
         amalthea.getSwModel().getActivations().forEach(activation -> {
             final Vertex timerVertex = new Vertex(activation.getName(), VertexTrait.EXECUTION_PERIODICSTIMULUS);
             final forsyde.io.java.typed.viewers.execution.PeriodicStimulus periodicStimulusVertex =
                     forsyde.io.java.typed.viewers.execution.PeriodicStimulus.enforce(timerVertex);
-            forSyDeSystemGraph.addVertex(timerVertex);
+            systemGraph.addVertex(timerVertex);
             if (activation instanceof PeriodicActivation) {
                 final PeriodicActivation periodicActivation = (PeriodicActivation) activation;
                 if (periodicActivation.getRecurrence() != null) {

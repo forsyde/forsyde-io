@@ -1,7 +1,7 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
-import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.core.Vertex;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.app4mc.amalthea.model.Amalthea;
 import org.eclipse.app4mc.amalthea.model.INamed;
@@ -15,7 +15,7 @@ public class AmaltheaToForSyDeAdapter implements AmaltheaOS2ForSyDeMixin, Amalth
 
     protected Set<Pair<INamed, Vertex>> equivalences = new HashSet<>();
 
-    public void convert(Amalthea input, ForSyDeSystemGraph output) {
+    public void convert(Amalthea input, SystemGraph output) {
         fromStimulusToForSyDe(input, output);
         fromHWtoForSyDe(input, output);
         fromSWToForSyDe(input, output);

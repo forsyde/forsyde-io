@@ -1,15 +1,15 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.core.Vertex;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
 import forsyde.io.java.typed.viewers.execution.ConstrainedTask;
 import forsyde.io.java.typed.viewers.execution.Task;
 import org.eclipse.app4mc.amalthea.model.*;
 
 public interface AmaltheaConstraints2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
-    default void fromConstraintsToForSyDe(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void fromConstraintsToForSyDe(Amalthea amalthea, SystemGraph systemGraph) {
         if (amalthea.getConstraintsModel() != null) {
             amalthea.getConstraintsModel().getRequirements().forEach(req -> {
                 if (req instanceof ProcessRequirement) {

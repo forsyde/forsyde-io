@@ -1,5 +1,9 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
+import forsyde.io.core.EdgeInfo;
+import forsyde.io.core.EdgeTrait;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
 import forsyde.io.java.typed.viewers.platform.*;
@@ -12,14 +16,14 @@ import java.util.stream.Collectors;
 
 public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMixin<Vertex, INamed> {
 
-    default void fromVertexesToHWModel(ForSyDeSystemGraph model, Amalthea target) {
+    default void fromVertexesToHWModel(SystemGraph model, Amalthea target) {
         target.setHwModel(AmaltheaFactory.eINSTANCE.createHWModel());
         fromVertexesToModules(model, target);
         fromVertexesToStructures(model, target);
         fromEdgesToConnections(model, target);
     }
 
-    default void fromVertexesToModules(ForSyDeSystemGraph model, Amalthea target) {
+    default void fromVertexesToModules(SystemGraph model, Amalthea target) {
         model.vertexSet()
             .stream().filter(DigitalModule::conforms)
             .flatMap(v -> DigitalModule.safeCast(v).stream())
@@ -123,7 +127,7 @@ public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMi
 
     }
 
-    default void fromVertexesToStructures(ForSyDeSystemGraph model, Amalthea target) {
+    default void fromVertexesToStructures(SystemGraph model, Amalthea target) {
         final Set<AbstractStructure> platforms = model.vertexSet()
                 .stream().filter(AbstractStructure::conforms)
                 .flatMap(v -> AbstractStructure.safeCast(v).stream())
@@ -183,7 +187,7 @@ public interface ForSyDe2AmaltheaHWAdapterMixin extends EquivalenceModel2ModelMi
         }
     }
 
-    default void fromEdgesToConnections(ForSyDeSystemGraph model, Amalthea targetModel) {
+    default void fromEdgesToConnections(SystemGraph model, Amalthea targetModel) {
         final HWModel hwModel = targetModel.getHwModel();
         for (EdgeInfo e: model.edgeSet()) {
             final Vertex sourceV = model.getEdgeSource(e);

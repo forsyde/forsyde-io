@@ -1,6 +1,6 @@
 plugins {
     id 'antlr' // required for java core
-    id 'forsyde-io-java-generator'
+//    id 'forsyde-io-java-generator'
 //    id "io.freefair.lombok" version "6.5.0.3"
 }
 
@@ -13,24 +13,24 @@ task clearForSyDeModel(type: Delete) {
     delete 'src-gen/main/java/forsyde/io/java/core', 'src-gen/main/java/forsyde/io/java/typed/viewers'
 }
 */
-
-tasks.register("cleanForSyDeModel", Delete) {
-    delete 'src-gen/main/java/forsyde/io/java'
-}
-
-tasks.clean.dependsOn(tasks.cleanForSyDeModel)
+//
+//tasks.register("cleanForSyDeModel", Delete) {
+//    delete 'src-gen/main/java/forsyde/io/java'
+//}
+//
+//tasks.clean.dependsOn(tasks.cleanForSyDeModel)
 
 //tasks.register('generateForSyDeModel', GenerateForSyDeModelTask) {
 //    inputModelDSL = project.ext.stdTraitHierarchyFile
 //}
 
-generateForSyDeModel {
-    inputModelDSL = project.ext.stdTraitHierarchyFile
-}
-
-getAllNamespaces {
-    inputModelDSL = project.ext.stdTraitHierarchyFile
-}
+//generateForSyDeModel {
+//    inputModelDSL = project.ext.stdTraitHierarchyFile
+//}
+//
+//getAllNamespaces {
+//    inputModelDSL = project.ext.stdTraitHierarchyFile
+//}
 
 
 //tasks.generateForSyDeModel.dependsOn clearForSyDeModel

@@ -1,9 +1,9 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.core.Vertex;
+import forsyde.io.core.EdgeTrait;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
 import forsyde.io.java.typed.viewers.execution.*;
 import forsyde.io.java.typed.viewers.execution.Task;
 import forsyde.io.java.typed.viewers.impl.*;
@@ -17,17 +17,17 @@ import java.util.stream.Collectors;
 
 public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Vertex, INamed> {
 
-    default void fromForSyDeToSW(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
+    default void fromForSyDeToSW(SystemGraph systemGraph, Amalthea amalthea) {
         amalthea.setSwModel(AmaltheaFactory.eINSTANCE.createSWModel());
-        fromVertexToLabelAndChannels(forSyDeSystemGraph, amalthea);
-        fromVertexToRunnables(forSyDeSystemGraph, amalthea);
-        fromVertexToTasks(forSyDeSystemGraph, amalthea);
-        fromEdgesToReadsAndWrites(forSyDeSystemGraph, amalthea);
-        fromVertexAndEdgesToOsEvents(forSyDeSystemGraph, amalthea);
+        fromVertexToLabelAndChannels(systemGraph, amalthea);
+        fromVertexToRunnables(systemGraph, amalthea);
+        fromVertexToTasks(systemGraph, amalthea);
+        fromEdgesToReadsAndWrites(systemGraph, amalthea);
+        fromVertexAndEdgesToOsEvents(systemGraph, amalthea);
     }
 
-    default void fromVertexToLabelAndChannels(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
-        forSyDeSystemGraph.vertexSet().forEach(vertex -> {
+    default void fromVertexToLabelAndChannels(SystemGraph systemGraph, Amalthea amalthea) {
+        systemGraph.vertexSet().forEach(vertex -> {
             // decide if it is a label or a channel
             TokenizableDataBlock.safeCast(vertex).ifPresentOrElse(tokenizableDataBlock -> {
                 final org.eclipse.app4mc.amalthea.model.Channel aChannel = AmaltheaFactory.eINSTANCE.createChannel();
@@ -58,36 +58,36 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
         });
     }
 
-    default void fromVertexAndEdgesToOsEvents(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
+    default void fromVertexAndEdgesToOsEvents(SystemGraph systemGraph, Amalthea amalthea) {
         // create a completed event for every task
-        forSyDeSystemGraph.vertexSet().stream().flatMap(v -> Task.safeCast(v).stream()).forEach(task -> {
+        systemGraph.vertexSet().stream().flatMap(v -> Task.safeCast(v).stream()).forEach(task -> {
             final OsEvent osEvent = AmaltheaFactory.eINSTANCE.createOsEvent();
             osEvent.setName(task.getIdentifier() + "Completed");
             addEquivalence(task.getViewedVertex(), osEvent);
         });
         // now gatter all incoming triggers
-        forSyDeSystemGraph.vertexSet().stream().flatMap(v -> Task.safeCast(v).stream()).forEach(task -> {
+        systemGraph.vertexSet().stream().flatMap(v -> Task.safeCast(v).stream()).forEach(task -> {
             equivalents(task.getViewedVertex()).filter(v -> v instanceof org.eclipse.app4mc.amalthea.model.Task)
                     .map(v -> (org.eclipse.app4mc.amalthea.model.Task) v).forEach(aTask -> {
                         if (!task.getHasORSemantics()) {
                             // now gatter all incoming direct triggers
-                            final List<OsEvent> incomingTaskCompleteEvents = forSyDeSystemGraph.incomingEdgesOf(task.getViewedVertex()).stream()
+                            final List<OsEvent> incomingTaskCompleteEvents = systemGraph.incomingEdgesOf(task.getViewedVertex()).stream()
                                     .filter(e -> e.getSourcePort().equals("activated") && e.getTargetPort().equals("activators"))
-                                    .map(e -> equivalents(forSyDeSystemGraph.getEdgeSource(e)))
+                                    .map(e -> equivalents(systemGraph.getEdgeSource(e)))
                                     .filter(o -> o instanceof OsEvent)
                                     .map(o -> (OsEvent) o)
                                     .collect(Collectors.toList());
                             // all incoming triggers through a downsample
-                            final List<Downsample> incomingDownsample = forSyDeSystemGraph.incomingEdgesOf(task.getViewedVertex()).stream()
+                            final List<Downsample> incomingDownsample = systemGraph.incomingEdgesOf(task.getViewedVertex()).stream()
                                     .filter(e -> e.getSourcePort().equals("activated") && e.getTargetPort().equals("activators"))
-                                    .map(forSyDeSystemGraph::getEdgeSource)
+                                    .map(systemGraph::getEdgeSource)
                                     .flatMap(v -> Downsample.safeCast(v).stream())
                                     .collect(Collectors.toList());
                             final Map<Downsample, List<OsEvent>> downsampledOsEvents = incomingDownsample.stream().collect(Collectors.toMap(
                                     d -> d,
-                                    d -> forSyDeSystemGraph.incomingEdgesOf(d.getViewedVertex()).stream()
+                                    d -> systemGraph.incomingEdgesOf(d.getViewedVertex()).stream()
                                             .filter(e -> e.getSourcePort().equals("activated") && e.getTargetPort().equals("activators"))
-                                            .map(e -> equivalents(forSyDeSystemGraph.getEdgeSource(e)))
+                                            .map(e -> equivalents(systemGraph.getEdgeSource(e)))
                                             .filter(o -> o instanceof OsEvent)
                                             .map(o -> (OsEvent) o)
                                             .collect(Collectors.toList())
@@ -129,15 +129,15 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
                                     .filter(o -> o instanceof OsEvent)
                                     .map(o -> (OsEvent) o)
                                     .findFirst().get();
-                            final List<Upsample> outgoingUpsample = forSyDeSystemGraph.outgoingEdgesOf(task.getViewedVertex()).stream()
+                            final List<Upsample> outgoingUpsample = systemGraph.outgoingEdgesOf(task.getViewedVertex()).stream()
                                     .filter(e -> e.getSourcePort().equals("activated") && e.getTargetPort().equals("activators"))
-                                    .map(forSyDeSystemGraph::getEdgeTarget)
+                                    .map(systemGraph::getEdgeTarget)
                                     .flatMap(v -> Upsample.safeCast(v).stream())
                                     .collect(Collectors.toList());
                             // now gatter all outgoing direct triggers
-                            forSyDeSystemGraph.outgoingEdgesOf(task.getViewedVertex()).stream()
+                            systemGraph.outgoingEdgesOf(task.getViewedVertex()).stream()
                                     .filter(e -> e.getSourcePort().equals("activated") && e.getTargetPort().equals("activators"))
-                                    .map(e -> equivalents(forSyDeSystemGraph.getEdgeTarget(e)))
+                                    .map(e -> equivalents(systemGraph.getEdgeTarget(e)))
                                     .filter(v -> v instanceof org.eclipse.app4mc.amalthea.model.Task)
                                     .map(v -> (org.eclipse.app4mc.amalthea.model.Task) v)
                                     .forEach(dstTask -> {
@@ -150,9 +150,9 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
                                     });
                             // finally with upsampling
                             outgoingUpsample.forEach(upsample -> {
-                                forSyDeSystemGraph.outgoingEdgesOf(upsample.getViewedVertex()).stream()
+                                systemGraph.outgoingEdgesOf(upsample.getViewedVertex()).stream()
                                         .filter(e -> e.getSourcePort().equals("activated") && e.getTargetPort().equals("activators"))
-                                        .map(e -> equivalents(forSyDeSystemGraph.getEdgeTarget(e)))
+                                        .map(e -> equivalents(systemGraph.getEdgeTarget(e)))
                                         .filter(v -> v instanceof org.eclipse.app4mc.amalthea.model.Task)
                                         .map(v -> (org.eclipse.app4mc.amalthea.model.Task) v)
                                         .forEach(dstTask -> {
@@ -236,8 +236,8 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
         });*/
     }
 
-    default void fromVertexToRunnables(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
-        forSyDeSystemGraph.vertexSet().forEach(vertex -> {
+    default void fromVertexToRunnables(SystemGraph systemGraph, Amalthea amalthea) {
+        systemGraph.vertexSet().forEach(vertex -> {
             Executable.safeCast(vertex).ifPresent(executable -> {
                 final Runnable runnable = AmaltheaFactory.eINSTANCE.createRunnable();
                 runnable.setName(executable.getIdentifier());
@@ -263,14 +263,14 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
         });
     }
 
-    default void fromVertexToTasks(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
-        forSyDeSystemGraph.vertexSet().forEach(vertex -> {
+    default void fromVertexToTasks(SystemGraph systemGraph, Amalthea amalthea) {
+        systemGraph.vertexSet().forEach(vertex -> {
             LoopingTask.safeCast(vertex).ifPresent(task -> {
                 final org.eclipse.app4mc.amalthea.model.Task aTask = AmaltheaFactory.eINSTANCE.createTask();
                 aTask.setName(task.getIdentifier());
 
                 // create connections to the other runnables
-                task.getLoopSequencePort(forSyDeSystemGraph).forEach(executable -> {
+                task.getLoopSequencePort(systemGraph).forEach(executable -> {
                     equivalents(executable.getViewedVertex()).filter(e -> e instanceof Runnable).map(e -> (Runnable) e).forEach(runnable -> {
                         final RunnableCall runnableCall = AmaltheaFactory.eINSTANCE.createRunnableCall();
                         runnableCall.setRunnable(runnable);
@@ -302,10 +302,10 @@ public interface ForSyDe2AmaltheaSWMixin extends EquivalenceModel2ModelMixin<Ver
         });
     }
 
-    default void fromEdgesToReadsAndWrites(ForSyDeSystemGraph forSyDeSystemGraph, Amalthea amalthea) {
-        forSyDeSystemGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.IMPL_DATAMOVEMENT)).forEach(e -> {
-            final Vertex src = forSyDeSystemGraph.getEdgeSource(e);
-            final Vertex dst = forSyDeSystemGraph.getEdgeTarget(e);
+    default void fromEdgesToReadsAndWrites(SystemGraph systemGraph, Amalthea amalthea) {
+        systemGraph.edgeSet().stream().filter(e -> e.hasTrait(EdgeTrait.IMPL_DATAMOVEMENT)).forEach(e -> {
+            final Vertex src = systemGraph.getEdgeSource(e);
+            final Vertex dst = systemGraph.getEdgeTarget(e);
             // first from label to runnable
             equivalents(src).filter(v -> v instanceof Label).map(l -> (Label) l).forEach(label -> {
                 equivalents(dst).filter(v -> v instanceof Runnable).map(r -> (Runnable) r).forEach(runnable -> {

@@ -1,5 +1,6 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
+import forsyde.io.core.*;
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.java.core.*;
 import forsyde.io.java.typed.viewers.decision.Allocated;
@@ -14,13 +15,13 @@ import java.util.stream.Collectors;
 
 public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
-    default void fromHWtoForSyDe(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void fromHWtoForSyDe(Amalthea amalthea, SystemGraph systemGraph) {
         if (amalthea.getHwModel() != null) {
             amalthea.getHwModel().getStructures().forEach(hwStructure -> {
-                fromStructureToVertex(forSyDeSystemGraph, hwStructure);
-                fromStructureToEdges(forSyDeSystemGraph, hwStructure);
+                fromStructureToVertex(systemGraph, hwStructure);
+                fromStructureToEdges(systemGraph, hwStructure);
             });
-            connectModulesBetweenContainers(amalthea, forSyDeSystemGraph);
+            connectModulesBetweenContainers(amalthea, systemGraph);
         }
     }
 
@@ -43,10 +44,10 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         profPu.setModalInstructionsPerCycle(provisions);
     }
 
-    default void fromCUIntoVertex(ForSyDeSystemGraph forSyDeSystemGraph, ConnectionHandler connectionHandler, Vertex connectionHandlerVertex) {
+    default void fromCUIntoVertex(SystemGraph systemGraph, ConnectionHandler connectionHandler, Vertex connectionHandlerVertex) {
         switch (connectionHandler.getDefinition().getPolicy()) {
             case ROUND_ROBIN:
-                final RoundRobinScheduler roundRobinScheduler = RoundRobinScheduler.enforce(forSyDeSystemGraph.newVertex(connectionHandlerVertex.getIdentifier() + "Scheduler"));
+                final RoundRobinScheduler roundRobinScheduler = RoundRobinScheduler.enforce(systemGraph.newVertex(connectionHandlerVertex.getIdentifier() + "Scheduler"));
                 final RoundRobinCommunicationModule roundRobinCommunicationModule = RoundRobinCommunicationModule.enforce(connectionHandlerVertex);
                 final List<HwConnection> outgoingConnections = connectionHandler.getPorts().stream().flatMap(p -> p.getConnections().stream())
                         .filter(p -> p.getPort1().getNamedContainer().equals(connectionHandler)).collect(Collectors.toList());
@@ -58,8 +59,8 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
                 roundRobinCommunicationModule.setAllocatedWeights(allocation);
                 roundRobinCommunicationModule.setTotalWeights(allocation.size());
                 addEquivalence(connectionHandler, roundRobinScheduler.getViewedVertex());
-                Allocated.enforce(roundRobinScheduler).insertAllocationHostsPort(forSyDeSystemGraph, roundRobinCommunicationModule);
-                GreyBox.enforce(connectionHandlerVertex).insertContainedPort(forSyDeSystemGraph, Visualizable.enforce(roundRobinScheduler));
+                Allocated.enforce(roundRobinScheduler).insertAllocationHostsPort(systemGraph, roundRobinCommunicationModule);
+                GreyBox.enforce(connectionHandlerVertex).insertContainedPort(systemGraph, Visualizable.enforce(roundRobinScheduler));
 //                forSyDeSystemGraph.connect(v, rrVertex, "contained", EdgeTrait.VISUALIZATION_VISUALCONTAINMENT);
                 break;
             default:
@@ -67,12 +68,12 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         }
     }
 
-    default void fromStructureToVertex(ForSyDeSystemGraph model, HwStructure structure) {
+    default void fromStructureToVertex(SystemGraph model, HwStructure structure) {
         fromStructureToVertex(model, structure, "");
     }
 
-    default void fromStructureToVertex(ForSyDeSystemGraph model, HwStructure structure,
-                                                      String prefix) {
+    default void fromStructureToVertex(SystemGraph model, HwStructure structure,
+                                       String prefix) {
         final AbstractStructure abstractStructure = AbstractStructure.enforce(model.newVertex(prefix + structure.getName()));
 //        final Vertex structureVertex = new Vertex(prefix + structure.getName(), VertexTrait.PLATFORM_ABSTRACTSTRUCTURE);
         final GreyBox structureGreyBox = GreyBox.enforce(abstractStructure);
@@ -130,7 +131,7 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         }
     }
 
-    default void fromStructureToEdges(ForSyDeSystemGraph model, HwStructure structure) {
+    default void fromStructureToEdges(SystemGraph model, HwStructure structure) {
         for (HwStructure childStructure : structure.getStructures()) {
             fromStructureToEdges(model, childStructure);
         }
@@ -175,21 +176,21 @@ public interface AmaltheaHW2ForSyDeMixin extends EquivalenceModel2ModelMixin<INa
         }
     }
 
-    default void connectModulesBetweenContainers(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
-        forSyDeSystemGraph.vertexSet().stream()
+    default void connectModulesBetweenContainers(Amalthea amalthea, SystemGraph systemGraph) {
+        systemGraph.vertexSet().stream()
         .filter(AbstractStructure::conforms)
         .map(v -> AbstractStructure.safeCast(v).get())
         .forEach(abstractStructure -> {
-            for (EdgeInfo inInfo : forSyDeSystemGraph.incomingEdgesOf(abstractStructure.getViewedVertex())) {
-                final Vertex inVertex = forSyDeSystemGraph.getEdgeSource(inInfo);
-                for (EdgeInfo outInfo : forSyDeSystemGraph.outgoingEdgesOf(abstractStructure.getViewedVertex())) {
-                    final Vertex outVertex = forSyDeSystemGraph.getEdgeTarget(outInfo);
+            for (EdgeInfo inInfo : systemGraph.incomingEdgesOf(abstractStructure.getViewedVertex())) {
+                final Vertex inVertex = systemGraph.getEdgeSource(inInfo);
+                for (EdgeInfo outInfo : systemGraph.outgoingEdgesOf(abstractStructure.getViewedVertex())) {
+                    final Vertex outVertex = systemGraph.getEdgeTarget(outInfo);
                     if (inInfo.getTargetPort().equals(outInfo.getSourcePort()) && !AbstractStructure.conforms(inVertex)
                             && !AbstractStructure.conforms(outVertex)) {
                         final EdgeInfo edgeInfo = new EdgeInfo(inVertex.identifier, outVertex.identifier, inInfo.getTargetPort(), outInfo.getSourcePort());
                         edgeInfo.edgeTraits.addAll(inInfo.edgeTraits);
                         edgeInfo.edgeTraits.addAll(outInfo.edgeTraits);
-                        forSyDeSystemGraph.addEdge(inVertex, outVertex, edgeInfo);
+                        systemGraph.addEdge(inVertex, outVertex, edgeInfo);
                     }
                 }
             }

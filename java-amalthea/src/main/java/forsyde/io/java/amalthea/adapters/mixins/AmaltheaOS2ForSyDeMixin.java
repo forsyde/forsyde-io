@@ -1,10 +1,10 @@
 package forsyde.io.java.amalthea.adapters.mixins;
 
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.java.core.EdgeTrait;
-import forsyde.io.java.core.ForSyDeSystemGraph;
-import forsyde.io.java.core.Vertex;
-import forsyde.io.java.core.VertexTrait;
+import forsyde.io.core.EdgeTrait;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Vertex;
+import forsyde.io.core.VertexTrait;
 import forsyde.io.java.typed.viewers.decision.Allocated;
 import forsyde.io.java.typed.viewers.platform.GenericProcessingModule;
 import forsyde.io.java.typed.viewers.platform.runtime.FixedPriorityScheduler;
@@ -17,13 +17,13 @@ import java.util.Set;
 
 public interface AmaltheaOS2ForSyDeMixin extends EquivalenceModel2ModelMixin<INamed, Vertex> {
 
-    default void fromOSToForSyDe(Amalthea amalthea, ForSyDeSystemGraph forSyDeSystemGraph) {
+    default void fromOSToForSyDe(Amalthea amalthea, SystemGraph systemGraph) {
         if (amalthea.getOsModel() != null) {
-            fromOSModelToBinding(amalthea, forSyDeSystemGraph);
+            fromOSModelToBinding(amalthea, systemGraph);
         }
     }
 
-    default void fromOSModelToBinding(Amalthea amalthea, ForSyDeSystemGraph model) {
+    default void fromOSModelToBinding(Amalthea amalthea, SystemGraph model) {
         for (OperatingSystem os: amalthea.getOsModel().getOperatingSystems()) {
             for(TaskScheduler taskScheduler : os.getTaskSchedulers()) {
                 final Vertex runtimeVertex = new Vertex(os.getName() + "." + taskScheduler.getName(), VertexTrait.PLATFORM_PLATFORMELEM);

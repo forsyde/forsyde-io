@@ -6,9 +6,9 @@ module forsyde.io.java.sdfThree {
     requires org.glassfish.jaxb.runtime;
     requires org.apache.commons.lang3;
 
-    requires forsyde.io.java.core;
+    requires forsyde.io.core;
 
-    exports forsyde.io.java.sdf3.adapters;
-    exports forsyde.io.java.sdf3.adapters.mixins;
-    exports forsyde.io.java.sdf3.drivers;
+    exports forsyde.io.bridge.sdf3.adapters;
+    exports forsyde.io.bridge.sdf3.adapters.mixins;
+    exports forsyde.io.bridge.sdf3.drivers;
 }

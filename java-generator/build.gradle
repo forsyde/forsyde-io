@@ -1,29 +1,21 @@
 plugins {
-  id 'java'
-  id 'idea'
-  id 'eclipse'
   id 'antlr'
-  id 'java-gradle-plugin'
+//  id 'java-gradle-plugin'
 }
-
-repositories {
-  mavenCentral()
-}
-
-sourceCompatibility = 1.11
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
   // The production code uses the SLF4J logging API at compile time
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
-  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.3'
-  implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.4'
+//  implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
   implementation 'com.squareup:javapoet:1.13.0'
   antlr 'org.antlr:antlr4:4.10.1'
   implementation 'org.antlr:antlr4-runtime:4.10.1'
-  compileOnly "org.derive4j:derive4j-annotation:1.1.1"
-  annotationProcessor "org.derive4j:derive4j:1.1.1"
-  implementation gradleApi()
+//  implementation "org.derive4j:derive4j-annotation:1.1.1"
+//  compileOnly "org.derive4j:derive4j:1.1.1"
+//  implementation gradleApi()
+  implementation project(":java-core")
 }
 
 generateGrammarSource {
@@ -38,21 +30,17 @@ sourceSets {
   }
 }
 
+tasks.sourcesJar.dependsOn generateGrammarSource
+
 clean{
   delete "src-gen"
 }
 
-idea {
-  module {
-    sourceDirs += file("src-gen/main/java/")
-  }
-}
-
-gradlePlugin {
-  plugins {
-    simplePlugin {
-      id = 'forsyde-io-java-generator'
-      implementationClass = 'forsyde.io.java.generator.ForSyDeIOJavaMetaGenerator'
-    }
-  }
-}
+//gradlePlugin {
+//  plugins {
+//    simplePlugin {
+//      id = 'forsyde-io-java-generator'
+//      implementationClass = 'forsyde.io.java.generator.ForSyDeIOJavaMetaGenerator'
+//    }
+//  }
+//}

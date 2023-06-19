@@ -102,28 +102,28 @@ public class ForSyDeIOTraitDSLListener extends ForSyDeTraitDSLBaseListener {
         }
     }
 
-    protected PropertyTypeSpec buildFromContext(ForSyDeTraitDSLParser.VertexPropertyTypeContext ctx) {
-        return ctx.typeName.getText().equals("int") ? PropertyTypeSpecs.IntVertexProperty() :
-                ctx.typeName.getText().equals("integer") ? PropertyTypeSpecs.IntVertexProperty() :
-                ctx.typeName.getText().equals("float") ? PropertyTypeSpecs.FloatVertexProperty() :
-                ctx.typeName.getText().equals("bool") ? PropertyTypeSpecs.BooleanVertexProperty() :
-                ctx.typeName.getText().equals("boolean") ? PropertyTypeSpecs.BooleanVertexProperty() :
-                ctx.typeName.getText().equals("long") ? PropertyTypeSpecs.LongVertexProperty() :
-                ctx.typeName.getText().equals("double") ? PropertyTypeSpecs.DoubleVertexProperty() :
-                ctx.typeName.getText().equals("real") ? PropertyTypeSpecs.DoubleVertexProperty() :
-                ctx.typeName.getText().equals("str") ? PropertyTypeSpecs.StringVertexProperty() :
-                ctx.typeName.getText().equals("string") ? PropertyTypeSpecs.StringVertexProperty() :
-                ctx.typeName.getText().equals("array") ? PropertyTypeSpecs.ArrayVertexProperty(buildFromContext(ctx.arrayType)) :
-                ctx.typeName.getText().equals("intmap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
-                ctx.typeName.getText().equals("integermap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
-                ctx.typeName.getText().equals("intMap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
-                ctx.typeName.getText().equals("integerMap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
-                ctx.typeName.getText().equals("strmap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
-                ctx.typeName.getText().equals("stringmap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
-                ctx.typeName.getText().equals("strMap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
-                ctx.typeName.getText().equals("stringMap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
-                PropertyTypeSpecs.StringVertexProperty();
-    }
+//    protected PropertyTypeSpec buildFromContext(ForSyDeTraitDSLParser.VertexPropertyTypeContext ctx) {
+//        return ctx.typeName.getText().equals("int") ? PropertyTypeSpecs.IntVertexProperty() :
+//                ctx.typeName.getText().equals("integer") ? PropertyTypeSpecs.IntVertexProperty() :
+//                ctx.typeName.getText().equals("float") ? PropertyTypeSpecs.FloatVertexProperty() :
+//                ctx.typeName.getText().equals("bool") ? PropertyTypeSpecs.BooleanVertexProperty() :
+//                ctx.typeName.getText().equals("boolean") ? PropertyTypeSpecs.BooleanVertexProperty() :
+//                ctx.typeName.getText().equals("long") ? PropertyTypeSpecs.LongVertexProperty() :
+//                ctx.typeName.getText().equals("double") ? PropertyTypeSpecs.DoubleVertexProperty() :
+//                ctx.typeName.getText().equals("real") ? PropertyTypeSpecs.DoubleVertexProperty() :
+//                ctx.typeName.getText().equals("str") ? PropertyTypeSpecs.StringVertexProperty() :
+//                ctx.typeName.getText().equals("string") ? PropertyTypeSpecs.StringVertexProperty() :
+//                ctx.typeName.getText().equals("array") ? PropertyTypeSpecs.ArrayVertexProperty(buildFromContext(ctx.arrayType)) :
+//                ctx.typeName.getText().equals("intmap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
+//                ctx.typeName.getText().equals("integermap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
+//                ctx.typeName.getText().equals("intMap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
+//                ctx.typeName.getText().equals("integerMap") ? PropertyTypeSpecs.IntMapVertexProperty(buildFromContext(ctx.intMapType)) :
+//                ctx.typeName.getText().equals("strmap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
+//                ctx.typeName.getText().equals("stringmap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
+//                ctx.typeName.getText().equals("strMap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
+//                ctx.typeName.getText().equals("stringMap") ? PropertyTypeSpecs.StringMapVertexProperty(buildFromContext(ctx.strMapType)) :
+//                PropertyTypeSpecs.StringVertexProperty();
+//    }
 
     @Override
     public void enterVertexPropertyType(ForSyDeTraitDSLParser.VertexPropertyTypeContext ctx) {
@@ -131,8 +131,8 @@ public class ForSyDeIOTraitDSLListener extends ForSyDeTraitDSLBaseListener {
 
     @Override
     public void exitVertexPropertyType(ForSyDeTraitDSLParser.VertexPropertyTypeContext ctx) {
-        final PropertyTypeSpec propertyTypeSpec = buildFromContext(ctx);
-        propertyTypeSpecMap.put(ctx, propertyTypeSpec);
+//        final PropertyTypeSpec propertyTypeSpec = buildFromContext(ctx);
+//        propertyTypeSpecMap.put(ctx, propertyTypeSpec);
     }
 
     @Override
