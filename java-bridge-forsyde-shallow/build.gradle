@@ -24,3 +24,5 @@ sourceSets {
         }
     }
 }
+
+tasks.sourcesJar.dependsOn tasks.generateGrammarSource
