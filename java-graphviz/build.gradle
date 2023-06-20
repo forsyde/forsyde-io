@@ -31,7 +31,7 @@ configurations.all {
             else if (os.isLinux()) {
                 substitute module('org.eclipse.platform:org.eclipse.swt.${osgi.platform}') using module("org.eclipse.platform:org.eclipse.swt.gtk.linux.$arch:$swtVersion")
             }
-            else if (os.isMacos()) {
+            else if (os.isMacOsX()) {
                 substitute module('org.eclipse.platform:org.eclipse.swt.${osgi.platform}') using module("org.eclipse.platform:org.eclipse.swt.cocoa.macosx.$arch:$swtVersion")
             } else {
                 throw new GradleException("Your operating system ${os} is not supported")
