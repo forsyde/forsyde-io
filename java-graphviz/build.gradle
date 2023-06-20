@@ -13,3 +13,29 @@ dependencies {
     implementation project(":java-core")
     implementation project(":java-libforsyde")
 }
+
+var os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem;
+var arch = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentArchitecture.getName().replace("-", "_");
+// due to the origin in an explise environment, the KIELER toolset requires SWT to be present
+// this version must match wahtever the latest standalone Klighd is using
+var swtVersion = "3.124.0"
+
+configurations.all {
+    resolutionStrategy {
+        dependencySubstitution {
+            // The maven property ${osgi.platform} is not handled by Gradle
+            // so we replace the dependency, using the osgi platform from the project settings
+            if (os.isWindows()) {
+                substitute module('org.eclipse.platform:org.eclipse.swt.${osgi.platform}') using module("org.eclipse.platform:org.eclipse.swt.win32.win32.$arch:$swtVersion")
+            }
+            else if (os.isLinux()) {
+                substitute module('org.eclipse.platform:org.eclipse.swt.${osgi.platform}') using module("org.eclipse.platform:org.eclipse.swt.gtk.linux.$arch:$swtVersion")
+            }
+            else if (os.isMacos()) {
+                substitute module('org.eclipse.platform:org.eclipse.swt.${osgi.platform}') using module("org.eclipse.platform:org.eclipse.swt.cocoa.macosx.$arch:$swtVersion")
+            } else {
+                throw new GradleException("Your operating system ${os} is not supported")
+            }
+        }
+    }
+}

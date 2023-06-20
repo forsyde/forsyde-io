@@ -28,7 +28,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         distribution: '${{ matrix.jdk }}' # See 'Supported distributions' for available options
-        java-version: '11'
+        java-version: '${{ matrix.java }}'
     - name: Build with Gradle (Unix)
       if: ${{ matrix.os != 'windows-latest' }}
       run: |
