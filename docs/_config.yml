@@ -22,8 +22,9 @@ title: ForSyDe IO
 email: jordao@kth.se
 description: >- # this means to ignore newlines until "baseurl:"
   ForSyDe's system level model specification and supporting libraries.
-baseurl: "/forsyde-io" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+# baseurl: "/forsyde-io" # the subpath of your site, e.g. /blog
+# url: "" # the base hostname & protocol for your site, e.g. http://example.com
+parent-url: https://forsyde.github.io
 # twitter_username: jekyllrb
 github_username: forsyde
 
@@ -34,8 +35,6 @@ projects:
 sources:
   forsydeio: https://github.com/forsyde/forsyde-io
   idesyde: https://github.com/forsyde/IDeSyDe
-versions:
-  forsydeio: "0.2.5"
 
 # Build settings
 # remote_theme: forsyde/forsyde-web-theme
@@ -44,7 +43,7 @@ plugins:
   - jekyll-feed
   - jekyll-remote-theme
 
-remote_theme: just-the-docs/just-the-docs
+remote_theme: forsyde/forsyde-web-theme
 
 # Exclude from processing.
 # The following items will not be processed, by default.
