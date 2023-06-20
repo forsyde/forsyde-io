@@ -13,8 +13,8 @@ dependencies {
 
 generateGrammarSource {
     maxHeapSize = "512m"
-    arguments += ['-package', 'forsyde.io.java.bridge.forsyde.shallow.haskell', '-visitor']
-    outputDirectory layout.buildDirectory.dir("generated/${name}/main/java/forsyde/io/java/bridge/forsyde/shallow/haskell").get().getAsFile()
+    arguments += ['-package', 'forsyde.io.bridge.forsyde.shallow.haskell', '-visitor']
+    outputDirectory layout.buildDirectory.dir("generated/${name}/main/java/forsyde/io/bridge/forsyde/shallow/haskell").get().getAsFile()
 }
 
 sourceSets {
