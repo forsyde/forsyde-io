@@ -1,3 +1,7 @@
+plugins {
+    id 'forsydeio.public-module'
+}
+
 dependencies {
     implementation project(':java-core')
     compileOnly project(":java-generator")

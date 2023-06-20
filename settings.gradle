@@ -33,5 +33,5 @@ include 'java-conversyde'
 //include 'java-graphviz'
 //include 'java-ods-reporting'
 include 'java-libforsyde'
-include 'java-bridge-forsyde-shallow'
+//include 'java-bridge-forsyde-shallow'
 

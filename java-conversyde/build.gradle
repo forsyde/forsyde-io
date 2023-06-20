@@ -91,7 +91,8 @@ task zipJpackage(type: Zip, dependsOn: tasks.jpackageImage) {
 
 //tasks.launch4j.dependsOn(jar)
 
-project.tasks.publish.enabled = false
+//tasks.publish.enabled = false
+//tasks.publishMavenJavaPublicationToSonatypeRepository.enabled = false
 
 /*
 task packageConverSyDe(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: build) {

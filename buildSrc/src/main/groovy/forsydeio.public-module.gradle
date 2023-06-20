@@ -1,0 +1,107 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'eclipse'
+    id 'publishing'
+    id 'signing'
+    id 'maven-publish'
+}
+
+group = 'io.github.forsyde'
+archivesBaseName = rootProject.name + '-' + project.name
+version = rootProject.version
+
+repositories {
+    mavenCentral()
+}
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_17
+}
+
+compileTestJava {
+    sourceCompatibility = JavaVersion.VERSION_17
+}
+
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = archivesBaseName
+            from components.java
+            pom {
+                name = "ForSyDe IO " + project.niceName
+                description = "ForSyDe IO " + project.niceName + " (+JVM) supporting library"
+                url = 'https://github.com/forsyde/forsyde-io'
+                packaging = 'jar'
+                scm {
+                    connection = 'scm:git:https://github.com/forsyde/forsyde-io.git'
+                    developerConnection = 'scm:git:git@github.com:forsyde/forsyde-io.git'
+                    url = 'https://github.com/forsyde/forsyde-io'
+                }
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'https://choosealicense.com/licenses/mit/'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'Jordao'
+                        name = 'Rodolfo Jordao'
+                        email = 'jordao@kth.se'
+                    }
+                }
+            }
+        }
+//      gpr(MavenPublication) {
+//        from(components.java)
+//      }
+    }
+    repositories {
+        maven {
+            name = 'OSSRH'
+            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            credentials {
+                username = rootProject.hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('MAVEN_USERNAME') ?: System.getenv('OSSRH_USERNAME') ?: ''
+                password = rootProject.hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('MAVEN_PASSWORD') ?: System.getenv('OSSRH_PASSWORD') ?: ''
+            }
+        }
+//      maven {
+//        name = "GitHubPackages"
+//        url = uri("https://maven.pkg.github.com/forsyde/forsyde-io")
+//        credentials {
+//          username = System.getenv("GITHUB_ACTOR")
+//          password = System.getenv("GITHUB_TOKEN")
+//        }
+//      }
+    }
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+    modularity.inferModulePath = true
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    // small hack to work offline or online
+    sign publishing.publications.mavenJava
+    sign configurations.archives
+    if (rootProject.hasProperty('signing.useGpgCommand')) {
+        useGpgCmd()
+    } else {
+        useInMemoryPgpKeys(
+                System.getenv('GPG_SIGNING_KEY') ?: rootProject.findProperty('signing.gnupg.key'),
+                System.getenv('GPG_SIGNING_PASSWORD') ?: rootProject.findProperty('signing.gnupg.password') ?: '' //default to an empty password
+        )
+    }
+}
+
+tasks.publish.dependsOn tasks.signArchives
+tasks.publishMavenJavaPublicationToSonatypeRepository.dependsOn tasks.signArchives
+tasks.publishMavenJavaPublicationToOSSRHRepository.dependsOn tasks.signArchives

@@ -1,5 +1,6 @@
 plugins {
     id 'antlr' // required for java core
+    id 'forsydeio.public-module'
 //    id 'forsyde-io-java-generator'
 //    id "io.freefair.lombok" version "6.5.0.3"
 }
@@ -37,8 +38,6 @@ task clearForSyDeModel(type: Delete) {
 //tasks.build.dependsOn gradle.includedBuild('java-generator').task(':generateForSyDeModel')
 //tasks.compileJava.dependsOn gradle.includedBuild('java-generator').task(':generateForSyDeModel')
 tasks.sourcesJar.dependsOn generateGrammarSource
-//tasks.getByName("generateEffectiveLombokConfig").dependsOn generateForSyDeModel
-//tasks.getByName("generateEffectiveLombokConfig").dependsOn generateGrammarSource
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
