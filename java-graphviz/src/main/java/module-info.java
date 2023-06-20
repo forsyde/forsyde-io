@@ -12,7 +12,6 @@ module forsyde.io.java.graphviz {
     requires transitive forsyde.io.core;
     requires transitive forsyde.io.libforsyde;
 
-
     exports forsyde.io.visual.graphviz;
     exports forsyde.io.visual.kgt.drivers;
 }
