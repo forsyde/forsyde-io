@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        java: [1.17]
+        java: [17]
         jdk: [temurin, corretto, zulu, microsoft]
     runs-on: ${{ matrix.os }}
     steps:
@@ -33,12 +33,12 @@ jobs:
       if: ${{ matrix.os != 'windows-latest' }}
       run: |
         cd ${{ github.workspace }}
-        ./gradlew test
+        ./gradlew build
     - name: Build with Gradle (Windows)
       if: ${{ matrix.os == 'windows-latest' }}
       run: |
         cd ${{ github.workspace }}
-        .\gradlew.bat test
+        .\gradlew.bat build
 #
 #  test-amalthea-build:
 #      strategy:
