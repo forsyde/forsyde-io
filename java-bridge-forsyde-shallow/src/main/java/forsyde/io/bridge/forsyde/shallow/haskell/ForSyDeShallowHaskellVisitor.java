@@ -2,6 +2,7 @@ package forsyde.io.bridge.forsyde.shallow.haskell;
 
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Vertex;
+import forsyde.io.lib.ForSyDeHierarchy;
 import forsyde.io.lib.behavior.sdf.SDFActor;
 import forsyde.io.lib.behavior.sdf.SDFActorViewer;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -22,7 +23,7 @@ public class ForSyDeShallowHaskellVisitor extends HaskellParserBaseVisitor<Syste
     public SystemGraph visitModule(HaskellParser.ModuleContext ctx) {
 
         final SystemGraph systemGraph = new SystemGraph();
-        String filename = ctx.module_content().modid().getText();
+//        String filename = ctx.module_content().modid().getText();
 //        topSystem.setFileName(filename);
 //
         if (ctx.module_content() != null && ctx.module_content().where_module() != null && ctx.module_content().where_module().module_body() != null && ctx.module_content().where_module().module_body().body() != null) {
@@ -75,22 +76,66 @@ public class ForSyDeShallowHaskellVisitor extends HaskellParserBaseVisitor<Syste
                 if (topdeclContext.decl_no_th().rhs() != null && topdeclContext.decl_no_th().rhs().exp().infixexp() != null) {
                     // this long stream of calls is beacuse of the many recursive ways Haskell can build expressionss...
                     // but it basically gets the first name coming AFTER the "=" sign.
-                    final String potentialProcessConstructorName = topdeclContext.decl_no_th().rhs().exp().infixexp().exp10().fexp().aexp(0).qvar().getText();
-                    if (potentialProcessConstructorName.contains("actor") && potentialProcessConstructorName.contains("actor")) {
+                    final String potentialProcessConstructorName = topdeclContext.decl_no_th().rhs().exp().infixexp().exp10().fexp().aexp(0).aexp1().aexp2().qvar().getText();
+                    if (potentialProcessConstructorName.contains("actor")) {
                         // we also get the first variable that appear BEFORE the "=" sign
-                        final String processName = topdeclContext.decl_no_th().infixexp().exp10().fexp().aexp(0).qvar().getText();
+                        final String processName = topdeclContext.decl_no_th().infixexp().exp10().fexp().aexp(0).aexp1().aexp2().qvar().getText();
                         final Vertex v = systemGraph.newVertex(processName);
-                        final SDFActor actor = SDFActorViewer.enforce(systemGraph, v);
+                        final SDFActorViewer actor = ForSyDeHierarchy.SDFActor.enforce(systemGraph, v);
                         final int numInputs = Character.getNumericValue(potentialProcessConstructorName.charAt(5));
+                        var consumptions = new ArrayList<Integer>();
                         final int numOutputs = Character.getNumericValue(potentialProcessConstructorName.charAt(6));
-                        // extract port names assuming syntax: proc port1 port2 port3 ... = ...
-                        for (int i = 1; i < numInputs + 1; i++) {
-                            final String portName = topdeclContext.decl_no_th().infixexp().exp10().fexp().aexp(i).qvar().getText();
-                            v.addPort(portName);
+                        var productions = new ArrayList<Integer>();
+                        // have to do some recursion based on the number of inputs...
+                        if (numInputs == 1) {
+                            // easy, we just get the number
+                            consumptions.add(Integer.parseInt(topdeclContext.decl_no_th().rhs().exp().infixexp().exp10().fexp().aexp(1).aexp1().aexp2().getText()));
+                        } else {
+                            // harder, have to recurse on the commas.
+                            var tIter = topdeclContext.decl_no_th().rhs().exp().infixexp().exp10().fexp().aexp(1).aexp1().aexp2().tup_exprs();
+                            consumptions.add(Integer.parseInt(tIter.texp().getText()));
+                            var next = tIter.commas_tup_tail().tup_tail();
+                            consumptions.add(Integer.parseInt(next.texp().getText()));
+                            while (next.commas_tup_tail() != null) {
+                                next = next.commas_tup_tail().tup_tail();
+                                consumptions.add(Integer.parseInt(next.texp().getText()));
+                            }
                         }
-                        for (int i = 3; i < numOutputs + 3; i++) {
-                            final String portName = topdeclContext.decl_no_th().rhs().exp().infixexp().exp10().fexp().aexp(i).qvar().getText();
-                            v.addPort(portName);
+                        // now we do exactly the same but for the outputs
+                        if (numOutputs == 1) {
+                            // easy, we just get the number
+                            productions.add(Integer.parseInt(topdeclContext.decl_no_th().rhs().exp().infixexp().exp10().fexp().aexp(2).aexp1().aexp2().getText()));
+                        } else {
+                            // harder, have to recurse on the commas.
+                            var tIter = topdeclContext.decl_no_th().rhs().exp().infixexp().exp10().fexp().aexp(2).aexp1().aexp2().tup_exprs();
+                            productions.add(Integer.parseInt(tIter.texp().getText()));
+                            var next = tIter.commas_tup_tail().tup_tail();
+                            productions.add(Integer.parseInt(next.texp().getText()));
+                            while (next.commas_tup_tail() != null) {
+                                next = next.commas_tup_tail().tup_tail();
+                                productions.add(Integer.parseInt(next.texp().getText()));
+                            }
+                        }
+                        // extract port names assuming syntax: proc port1 port2 port3 ... = actorXYSDF (...) (..) f port1 port 2...
+                        for (int i = 1; i < numInputs + 1; i++) {
+                            if (topdeclContext.decl_no_th().infixexp().exp10().fexp().aexp(i) != null) {
+                                final String portName = topdeclContext.decl_no_th().infixexp().exp10().fexp().aexp(i).aexp1().aexp2().qvar().getText();
+                                v.addPort(portName);
+                                actor.consumption().put(portName, consumptions.get(i - 1));
+                            } else {
+                                v.addPort("in" + (i - 1));
+                                actor.consumption().put("in" + (i - 1), consumptions.get(i - 1));
+                            }
+                        }
+                        for (int i = 4; i < numOutputs + 4; i++) {
+                            if (topdeclContext.decl_no_th().rhs().exp().infixexp().exp10().fexp().aexp(i) != null) {
+                                final String portName = topdeclContext.decl_no_th().rhs().exp().infixexp().exp10().fexp().aexp(i).aexp1().aexp2().qvar().getText();
+                                v.addPort(portName);
+                                actor.production().put(portName, productions.get(i - 4));
+                            } else {
+                                v.addPort("out" + (i - 4));
+                                actor.production().put("out" + (i - 4), productions.get(i - 4));
+                            }
                         }
 
                     }

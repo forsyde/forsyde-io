@@ -4,6 +4,7 @@
 package forsyde.io.core.drivers;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.*;
 import java.util.*;
 
