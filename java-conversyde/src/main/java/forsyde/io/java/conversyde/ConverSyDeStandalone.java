@@ -1,12 +1,10 @@
 package forsyde.io.java.conversyde;
 
 import forsyde.io.core.SystemGraph;
-import forsyde.io.java.amalthea.drivers.AmaltheaDriver;
 //import forsyde.io.java.drivers.ForSyDeLFDriver;
 import forsyde.io.core.drivers.ModelHandler;
 import forsyde.io.bridge.sdf3.drivers.SDF3Driver;
-import forsyde.io.visual.graphviz.GraphVizDriver;
-import forsyde.io.visual.kgt.drivers.KGTDriver;
+import forsyde.io.lib.ForSyDeHierarchy;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -29,12 +27,13 @@ public class ConverSyDeStandalone implements Callable<Integer> {
 
     public ConverSyDeStandalone() {
         // register additional drivers that do not come with the default model handler.
-        modelHandler.registerDriver(new AmaltheaDriver());
+//        modelHandler.registerDriver(new AmaltheaDriver());
         //forSyDeModelHandler.registerDriver(new ForSyDeLFDriver());
+        modelHandler.registerTraitHierarchy(new ForSyDeHierarchy());
         modelHandler.registerDriver(new SDF3Driver());
         // put it at high priority to override the core graphviz driver
-        modelHandler.registerDriver(new GraphVizDriver(), 0);
-        modelHandler.registerDriver(new KGTDriver());
+//        modelHandler.registerDriver(new GraphVizDriver(), 0);
+//        modelHandler.registerDriver(new KGTDriver());
     }
 
     @Override

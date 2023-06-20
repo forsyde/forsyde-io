@@ -40,7 +40,7 @@ dependencies {
 
   testImplementation project(":java-core")
   testImplementation project(":java-libforsyde")
-  testImplementation project(":java-graphviz")
+//  testImplementation project(":java-graphviz")
   testImplementation project(":java-bridge-forsyde-shallow")
 }
 

@@ -7,10 +7,12 @@ import java.io.File;
 import java.nio.file.*;
 import java.util.*;
 
+import forsyde.io.core.OpaqueTrait;
 import forsyde.io.core.SystemGraph;
+import forsyde.io.core.Trait;
+import forsyde.io.core.TraitHierarchy;
 import forsyde.io.core.inference.PopulateTaskCommunications;
 import forsyde.io.core.inference.SystemGraphInference;
-import forsyde.io.core.migrations.*;
 import forsyde.io.core.migrations.*;
 import forsyde.io.core.validation.SDFValidator;
 import forsyde.io.core.validation.SystemGraphValidation;
@@ -27,6 +29,8 @@ public final class ModelHandler {
 	private final List<ModelDriver> registeredDrivers = new ArrayList<>();
 	private final List<PathMatcher> registeredDriversInputMatchers = new ArrayList<>();
 	private final List<PathMatcher> registeredDriversOutputMatchers = new ArrayList<>();
+
+	private final Set<TraitHierarchy> registeredTraitHierarchies = new HashSet<>();
 //	PathMatcher forsydeMLMatcher;
 //	PathMatcher graphMLMatcher;
 //	PathMatcher dotMatcher;
@@ -45,7 +49,7 @@ public final class ModelHandler {
 		// default validators
 		registesteredValidators.add(new SDFValidator());
 		// register default drivers
-        registeredDrivers.add(new FiodlHandler());
+        registeredDrivers.add(new FiodlDriver());
 		// register extra drivers
 		registeredDrivers.addAll(Arrays.asList(extraDrivers));
 		// make their
@@ -81,6 +85,11 @@ public final class ModelHandler {
 		return this;
 	}
 
+	public ModelHandler registerTraitHierarchy(TraitHierarchy traitHierarchy) {
+		registeredTraitHierarchies.add(traitHierarchy);
+		return this;
+	}
+
 	public ModelHandler registerDriver(ModelDriver extraDriver) {
 		return registerDriver(extraDriver, registeredDrivers.size());
 	}
@@ -109,6 +118,24 @@ public final class ModelHandler {
 		for (int i = 0; i < registeredDrivers.size(); i++) {
 			if (registeredDriversInputMatchers.get(i).matches(inPath)) {
 				final SystemGraph systemGraph = registeredDrivers.get(i).loadModel(inPath);
+				// use trait hierarchies to remove opaque traits
+				for (var v : systemGraph.vertexSet()) {
+					var toDelete = new HashSet<Trait>();
+					var toAdd = new HashSet<Trait>();
+					for (var t : v.getTraits()) {
+						if (t instanceof OpaqueTrait) {
+							for (var traitHierarchies : registeredTraitHierarchies) {
+								var newT = traitHierarchies.fromName(t.getName());
+								if (!(newT instanceof OpaqueTrait)) {
+									toDelete.add(t);
+									toAdd.add(newT);
+								}
+							}
+						}
+					}
+					v.getTraits().removeAll(toDelete);
+					v.getTraits().addAll(toAdd);
+				}
 				for (SystemGraphMigrator systemGraphMigrator : registeredMigrators) {
 					if (!systemGraphMigrator.effect(systemGraph)) {
 						throw new Exception("Migrator " + systemGraphMigrator.getName() + " has failed its migration.");

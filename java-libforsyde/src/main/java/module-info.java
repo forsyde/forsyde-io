@@ -9,4 +9,5 @@ module forsyde.io.libforsyde {
     exports forsyde.io.lib.behavior.basic;
     exports forsyde.io.lib.behavior.sdf;
     exports forsyde.io.lib.visualization;
+    exports forsyde.io.lib.implementation.functional;
 }

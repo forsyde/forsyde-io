@@ -686,8 +686,28 @@ public class TraitViewerGenerator extends AbstractProcessor {
         edgesTraitEnumBuilder.addMethod(MethodSpec.methodBuilder("refines").addParameter(Trait.class, "other").addModifiers(Modifier.PUBLIC).returns(TypeName.BOOLEAN).addCode(edgesTraitEnumRefinesBuilder.build()).build());
         edgesTraitEnumBuilder.addMethod(MethodSpec.methodBuilder("getName").addModifiers(Modifier.PUBLIC).returns(String.class).addStatement("return name").build());
         // finishing
-        hierarchySpecBuilder.addMethod(MethodSpec.methodBuilder("fromName").addParameter(String.class, "traitName").addModifiers(Modifier.PUBLIC).returns(Trait.class).addStatement("return new $T($L)", OpaqueTrait.class, "traitName").build());
-        hierarchySpecBuilder.addMethod(MethodSpec.methodBuilder("traits").addModifiers(Modifier.PUBLIC).returns(ParameterizedTypeName.get(Set.class, Trait.class)).addStatement("return $T.of()", Set.class).build());
+        hierarchySpecBuilder.addField(FieldSpec.builder(ParameterizedTypeName.get(Set.class, Trait.class), "containedTraits").addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                .initializer("Set.of($L)",
+                        containedVertexTraits.stream().map(t ->
+                                "VertexTraits." + t.getSimpleName().toString()
+                        ).collect(Collectors.joining(",\n")) +
+                         (!containedEdgeTraits.isEmpty() ? ",\n" + containedEdgeTraits.stream().map(t ->
+                                "EdgeTraits." + t.getSimpleName().toString()
+                        ).collect(Collectors.joining(",\n")) : "")
+                ).build());
+        var fromNameCodeBlockBuilder = CodeBlock.builder()
+                .beginControlFlow("switch (traitName)");
+        for (var trait: containedVertexTraits) {
+            fromNameCodeBlockBuilder.addStatement("case $S: return VertexTraits.$L", trait.getQualifiedName().toString().replace(".", "::"), trait.getSimpleName().toString());
+        }
+        for (var trait: containedEdgeTraits) {
+            fromNameCodeBlockBuilder.addStatement("case $S: return EdgeTraits.$L", trait.getQualifiedName().toString().replace(".", "::"), trait.getSimpleName().toString());
+        }
+        fromNameCodeBlockBuilder.addStatement("default: return new $T(traitName)", OpaqueTrait.class);
+        fromNameCodeBlockBuilder.endControlFlow();
+        hierarchySpecBuilder.addMethod(MethodSpec.methodBuilder("fromName").addParameter(String.class, "traitName").addModifiers(Modifier.PUBLIC).returns(Trait.class)
+                .addCode(fromNameCodeBlockBuilder.build()).build());
+        hierarchySpecBuilder.addMethod(MethodSpec.methodBuilder("traits").addModifiers(Modifier.PUBLIC).returns(ParameterizedTypeName.get(Set.class, Trait.class)).addStatement("return containedTraits").build());
         if (!containedVertexTraits.isEmpty()) hierarchySpecBuilder.addType(vertexTraitEnumBuilder.build());
         if(!containedEdgeTraits.isEmpty()) hierarchySpecBuilder.addType(edgesTraitEnumBuilder.build());
         return hierarchySpecBuilder.build();

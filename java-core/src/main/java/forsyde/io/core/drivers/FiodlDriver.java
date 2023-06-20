@@ -4,7 +4,6 @@ import forsyde.io.core.*;
 import forsyde.io.java.adapters.fiodl.ForSyDeFioDLBaseVisitor;
 import forsyde.io.java.adapters.fiodl.ForSyDeFioDLLex;
 import forsyde.io.java.adapters.fiodl.ForSyDeFioDL;
-import forsyde.io.core.*;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
@@ -15,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class FiodlHandler extends ForSyDeFioDLBaseVisitor<SystemGraph> implements ModelDriver {
+public class FiodlDriver extends ForSyDeFioDLBaseVisitor<SystemGraph> implements ModelDriver {
 
     public static class InconsistentModelException extends Exception {
         public InconsistentModelException(String message) {
