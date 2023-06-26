@@ -89,9 +89,14 @@ We will read this serialized model in memory and print its contents just to see 
 
 Now, on your `main` method inside the `App` class (or equivalent in your bigger project), you can do the following:
 
+    // add this imports....
+    import forsyde.io.core.drivers.ModelHandler;
+    import forsyde.io.lib.ForSyDeHierarchy;
+
+    // within the main class, interface etc
     public static void main(String[] args) {
       var handler = new ModelHandler();
-      handler.addTraitHierarchy(new ForSyDeHierarchy());
+      handler.registerTraitHierarchy(new ForSyDeHierarchy());
       var model = handler.loadModel("path/to/toy_sdf_tiny.fiodl");
       System.out.println(model.toString());
     }
@@ -103,9 +108,11 @@ If this worked fine, you should get a big one line that is simply the string rep
 
 You could naturally also write the model out again for fun and see how the "standard" identation of a `fiodl` file is:
 
+    // same imports...
+
     public static void main(String[] args) {
       var handler = new ModelHandler();
-      handler.addTraitHierarchy(new ForSyDeHierarchy());
+      handler.registerTraitHierarchy(new ForSyDeHierarchy());
       var model = handler.loadModel("path/to/toy_sdf_tiny.fiodl");
       handler.writeModel(model, "itworksnice.fiodl");
     }
