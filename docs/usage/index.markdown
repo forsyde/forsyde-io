@@ -1,8 +1,8 @@
----
+<!-- ---
 title: Usage
 layout: default
 permalink: /usage
----
+--- -->
 
 # Basic use for reading and manipulating ForSyDe models
 
@@ -282,11 +282,11 @@ an `SDFActor` object,
 
     v1Actor.addPorts("in", "out");
     v1Actor.production().put("out", 1);
-    v1Avtor.consumption().put("in", 2);
+    v1Actor.consumption().put("in", 2);
 
 and we could save this again to check out the final product,
 
-    modelHandler.writeModel("created_in_memory.fiodl");
+    modelHandler.writeModel(m, "created_in_memory.fiodl");
 
 if would want to query for vertexes of a certain ID, or find all vertexes that have a certain trait, we could do it with simple traversals and `tryView` methods,
 
