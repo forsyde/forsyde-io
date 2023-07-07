@@ -53,4 +53,12 @@ public class KlighDEdge {
     public int hashCode() {
         return Objects.hash(getSrcPort(), target, getDstPort());
     }
+
+    public void setSrcPort(String srcPort) {
+        this.srcPort = srcPort;
+    }
+
+    public void setDstPort(String dstPort) {
+        this.dstPort = dstPort;
+    }
 }

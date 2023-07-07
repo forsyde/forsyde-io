@@ -1,26 +1,15 @@
 package forsyde.io.visual.kgt.drivers;
 
-import de.cau.cs.kieler.klighd.IDiagramExporter;
-import de.cau.cs.kieler.klighd.kgraph.KNode;
-import de.cau.cs.kieler.klighd.krendering.KRenderingFactory;
-import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses;
-import forsyde.io.core.EdgeInfo;
-import forsyde.io.core.EdgeTrait;
 import forsyde.io.core.SystemGraph;
-import forsyde.io.core.Vertex;
-import forsyde.io.core.*;
 import forsyde.io.core.drivers.ModelDriver;
 import forsyde.io.visual.kgt.adapter.ForSyDe2KGTNode;
 import forsyde.io.visual.kgt.adapter.KlighDContainer;
-import forsyde.io.visual.kgt.adapter.KlighDEdge;
-import forsyde.io.visual.kgt.adapter.KlighDNodeView;
 import org.ainslec.picocog.PicoWriter;
-import org.jgrapht.Graph;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.List;
 
 public class KGTDriver implements ModelDriver, ForSyDe2KGTNode {
 
@@ -41,10 +30,9 @@ public class KGTDriver implements ModelDriver, ForSyDe2KGTNode {
 
     @Override
     public void writeModel(SystemGraph model, OutputStream out) throws Exception {
-        final KNode kNode = convert(model);
-
-//        final PicoWriter topWriter = new PicoWriter();
-//        // keep a map of writer to make sure that we can write everything correctly
+        final KlighDContainer klighDContainer = convert(model);
+        final PicoWriter topWriter = new PicoWriter();
+        // keep a map of writer to make sure that we can write everything correctly
 //        final Map<KlighDNodeView, PicoWriter> writers = new HashMap<>();
 //        // we make a fake top to make sure everything works even in the absence of a
 //        // container for all elements
@@ -110,7 +98,8 @@ public class KGTDriver implements ModelDriver, ForSyDe2KGTNode {
 //            }
 //            curWriter.writeln_l("}");
 //        }
-//        out.write(topWriter.toString().getBytes(StandardCharsets.UTF_8));
+        klighDContainer.write(topWriter);
+        out.write(topWriter.toString().getBytes(StandardCharsets.UTF_8));
     }
 
 //    protected Vertex getParentInContainmentGraph(Graph<Vertex, EdgeInfo> containmentGraph, Vertex child) {

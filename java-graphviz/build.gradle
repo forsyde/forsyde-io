@@ -6,7 +6,7 @@ dependencies {
 
     implementation 'guru.nidi:graphviz-java:0.18.1'
     implementation 'org.ainslec:picocog:1.0.7'
-    implementation 'de.cau.cs.kieler.klighd:de.cau.cs.kieler.klighd.standalone:2.3.0.v20230606'
+//    implementation 'de.cau.cs.kieler.klighd:de.cau.cs.kieler.klighd.standalone:2.3.0.v20230606'
 
     implementation project(":java-core")
     implementation project(":java-libforsyde")
