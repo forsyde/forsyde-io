@@ -616,6 +616,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     vertexTraitEnumRefinesBuilder.addStatement("case $S: return true", typeElement.getQualifiedName().toString().replace(".", "::"));
                 }
             }
+            vertexTraitEnumRefinesBuilder.addStatement("case $S: return true", trait.getQualifiedName().toString().replace(".", "::"));
             vertexTraitEnumRefinesBuilder.addStatement("default: return false");
             vertexTraitEnumRefinesBuilder.endControlFlow();
             var traitInnerClassBuilder = TypeSpec.classBuilder(trait.getSimpleName().toString())
@@ -682,6 +683,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     edgesTraitEnumRefinesBuilder.addStatement("case $S: return true", typeElement.getQualifiedName().toString().replace(".", "::"));
                 }
             }
+            edgesTraitEnumRefinesBuilder.addStatement("case $S: return true", trait.getQualifiedName().toString().replace(".", "::"));
             edgesTraitEnumRefinesBuilder.addStatement("default: return false");
             edgesTraitEnumRefinesBuilder.endControlFlow();
 //            hierarchySpecBuilder.addType(traitInnerClassBuilder.build());

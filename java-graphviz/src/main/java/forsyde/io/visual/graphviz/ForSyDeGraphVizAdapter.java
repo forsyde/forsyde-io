@@ -3,14 +3,15 @@ package forsyde.io.visual.graphviz;
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Vertex;
 import forsyde.io.java.adapters.ModelAdapter;
-import forsyde.io.java.core.*;
 import guru.nidi.graphviz.attribute.Records;
-import guru.nidi.graphviz.model.*;
+import guru.nidi.graphviz.model.Graph;
+import guru.nidi.graphviz.model.Node;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import static guru.nidi.graphviz.model.Factory.*;
+import static guru.nidi.graphviz.model.Factory.node;
 
 public class ForSyDeGraphVizAdapter implements ModelAdapter<Graph> {
 

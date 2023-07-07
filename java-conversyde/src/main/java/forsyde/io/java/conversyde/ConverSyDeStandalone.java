@@ -5,6 +5,9 @@ import forsyde.io.core.SystemGraph;
 import forsyde.io.core.drivers.ModelHandler;
 import forsyde.io.bridge.sdf3.drivers.SDF3Driver;
 import forsyde.io.lib.ForSyDeHierarchy;
+import forsyde.io.lib.TraitNamesFrom0_6To0_7;
+import forsyde.io.visual.graphviz.GraphVizDriver;
+import forsyde.io.visual.kgt.drivers.KGTDriver;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -33,7 +36,8 @@ public class ConverSyDeStandalone implements Callable<Integer> {
         modelHandler.registerDriver(new SDF3Driver());
         // put it at high priority to override the core graphviz driver
 //        modelHandler.registerDriver(new GraphVizDriver(), 0);
-//        modelHandler.registerDriver(new KGTDriver());
+        modelHandler.registerDriver(new KGTDriver());
+        modelHandler.registerSystemGraphMigrator(new TraitNamesFrom0_6To0_7());
     }
 
     @Override

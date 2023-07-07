@@ -153,4 +153,8 @@ final public class EdgeInfo {
         edgeTraits.addAll(Arrays.asList(traits.clone()));
     }
 
+    public void addTraits(Collection<Trait> col) {
+        edgeTraits.addAll(col);
+    }
+
 }

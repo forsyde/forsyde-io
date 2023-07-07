@@ -66,6 +66,11 @@ public final class ModelHandler {
 		}
 	}
 
+	public ModelHandler registerSystemGraphMigrator(SystemGraphMigrator systemGraphMigrator) {
+		registeredMigrators.add(systemGraphMigrator);
+		return this;
+	}
+
 	public ModelHandler registerSystemGraphMigrator(SystemGraphMigrator systemGraphMigrator, int applyOrder) {
 		registeredMigrators.add(applyOrder, systemGraphMigrator);
 		return this;

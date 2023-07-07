@@ -38,7 +38,7 @@ dependencies {
     //implementation project(":java-linguafranca")
     implementation project(":java-sdf3")
     implementation project(":java-libforsyde")
-//    implementation project(":java-graphviz")
+    implementation project(":java-graphviz")
 }
 
 test {

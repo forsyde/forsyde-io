@@ -23,7 +23,7 @@ public interface ForSyDe2KGTNode extends ModelAdapter<KlighDContainer> {
         //  \  /
         //   c
         // where c needs to be duplicated (or equivalently triplicated etc).
-        final Map<Visualizable, Integer> counted = inputModel.vertexSet().stream().flatMap(v -> ForSyDeHierarchy.Visualizable.tryView(inputModel, v).stream()).collect(Collectors.toMap(v -> v, v -> 0));
+//        final Map<Visualizable, Integer> counted = inputModel.vertexSet().stream().flatMap(v -> ForSyDeHierarchy.Visualizable.tryView(inputModel, v).stream()).collect(Collectors.toMap(v -> v, v -> 0));
         final Set<Visualizable> noParents = inputModel.vertexSet().stream().flatMap(v -> ForSyDeHierarchy.Visualizable.tryView(inputModel, v).stream()).filter(v -> inputModel.incomingEdgesOf(v).stream().noneMatch(e -> e.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualContainment))).collect(Collectors.toSet());
         final Set<KlighDNodeView> roots = noParents.stream().map(v -> new KlighDNodeView(v, "v_" + v.getIdentifier())).collect(Collectors.toSet());
         final KlighDContainer root = new KlighDContainer(roots);
@@ -47,7 +47,7 @@ public interface ForSyDe2KGTNode extends ModelAdapter<KlighDContainer> {
             ForSyDeHierarchy.GreyBox.tryView(kcur.getViewed()).ifPresent(greyBox -> {
                 // add them as children
                 for (Visualizable visualizable : greyBox.contained()) {
-                    final int count = counted.get(visualizable);
+//                    final int count = counted.get(visualizable);
                     final KlighDNodeView knode = new KlighDNodeView(visualizable, "v_" + visualizable.getIdentifier());
 //                    var klabel = KGraphFactory.eINSTANCE.createKLabel();
 //                    klabel.setParent(knode);
@@ -56,7 +56,7 @@ public interface ForSyDe2KGTNode extends ModelAdapter<KlighDContainer> {
 //                    knode.setParent(kcur);
                     kqueue.add(knode);
 //                    queue.add(visualizable);
-                    counted.put(visualizable, count + 1);
+//                    counted.put(visualizable, count + 1);
                     // edges
                     inputModel.getAllEdges(kcur.getViewed().getViewedVertex(), visualizable.getViewedVertex()).stream().filter(edgeInfo -> edgeInfo.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection)).forEach(edgeInfo -> {
                         var kedge = kcur.addEdge(knode);
@@ -86,6 +86,7 @@ public interface ForSyDe2KGTNode extends ModelAdapter<KlighDContainer> {
         kqueue.addAll(roots);
         while (!kqueue.isEmpty()) {
             var kcur = kqueue.poll();
+            kqueue.addAll(kcur.getChildren());
             for (var src : kcur.getChildren()) {
                 for (var dst: kcur.getChildren()) {
                     if (src != dst) {
