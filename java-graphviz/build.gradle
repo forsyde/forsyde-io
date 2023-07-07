@@ -1,8 +1,6 @@
-repositories {
-    mavenCentral()
+plugins {
+    id 'forsydeio.public-module'
 }
-
-project.ext.niceName = "Java KGT Driver"
 
 dependencies {
 
