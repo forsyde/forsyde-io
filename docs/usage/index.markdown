@@ -1,19 +1,19 @@
----
+<!-- ---
 title: Usage
 layout: default
 permalink: /usage
----
+--- -->
 
 # Basic use for reading and manipulating ForSyDe models
 
-This quick start focuses on the Java supporting library. 
+This quick start focuses on the Java supporting library.
 Currently, this is the main supporting library of ForSyDe IO.
 
 Topics covered in this tutorial:
-  1. Reading ForSyDe IO Models from disk to memory.
-  2. Saving ForSyDe IO Models from memory to disk.
-  3. Querying and manipulating them in memory for any analysis purposes.
 
+1. Reading ForSyDe IO Models from disk to memory.
+2. Saving ForSyDe IO Models from memory to disk.
+3. Querying and manipulating them in memory for any analysis purposes.
 
 ## Requirements
 
@@ -25,6 +25,114 @@ We recommend using a versioning installer like [jabba](https://github.com/shyiko
 The modules were tested with [Amazon Coretto](https://aws.amazon.com/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc) and the [Graal VM](https://www.graalvm.org/).
 
 You also need [Gradle](https://gradle.org/) installed as well.
+
+## (Optional) Downloading SDK, Gradle, and Jabba
+
+This documentation provides step-by-step instructions to download and install SDK, Gradle, and Jabba for your project on Linux and Windows platforms.
+
+## Linux
+
+This documentation provides step-by-step instructions to download and install SDK, Gradle, and Jabba for your project.
+
+### Prerequisites
+
+- Ensure that you have internet connectivity.
+- Make sure that you have a terminal or command prompt available on your system.
+
+### Step 1: Downloading SDKMan
+
+1. Visit the official SDKMan website at [https://sdkman.io/](https://sdkman.io/).
+2. Follow the provided instructions in the official documentation to download and install SDKMan.
+
+Alternatively, you can use the following steps:
+
+1. Open your terminal or command prompt.
+2. Execute the following command to download and install SDKMan:
+   ```shell
+   curl -s "https://get.sdkman.io" | bash
+   ```
+3. After installation, execute the following command to configure SDKMan:
+   ```shell
+   source "$HOME/.sdkman/bin/sdkman-init.sh"
+   ```
+   _(Optional) Check the installed SDKMan version by executing the following command:_
+   ```shell
+   sdk version
+   ```
+4. Install Gradle by executing the following command:
+   ```shell
+   sdk install gradle 8.1.1
+   ```
+
+### Step 2: Downloading Jabba
+
+1. Visit the official Jabba repository on GitHub at [https://github.com/shyiko/jabba](https://github.com/shyiko/jabba).
+2. Follow the provided instructions in the official documentation to download and install Jabba.
+
+Alternatively, you can use the following steps:
+
+1. Open your terminal or command prompt.
+2. Execute the following command to download and install Jabba:
+   ```shell
+   curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && . ~/.jabba/jabba.sh
+   ```
+3. Install your preferred version of OpenJDK using Jabba. For example:
+   ```shell
+   jabba install openjdk@1.17.0
+   ```
+
+## Windows
+
+This documentation provides step-by-step instructions to download and install SDK, Gradle, and Jabba on a Windows machine for your project.
+
+### Prerequisites
+
+- Ensure that you have internet connectivity.
+- Make sure that you have a command prompt available on your Windows machine.
+
+### Step 1: Downloading SDKMan
+
+1. Visit the official SDKMan website at [https://sdkman.io/](https://sdkman.io/).
+2. Follow the provided instructions in the official documentation to download and install SDKMan.
+
+Alternatively, you can use the following steps:
+
+1. Open a command prompt.
+2. Execute the following command to download and install SDKMan:
+   ```shell
+   powershell -nop -c "iex ((new-object net.webclient).DownloadString('https://get.sdkman.io'))"
+   ```
+3. After installation, execute the following command to configure SDKMan:
+   ```shell
+   source "$HOME/.sdkman/bin/sdkman-init.sh"
+   ```
+   _(Optional) Check the installed SDKMan version by executing the following command:_
+   ```shell
+   sdk version
+   ```
+4. Install Gradle by executing the following command:
+   ```shell
+   sdk install gradle 8.1.1
+   ```
+
+### Step 2: Downloading Jabba
+
+1. Visit the official Jabba repository on GitHub at [https://github.com/shyiko/jabba](https://github.com/shyiko/jabba).
+2. Follow the provided instructions in the official documentation to download and install Jabba.
+
+Alternatively, you can use the following steps:
+
+1. Open a command prompt.
+2. Execute the following command to download and install Jabba:
+   ```shell
+   @powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://github.com/shyiko/jabba/raw/master/install.ps1'))"
+   ```
+3. Install your preferred version of OpenJDK using Jabba. For example:
+   ```shell
+   jabba install openjdk@1.17.0
+   ```
+
+Congratulations! You have successfully downloaded and installed SDKMan, Gradle, and Jabba for your project.
 
 ## Setting up your tool project
 
@@ -129,7 +237,7 @@ then the `SDF3Driver` becomes available, and we can spice up the model handler v
 
     handler.registerDriver(new SDF3Driver());
 
-which now enables the `loadModel` function to load [SDF3](https://www.es.ele.tue.nl/sdf3/manuals/xml/sdf/) files, i.e. `.sdf.xml` files! 
+which now enables the `loadModel` function to load [SDF3](https://www.es.ele.tue.nl/sdf3/manuals/xml/sdf/) files, i.e. `.sdf.xml` files!
 We shall not cover it in this tutorial, but enabling bridges to other MDE framework boils down to developing drivers
 and adapters that can be registered in the `ModelHandler`, which then takes care of it automatically in any code that
 is already using it.
@@ -160,9 +268,9 @@ Let's say we want to create a Synchronous process in the system graph `m` that i
 We could do the following:
 
     var newProc = ForSyDeHierarchy.SYComb.enforce(m, m.newVertex("syproc1"));
-  
+
 You might notice that `ForSyDeHierarchy` has many inner classes in it: they are not real classes, but shortcuts to the actual trait viewers
-required to pull out this operation. That is to say, the line given is *not the only way to achieve this* but it is the recommended one.
+required to pull out this operation. That is to say, the line given is _not the only way to achieve this_ but it is the recommended one.
 
 We could also decide that `v1` is actually an `SDFActor` and also `enforce` that is becomes one:
 
@@ -174,11 +282,11 @@ an `SDFActor` object,
 
     v1Actor.addPorts("in", "out");
     v1Actor.production().put("out", 1);
-    v1Avtor.consumption().put("in", 2);
+    v1Actor.consumption().put("in", 2);
 
 and we could save this again to check out the final product,
 
-    modelHandler.writeModel("created_in_memory.fiodl");
+    modelHandler.writeModel(m, "created_in_memory.fiodl");
 
 if would want to query for vertexes of a certain ID, or find all vertexes that have a certain trait, we could do it with simple traversals and `tryView` methods,
 
@@ -194,9 +302,9 @@ if would want to query for vertexes of a certain ID, or find all vertexes that h
     }
 
 note that most of the methods coming from ForSyDe IO are made to work out fine with Java 8+ Streams, which enable you to build near-declarative code at times,
-specially when dealing with collection filtering and creation. 
+specially when dealing with collection filtering and creation.
 An important final word of wisdom where is the **cross-cutting** part of ForSyDe IO that might not have been evident in the foregoing tutorial.
-A vertex can have *many* traits that define cross-cutting concerns on that vertex; let's say, for example, that we will also add a `Visualizable` trait, which
+A vertex can have _many_ traits that define cross-cutting concerns on that vertex; let's say, for example, that we will also add a `Visualizable` trait, which
 tell us that `v1` should appear in a visualization framework later on:
 
     ForSyDeHierarchy.Visualizable.enforce(m, v1) // if you don't want the resulting viewer
@@ -253,4 +361,3 @@ You can then check that `v1visu` and `v1visu2` are in fact viewing the same unde
 <br>Legend: R is "Read", W is "Write", * means it is not a trivial translation and - means it is partial implementation.
 </caption>
 </table> -->
-
