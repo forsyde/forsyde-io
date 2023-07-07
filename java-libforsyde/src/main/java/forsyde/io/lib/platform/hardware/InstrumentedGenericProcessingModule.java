@@ -7,6 +7,16 @@ import forsyde.io.lib.IForSyDeHierarchy;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * A InstrumentedGenericProcessingModule enriches `GenericProcessingModule` with provision numbers so that
+ * an analysis and synthesis tool is able to estimate the total amount of execution time is required to execute
+ * a bunch of instructions in this processing element.
+ *
+ * If this processing element exhibits higher level of parallelism (see `GenericProcessingModule`), then the provisions
+ * should always be provided _per parallel "thread"_.
+ * For example, if the processing element is a typical dual-core, the model instructions per cycle property
+ * should be as the intructions per cycle _per core_, not their summed total.
+ */
 @RegisterTrait(IForSyDeHierarchy.class)
 public interface InstrumentedGenericProcessingModule extends GenericProcessingModule {
 

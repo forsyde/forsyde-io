@@ -50,7 +50,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 traitsToHierarchy.put(typeElement, hierarchy);
             }
             var hierarchies = new HashSet<>(traitsToHierarchy.values());
-            for (var typeHierarchy: hierarchies) {
+            for (var typeHierarchy : hierarchies) {
                 var containedTraits = traitsToHierarchy.entrySet().stream().filter(e -> e.getValue().equals(typeHierarchy)).map(Map.Entry::getKey).collect(Collectors.toSet());
 //                hierarchyToSpec.putIfAbsent(hierarchy, makeHierarchy(hierarchy));
                 var genTH = makeHierarchy(typeHierarchy, containedTraits);
@@ -70,6 +70,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addSuperinterface(ClassName.get(traitInterface))
                 .addSuperinterface(VertexViewer.class)
+                .addJavadoc("Generated vertex viewer class for trait $L.\n {@inheritDoc}", traitInterface.getQualifiedName().toString().replace(".", "::"))
                 //.superclass(ClassName.get("forsyde.io.java.core", "VertexViewer"))
                 .addField(Vertex.class, "vertex", Modifier.PRIVATE, Modifier.FINAL)
                 .addField(SystemGraph.class, "systemGraph", Modifier.PRIVATE, Modifier.FINAL);
@@ -134,10 +135,10 @@ public class TraitViewerGenerator extends AbstractProcessor {
         for (var portSetter : generatePortSetters(hierarchy, traitInterface)) {
             viewerClassBuilder.addMethod(portSetter);
         }
-        for (var propGetter: generatePropertyGetters(traitInterface)) {
+        for (var propGetter : generatePropertyGetters(traitInterface)) {
             viewerClassBuilder.addMethod(propGetter);
         }
-        for (var propSetter: generatePropertySetters(traitInterface)) {
+        for (var propSetter : generatePropertySetters(traitInterface)) {
             viewerClassBuilder.addMethod(propSetter);
         }
         return viewerClassBuilder.build();
@@ -561,12 +562,9 @@ public class TraitViewerGenerator extends AbstractProcessor {
 
     // taken from https://stackoverflow.com/questions/7687829/java-6-annotation-processing-getting-a-class-from-an-annotation
     protected TypeElement getRegisteredHierarchy(RegisterTrait annotation) {
-        try
-        {
+        try {
             annotation.value(); // this should throw
-        }
-        catch( MirroredTypeException mte )
-        {
+        } catch (MirroredTypeException mte) {
             var hierarchy = mte.getTypeMirror();
             var t = processingEnv.getTypeUtils().asElement(hierarchy);
             if (t instanceof TypeElement typeElement) {
@@ -579,12 +577,9 @@ public class TraitViewerGenerator extends AbstractProcessor {
     }
 
     protected TypeElement getRegisteredEdge(WithEdgeTrait annotation) {
-        try
-        {
+        try {
             annotation.value(); // this should throw
-        }
-        catch( MirroredTypeException mte )
-        {
+        } catch (MirroredTypeException mte) {
             var hierarchy = mte.getTypeMirror();
             var t = processingEnv.getTypeUtils().asElement(hierarchy);
             if (t instanceof TypeElement typeElement) {
@@ -609,9 +604,12 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 .addMethod(MethodSpec.constructorBuilder().addParameter(String.class, "name").addStatement("this.name = name").build());
         var vertexTraitEnumRefinesBuilder = CodeBlock.builder().beginControlFlow("switch (this)");
         for (var trait : containedVertexTraits) {
-            vertexTraitEnumBuilder.addEnumConstant(trait.getSimpleName().toString(), TypeSpec.anonymousClassBuilder("$S", trait.getQualifiedName().toString().replace(".", "::")).build());
+            vertexTraitEnumBuilder.addEnumConstant(
+                    trait.getSimpleName().toString(),
+                    TypeSpec.anonymousClassBuilder("$S", trait.getQualifiedName().toString().replace(".", "::"))
+                            .build()
+            );
             vertexTraitEnumRefinesBuilder.beginControlFlow("case $L: switch(other.getName())", trait.getSimpleName().toString());
-            var traitInnerClassBuilder = TypeSpec.classBuilder(trait.getSimpleName().toString()).addModifiers(Modifier.PUBLIC);
             for (var refinedTrait : trait.getInterfaces()) {
                 var elem = processingEnv.getTypeUtils().asElement(refinedTrait);
                 if (elem instanceof TypeElement typeElement && !typeElement.getSimpleName().contentEquals("VertexViewer")) {
@@ -620,6 +618,13 @@ public class TraitViewerGenerator extends AbstractProcessor {
             }
             vertexTraitEnumRefinesBuilder.addStatement("default: return false");
             vertexTraitEnumRefinesBuilder.endControlFlow();
+            var traitInnerClassBuilder = TypeSpec.classBuilder(trait.getSimpleName().toString())
+                    .addModifiers(Modifier.PUBLIC);
+            if (processingEnv.getElementUtils().getDocComment(trait) == null) {
+                traitInnerClassBuilder.addJavadoc("Access methods for vertex trait $L.", trait.getQualifiedName().toString().replace(".", "::"));
+            } else {
+                traitInnerClassBuilder.addJavadoc("Access methods for vertex trait $L.\n\n" + processingEnv.getElementUtils().getDocComment(trait), trait.getQualifiedName().toString().replace(".", "::"));
+            }
             // add the viewing method
             var tryViewMethod = MethodSpec.methodBuilder("tryView")
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -691,16 +696,16 @@ public class TraitViewerGenerator extends AbstractProcessor {
                         containedVertexTraits.stream().map(t ->
                                 "VertexTraits." + t.getSimpleName().toString()
                         ).collect(Collectors.joining(",\n")) +
-                         (!containedEdgeTraits.isEmpty() ? ",\n" + containedEdgeTraits.stream().map(t ->
-                                "EdgeTraits." + t.getSimpleName().toString()
-                        ).collect(Collectors.joining(",\n")) : "")
+                                (!containedEdgeTraits.isEmpty() ? ",\n" + containedEdgeTraits.stream().map(t ->
+                                        "EdgeTraits." + t.getSimpleName().toString()
+                                ).collect(Collectors.joining(",\n")) : "")
                 ).build());
         var fromNameCodeBlockBuilder = CodeBlock.builder()
                 .beginControlFlow("switch (traitName)");
-        for (var trait: containedVertexTraits) {
+        for (var trait : containedVertexTraits) {
             fromNameCodeBlockBuilder.addStatement("case $S: return VertexTraits.$L", trait.getQualifiedName().toString().replace(".", "::"), trait.getSimpleName().toString());
         }
-        for (var trait: containedEdgeTraits) {
+        for (var trait : containedEdgeTraits) {
             fromNameCodeBlockBuilder.addStatement("case $S: return EdgeTraits.$L", trait.getQualifiedName().toString().replace(".", "::"), trait.getSimpleName().toString());
         }
         fromNameCodeBlockBuilder.addStatement("default: return new $T(traitName)", OpaqueTrait.class);
@@ -709,9 +714,11 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 .addCode(fromNameCodeBlockBuilder.build()).build());
         hierarchySpecBuilder.addMethod(MethodSpec.methodBuilder("traits").addModifiers(Modifier.PUBLIC).returns(ParameterizedTypeName.get(Set.class, Trait.class)).addStatement("return containedTraits").build());
         if (!containedVertexTraits.isEmpty()) hierarchySpecBuilder.addType(vertexTraitEnumBuilder.build());
-        if(!containedEdgeTraits.isEmpty()) hierarchySpecBuilder.addType(edgesTraitEnumBuilder.build());
+        if (!containedEdgeTraits.isEmpty()) hierarchySpecBuilder.addType(edgesTraitEnumBuilder.build());
         return hierarchySpecBuilder.build();
-    };
+    }
+
+    ;
 
     protected MethodSpec makeEnforceMethod(TypeElement traitInterface) {
         var viewerClassSimpleName = traitInterface.getSimpleName().toString() + "Viewer";

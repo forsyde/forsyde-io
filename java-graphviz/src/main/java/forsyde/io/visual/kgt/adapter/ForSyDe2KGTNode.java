@@ -31,7 +31,7 @@ public interface ForSyDe2KGTNode extends ModelAdapter<KNode> {
         final Map<Visualizable, Integer> counted = inputModel.vertexSet().stream().flatMap(v -> ForSyDeHierarchy.Visualizable.tryView(inputModel, v).stream()).collect(Collectors.toMap(v -> v, v -> 0));
         final Set<Visualizable> noParents = inputModel.vertexSet().stream().flatMap(v -> ForSyDeHierarchy.Visualizable.tryView(inputModel, v).stream()).filter(v -> inputModel.incomingEdgesOf(v).stream().noneMatch(e -> e.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualContainment))).collect(Collectors.toSet());
         final Map<KNode, Visualizable> nodeToVisu = new HashMap<>();
-        var listParents = noParents.stream().collect(Collectors.toList());
+        var listParents = new ArrayList<>(noParents);
         var listKNodes = new ArrayList<KNode>();
         for (var parent: listParents) {
             var knode = KGraphFactory.eINSTANCE.createKNode();
