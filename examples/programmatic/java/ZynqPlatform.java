@@ -102,15 +102,15 @@ class ZynqPlatform {
             // connect bus
             sgraph.connect(ublazei, ublazi_axi_bus, ForSyDeHierarchy.EdgeTraits.PhysicalConnection, ForSyDeHierarchy.EdgeTraits.VisualConnection);
             sgraph.connect(ublazi_axi_bus, ublazei, ForSyDeHierarchy.EdgeTraits.PhysicalConnection, ForSyDeHierarchy.EdgeTraits.VisualConnection);
-            // and to other buses (taking into account visual hierarchy)
+            // and to other buses
             sgraph.connect(bram_axi_bus, ublazi_axi_bus, ForSyDeHierarchy.EdgeTraits.PhysicalConnection, ForSyDeHierarchy.EdgeTraits.VisualConnection);
             sgraph.connect(ublazi_axi_bus, bram_axi_bus, ForSyDeHierarchy.EdgeTraits.PhysicalConnection, ForSyDeHierarchy.EdgeTraits.VisualConnection);
             // now visual (no semantic meaning, just visuals)
             ublazei_tile.addPorts("buses");
             sgraph.connect(bram_axi_bus, ublazei_tile, null, "buses", ForSyDeHierarchy.EdgeTraits.VisualConnection);
             sgraph.connect(ublazei_tile, ublazi_axi_bus, "buses", ForSyDeHierarchy.EdgeTraits.VisualConnection);
-//            sgraph.connect(ublazi_axi_bus, ublazei_tile, null, "buses", ForSyDeHierarchy.EdgeTraits.VisualConnection);
-//            sgraph.connect(ublazei_tile, bram_axi_bus, "buses", ForSyDeHierarchy.EdgeTraits.VisualConnection);
+            sgraph.connect(ublazi_axi_bus, ublazei_tile, null, "buses", ForSyDeHierarchy.EdgeTraits.VisualConnection);
+            sgraph.connect(ublazei_tile, bram_axi_bus, "buses", ForSyDeHierarchy.EdgeTraits.VisualConnection);
 
             // now add message box
             var mboxi = ForSyDeHierarchy.GenericMemoryModule.enforce(sgraph, sgraph.newVertex("MBox" + i));
