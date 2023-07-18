@@ -2,6 +2,7 @@ plugins {
   id 'maven-publish'
   id 'signing'
   id 'java'
+  id 'groovy' // mainly for examples
   id 'java-library'
   id 'idea'
   id 'eclipse'
@@ -40,7 +41,7 @@ dependencies {
 
   testImplementation project(":java-core")
   testImplementation project(":java-libforsyde")
-//  testImplementation project(":java-graphviz")
+  testImplementation project(":java-graphviz")
 //  testImplementation project(":java-bridge-forsyde-shallow")
 }
 
@@ -56,13 +57,16 @@ compileTestJava {
   sourceCompatibility = JavaVersion.VERSION_17
 }
 
-//sourceSets {
-//  test {
-//    java {
-//      srcDirs += ['java-tests']
-//    }
-//  }
-//}
+sourceSets {
+  test {
+    groovy {
+      srcDirs += ['examples/programmatic/groovy']
+    }
+    java {
+      srcDirs += ['examples/programmatic/java']
+    }
+  }
+}
 
 // has to be outside so that all projects get the root trait hierarchy
 def stdTraitHierarchyFile = file("std_trait_hierarchy.traitdsl")

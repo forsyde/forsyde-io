@@ -124,6 +124,22 @@ final public class Vertex {
         return properties.get(propertyName);
     }
 
+    public boolean putProperty(String propertyName, long propertyValue) throws IllegalArgumentException {
+        return properties.put(propertyName, propertyValue) == null;
+    }
+
+    public boolean putProperty(String propertyName, int propertyValue) throws IllegalArgumentException {
+        return properties.put(propertyName, propertyValue) == null;
+    }
+
+    public boolean putProperty(String propertyName, float propertyValue) throws IllegalArgumentException {
+        return properties.put(propertyName, propertyValue) == null;
+    }
+
+    public boolean putProperty(String propertyName, boolean propertyValue) throws IllegalArgumentException {
+        return properties.put(propertyName, propertyValue) == null;
+    }
+
     public boolean putProperty(String propertyName, Object propertyValue) throws IllegalArgumentException {
         if (
                 (propertyValue instanceof Integer) ||
@@ -137,7 +153,7 @@ final public class Vertex {
         ) {
             return properties.put(propertyName, propertyValue) == null;
         } else {
-            throw new IllegalArgumentException("Only allowed vertex properties types are (boxed) numeric values, strings, lists and maps.");
+            throw new IllegalArgumentException("Only allowed vertex properties types are numeric values, strings, lists and maps.");
         }
     }
 

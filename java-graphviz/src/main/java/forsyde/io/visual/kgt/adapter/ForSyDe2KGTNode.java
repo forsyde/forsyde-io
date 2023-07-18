@@ -26,6 +26,7 @@ public interface ForSyDe2KGTNode extends ModelAdapter<KlighDContainer> {
 //        final Map<Visualizable, Integer> counted = inputModel.vertexSet().stream().flatMap(v -> ForSyDeHierarchy.Visualizable.tryView(inputModel, v).stream()).collect(Collectors.toMap(v -> v, v -> 0));
         final Set<Visualizable> noParents = inputModel.vertexSet().stream().flatMap(v -> ForSyDeHierarchy.Visualizable.tryView(inputModel, v).stream()).filter(v -> inputModel.incomingEdgesOf(v).stream().noneMatch(e -> e.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualContainment))).collect(Collectors.toSet());
         final Set<KlighDNodeView> roots = noParents.stream().map(v -> new KlighDNodeView(v, "v_" + v.getIdentifier())).collect(Collectors.toSet());
+        final Set<KlighDNodeView> allNodes = new HashSet<>();
         final KlighDContainer root = new KlighDContainer(roots);
 //        final Map<KNode, Visualizable> nodeToVisu = new HashMap<>();
 //        var listParents = new ArrayList<>(noParents);
@@ -43,6 +44,7 @@ public interface ForSyDe2KGTNode extends ModelAdapter<KlighDContainer> {
         while (!kqueue.isEmpty()) {
 //            final Visualizable cur = queue.poll();
             var kcur = kqueue.poll();
+            allNodes.add(kcur);
 //            nodeToVisu.put(kcur, cur);
             ForSyDeHierarchy.GreyBox.tryView(kcur.getViewed()).ifPresent(greyBox -> {
                 // add them as children
@@ -58,55 +60,62 @@ public interface ForSyDe2KGTNode extends ModelAdapter<KlighDContainer> {
 //                    queue.add(visualizable);
 //                    counted.put(visualizable, count + 1);
                     // edges
-                    inputModel.getAllEdges(kcur.getViewed().getViewedVertex(), visualizable.getViewedVertex()).stream().filter(edgeInfo -> edgeInfo.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection)).forEach(edgeInfo -> {
-                        var kedge = kcur.addEdge(knode);
-//                        kedge.setSource(kcur);
-//                        kedge.setTarget(knode);
-                        edgeInfo.getSourcePort().ifPresent(srcPort -> {
-                            kedge.setSrcPort(srcPort);
-                            edgeInfo.getTargetPort().ifPresent(dstPort -> {
-                                kedge.setDstPort(dstPort);
-                            });
-                        });
-                    });
-                    //other direction
-                    inputModel.getAllEdges(visualizable.getViewedVertex(), kcur.getViewed().getViewedVertex()).stream().filter(edgeInfo -> edgeInfo.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection)).forEach(edgeInfo -> {
-                        var kedge = knode.addEdge(kcur);
-                        edgeInfo.getSourcePort().ifPresent(srcPort -> {
-                            kedge.setSrcPort(srcPort);
-                            edgeInfo.getTargetPort().ifPresent(dstPort -> {
-                                kedge.setDstPort(dstPort);
-                            });
-                        });
-                    });
+//                    inputModel.getAllEdges(kcur.getViewed().getViewedVertex(), visualizable.getViewedVertex()).stream().filter(edgeInfo -> edgeInfo.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection)).forEach(edgeInfo -> {
+//                        var kedge = kcur.addEdge(knode);
+////                        kedge.setSource(kcur);
+////                        kedge.setTarget(knode);
+//                        edgeInfo.getSourcePort().ifPresent(kedge::setSrcPort);
+//                        edgeInfo.getTargetPort().ifPresent(kedge::setDstPort);
+//                    });
+//                    //other direction
+//                    inputModel.getAllEdges(visualizable.getViewedVertex(), kcur.getViewed().getViewedVertex()).stream().filter(edgeInfo -> edgeInfo.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection)).forEach(edgeInfo -> {
+//                        var kedge = knode.addEdge(kcur);
+//                        edgeInfo.getSourcePort().ifPresent(kedge::setSrcPort);
+//                        edgeInfo.getTargetPort().ifPresent(kedge::setDstPort);
+//                    });
                 }
             });
         }
         // finish by making same level connections
-        kqueue.addAll(roots);
-        while (!kqueue.isEmpty()) {
-            var kcur = kqueue.poll();
-            kqueue.addAll(kcur.getChildren());
-            for (var src : kcur.getChildren()) {
-                for (var dst: kcur.getChildren()) {
-                    if (src != dst) {
-                        // edges
-                        inputModel.getAllEdges(src.getViewed(), dst.getViewed()).stream().filter(edgeInfo -> edgeInfo.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection)).forEach(edgeInfo -> {
-                            var kedge = src.addEdge(dst);
-                            edgeInfo.getSourcePort().ifPresent(srcPort -> {
-                                kedge.setSrcPort(srcPort);
-                                edgeInfo.getTargetPort().ifPresent(kedge::setDstPort);
-                            });
-                        });
-                        //other direction
-                        inputModel.getAllEdges(dst.getViewed(), src.getViewed()).stream().filter(edgeInfo -> edgeInfo.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection)).forEach(edgeInfo -> {
-                            var kedge = dst.addEdge(src);
-                            edgeInfo.getSourcePort().ifPresent(srcPort -> {
-                                kedge.setSrcPort(srcPort);
-                                edgeInfo.getTargetPort().ifPresent(kedge::setDstPort);
-                            });
-                        });
-                    }
+//        kqueue.addAll(roots);
+//        while (!kqueue.isEmpty()) {
+//            var kcur = kqueue.poll();
+//            kqueue.addAll(kcur.getChildren());
+//            for (var src : kcur.getChildren()) {
+//                for (var dst: kcur.getChildren()) {
+//                    if (src != dst) {
+//                        // edges
+//                        inputModel.getAllEdges(src.getViewed(), dst.getViewed()).stream().filter(edgeInfo -> edgeInfo.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection)).forEach(edgeInfo -> {
+//                            var kedge = src.addEdge(dst);
+//                            edgeInfo.getSourcePort().ifPresent(kedge::setSrcPort);
+//                            edgeInfo.getTargetPort().ifPresent(kedge::setDstPort);
+//                        });
+//                        //other direction
+//                        inputModel.getAllEdges(dst.getViewed(), src.getViewed()).stream().filter(edgeInfo -> edgeInfo.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection)).forEach(edgeInfo -> {
+//                            var kedge = dst.addEdge(src);
+//                            edgeInfo.getSourcePort().ifPresent(kedge::setSrcPort);
+//                            edgeInfo.getTargetPort().ifPresent(kedge::setDstPort);
+//                        });
+//                    }
+//                }
+//            }
+//
+        // and the root level connections
+        for (var src : allNodes) {
+            for (var dst: allNodes) {
+                if (src != dst) {
+                    // edges
+                    inputModel.getAllEdges(src.getViewed(), dst.getViewed()).stream().filter(edgeInfo -> edgeInfo.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection)).forEach(edgeInfo -> {
+                        var kedge = src.addEdge(dst);
+                        edgeInfo.getSourcePort().ifPresent(kedge::setSrcPort);
+                        edgeInfo.getTargetPort().ifPresent(kedge::setDstPort);
+                    });
+                    //other direction
+//                    inputModel.getAllEdges(dst.getViewed(), src.getViewed()).stream().filter(edgeInfo -> edgeInfo.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection)).forEach(edgeInfo -> {
+//                        var kedge = dst.addEdge(src);
+//                        edgeInfo.getSourcePort().ifPresent(kedge::setSrcPort);
+//                        edgeInfo.getTargetPort().ifPresent(kedge::setDstPort);
+//                    });
                 }
             }
         }

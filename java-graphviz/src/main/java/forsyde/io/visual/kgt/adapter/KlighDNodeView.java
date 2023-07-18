@@ -33,7 +33,7 @@ public class KlighDNodeView {
     }
 
     public String getLabel() {
-        return viewed.getIdentifier() + " [" + viewed.getVertexTraitNames().stream().filter(t -> t.getName().contains("visualization")).map(Trait::getName).collect(Collectors.joining(", ")) + "]";
+        return viewed.getIdentifier() + " [" + viewed.getVertexTraitNames().stream().filter(t -> !t.getName().contains("visualization")).map(Trait::getName).collect(Collectors.joining(", ")) + "]";
     }
 
     public List<KlighDNodeView> getChildren() {
@@ -50,7 +50,11 @@ public class KlighDNodeView {
 
     public Set<String> getActiveKports() {
         var m = getViewed().getViewedSystemGraph();
-        return viewed.getPorts().stream().filter(p -> m.incomingEdgesOf(viewed).stream().filter(e -> e.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection) && !e.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualContainment)).anyMatch(e -> e.getTargetPort().map(p::equals).orElse(false)) || m.outgoingEdgesOf(viewed).stream().filter(e -> e.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection) && !e.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualContainment)).anyMatch(e -> e.getSourcePort().map(p::equals).orElse(false))).collect(Collectors.toSet());
+        return viewed.getPorts().stream().filter(p ->
+                m.incomingEdgesOf(viewed).stream().filter(e -> e.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection) && !e.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualContainment))
+                        .anyMatch(e -> e.getTargetPort().map(p::equals).orElse(false)) || m.outgoingEdgesOf(viewed).stream().filter(e -> e.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualConnection) && !e.hasTrait(ForSyDeHierarchy.EdgeTraits.VisualContainment))
+                        .anyMatch(e -> e.getSourcePort().map(p::equals).orElse(false)))
+                .collect(Collectors.toSet());
     }
 
     public Set<KlighDEdge> getKedges() {
@@ -122,9 +126,26 @@ public class KlighDNodeView {
                     picoWriter.writeln("kedge ( " + ":" + srcPort + " -> " + dstId + ")");
                 });
             }, () -> {
-                picoWriter.writeln("kedge ( " + " -> " + dstId + ")");
+                edge.getDstPort().ifPresentOrElse(dstPort -> {
+                    picoWriter.writeln("kedge ( -> " + dstId + ":" + dstPort + ")");
+                }, () -> {
+                    picoWriter.writeln("kedge ( " + " -> " + dstId + ")");
+                });
             });
         }
         picoWriter.writeln_l("}");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KlighDNodeView that = (KlighDNodeView) o;
+        return Objects.equals(viewed, that.viewed) && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(viewed, id);
     }
 }

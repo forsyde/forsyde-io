@@ -2,6 +2,7 @@ package forsyde.io.visual.kgt.adapter;
 
 import org.ainslec.picocog.PicoWriter;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class KlighDContainer {
@@ -24,5 +25,18 @@ public class KlighDContainer {
             root.write(picoWriter.createDeferredWriter());
         }
         picoWriter.writeln_l("}");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KlighDContainer that = (KlighDContainer) o;
+        return Objects.equals(roots, that.roots);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(roots);
     }
 }
