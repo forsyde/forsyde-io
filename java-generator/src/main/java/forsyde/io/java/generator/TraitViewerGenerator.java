@@ -260,8 +260,11 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     getMethodBuilder.addStatement("return this");
                     methods.add(getMethodBuilderWithoutPort.build());
                     methods.add(getMethodBuilder.build());
-                } else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("List"))) {
-                } else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Optional"))) {
+                }
+                else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("List"))) {
+                    throw new IllegalArgumentException("Lists are not supported. Use Sets and properties with your ordering scheme to achieve proper listing");
+                }
+                else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Optional"))) {
                     var getMethodBuilderWithoutPort = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
                     var getMethodBuilder = MethodSpec.methodBuilder(name).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
                     if (execMember.getAnnotation(InPort.class) != null) {
@@ -269,18 +272,19 @@ public class TraitViewerGenerator extends AbstractProcessor {
                         getMethodBuilderWithoutPort.addParameter(portInputType, name);
                         getMethodBuilder.addParameter(portInputType, name);
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
-                            var edgeTrait = getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class));
                             getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, null, $S, $T.instance)",
+                                    "getViewedSystemGraph().connect($L, this, null, $S, $T.EdgeTraits.$L)",
                                     name,
                                     name,
-                                    edgeTrait
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
                             );
                             getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, $T.instance)",
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, $T.EdgeTraits.$L)",
                                     name,
                                     name,
-                                    edgeTrait
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
                             );
                         } else {
                             getMethodBuilderWithoutPort.addStatement(
@@ -303,18 +307,19 @@ public class TraitViewerGenerator extends AbstractProcessor {
                         getMethodBuilderWithoutPort.addParameter(portOutputType, name);
                         getMethodBuilder.addParameter(portOutputType, name);
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
-                            var edgeTrait = getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class));
                             getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S, $T)",
+                                    "getViewedSystemGraph().connect(this, $L, $S, $T.EdgeTraits.$L)",
                                     name,
                                     name,
-                                    edgeTrait
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
                             );
                             getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, $T)",
+                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, $T.EdgeTraits.$L)",
                                     name,
                                     name,
-                                    edgeTrait
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
                             );
                         } else {
                             getMethodBuilderWithoutPort.addStatement(
@@ -341,18 +346,19 @@ public class TraitViewerGenerator extends AbstractProcessor {
                         getMethodBuilderWithoutPort.addParameter(portInputType, name);
                         getMethodBuilder.addParameter(portInputType, name);
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
-                            var edgeTrait = getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class));
                             getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, null, $S, $T.instance)",
+                                    "getViewedSystemGraph().connect($L, this, null, $S, $T.EdgeTraits.$L)",
                                     name,
                                     name,
-                                    edgeTrait
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
                             );
                             getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, $T.instance)",
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, $T.EdgeTraits.$L)",
                                     name,
                                     name,
-                                    edgeTrait
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
                             );
                         } else {
                             getMethodBuilderWithoutPort.addStatement(
@@ -377,16 +383,18 @@ public class TraitViewerGenerator extends AbstractProcessor {
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
                             var edgeTrait = getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class));
                             getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S, $T)",
+                                    "getViewedSystemGraph().connect(this, $L, $S, $T.EdgeTraits.$L)",
                                     name,
                                     name,
-                                    edgeTrait
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
                             );
                             getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, $T)",
+                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, $T.EdgeTraits.$L)",
                                     name,
                                     name,
-                                    edgeTrait
+                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
                             );
                         } else {
                             getMethodBuilderWithoutPort.addStatement(
@@ -418,7 +426,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
             if (member instanceof ExecutableElement execMember && (member.getAnnotation(InPort.class) != null || member.getAnnotation(OutPort.class) != null)) {
                 var name = execMember.getSimpleName().toString();
                 var getMethodBuilder = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(TypeName.get(execMember.getReturnType()));
-                if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Set") || declaredType.asElement().getSimpleName().contentEquals("List"))) {
+                if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Set"))) {
                     getMethodBuilder.addStatement("$T<$T> collected = new $T<>()", ArrayList.class, declaredType.getTypeArguments().get(0), ArrayList.class);
                     if (execMember.getAnnotation(InPort.class) != null) {
                         var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
@@ -456,6 +464,8 @@ public class TraitViewerGenerator extends AbstractProcessor {
                         getMethodBuilder.addStatement("return collected");
                     }
                     methods.add(getMethodBuilder.build());
+                } else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("List"))) {
+                    throw new IllegalArgumentException("Lists are not supported. Use Sets and properties with your ordering scheme to achieve proper listing");
                 } else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Optional"))) {
                     if (execMember.getAnnotation(InPort.class) != null) {
                         var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
