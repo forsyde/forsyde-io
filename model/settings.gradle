@@ -1,4 +1,0 @@
-include 'system.graph.meta'
-include 'trait.hierarchy.meta'
-include 'trait.hierarchy.meta.dsl'
-include 'trait.hierarchy.meta.dsl.ide'
