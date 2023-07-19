@@ -7,13 +7,14 @@ import forsyde.io.lib.IForSyDeHierarchy;
 import forsyde.io.lib.behavior.AlgorithmicEntity;
 
 import java.util.List;
+import java.util.Set;
 
 @RegisterTrait(IForSyDeHierarchy.class)
 public interface LoopingTask extends Task {
 
     @OutPort
-    List<AlgorithmicEntity> initSequence();
+    Set<AlgorithmicEntity> initSequence();
 
     @OutPort
-    List<AlgorithmicEntity> loopSequence();
+    Set<AlgorithmicEntity> loopSequence();
 }
