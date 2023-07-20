@@ -5,7 +5,8 @@ import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.core.annotations.WithEdgeTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
-import forsyde.io.lib.behavior.AlgorithmicEntity;
+import forsyde.io.lib.behavior.BehaviourEntity;
+import forsyde.io.lib.behavior.BehaviourCompositionEdge;
 import forsyde.io.lib.behavior.moc.MoCEntity;
 
 import java.util.Map;
@@ -21,7 +22,7 @@ public interface SDFActor extends MoCEntity {
     Map<String, Integer> production();
 
     @OutPort
-    @WithEdgeTrait(SDFNetworkEdge.class)
-    Set<AlgorithmicEntity> combinators();
+    @WithEdgeTrait(BehaviourCompositionEdge.class)
+    Set<BehaviourEntity> combFunctions();
 
 }

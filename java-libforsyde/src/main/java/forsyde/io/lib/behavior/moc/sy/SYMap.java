@@ -4,8 +4,10 @@ import forsyde.io.core.VertexViewer;
 import forsyde.io.core.annotations.OutPort;
 import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.RegisterTrait;
+import forsyde.io.core.annotations.WithEdgeTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
-import forsyde.io.lib.behavior.AlgorithmicEntity;
+import forsyde.io.lib.behavior.BehaviourEntity;
+import forsyde.io.lib.behavior.BehaviourCompositionEdge;
 import org.jgrapht.alg.shortestpath.FloydWarshallShortestPaths;
 
 import java.util.ArrayList;
@@ -32,7 +34,8 @@ import java.util.stream.Collectors;
 public interface SYMap extends SYProcess {
 
     @OutPort
-    Set<AlgorithmicEntity> combinators();
+    @WithEdgeTrait(BehaviourCompositionEdge.class)
+    Set<BehaviourEntity> combFunctions();
 
     @Property
     List<String> outputPorts();
@@ -40,15 +43,15 @@ public interface SYMap extends SYProcess {
     @Property
     List<String> inputPorts();
 
-    default List<AlgorithmicEntity> combinatorsOrdered() {
+    default List<BehaviourEntity> combinatorsOrdered() {
         if (getViewedVertex().hasProperty("__combinators_ordering__") && getViewedVertex().getProperty("__combinators_ordering__") instanceof List<?> list
-        && combinators().stream().map(VertexViewer::getIdentifier).allMatch(list::contains)) {
-            var ordered = new ArrayList<>(combinators());
+        && combFunctions().stream().map(VertexViewer::getIdentifier).allMatch(list::contains)) {
+            var ordered = new ArrayList<>(combFunctions());
             ordered.sort(Comparator.comparingInt(list::indexOf));
             return ordered;
         } else {
             var shortestPaths = new FloydWarshallShortestPaths<>(getViewedSystemGraph());
-            var ordered = new ArrayList<>(combinators());
+            var ordered = new ArrayList<>(combFunctions());
             ordered.sort((f1, f2) ->
                     (int) shortestPaths.getPathWeight(f1.getViewedVertex(), f2.getViewedVertex()) -
                             (int) shortestPaths.getPathWeight(f2.getViewedVertex(), f1.getViewedVertex()));
