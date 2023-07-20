@@ -64,8 +64,9 @@ public class TraitViewerGenerator extends AbstractProcessor {
         return false;
     }
 
-    protected TypeSpec makeViewer(TypeElement hierarchy, TypeElement traitInterface) {
+    protected TypeSpec makeViewer(TypeElement hierarchyInterface, TypeElement traitInterface) {
         var viewerClassSimpleName = traitInterface.getSimpleName().toString() + "Viewer";
+        var generatedHierarchy = ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchyInterface).toString(), hierarchyElemToName(hierarchyInterface));
         final TypeSpec.Builder viewerClassBuilder = TypeSpec.classBuilder(ClassName.get(processingEnv.getElementUtils().getPackageOf(traitInterface).toString(), viewerClassSimpleName))
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addSuperinterface(ClassName.get(traitInterface))
@@ -105,7 +106,13 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(SystemGraph.class, "systemGraph")
                 .addParameter(Vertex.class, "vertex")
-                .addStatement("return Optional.of(new $L(systemGraph, vertex))", viewerClassSimpleName)
+                .addCode(CodeBlock.builder()
+                        .beginControlFlow("if (vertex.hasTrait($T.VertexTraits.$L))", generatedHierarchy, traitInterface.getSimpleName().toString())
+                        .addStatement("return Optional.of(new $L(systemGraph, vertex))", viewerClassSimpleName)
+                        .nextControlFlow("else")
+                        .addStatement("return Optional.empty()")
+                        .endControlFlow()
+                        .build())
                 .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), ClassName.get(processingEnv.getElementUtils().getPackageOf(traitInterface).toString(), traitInterface.getSimpleName().toString() + "Viewer")))
                 .build();
         viewerClassBuilder.addMethod(tryViewMethod);
@@ -113,7 +120,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 .addTypeVariable(TypeVariableName.get("T").withBounds(ClassName.get(VertexViewer.class)))
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(TypeVariableName.get("T"), "otherViewer")
-                .addStatement("return Optional.of(new $L(otherViewer.getViewedSystemGraph(), otherViewer.getViewedVertex()))", viewerClassSimpleName)
+                .addStatement("return tryView(otherViewer.getViewedSystemGraph(), otherViewer.getViewedVertex())", viewerClassSimpleName)
                 .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), ClassName.get(processingEnv.getElementUtils().getPackageOf(traitInterface).toString(), traitInterface.getSimpleName().toString() + "Viewer")))
                 .build();
         viewerClassBuilder.addMethod(tryViewMethodFromViewer);
@@ -129,10 +136,10 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 .build();
         viewerClassBuilder.addMethod(enforceFromViewer);
 
-        for (var portGetter : generatePortGetters(hierarchy, traitInterface)) {
+        for (var portGetter : generatePortGetters(hierarchyInterface, traitInterface)) {
             viewerClassBuilder.addMethod(portGetter);
         }
-        for (var portSetter : generatePortSetters(hierarchy, traitInterface)) {
+        for (var portSetter : generatePortSetters(hierarchyInterface, traitInterface)) {
             viewerClassBuilder.addMethod(portSetter);
         }
         for (var propGetter : generatePropertyGetters(traitInterface)) {
