@@ -1,9 +1,6 @@
 package forsyde.io.lib.behavior.moc.sdf;
 
-import forsyde.io.core.annotations.InPort;
-import forsyde.io.core.annotations.OutPort;
-import forsyde.io.core.annotations.Property;
-import forsyde.io.core.annotations.RegisterTrait;
+import forsyde.io.core.annotations.*;
 import forsyde.io.lib.IForSyDeHierarchy;
 import forsyde.io.lib.behavior.moc.MoCEntity;
 
@@ -15,9 +12,11 @@ public interface SDFChannel extends MoCEntity {
     @Property
     default Integer numInitialTokens() {return 0;};
     @InPort
+    @WithEdgeTrait(SDFNetworkEdge.class)
     Optional<SDFActor> producer();
 
     @OutPort
+    @WithEdgeTrait(SDFNetworkEdge.class)
     Optional<SDFActor> consumer();
 
 }

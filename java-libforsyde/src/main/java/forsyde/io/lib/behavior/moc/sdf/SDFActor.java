@@ -3,6 +3,7 @@ package forsyde.io.lib.behavior.moc.sdf;
 import forsyde.io.core.annotations.OutPort;
 import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.RegisterTrait;
+import forsyde.io.core.annotations.WithEdgeTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
 import forsyde.io.lib.behavior.AlgorithmicEntity;
 import forsyde.io.lib.behavior.moc.MoCEntity;
@@ -20,6 +21,7 @@ public interface SDFActor extends MoCEntity {
     Map<String, Integer> production();
 
     @OutPort
+    @WithEdgeTrait(SDFNetworkEdge.class)
     Set<AlgorithmicEntity> combinators();
 
 }
