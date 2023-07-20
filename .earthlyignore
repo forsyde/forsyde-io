@@ -1,0 +1,5 @@
+java*/build
+java*/bin
+java*/gradle
+scala*/target
+rust*/target

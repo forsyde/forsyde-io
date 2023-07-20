@@ -262,7 +262,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     methods.add(getMethodBuilder.build());
                 }
                 else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("List"))) {
-                    throw new IllegalArgumentException("Lists are not supported. Use Sets and properties with your ordering scheme to achieve proper listing");
+                    throw new IllegalArgumentException("Exception at " + viewerInterface.getQualifiedName().toString() + " on " + execMember.getSimpleName() + ": Lists are not supported. Use Sets and properties with your ordering scheme to achieve proper listing");
                 }
                 else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Optional"))) {
                     var getMethodBuilderWithoutPort = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
@@ -465,7 +465,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     }
                     methods.add(getMethodBuilder.build());
                 } else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("List"))) {
-                    throw new IllegalArgumentException("Lists are not supported. Use Sets and properties with your ordering scheme to achieve proper listing");
+                    throw new IllegalArgumentException("Exception at " + viewerInterface.getQualifiedName().toString() + " on " + execMember.getSimpleName() + ": Lists are not supported. Use Sets and properties with your ordering scheme to achieve proper listing");
                 } else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Optional"))) {
                     if (execMember.getAnnotation(InPort.class) != null) {
                         var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
