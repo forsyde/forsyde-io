@@ -209,7 +209,7 @@ Now, on your `main` method inside the `App` class (or equivalent in your bigger 
       System.out.println(model.toString());
     }
 
-This likely won't compile becuase loading models can throw exceptions, so you can add a `throws` exception to the main signature.
+This likely won't compile because loading models can throw exceptions, so you can add a `throws` exception to the main signature.
 If this worked fine, you should get a big one line that is simply the string representation of the system graph in question.
 
     SystemGraph(...includes p1 and p2...)
@@ -241,6 +241,12 @@ which now enables the `loadModel` function to load [SDF3](https://www.es.ele.tue
 We shall not cover it in this tutorial, but enabling bridges to other MDE framework boils down to developing drivers
 and adapters that can be registered in the `ModelHandler`, which then takes care of it automatically in any code that
 is already using it.
+
+If you have a `fiodl` file on disk that was created with supporting libraries prior to 0.7+, be sure
+to register the migrator that comes with `libforsyde` so that all the tools consuming them are updated
+in a best-effort basis:
+
+    handler.registerSystemGraphMigrator(new TraitNamesFrom0_6To0_7())
 
 ## Programmatic creation, manipulation and querying
 

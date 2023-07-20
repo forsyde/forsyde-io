@@ -1,14 +1,12 @@
-package forsyde.io.lib.behavior.sy;
+package forsyde.io.lib.behavior.moc.sy;
 
 import forsyde.io.core.VertexViewer;
 import forsyde.io.core.annotations.OutPort;
+import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
 import forsyde.io.lib.behavior.AlgorithmicEntity;
-import forsyde.io.lib.behavior.MoCEntity;
-import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.shortestpath.FloydWarshallShortestPaths;
-import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,10 +29,16 @@ import java.util.stream.Collectors;
  * output(k) = fn . . . . . f3 . f2 . f1 (input(k))
  */
 @RegisterTrait(IForSyDeHierarchy.class)
-public interface SYComb extends SYProcess {
+public interface SYMap extends SYProcess {
 
     @OutPort
     Set<AlgorithmicEntity> combinators();
+
+    @Property
+    List<String> outputPorts();
+
+    @Property
+    List<String> inputPorts();
 
     default List<AlgorithmicEntity> combinatorsOrdered() {
         if (getViewedVertex().hasProperty("__combinators_ordering__") && getViewedVertex().getProperty("__combinators_ordering__") instanceof List<?> list

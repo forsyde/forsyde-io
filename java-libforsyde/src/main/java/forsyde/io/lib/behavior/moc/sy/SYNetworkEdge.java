@@ -1,4 +1,4 @@
-package forsyde.io.lib.behavior.sy;
+package forsyde.io.lib.behavior.moc.sy;
 
 import forsyde.io.core.EdgeTrait;
 import forsyde.io.core.annotations.RegisterTrait;

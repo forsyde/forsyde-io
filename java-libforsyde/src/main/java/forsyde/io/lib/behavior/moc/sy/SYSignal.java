@@ -1,13 +1,12 @@
-package forsyde.io.lib.behavior.sy;
+package forsyde.io.lib.behavior.moc.sy;
 
 
-import forsyde.io.core.VertexViewer;
 import forsyde.io.core.annotations.InPort;
 import forsyde.io.core.annotations.OutPort;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.core.annotations.WithEdgeTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
-import forsyde.io.lib.behavior.MoCEntity;
+import forsyde.io.lib.behavior.moc.MoCEntity;
 
 import java.util.Set;
 

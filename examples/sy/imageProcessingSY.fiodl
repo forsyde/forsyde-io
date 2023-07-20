@@ -1,0 +1,402 @@
+systemgraph {
+vertex "graySY"
+  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::GreyBox]
+  (combFunctions, inSig, graySig,contained)
+  {
+    "inputPorts": [
+      "inSig"
+    ],
+    "outputPorts": [
+      "graySig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+
+vertex "resizeSY"
+  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::VisualizableWithProperties]
+  (combFunctions, graySig, resizedSig)
+  {
+    "inputPorts": [
+      "graySig"
+    ],
+    "outputPorts": [
+      "resizedSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+  
+vertex "maxBrightnessSY"
+  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::GreyBox]
+  (combFunctions, resizedSig, maxBrightnessSig, contained)
+  {
+    "inputPorts": [
+      "resizedSig"
+    ],
+    "outputPorts": [
+      "maxBrightnessSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "maxBrightnessMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels, resizedSig, maxMapVReduceVVec, contained)
+  {
+    "inputPorts": [
+      "resizedSig"
+    ],
+    "outputPorts": [
+      "maxMapVReduceVVec"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "maxBrightnessReduceVA"
+  [impl::Executable, parallel::ReduceV, visualization::GreyBox]
+  (kernels, resizedSig, maxMapVReduceVVec, contained)
+  {
+    "inputArray": [
+      "resizedSig"
+    ],
+    "outputScalar": [
+      "maxMapVReduceVVec"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "maxBrightnessReduceVB"
+  [impl::Executable, parallel::ReduceV, visualization::GreyBox]
+  (kernels, maxMapVReduceVVec, maxBrightnessSig, contained)
+  {
+    "inputArray": [
+      "maxMapVReduceVVec"
+    ],
+    "outputScalar": [
+      "maxBrightnessSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "max"
+    [impl::ANSICBlackBoxExecutable, visualization::VisualizableWithProperties]
+    (a, b, res)
+  {
+    "inlinedCode": "res = a > b ? a : b;",
+    "inputArgumentPorts": ["a", "b"],
+    "outputArgumentPorts": [],
+    "returnPort": "res",
+    "visualizedPropertiesNames": ["inlinedCode"]
+  }
+
+vertex "minBrightnessSY"
+  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::GreyBox]
+  (combFunctions, resizedSig, minBrightnessSig, contained)
+  {
+    "inputPorts": [
+      "resizedSig"
+    ],
+    "outputPorts": [
+      "minBrightnessSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "minBrightnessMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels, resizedSig, minMapVReduceVVec, contained)
+  {
+    "inputPorts": [
+      "resizedSig"
+    ],
+    "outputPorts": [
+      "minMapVReduceVVec"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "minBrightnessReduceVA"
+  [impl::Executable, parallel::ReduceV, visualization::GreyBox]
+  (kernels, resizedSig, minMapVReduceVVec, contained)
+  {
+    "inputArray": [
+      "resizedSig"
+    ],
+    "outputScalar": [
+      "minMapVReduceVVec"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "minBrightnessReduceVB"
+  [impl::Executable, parallel::ReduceV, visualization::GreyBox]
+  (kernels, minMapVReduceVVec, minBrightnessSig, contained)
+  {
+    "inputArray": [
+      "minMapVReduceVVec"
+    ],
+    "outputScalar": [
+      "minBrightnessSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "min"
+    [impl::ANSICBlackBoxExecutable, visualization::VisualizableWithProperties]
+    (a, b, res)
+  {
+    "inlinedCode": "res = a < b ? a : b;",
+    "inputArgumentPorts": ["a", "b"],
+    "outputArgumentPorts": [],
+    "returnPort": "res",
+    "visualizedPropertiesNames": ["inlinedCode"]
+  }
+
+vertex "controlSY"
+  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::VisualizableWithProperties]
+  (combFunctions, maxBrightnessSig, minBrightnessSig, controlSig)
+  {
+    "inputPorts": [
+      "maxBrightnessSig",
+      "minBrightnessSig"
+    ],
+    "outputPorts": [
+      "controlSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "correctionSY"
+  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::VisualizableWithProperties]
+  (combFunctions, controlSig, resizedSig, maxBrightnessSig, minBrightnessSig, correctedSig)
+  {
+    "inputPorts": [
+      "controlSig",
+      "resizedSig",
+      "maxBrightnessSig",
+      "minBrightnessSig"
+    ],
+    "outputPorts": [
+      "correctedSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+  
+vertex "sobelSY"
+  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::VisualizableWithProperties]
+  (combFunctions, correctedSig, sobelSig)
+  {
+    "inputPorts": [
+      "correctedSig"
+    ],
+    "outputPorts": [
+      "sobelSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+  
+vertex "asciiSY"
+  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::VisualizableWithProperties]
+  (combFunctions, sobelSig, processedImageSig)
+  {
+    "inputPorts": [
+      "sobelSig"
+    ],
+    "outputPorts": [
+      "processedImageSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "inSig"
+  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": []
+  }
+
+vertex "graySig"
+  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": []
+  }
+  
+vertex "resizedSig"
+  [impl::DataBlock, moc::sy::SYSignal, visualization::GreyBox]
+  (input, output, contained)
+  {
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": []
+  }
+
+vertex "resizedV"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "dimensions": [8_i, 4_i],
+    "visualizedPropertiesNames": ["dimensions"]
+  }
+
+vertex "maxBrightnessSig"
+  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": []
+  }
+
+  
+vertex "minBrightnessSig"
+  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": []
+  }
+
+  
+vertex "controlSig"
+  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": []
+  }
+
+vertex "correctedSig"
+  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": []
+  }
+
+vertex "sobelSig"
+  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": []
+  }
+  
+vertex "processedImageSig"
+  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": []
+  } 
+
+vertex "maxMapVReduceVVec"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+      "dimensions": [8_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
+  }
+
+vertex "minMapVReduceVVec"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+      "dimensions": [8_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
+  }
+
+vertex "application"
+  [visualization::GreyBox]
+  (contained)
+  {}
+
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "inSig" port "output" to "graySY" port "inSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "graySY" port "graySig" to "graySig" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "graySig" port "output" to "resizeSY" port "graySig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizeSY" port "resizedSig" to "resizedSig" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizedSig" port "output" to "maxBrightnessSY" port "resizedSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizedSig" port "output" to "minBrightnessSY" port "resizedSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizedSig" port "output" to "correctionSY" port "resizedSig"
+
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizedSig" port "input" to "resizedV" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizedV" port "output" to "resizedSig" port "output"
+
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "maxBrightnessSY" port "maxBrightnessSig" to "maxBrightnessSig" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "minBrightnessSY" port "minBrightnessSig" to "minBrightnessSig" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "maxBrightnessSig" port "output" to "controlSY" port "maxBrightnessSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "minBrightnessSig" port "output" to "controlSY" port "minBrightnessSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "controlSY" port "controlSig" to "controlSig" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "controlSig" port "output" to "correctionSY" port "controlSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "maxBrightnessSig" port "output" to "correctionSY" port "maxBrightnessSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "minBrightnessSig" port "output" to "correctionSY" port "minBrightnessSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "correctionSY" port "correctedSig" to "correctedSig" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "correctedSig" port "output" to "sobelSY" port "correctedSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "sobelSY" port "sobelSig" to "sobelSig" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "sobelSig" port "output" to "asciiSY" port "sobelSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "asciiSY" port "processedImageSig" to "processedImageSig" port "input"
+
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "maxBrightnessSY" port "resizedSig" to "maxBrightnessMapV" port "resizedSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "maxBrightnessMapV" port "resizedSig" to "maxBrightnessReduceVA" port "resizedSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "maxBrightnessReduceVA" port "maxMapVReduceVVec" to "maxBrightnessMapV" port "maxMapVReduceVVec"
+edge [parallel::ParallelComputationEdge, visualization::VisualConnection] from "maxBrightnessMapV" port "maxMapVReduceVVec" to "maxMapVReduceVVec" port "input"
+edge [parallel::ParallelComputationEdge, visualization::VisualConnection] from "maxMapVReduceVVec" port "output" to "maxBrightnessReduceVB" port "maxMapVReduceVVec"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "maxBrightnessReduceVB" port "maxBrightnessSig" to "maxBrightnessSY" port "maxBrightnessSig"
+edge [moc::AbstractionEdge] from "maxBrightnessSY" port "combFunctions" to "maxBrightnessMapV"
+edge [moc::AbstractionEdge] from "maxBrightnessSY" port "combFunctions" to "maxBrightnessReduceVB"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "maxBrightnessMapV" port "kernels" to "maxBrightnessReduceVA"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "maxBrightnessReduceVA" port "kernels" to "max"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "maxBrightnessReduceVB" port "kernels" to "max"
+
+
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "minBrightnessSY" port "resizedSig" to "minBrightnessMapV" port "resizedSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "minBrightnessMapV" port "resizedSig" to "minBrightnessReduceVA" port "resizedSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "minBrightnessReduceVA" port "minMapVReduceVVec" to "minBrightnessMapV" port "minMapVReduceVVec"
+edge [parallel::ParallelComputationEdge, visualization::VisualConnection] from "minBrightnessMapV" port "minMapVReduceVVec" to "minMapVReduceVVec" port "input"
+edge [parallel::ParallelComputationEdge, visualization::VisualConnection] from "minMapVReduceVVec" port "output" to "minBrightnessReduceVB" port "minMapVReduceVVec"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "minBrightnessReduceVB" port "minBrightnessSig" to "minBrightnessSY" port "minBrightnessSig"
+edge [moc::AbstractionEdge] from "minBrightnessSY" port "combFunctions" to "minBrightnessMapV"
+edge [moc::AbstractionEdge] from "minBrightnessSY" port "combFunctions" to "minBrightnessReduceVB"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "minBrightnessMapV" port "kernels" to "minBrightnessReduceVA"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "minBrightnessReduceVA" port "kernels" to "min"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "minBrightnessReduceVB" port "kernels" to "min"
+
+
+edge [visualization::VisualContainment] from "application" port "contained" to "graySY"
+edge [visualization::VisualContainment] from "application" port "contained" to "resizeSY"
+edge [visualization::VisualContainment] from "application" port "contained" to "maxBrightnessSY"
+edge [visualization::VisualContainment] from "application" port "contained" to "minBrightnessSY"
+edge [visualization::VisualContainment] from "application" port "contained" to "controlSY"
+edge [visualization::VisualContainment] from "application" port "contained" to "correctionSY"
+edge [visualization::VisualContainment] from "application" port "contained" to "sobelSY"
+edge [visualization::VisualContainment] from "application" port "contained" to "asciiSY" 
+edge [visualization::VisualContainment] from "application" port "contained" to "inSig"
+edge [visualization::VisualContainment] from "application" port "contained" to "graySig"
+edge [visualization::VisualContainment] from "application" port "contained" to "resizedSig"
+edge [visualization::VisualContainment] from "application" port "contained" to "maxBrightnessSig"
+edge [visualization::VisualContainment] from "application" port "contained" to "minBrightnessSig"
+edge [visualization::VisualContainment] from "application" port "contained" to "controlSig"
+edge [visualization::VisualContainment] from "application" port "contained" to "correctedSig"
+edge [visualization::VisualContainment] from "application" port "contained" to "sobelSig"
+edge [visualization::VisualContainment] from "application" port "contained" to "processedImageSig"
+edge [visualization::VisualContainment] from "maxBrightnessSY" port "contained" to "maxBrightnessMapV"
+edge [visualization::VisualContainment] from "maxBrightnessSY" port "contained" to "maxMapVReduceVVec"
+edge [visualization::VisualContainment] from "maxBrightnessMapV" port "contained" to "maxBrightnessReduceVA"
+edge [visualization::VisualContainment] from "maxBrightnessSY" port "contained" to "maxBrightnessReduceVB"
+edge [visualization::VisualContainment] from "maxBrightnessReduceVA" port "contained" to "max"
+edge [visualization::VisualContainment] from "maxBrightnessReduceVB" port "contained" to "max"
+edge [visualization::VisualContainment] from "minBrightnessSY" port "contained" to "minBrightnessMapV"
+edge [visualization::VisualContainment] from "minBrightnessSY" port "contained" to "minMapVReduceVVec"
+edge [visualization::VisualContainment] from "minBrightnessMapV" port "contained" to "minBrightnessReduceVA"
+edge [visualization::VisualContainment] from "minBrightnessSY" port "contained" to "minBrightnessReduceVB"
+edge [visualization::VisualContainment] from "minBrightnessReduceVA" port "contained" to "min"
+edge [visualization::VisualContainment] from "minBrightnessReduceVB" port "contained" to "min"
+edge [visualization::VisualContainment] from "resizedSig" port "contained" to "resizedV"
+
+
+
+}
+
+

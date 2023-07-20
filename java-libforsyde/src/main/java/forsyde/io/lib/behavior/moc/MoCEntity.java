@@ -1,4 +1,4 @@
-package forsyde.io.lib.behavior;
+package forsyde.io.lib.behavior.moc;
 
 import forsyde.io.core.VertexViewer;
 import forsyde.io.core.annotations.RegisterTrait;

@@ -5,6 +5,7 @@ import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Trait;
 import forsyde.io.lib.ForSyDeHierarchy;
 import forsyde.io.lib.visualization.Visualizable;
+import forsyde.io.lib.visualization.VisualizableWithPropertiesViewer;
 import org.ainslec.picocog.PicoWriter;
 
 import java.util.*;
@@ -80,15 +81,14 @@ public class KlighDNodeView {
     }
 
     public boolean hasVisualizableProperties() {
-        return false;//VisualizableWithProperties.conforms(viewed);
+        return ForSyDeHierarchy.VisualizableWithProperties.tryView(viewed).isPresent();
     }
 
     public Map<String, String> getVisualizedProperties() {
-        return Map.of();
-//        return VisualizableWithProperties.safeCast(viewed).map(VisualizableWithProperties::getVisualizedPropertiesNames).map(strings -> strings.stream().collect(Collectors.toMap(
-//                s -> s,
-//                s -> viewed.getViewedVertex().getProperty(s).toString()
-//        ))).orElse(Map.of());
+        return ForSyDeHierarchy.VisualizableWithProperties.tryView(viewed).map(VisualizableWithPropertiesViewer::visualizedPropertiesNames).map(strings -> strings.stream().collect(Collectors.toMap(
+                s -> s,
+                s -> viewed.getViewedVertex().getProperty(s).toString()
+        ))).orElse(Map.of());
     }
 
     public void write(PicoWriter picoWriter) {

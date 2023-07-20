@@ -2,15 +2,12 @@ package forsyde.io.bridge.sdf3.adapters.mixins;
 
 import forsyde.io.bridge.sdf3.adapters.mixins.elems.Processor;
 import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.core.EdgeTrait;
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Vertex;
 import forsyde.io.bridge.sdf3.adapters.mixins.elems.Sdf3;
 import forsyde.io.lib.ForSyDeHierarchy;
-import forsyde.io.lib.behavior.sdf.SDFActor;
-import forsyde.io.lib.behavior.sdf.SDFActorViewer;
-import forsyde.io.lib.behavior.sdf.SDFChannelViewer;
-import forsyde.io.lib.visualization.Visualizable;
+import forsyde.io.lib.behavior.moc.sdf.SDFActorViewer;
+import forsyde.io.lib.behavior.moc.sdf.SDFChannelViewer;
 
 import java.util.HashMap;
 import java.util.Map;

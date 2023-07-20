@@ -1,8 +1,7 @@
-package forsyde.io.lib.behavior.sy;
+package forsyde.io.lib.behavior.moc.sy;
 
 import forsyde.io.core.annotations.*;
 import forsyde.io.lib.IForSyDeHierarchy;
-import forsyde.io.lib.behavior.MoCEntity;
 
 /**
  * An SY Delay is an SY process creates a signal with one discrete step phaing.
