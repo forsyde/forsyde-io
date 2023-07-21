@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  *         Class containing all information for an Edge.
  *
  *         The edge contains references to the source and target
- *         {@link Vertex}es as well as the {@link Port}s being connect on both
+ *         {@link Vertex}es as well as the ports being connect on both
  *         ends, in case they exist. The edges also have types associated with
  *         them so that extra deductions can be made along the EDA flow.
  */

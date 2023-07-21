@@ -9,6 +9,6 @@ import forsyde.io.lib.IForSyDeHierarchy;
 public interface BufferLike extends VertexViewer {
 
     @Property
-    Long maxBufferSize();
+    Long elementSizeInBits();
 
 }

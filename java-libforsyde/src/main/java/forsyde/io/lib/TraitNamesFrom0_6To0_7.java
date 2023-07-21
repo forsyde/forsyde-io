@@ -17,6 +17,31 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                         traitToAdd.add(t);
                     }
                 }
+                if (vt.getName().contains("DataBlock")) {
+                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.RegisterLike);
+                }
+                if (vt.getName().contains("TokenizableDataBlock")) {
+                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.ArrayBufferLike);
+                }
+                if (vt.getName().contains("TokenizableDataBlock")) {
+                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.ArrayBufferLike);
+                }
+                if (vt.getName().contains("ANSICBlackBoxExecutable")) {
+                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.HasANSICImplementation);
+                }
+                if (vt.getName().contains("InstrumentedExecutable") || vt.getName().contains("Executable")) {
+                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.BehaviourEntity);
+                }
+            }
+            if (traitToAdd.contains(ForSyDeHierarchy.VertexTraits.RegisterLike)) {
+                var reg = ForSyDeHierarchy.RegisterLike.enforce(systemGraph, v);
+                reg.sizeInBits((Long) v.getProperty("maxSizeInBits"));
+            }
+            if (traitToAdd.contains(ForSyDeHierarchy.VertexTraits.ArrayBufferLike)) {
+                var buf = ForSyDeHierarchy.ArrayBufferLike.enforce(systemGraph, v);
+                buf.elementSizeInBits((Long) v.getProperty("tokenSizeInBits"));
+                var maxElems = ((Long) v.getProperty("maxSizeInBits")) / buf.elementSizeInBits();
+                buf.maxElements((int) maxElems);
             }
             v.addTraits(traitToAdd);
         }

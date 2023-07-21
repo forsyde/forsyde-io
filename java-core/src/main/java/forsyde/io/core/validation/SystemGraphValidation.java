@@ -12,4 +12,10 @@ import java.util.Optional;
 public interface SystemGraphValidation {
 
     Optional<String> validate(SystemGraph systemGraph);
+
+    class InvalidSystemGraph extends Exception {
+        public InvalidSystemGraph(String message) {
+            super(message);
+        }
+    }
 }

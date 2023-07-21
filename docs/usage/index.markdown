@@ -198,7 +198,7 @@ We will read this serialized model in memory and print its contents just to see 
 Now, on your `main` method inside the `App` class (or equivalent in your bigger project), you can do the following:
 
     // add this imports....
-    import forsyde.io.core.drivers.ModelHandler;
+    import forsyde.io.core.ModelHandler;
     import forsyde.io.lib.ForSyDeHierarchy;
 
     // within the main class, interface etc

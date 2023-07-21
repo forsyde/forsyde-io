@@ -154,15 +154,16 @@ public class TraitViewerGenerator extends AbstractProcessor {
     protected Set<MethodSpec> generatePortSetters(TypeElement hierarchy, TypeElement viewerInterface) {
         var methods = new HashSet<MethodSpec>();
         var members = processingEnv.getElementUtils().getAllMembers(viewerInterface);
+        var viewerClass = ClassName.get(processingEnv.getElementUtils().getPackageOf(viewerInterface).toString(), viewerInterface.getSimpleName().toString() + "Viewer");
         for (var member : members) {
             if (member instanceof ExecutableElement execMember && (member.getAnnotation(InPort.class) != null || member.getAnnotation(OutPort.class) != null)) {
                 var name = execMember.getSimpleName().toString();
                 if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Set"))) {
                     var capitalizedName = name.substring(0, 1).toUpperCase() + name.substring(1);
-                    var getMethodBuilderWithoutPort = MethodSpec.methodBuilder("add" + capitalizedName).addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
-                    var getMethodBuilder = MethodSpec.methodBuilder("add" + capitalizedName).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
+                    var getMethodBuilderWithoutPort = MethodSpec.methodBuilder("add" + capitalizedName).addModifiers(Modifier.PUBLIC).returns(viewerClass);
+                    var getMethodBuilder = MethodSpec.methodBuilder("add" + capitalizedName).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(viewerClass);
                     if (execMember.getAnnotation(InPort.class) != null) {
-                        var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
+                        var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString());
                         getMethodBuilderWithoutPort.addParameter(portInputType, name);
                         getMethodBuilder.addParameter(portInputType, name);
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
@@ -197,7 +198,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     }
                     if (execMember.getAnnotation(OutPort.class) != null) {
                         // checking for what type of return type it is
-                        var portOutputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
+                        var portOutputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString());
                         getMethodBuilderWithoutPort.addParameter(portOutputType, name);
                         getMethodBuilder.addParameter(portOutputType, name);
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
@@ -272,10 +273,10 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     throw new IllegalArgumentException("Exception at " + viewerInterface.getQualifiedName().toString() + " on " + execMember.getSimpleName() + ": Lists are not supported. Use Sets and properties with your ordering scheme to achieve proper listing");
                 }
                 else if (execMember.getReturnType() instanceof DeclaredType declaredType && (declaredType.asElement().getSimpleName().contentEquals("Optional"))) {
-                    var getMethodBuilderWithoutPort = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
-                    var getMethodBuilder = MethodSpec.methodBuilder(name).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
+                    var getMethodBuilderWithoutPort = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).returns(viewerClass);
+                    var getMethodBuilder = MethodSpec.methodBuilder(name).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(viewerClass);
                     if (execMember.getAnnotation(InPort.class) != null) {
-                        var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
+                        var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString());
                         getMethodBuilderWithoutPort.addParameter(portInputType, name);
                         getMethodBuilder.addParameter(portInputType, name);
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
@@ -310,7 +311,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     }
                     if (execMember.getAnnotation(OutPort.class) != null) {
                         // checking for what type of return type it is
-                        var portOutputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
+                        var portOutputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString());
                         getMethodBuilderWithoutPort.addParameter(portOutputType, name);
                         getMethodBuilder.addParameter(portOutputType, name);
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
@@ -346,10 +347,10 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     methods.add(getMethodBuilderWithoutPort.build());
                     methods.add(getMethodBuilder.build());
                 } else {
-                    var getMethodBuilderWithoutPort = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
-                    var getMethodBuilder = MethodSpec.methodBuilder(name).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(TypeName.get(viewerInterface.asType()));
+                    var getMethodBuilderWithoutPort = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).returns(viewerClass);
+                    var getMethodBuilder = MethodSpec.methodBuilder(name).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(viewerClass);
                     if (execMember.getAnnotation(InPort.class) != null) {
-                        var portInputType = execMember.getReturnType().toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(execMember.getReturnType().toString() + "Viewer");
+                        var portInputType = execMember.getReturnType().toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(execMember.getReturnType().toString());
                         getMethodBuilderWithoutPort.addParameter(portInputType, name);
                         getMethodBuilder.addParameter(portInputType, name);
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
@@ -384,7 +385,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     }
                     if (execMember.getAnnotation(OutPort.class) != null) {
                         // checking for what type of return type it is
-                        var portOutputType = execMember.getReturnType().toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(execMember.getReturnType().toString() + "Viewer");
+                        var portOutputType = execMember.getReturnType().toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(execMember.getReturnType().toString());
                         getMethodBuilderWithoutPort.addParameter(portOutputType, name);
                         getMethodBuilder.addParameter(portOutputType, name);
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
@@ -551,7 +552,15 @@ public class TraitViewerGenerator extends AbstractProcessor {
             if (execMember.isDefault()) {
                 getMethodBuilder.addStatement("if (!getViewedVertex().hasProperty($S)) getViewedVertex().putProperty($S, $T.super.$L())", name, name, viewerInterface, name);
             }
-            getMethodBuilder.addStatement("return ($T) vertex.getProperty($S)", execMember.getReturnType(), name);
+            if (execMember.getReturnType().toString().contains("Optional")) {
+                var innerType = execMember.getReturnType();
+                if (execMember.getReturnType() instanceof DeclaredType declaredType) {
+                    innerType = declaredType.getTypeArguments().get(0);
+                }
+                getMethodBuilder.addStatement("return ($T) $T.ofNullable(($T) vertex.getProperty($S))", execMember.getReturnType(), Optional.class, innerType, name);
+            } else {
+                getMethodBuilder.addStatement("return ($T) vertex.getProperty($S)", execMember.getReturnType(), name);
+            }
             methods.add(getMethodBuilder.build());
         }
         return methods;

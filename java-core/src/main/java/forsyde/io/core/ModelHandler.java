@@ -1,20 +1,18 @@
 /**
  * 
  */
-package forsyde.io.core.drivers;
+package forsyde.io.core;
 
 import java.io.File;
-import java.io.InputStream;
 import java.nio.file.*;
 import java.util.*;
 
-import forsyde.io.core.OpaqueTrait;
-import forsyde.io.core.SystemGraph;
-import forsyde.io.core.Trait;
-import forsyde.io.core.TraitHierarchy;
+import forsyde.io.core.drivers.FiodlDriver;
+import forsyde.io.core.drivers.ModelDriver;
 import forsyde.io.core.inference.PopulateTaskCommunications;
 import forsyde.io.core.inference.SystemGraphInference;
 import forsyde.io.core.migrations.*;
+import forsyde.io.core.validation.BasicTraitsValidation;
 import forsyde.io.core.validation.SDFValidator;
 import forsyde.io.core.validation.SystemGraphValidation;
 
@@ -38,32 +36,48 @@ public final class ModelHandler {
 //	PathMatcher linguaFrancaMatcher;
 //	PathMatcher amaltheaMatcher;
 
-	public ModelHandler(ModelDriver... extraDrivers) {
-		// register default inferences
-		registeredInferences.add(new PopulateTaskCommunications());
-		// register default migrators
-		registeredMigrators.add(new NoMoreReactiveTaskMigration());
-        registeredMigrators.add(new TaskCallSequenceSplit());
-		registeredMigrators.add(new SDFCombToSDFActorConversion());
-		registeredMigrators.add(new ParallelSkeletonsNameMigrator());
-		registeredMigrators.add(new MadeMocAndParallelPortsMultipleMigrator());
-		// default validators
-		registesteredValidators.add(new SDFValidator());
-		// register default drivers
-        registeredDrivers.add(new FiodlDriver());
-		// register extra drivers
-		registeredDrivers.addAll(Arrays.asList(extraDrivers));
-		// make their
-		for (ModelDriver driver : registeredDrivers) {
-			final String inExtensions = "{" + String.join(",", driver.inputExtensions()) + "}";
-			final String outExtensions = "{" + String.join(",", driver.outputExtensions()) + "}";
-			registeredDriversInputMatchers.add(
-					FileSystems.getDefault().getPathMatcher("glob:**." + inExtensions)
-			);
-			registeredDriversOutputMatchers.add(
-					FileSystems.getDefault().getPathMatcher("glob:**." + outExtensions)
-			);
-		}
+	public ModelHandler() {
+		// mandatory validator
+		registerValidation(new BasicTraitsValidation());
+		// mandatory drivers
+		registerDriver(new FiodlDriver());
+	}
+
+//	public ModelHandler(ModelDriver... extraDrivers) {
+//		// mandatory validator
+//		registesteredValidators.add(new BasicTraitsValidation());
+//		// mandatory drivers
+//		registeredDrivers.add(new FiodlDriver());
+//		// register default inferences
+////		registeredInferences.add(new PopulateTaskCommunications());
+//		// register default migrators
+////		registeredMigrators.add(new NoMoreReactiveTaskMigration());
+////        registeredMigrators.add(new TaskCallSequenceSplit());
+////		registeredMigrators.add(new SDFCombToSDFActorConversion());
+////		registeredMigrators.add(new ParallelSkeletonsNameMigrator());
+////		registeredMigrators.add(new MadeMocAndParallelPortsMultipleMigrator());
+//		// default validators
+////		registesteredValidators.add(new SDFValidator());
+//		// register default drivers
+//
+//		// register extra drivers
+//		registeredDrivers.addAll(Arrays.asList(extraDrivers));
+//		// make their
+//		for (ModelDriver driver : registeredDrivers) {
+//			final String inExtensions = "{" + String.join(",", driver.inputExtensions()) + "}";
+//			final String outExtensions = "{" + String.join(",", driver.outputExtensions()) + "}";
+//			registeredDriversInputMatchers.add(
+//					FileSystems.getDefault().getPathMatcher("glob:**." + inExtensions)
+//			);
+//			registeredDriversOutputMatchers.add(
+//					FileSystems.getDefault().getPathMatcher("glob:**." + outExtensions)
+//			);
+//		}
+//	}
+
+	public ModelHandler registerValidation(SystemGraphValidation validation) {
+		registesteredValidators.add(validation);
+		return this;
 	}
 
 	public ModelHandler registerSystemGraphMigrator(SystemGraphMigrator systemGraphMigrator) {
@@ -80,11 +94,11 @@ public final class ModelHandler {
 		if (!registeredDrivers.contains(extraDriver)) {
 			final String inExtensions = "{" + String.join(",", extraDriver.inputExtensions()) + "}";
 			final String outExtensions = "{" + String.join(",", extraDriver.outputExtensions()) + "}";
-			registeredDrivers.add(loadOrder, extraDriver);
-			registeredDriversInputMatchers.add(loadOrder,
+			registeredDrivers.add(Math.min(loadOrder, registeredDrivers.size()), extraDriver);
+			registeredDriversInputMatchers.add(Math.min(loadOrder, registeredDrivers.size()),
 					FileSystems.getDefault().getPathMatcher("glob:**." + inExtensions)
 			);
-			registeredDriversOutputMatchers.add(loadOrder,
+			registeredDriversOutputMatchers.add(Math.min(loadOrder, registeredDrivers.size()),
 					FileSystems.getDefault().getPathMatcher("glob:**." + outExtensions)
 			);
 		}
@@ -142,15 +156,23 @@ public final class ModelHandler {
 					v.getTraits().removeAll(toDelete);
 					v.getTraits().addAll(toAdd);
 				}
+				// pre migration validation
+				for (SystemGraphValidation validation : registesteredValidators) {
+					final Optional<String> validationResult = validation.validate(systemGraph);
+					if (validationResult.isPresent()) {
+						throw new SystemGraphValidation.InvalidSystemGraph(validationResult.get());
+					}
+				}
 				for (SystemGraphMigrator systemGraphMigrator : registeredMigrators) {
 					if (!systemGraphMigrator.effect(systemGraph)) {
 						throw new Exception("Migrator " + systemGraphMigrator.getName() + " has failed its migration.");
 					}
 				}
+				// post migration validation
 				for (SystemGraphValidation validation : registesteredValidators) {
 					final Optional<String> validationResult = validation.validate(systemGraph);
 					if (validationResult.isPresent()) {
-						throw new Exception(validationResult.get());
+						throw new SystemGraphValidation.InvalidSystemGraph(validationResult.get());
 					}
 				}
 				registeredInferences.forEach(inference -> inference.infer(systemGraph));

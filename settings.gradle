@@ -20,4 +20,5 @@ include 'java-graphviz'
 //include 'java-ods-reporting'
 include 'java-libforsyde'
 include 'java-bridge-forsyde-shallow'
+//include 'groovy-frontsyde'
 

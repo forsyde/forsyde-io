@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Class holding data for a Vertex (Node) in memory.
  * <p>
- * Every vertex contains a number of {@link Port}s (which are repeated in the
+ * Every vertex contains a number of ports (which are repeated in the
  * vertexes to increase reliability in the model, since putting them in edges
  * would have been sufficient) with their associated types. Also, every vertex
  * contains "Properties" which are arbitrary self-contained associated data,
@@ -125,19 +125,19 @@ final public class Vertex {
     }
 
     public boolean putProperty(String propertyName, long propertyValue) throws IllegalArgumentException {
-        return properties.put(propertyName, propertyValue) == null;
+        return properties.put(propertyName, Long.valueOf(propertyValue)) == null;
     }
 
     public boolean putProperty(String propertyName, int propertyValue) throws IllegalArgumentException {
-        return properties.put(propertyName, propertyValue) == null;
+        return properties.put(propertyName, Integer.valueOf(propertyValue)) == null;
     }
 
     public boolean putProperty(String propertyName, float propertyValue) throws IllegalArgumentException {
-        return properties.put(propertyName, propertyValue) == null;
+        return properties.put(propertyName, Float.valueOf(propertyValue)) == null;
     }
 
     public boolean putProperty(String propertyName, boolean propertyValue) throws IllegalArgumentException {
-        return properties.put(propertyName, propertyValue) == null;
+        return properties.put(propertyName, Boolean.valueOf(propertyValue)) == null;
     }
 
     public boolean putProperty(String propertyName, Object propertyValue) throws IllegalArgumentException {

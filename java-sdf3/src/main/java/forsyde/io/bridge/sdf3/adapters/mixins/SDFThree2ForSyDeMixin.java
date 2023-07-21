@@ -89,9 +89,9 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                 if (channelProperties.getBufferSize() != null) {
                     var tokenizableDataBlock = ForSyDeHierarchy.ArrayBufferLike.enforce(sdfChannel);
                     var max = channelProperties.getBufferSize().getSz().longValueExact();
-                    tokenizableDataBlock.maxBufferSize(max);
                     var sz = channelProperties.getTokenSize().stream().mapToLong(t -> t.getSz().longValueExact()).sum();
                     tokenizableDataBlock.maxElements((int) max / (int) sz);
+                    tokenizableDataBlock.elementSizeInBits(sz);
                 }
             });
         });

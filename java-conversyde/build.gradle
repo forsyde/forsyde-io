@@ -1,29 +1,5 @@
-// buildscript {
-//     repositories {
-//         mavenCentral()
-//     }
-//     dependencies {
-//         classpath 'io.github.fvarrui:javapackager:1.6.2'
-//     }
-// }
-
 plugins {
-    id 'java'
-    id 'application'
-    id 'idea'
-    id 'eclipse'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'org.beryx.jlink' version '2.25.0'
-//    id 'org.graalvm.buildtools.native' version '0.9.13'
-}
-
-// apply plugin: 'io.github.fvarrui.javapackager.plugin'
-
-group 'io.github.forsyde'
-archivesBaseName = 'conversyde'
-
-repositories {
-    mavenCentral()
+    id 'forsydeio.app-module'
 }
 
 dependencies {
@@ -41,10 +17,6 @@ dependencies {
     implementation project(":java-graphviz")
 }
 
-test {
-    useJUnitPlatform()
-}
-
 mainClassName = 'forsyde.io.java.conversyde.ConverSyDeStandalone'
 
 application {
@@ -52,67 +24,7 @@ application {
     mainModule = "forsyde.io.java.conversyde"
 }
 
-jlink {
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-
-    jpackage {
-        skipInstaller = true
-        if (org.gradle.internal.os.OperatingSystem.current().windows) {
-            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
-            imageOptions += ['--win-console']
-        }
-    }
-}
-
 task zipJpackage(type: Zip, dependsOn: tasks.jpackageImage) {
     from "$buildDir/jpackage/java-conversyde"
     destinationDirectory = file("$buildDir/distributions")
 }
-
-//graalvmNative {
-//    binaries {
-//        main {
-//            useFatJar = true
-//        }
-//    }
-//}
-
-// javapackager {
-//     mainClass = "io.github.forsyde.conversyde.ConverSyDeStandalone"
-//     generateInstaller = false
-//     bundleJre = true
-//     administratorRequired = false
-//     name = "conversyde"
-// }
-
-// launch4j {
-//     headerType = "console"
-// }
-
-//tasks.launch4j.dependsOn(jar)
-
-//tasks.publish.enabled = false
-//tasks.publishMavenJavaPublicationToSonatypeRepository.enabled = false
-
-/*
-task packageConverSyDe(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: build) {
-    // mandatory
-    mainClass = 'io.github.forsyde.conversyde.ConverSyDeStandalone'
-    // optional
-    bundleJre = true
-    generateInstaller = false
-    administratorRequired = false
-    platform = "auto"
-//    additionalResources = [ file('file path'), file('folder path'), ... ]
-//    linuxConfig {
-//        ...
-//    }
-//    macConfig {
-//        ...
-//    }
-//    winConfig {
-//        ...
-//    }
-//    ...
-}
-*/
