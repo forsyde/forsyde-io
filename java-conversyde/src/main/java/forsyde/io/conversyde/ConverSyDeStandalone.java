@@ -1,4 +1,4 @@
-package forsyde.io.java.conversyde;
+package forsyde.io.conversyde;
 
 import forsyde.io.core.SystemGraph;
 //import forsyde.io.java.drivers.ForSyDeLFDriver;

@@ -12,10 +12,19 @@ dependencies {
     implementation project(":java-core")
     implementation project(":java-libforsyde")
     implementation project(":java-graphviz")
+    implementation 'info.picocli:picocli:4.6.3'
+    annotationProcessor 'info.picocli:picocli-codegen:4.6.3'
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
 test {
     useJUnitPlatform()
+}
+
+mainClassName = 'forsyde.io.java.frontsyde.FrontSyDeCLI'
+
+application {
+    mainClass = mainClassName
+    mainModule = "forsyde.io.frontsyde"
 }

@@ -1,4 +1,4 @@
-module forsyde.io.java.graphviz {
+module forsyde.io.graphviz {
     requires java.base;
     requires java.xml;
 
