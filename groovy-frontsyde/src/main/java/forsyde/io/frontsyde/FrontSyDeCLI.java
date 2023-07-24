@@ -1,6 +1,7 @@
 package forsyde.io.frontsyde;
 
 import forsyde.io.core.ModelHandler;
+import forsyde.io.lib.ForSyDeHierarchy;
 import forsyde.io.lib.TraitNamesFrom0_6To0_7;
 import forsyde.io.visual.kgt.drivers.KGTDriver;
 import picocli.CommandLine;
@@ -16,6 +17,7 @@ public class FrontSyDeCLI implements Callable<Integer> {
 
     public ModelHandler modelHandler = new ModelHandler()
             .registerSystemGraphMigrator(new TraitNamesFrom0_6To0_7())
+            .registerTraitHierarchy(new ForSyDeHierarchy())
             .registerDriver(new KGTDriver());
 
     @CommandLine.Parameters(description = "Input model files to be parsed and processes.")
