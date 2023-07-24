@@ -1,5 +1,12 @@
 package forsyde.io.frontsyde.sdf
 
+import forsyde.io.core.SystemGraph
+import forsyde.io.core.Vertex
+import forsyde.io.lib.ForSyDeHierarchy
+import forsyde.io.lib.behavior.moc.sdf.SDFActor
+import forsyde.io.lib.behavior.moc.sdf.SDFActorViewer
+import forsyde.io.lib.behavior.moc.sdf.SDFChannelViewer
+
 class SDFActorDef {
 
     String identifier_
@@ -27,63 +34,90 @@ class SDFActorDef {
         }]
     }
 
-    def port(String... s) {
-        [consumes: {int... tokens ->
-            for(int i = 0; i < s.length; i++) {
-                this.portNames_.add(s[i])
-                this.consumption.put(s[i], tokens[i])
-            }
+    def port(String s) {
+        [consumes: {int tokens ->
+            this.portNames_.add(s)
+            this.consumption.put(s, tokens)
         },
-         produces: {int... tokens ->
-             for(int i = 0; i < s.length; i++) {
-                 this.portNames_.add(s[i])
-                 this.production.put(s[i], tokens[i])
-             }
+         produces: {int tokens ->
+             this.portNames_.add(s)
+             this.production.put(s, tokens)
          }]
     }
 
-    def build(ForSyDeSystemGraph model = new ForSyDeSystemGraph()) {
+    def build(SystemGraph model = new SystemGraph()) {
         // make the highest random identifier possible
         if (identifier_ == null) {
             def counted = model.vertexSet().stream().map(v -> v.getIdentifier()).filter(s -> s.contains("sdfActor"))
             .count()
             identifier_ = "sdfActor${counted}"
         }
-        final Vertex newSDFactor = new Vertex(identifier_)
-        final SDFActor sdfActor = SDFActor.enforce(newSDFactor)
-        model.addVertex(newSDFactor)
-        portNames_.each {p -> newSDFactor.ports.add(p)}
+        final Vertex newSDFactor = model.newVertex(identifier_)
+        final SDFActorViewer sdfActor = ForSyDeHierarchy.SDFActor.enforce(model, newSDFactor)
+        ForSyDeHierarchy.Visualizable.enforce(sdfActor)
+        ForSyDeHierarchy.VisualizableWithProperties.enforce(sdfActor).visualizedPropertiesNames(List.of("consumption", "production"))
+        newSDFactor.addPorts(portNames_)
         for (int i = 0; i < states_.size(); i++) {
             def (stateName, stateType, stateVal) = states_[i]
-            newSDFactor.ports.add(stateName + "_in")
-            newSDFactor.ports.add(stateName + "_out")
+            newSDFactor.addPort(stateName + "_in")
+            newSDFactor.addPort(stateName + "_out")
 
             // create the channels with one token of delay
             final Vertex stateChannel = new Vertex("${identifier_}_${stateName}")
-            final SDFChannel sdfChannel = SDFChannel.enforce(stateChannel)
+            final SDFChannelViewer sdfChannel = ForSyDeHierarchy.SDFChannel.enforce(model, stateChannel)
+            ForSyDeHierarchy.Visualizable.enforce(sdfChannel)
+            ForSyDeHierarchy.VisualizableWithProperties.enforce(sdfChannel).visualizedPropertiesNames(List.of("numInitialTokens"))
             model.addVertex(stateChannel)
-            sdfChannel.setNumOfInitialTokens(1)
-
-            model.connect(newSDFactor, stateChannel, stateName + "_out", "producer", EdgeTrait.MOC_SDF_SDFDATAEDGE)
-            model.connect(stateChannel, newSDFactor, "consumer", stateName + "_in", EdgeTrait.MOC_SDF_SDFDATAEDGE)
-
+            sdfChannel.numInitialTokens(1)
+            sdfChannel.producer(stateName + "_out", sdfActor, ForSyDeHierarchy.EdgeTraits.VisualConnection)
+            sdfChannel.consumer(stateName + "_in", sdfActor, ForSyDeHierarchy.EdgeTraits.VisualConnection)
+            production.put(stateName + "_out", 1)
+            consumption.put(stateName + "_in", 1)
         }
 
-        sdfActor.setConsumption(consumption)
-        sdfActor.setProduction(production)
+        sdfActor.consumption(consumption)
+        sdfActor.production(production)
 
         if (body_ != null) {
-            def bodyVertex = new Vertex("${identifier_}_body")
-            def executable = ANSICBlackBoxExecutable.enforce(bodyVertex)
-            model.addVertex(bodyVertex)
-            executable.setInlinedCode(body_)
-            sdfActor.setCombFunctionsPort(model, Set.of(executable))
+            def bodyVertex = model.newVertex("${identifier_}_body")
+            def executable = ForSyDeHierarchy.HasANSICImplementation.enforce(model, bodyVertex)
+            executable.inlinedCode(body_)
+            ForSyDeHierarchy.VisualizableWithProperties.enforce(executable).visualizedPropertiesNames(List.of("inlinedCode", "inputArgumentPorts", "outputArgumentPorts", "returnPort"))
+            sdfActor.addCombFunctions(ForSyDeHierarchy.BehaviourEntity.enforce(executable))
+            ForSyDeHierarchy.GreyBox.enforce(sdfActor).addContained(ForSyDeHierarchy.Visualizable.enforce(executable))
+            for (String p : consumption.keySet()) {
+                executable.addPorts(p)
+                model.connect(sdfActor, executable, p, p, ForSyDeHierarchy.EdgeTraits.BehaviourCompositionEdge, ForSyDeHierarchy.EdgeTraits.VisualConnection)
+            }
+            executable.inputArgumentPorts(consumption.keySet().toList())
+            for (String p : production.keySet()) {
+                executable.addPorts(p)
+                model.connect(executable, sdfActor, p, p, ForSyDeHierarchy.EdgeTraits.BehaviourCompositionEdge, ForSyDeHierarchy.EdgeTraits.VisualConnection)
+            }
+            executable.outputArgumentPorts(production.keySet().toList())
+            executable.addPorts("res")
+            executable.returnPort("res")
         }
 
-        return model
+        for (def con : connected) {
+            def (srcPort, oActorDef, dstPort, tok) = con
+            sdfActor.addPorts(srcPort)
+            def oActor = oActorDef.build(model)
+            oActor.addPorts(dstPort)
+            // create middle sdfChannel
+            final Vertex channel = model.newVertex("${identifier_}_${oActor.getIdentifier()}")
+            final SDFChannelViewer sdfChannel = ForSyDeHierarchy.SDFChannel.enforce(model, channel)
+            ForSyDeHierarchy.Visualizable.enforce(sdfChannel)
+            ForSyDeHierarchy.VisualizableWithProperties.enforce(sdfChannel).visualizedPropertiesNames(List.of("numInitialTokens"))
+            sdfChannel.numInitialTokens(tok)
+            sdfChannel.producer(srcPort, sdfActor, ForSyDeHierarchy.EdgeTraits.VisualConnection)
+            sdfChannel.consumer(dstPort, oActor, ForSyDeHierarchy.EdgeTraits.VisualConnection)
+        }
+
+        return sdfActor
     }
 
-    def body(String b) {
+    def inlinedBody(String b) {
         body_ = b
     }
 
@@ -97,30 +131,8 @@ class SDFActorDef {
 
     def propertyMissing(String name) {
         if (portNames_.contains(name)) {
-            return new SDFActorDef.SDFActorDefPort(this, name)
+            return new SDFActorDefPort(this, name)
         }
     }
 
-    class SDFActorDefPort {
-
-        SDFActorDef ref
-        String portName
-
-        SDFActorDefPort(SDFActorDef ref, String portName) {
-            this.ref = ref
-            this.portName = portName
-        }
-
-        def to(SDFActorDef.SDFActorDefPort other) {
-            ref.connected.add(Tuple.tuple(portName, other.ref, other.portName, 0))
-            ["delayed": {Integer d ->
-                ref.connected.set(ref.connected.size() -1, Tuple.tuple(portName, other.ref, other.portName, d))
-            }]
-        }
-
-        def rightShift(SDFActorDef.SDFActorDefPort other) {
-            to(other)
-        }
-
-    }
 }

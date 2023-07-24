@@ -4,4 +4,5 @@
 package forsyde.io.frontsyde
 
 class FrontSyDePrelude {
+
 }

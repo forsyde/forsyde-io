@@ -164,32 +164,38 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     var getMethodBuilder = MethodSpec.methodBuilder("add" + capitalizedName).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(viewerClass);
                     if (execMember.getAnnotation(InPort.class) != null) {
                         var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString());
-                        getMethodBuilderWithoutPort.addParameter(portInputType, name);
-                        getMethodBuilder.addParameter(portInputType, name);
+                        getMethodBuilderWithoutPort.addParameter(portInputType, name).addParameter(ArrayTypeName.of(ClassName.get(EdgeTrait.class)), "extraEdgeTraits").varargs();
+                        getMethodBuilder.addParameter(portInputType, name).addParameter(ArrayTypeName.of(ClassName.get(EdgeTrait.class)), "extraEdgeTraits").varargs();
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
-                            getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, null, $S, $T.EdgeTraits.$L)",
+                            getMethodBuilderWithoutPort
+                                    .addStatement("$T[] edgeTraits = new $T[1 + extraEdgeTraits.length]", EdgeTrait.class, EdgeTrait.class)
+                                    .addStatement("$T.arraycopy(extraEdgeTraits, 0, edgeTraits, 0, extraEdgeTraits.length)", System.class)
+                                    .addStatement("edgeTraits[extraEdgeTraits.length] = $T.EdgeTraits.$L", ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                            getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName())
+                                    .addStatement(
+                                    "getViewedSystemGraph().connect($L, this, null, $S, edgeTraits)",
                                     name,
-                                    name,
-                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
-                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                                    name
                             );
-                            getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, $T.EdgeTraits.$L)",
+                            getMethodBuilder
+                                    .addStatement("$T[] edgeTraits = new $T[1 + extraEdgeTraits.length]", EdgeTrait.class, EdgeTrait.class)
+                                    .addStatement("$T.arraycopy(extraEdgeTraits, 0, edgeTraits, 0, extraEdgeTraits.length)", System.class)
+                                    .addStatement("edgeTraits[extraEdgeTraits.length] = $T.EdgeTraits.$L", ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                            getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName())
+                                    .addStatement(
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, edgeTraits)",
                                     name,
-                                    name,
-                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
-                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                                    name
                             );
                         } else {
                             getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, null, $S)",
+                                    "getViewedSystemGraph().connect($L, this, null, $S, extraEdgeTraits)",
                                     name,
                                     name
 
                             );
                             getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, otherPort, $S)",
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, extraEdgeTraits)",
                                     name,
                                     name
 
@@ -199,71 +205,43 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     if (execMember.getAnnotation(OutPort.class) != null) {
                         // checking for what type of return type it is
                         var portOutputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString());
-                        getMethodBuilderWithoutPort.addParameter(portOutputType, name);
-                        getMethodBuilder.addParameter(portOutputType, name);
+                        getMethodBuilderWithoutPort.addParameter(portOutputType, name).addParameter(ArrayTypeName.of(ClassName.get(EdgeTrait.class)), "extraEdgeTraits").varargs();
+                        getMethodBuilder.addParameter(portOutputType, name).addParameter(ArrayTypeName.of(ClassName.get(EdgeTrait.class)), "extraEdgeTraits").varargs();
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
                             var edgeTrait = getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class));
-                            getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S, $T.EdgeTraits.$L)",
+                            getMethodBuilderWithoutPort
+                                    .addStatement("$T[] edgeTraits = new $T[1 + extraEdgeTraits.length]", EdgeTrait.class, EdgeTrait.class)
+                                    .addStatement("$T.arraycopy(extraEdgeTraits, 0, edgeTraits, 0, extraEdgeTraits.length)", System.class)
+                                    .addStatement("edgeTraits[extraEdgeTraits.length] = $T.EdgeTraits.$L", ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                            getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName())
+                                    .addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, $S, edgeTraits)",
                                     name,
-                                    name,
-                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
-                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                                    name
                             );
-                            getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, $T.EdgeTraits.$L)",
+                            getMethodBuilder
+                                    .addStatement("$T[] edgeTraits = new $T[1 + extraEdgeTraits.length]", EdgeTrait.class, EdgeTrait.class)
+                                    .addStatement("$T.arraycopy(extraEdgeTraits, 0, edgeTraits, 0, extraEdgeTraits.length)", System.class)
+                                    .addStatement("edgeTraits[extraEdgeTraits.length] = $T.EdgeTraits.$L", ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                            getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName())
+                                    .addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, edgeTraits)",
                                     name,
-                                    name,
-                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
-                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                                    name
                             );
                         } else {
                             getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S)",
+                                    "getViewedSystemGraph().connect(this, $L, $S, extraEdgeTraits)",
                                     name,
                                     name
                             );
                             getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, otherPort, $S)",
+                                    "getViewedSystemGraph().connect(this, $L, otherPort, $S, extraEdgeTraits)",
                                     name,
                                     name
                             );
                         }
                     }
-//                    if (execMember.getAnnotation(InPort.class) != null) {
-//                        var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
-//                        if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
-//                            getMethodBuilder.addStatement(
-//                                    "collected.addAll(systemGraph.incomingEdgesOf(vertex).stream().filter(e -> e.connectsTargetPort($S)).filter(e -> e.hasTrait($S)).map(systemGraph::getEdgeSource).flatMap(v -> $T.tryView(systemGraph, v).stream()).collect($T.toList()))",
-//                                    name,
-//                                    viewerInterface.getAnnotation(WithEdgeTrait.class).value().getCanonicalName().replace(".", "::"),
-//                                    portInputType,
-//                                    Collectors.class
-//                            );
-//                        } else {
-//                            getMethodBuilder.addStatement(
-//                                    "collected.addAll(systemGraph.incomingEdgesOf(vertex).stream().filter(e -> e.connectsTargetPort($S)).map(systemGraph::getEdgeSource).flatMap(v -> $T.tryView(systemGraph, v).stream()).collect($T.toList()))",
-//                                    name,
-//                                    portInputType,
-//                                    Collectors.class
-//                            );
-//                        }
-//                    }
-//                    if (execMember.getAnnotation(OutPort.class) != null) {
-//                        // checking for what type of return type it is
-//                        var portOutputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString() + "Viewer");
-//                        getMethodBuilder.addStatement(
-//                                "collected.addAll(systemGraph.outgoingEdgesOf(vertex).stream().filter(e -> e.connectsSourcePort($S)).map(systemGraph::getEdgeTarget).flatMap(v -> $T.tryView(systemGraph, v).stream()).collect($T.toSet()))",
-//                                name,
-//                                portOutputType,
-//                                Collectors.class
-//                        );
-//                    }
-//                    if (declaredType.asElement().getSimpleName().contentEquals("Set")) {
-//                        getMethodBuilder.addStatement("return new $T(collected)", HashSet.class);
-//                    } else {
-//                        getMethodBuilder.addStatement("return collected");
-//                    }
                     getMethodBuilderWithoutPort.addStatement("return this");
                     getMethodBuilder.addStatement("return this");
                     methods.add(getMethodBuilderWithoutPort.build());
@@ -277,32 +255,38 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     var getMethodBuilder = MethodSpec.methodBuilder(name).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(viewerClass);
                     if (execMember.getAnnotation(InPort.class) != null) {
                         var portInputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString());
-                        getMethodBuilderWithoutPort.addParameter(portInputType, name);
-                        getMethodBuilder.addParameter(portInputType, name);
+                        getMethodBuilderWithoutPort.addParameter(portInputType, name).addParameter(ArrayTypeName.of(ClassName.get(EdgeTrait.class)), "extraEdgeTraits").varargs();
+                        getMethodBuilder.addParameter(portInputType, name).addParameter(ArrayTypeName.of(ClassName.get(EdgeTrait.class)), "extraEdgeTraits").varargs();
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
-                            getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, null, $S, $T.EdgeTraits.$L)",
+                            getMethodBuilderWithoutPort
+                                    .addStatement("$T[] edgeTraits = new $T[1 + extraEdgeTraits.length]", EdgeTrait.class, EdgeTrait.class)
+                                    .addStatement("$T.arraycopy(extraEdgeTraits, 0, edgeTraits, 0, extraEdgeTraits.length)", System.class)
+                                    .addStatement("edgeTraits[extraEdgeTraits.length] = $T.EdgeTraits.$L", ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                            getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName())
+                                    .addStatement(
+                                    "getViewedSystemGraph().connect($L, this, null, $S, edgeTraits)",
                                     name,
-                                    name,
-                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
-                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                                    name
                             );
-                            getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, $T.EdgeTraits.$L)",
+                            getMethodBuilder
+                                    .addStatement("$T[] edgeTraits = new $T[1 + extraEdgeTraits.length]", EdgeTrait.class, EdgeTrait.class)
+                                    .addStatement("$T.arraycopy(extraEdgeTraits, 0, edgeTraits, 0, extraEdgeTraits.length)", System.class)
+                                    .addStatement("edgeTraits[extraEdgeTraits.length] = $T.EdgeTraits.$L", ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                            getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName())
+                                    .addStatement(
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, edgeTraits)",
                                     name,
-                                    name,
-                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
-                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                                    name
                             );
                         } else {
                             getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, null, $S)",
+                                    "getViewedSystemGraph().connect($L, this, null, $S, extraEdgeTraits)",
                                     name,
                                     name
 
                             );
                             getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, otherPort, $S)",
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, extraEdgeTraits)",
                                     name,
                                     name
 
@@ -312,31 +296,37 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     if (execMember.getAnnotation(OutPort.class) != null) {
                         // checking for what type of return type it is
                         var portOutputType = declaredType.getTypeArguments().get(0).toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(declaredType.getTypeArguments().get(0).toString());
-                        getMethodBuilderWithoutPort.addParameter(portOutputType, name);
-                        getMethodBuilder.addParameter(portOutputType, name);
+                        getMethodBuilderWithoutPort.addParameter(portOutputType, name).addParameter(ArrayTypeName.of(ClassName.get(EdgeTrait.class)), "extraEdgeTraits").varargs();
+                        getMethodBuilder.addParameter(portOutputType, name).addParameter(ArrayTypeName.of(ClassName.get(EdgeTrait.class)), "extraEdgeTraits").varargs();
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
-                            getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S, $T.EdgeTraits.$L)",
+                            getMethodBuilderWithoutPort
+                                    .addStatement("$T[] edgeTraits = new $T[1 + extraEdgeTraits.length]", EdgeTrait.class, EdgeTrait.class)
+                                    .addStatement("$T.arraycopy(extraEdgeTraits, 0, edgeTraits, 0, extraEdgeTraits.length)", System.class)
+                                    .addStatement("edgeTraits[extraEdgeTraits.length] = $T.EdgeTraits.$L", ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                            getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName())
+                                    .addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, $S, edgeTraits)",
                                     name,
-                                    name,
-                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
-                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                                    name
                             );
-                            getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, $T.EdgeTraits.$L)",
+                            getMethodBuilder
+                                    .addStatement("$T[] edgeTraits = new $T[1 + extraEdgeTraits.length]", EdgeTrait.class, EdgeTrait.class)
+                                    .addStatement("$T.arraycopy(extraEdgeTraits, 0, edgeTraits, 0, extraEdgeTraits.length)", System.class)
+                                    .addStatement("edgeTraits[extraEdgeTraits.length] = $T.EdgeTraits.$L", ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                            getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName())
+                                    .addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, edgeTraits)",
                                     name,
-                                    name,
-                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
-                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                                    name
                             );
                         } else {
                             getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S)",
+                                    "getViewedSystemGraph().connect(this, $L, $S, extraEdgeTraits)",
                                     name,
                                     name
                             );
                             getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, otherPort, $S)",
+                                    "getViewedSystemGraph().connect(this, $L, otherPort, $S, extraEdgeTraits)",
                                     name,
                                     name
                             );
@@ -351,32 +341,38 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     var getMethodBuilder = MethodSpec.methodBuilder(name).addParameter(String.class, "otherPort").addModifiers(Modifier.PUBLIC).returns(viewerClass);
                     if (execMember.getAnnotation(InPort.class) != null) {
                         var portInputType = execMember.getReturnType().toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(execMember.getReturnType().toString());
-                        getMethodBuilderWithoutPort.addParameter(portInputType, name);
-                        getMethodBuilder.addParameter(portInputType, name);
+                        getMethodBuilderWithoutPort.addParameter(portInputType, name).addParameter(ArrayTypeName.of(ClassName.get(EdgeTrait.class)), "extraEdgeTraits").varargs();
+                        getMethodBuilder.addParameter(portInputType, name).addParameter(ArrayTypeName.of(ClassName.get(EdgeTrait.class)), "extraEdgeTraits").varargs();
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
-                            getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, null, $S, $T.EdgeTraits.$L)",
+                            getMethodBuilderWithoutPort
+                                    .addStatement("$T[] edgeTraits = new $T[1 + extraEdgeTraits.length]", EdgeTrait.class, EdgeTrait.class)
+                                    .addStatement("$T.arraycopy(extraEdgeTraits, 0, edgeTraits, 0, extraEdgeTraits.length)", System.class)
+                                    .addStatement("edgeTraits[extraEdgeTraits.length] = $T.EdgeTraits.$L", ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                            getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName())
+                                    .addStatement(
+                                    "getViewedSystemGraph().connect($L, this, null, $S, edgeTraits)",
                                     name,
-                                    name,
-                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
-                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                                    name
                             );
-                            getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, $T.EdgeTraits.$L)",
+                            getMethodBuilder
+                                    .addStatement("$T[] edgeTraits = new $T[1 + extraEdgeTraits.length]", EdgeTrait.class, EdgeTrait.class)
+                                    .addStatement("$T.arraycopy(extraEdgeTraits, 0, edgeTraits, 0, extraEdgeTraits.length)", System.class)
+                                    .addStatement("edgeTraits[extraEdgeTraits.length] = $T.EdgeTraits.$L", ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                            getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName())
+                                    .addStatement(
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, edgeTraits)",
                                     name,
-                                    name,
-                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
-                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                                    name
                             );
                         } else {
                             getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, null, $S)",
+                                    "getViewedSystemGraph().connect($L, this, null, $S, extraEdgeTraits)",
                                     name,
                                     name
 
                             );
                             getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect($L, this, otherPort, $S)",
+                                    "getViewedSystemGraph().connect($L, this, otherPort, $S, extraEdgeTraits)",
                                     name,
                                     name
 
@@ -386,32 +382,38 @@ public class TraitViewerGenerator extends AbstractProcessor {
                     if (execMember.getAnnotation(OutPort.class) != null) {
                         // checking for what type of return type it is
                         var portOutputType = execMember.getReturnType().toString().contains("VertexViewer") ? ClassName.get(OpaqueVertexViewer.class) : ClassName.bestGuess(execMember.getReturnType().toString());
-                        getMethodBuilderWithoutPort.addParameter(portOutputType, name);
-                        getMethodBuilder.addParameter(portOutputType, name);
+                        getMethodBuilderWithoutPort.addParameter(portOutputType, name).addParameter(ArrayTypeName.of(ClassName.get(EdgeTrait.class)), "extraEdgeTraits").varargs();
+                        getMethodBuilder.addParameter(portOutputType, name).addParameter(ArrayTypeName.of(ClassName.get(EdgeTrait.class)), "extraEdgeTraits").varargs();
                         if (execMember.getAnnotation(WithEdgeTrait.class) != null) {
                             var edgeTrait = getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class));
-                            getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S, $T.EdgeTraits.$L)",
+                            getMethodBuilderWithoutPort
+                                    .addStatement("$T[] edgeTraits = new $T[1 + extraEdgeTraits.length]", EdgeTrait.class, EdgeTrait.class)
+                                    .addStatement("$T.arraycopy(extraEdgeTraits, 0, edgeTraits, 0, extraEdgeTraits.length)", System.class)
+                                    .addStatement("edgeTraits[extraEdgeTraits.length] = $T.EdgeTraits.$L", ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                            getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName())
+                                    .addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, $S, edgeTraits)",
                                     name,
-                                    name,
-                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
-                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                                    name
                             );
-                            getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, $T.EdgeTraits.$L)",
+                            getMethodBuilder
+                                    .addStatement("$T[] edgeTraits = new $T[1 + extraEdgeTraits.length]", EdgeTrait.class, EdgeTrait.class)
+                                    .addStatement("$T.arraycopy(extraEdgeTraits, 0, edgeTraits, 0, extraEdgeTraits.length)", System.class)
+                                    .addStatement("edgeTraits[extraEdgeTraits.length] = $T.EdgeTraits.$L", ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
+                                            getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName())
+                                    .addStatement(
+                                    "getViewedSystemGraph().connect(this, $L, $S, otherPort, edgeTraits)",
                                     name,
-                                    name,
-                                    ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchy).toString(), hierarchyElemToName(hierarchy)),
-                                    getRegisteredEdge(execMember.getAnnotation(WithEdgeTrait.class)).getSimpleName()
+                                    name
                             );
                         } else {
                             getMethodBuilderWithoutPort.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, $S)",
+                                    "getViewedSystemGraph().connect(this, $L, $S, extraEdgeTraits)",
                                     name,
                                     name
                             );
                             getMethodBuilder.addStatement(
-                                    "getViewedSystemGraph().connect(this, $L, otherPort, $S)",
+                                    "getViewedSystemGraph().connect(this, $L, otherPort, $S, extraEdgeTraits)",
                                     name,
                                     name
                             );
@@ -578,10 +580,18 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 .collect(Collectors.toSet());
         for (var member : members) {
             var name = member.getSimpleName().toString();
-            var getMethodBuilder = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC)
-                    .addParameter(TypeName.get(member.getReturnType()), "value");
-            getMethodBuilder.addStatement("vertex.putProperty($S, value)", name);
-            methods.add(getMethodBuilder.build());
+            if (member.getReturnType() instanceof DeclaredType declaredType && declaredType.asElement().getSimpleName().toString().contains("Optional")) {
+                var inner = declaredType.getTypeArguments().get(0);
+                var getMethodBuilder = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC)
+                        .addParameter(TypeName.get(inner), "value");
+                getMethodBuilder.addStatement("vertex.putProperty($S, value)", name);
+                methods.add(getMethodBuilder.build());
+            } else {
+                var getMethodBuilder = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC)
+                        .addParameter(TypeName.get(member.getReturnType()), "value");
+                getMethodBuilder.addStatement("vertex.putProperty($S, value)", name);
+                methods.add(getMethodBuilder.build());
+            }
         }
         return methods;
     }

@@ -11,6 +11,7 @@ dependencies {
     implementation 'org.apache.groovy:groovy:4.0.2'
     implementation project(":java-core")
     implementation project(":java-libforsyde")
+    implementation project(":java-graphviz")
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
