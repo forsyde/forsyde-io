@@ -5,6 +5,7 @@ import forsyde.io.core.Trait;
 import forsyde.io.core.migrations.SystemGraphMigrator;
 
 import java.util.HashSet;
+import java.util.Map;
 
 public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
     @Override
@@ -21,27 +22,30 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     traitToAdd.add(ForSyDeHierarchy.VertexTraits.RegisterLike);
                 }
                 if (vt.getName().contains("TokenizableDataBlock")) {
-                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.ArrayBufferLike);
-                }
-                if (vt.getName().contains("TokenizableDataBlock")) {
-                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.ArrayBufferLike);
+                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.RegisterArrayLike);
                 }
                 if (vt.getName().contains("ANSICBlackBoxExecutable")) {
                     traitToAdd.add(ForSyDeHierarchy.VertexTraits.HasANSICImplementation);
                 }
-                if (vt.getName().contains("InstrumentedExecutable") || vt.getName().contains("Executable")) {
+                if (vt.getName().contains("Executable")) {
                     traitToAdd.add(ForSyDeHierarchy.VertexTraits.BehaviourEntity);
+                }
+                if (vt.getName().contains("InstrumentedExecutable")) {
+                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.InstrumentedBehaviour);
                 }
             }
             if (traitToAdd.contains(ForSyDeHierarchy.VertexTraits.RegisterLike)) {
                 var reg = ForSyDeHierarchy.RegisterLike.enforce(systemGraph, v);
                 reg.sizeInBits((Long) v.getProperty("maxSizeInBits"));
             }
-            if (traitToAdd.contains(ForSyDeHierarchy.VertexTraits.ArrayBufferLike)) {
-                var buf = ForSyDeHierarchy.ArrayBufferLike.enforce(systemGraph, v);
+            if (traitToAdd.contains(ForSyDeHierarchy.VertexTraits.RegisterArrayLike)) {
+                var buf = ForSyDeHierarchy.RegisterArrayLike.enforce(systemGraph, v);
                 buf.elementSizeInBits((Long) v.getProperty("tokenSizeInBits"));
-                var maxElems = ((Long) v.getProperty("maxSizeInBits")) / buf.elementSizeInBits();
-                buf.maxElements((int) maxElems);
+            }
+            if (traitToAdd.contains(ForSyDeHierarchy.VertexTraits.InstrumentedBehaviour)) {
+                var op = ForSyDeHierarchy.InstrumentedBehaviour.enforce(systemGraph, v);
+                op.computationalRequirements((Map<String, Map<String, Long>>) v.getProperty("operationRequirements"));
+                op.maxSizeInBits(Map.of("default", (Long) v.getProperty("sizeInBits")));
             }
             v.addTraits(traitToAdd);
         }

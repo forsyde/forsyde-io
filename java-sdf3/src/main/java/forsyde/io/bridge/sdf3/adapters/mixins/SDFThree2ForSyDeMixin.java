@@ -87,10 +87,10 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
         sdf3.getApplicationGraph().getSdfProperties().getChannelProperties().forEach(channelProperties -> {
             systemGraph.queryVertex(channelProperties.getChannel()).flatMap(v -> ForSyDeHierarchy.SDFChannel.tryView(systemGraph, v)).ifPresent(sdfChannel -> {
                 if (channelProperties.getBufferSize() != null) {
-                    var tokenizableDataBlock = ForSyDeHierarchy.ArrayBufferLike.enforce(sdfChannel);
+                    var tokenizableDataBlock = ForSyDeHierarchy.RegisterArrayLike.enforce(sdfChannel);
                     var max = channelProperties.getBufferSize().getSz().longValueExact();
                     var sz = channelProperties.getTokenSize().stream().mapToLong(t -> t.getSz().longValueExact()).sum();
-                    tokenizableDataBlock.maxElements((int) max / (int) sz);
+                    tokenizableDataBlock.sizeInBits(max);
                     tokenizableDataBlock.elementSizeInBits(sz);
                 }
             });
@@ -100,7 +100,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
     default void fromActorPropertiesToSDFActor(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdfProperties().getActorProperties().forEach(actorProperties -> {
             systemGraph.queryVertex(actorProperties.getActor()).flatMap(v -> ForSyDeHierarchy.SDFActor.tryView(systemGraph, v)).ifPresent(sdfActor -> {
-                var instrumentedExecutable = ForSyDeHierarchy.InstrumentedOperation.enforce(sdfActor);
+                var instrumentedExecutable = ForSyDeHierarchy.InstrumentedBehaviour.enforce(sdfActor);
                 final Map<String, Map<String, Long>> ops = actorProperties.getProcessor().stream().collect(Collectors.toMap(
                         Processor::getType,
                         p -> Map.of("all", p.getExecutionTime().getTime().longValueExact())
