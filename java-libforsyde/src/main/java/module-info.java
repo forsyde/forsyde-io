@@ -14,6 +14,7 @@ module forsyde.io.libforsyde {
     exports forsyde.io.lib.implementation.code;
     exports forsyde.io.lib.implementation.functional;
     exports forsyde.io.lib.platform.hardware;
+    exports forsyde.io.lib.platform.runtime;
     exports forsyde.io.lib.visualization;
     exports forsyde.io.lib;
 }

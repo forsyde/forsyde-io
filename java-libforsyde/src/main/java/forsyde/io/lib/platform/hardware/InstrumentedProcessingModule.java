@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * A InstrumentedGenericProcessingModule enriches `GenericProcessingModule` with provision numbers so that
+ * A InstrumentedProcessingModule enriches `GenericProcessingModule` with provision numbers so that
  * an analysis and synthesis tool is able to estimate the total amount of execution time is required to execute
  * a bunch of instructions in this processing element.
  *
@@ -18,19 +18,19 @@ import java.util.stream.Collectors;
  * should be as the intructions per cycle _per core_, not their summed total.
  */
 @RegisterTrait(IForSyDeHierarchy.class)
-public interface InstrumentedGenericProcessingModule extends GenericProcessingModule {
+public interface InstrumentedProcessingModule extends GenericProcessingModule {
 
     @Property
-    Map<String, Map<String, Integer>> modalInstructionsPerCycleNumerators();
+    Map<String, Map<String, Double>> modalInstructionsPerCycle();
 
-    @Property
-    default Map<String, Map<String, Integer>> modalInstructionsPerCycleDenominators() {
-        return modalInstructionsPerCycleNumerators().entrySet().stream().collect(Collectors.toMap(
-                Map.Entry::getKey,
-                e -> e.getValue().entrySet().stream().collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        ee -> 1
-                ))
-        ));
-    };
+//    @Property
+//    default Map<String, Map<String, Integer>> modalInstructionsPerCycleDenominators() {
+//        return modalInstructionsPerCycleNumerators().entrySet().stream().collect(Collectors.toMap(
+//                Map.Entry::getKey,
+//                e -> e.getValue().entrySet().stream().collect(Collectors.toMap(
+//                        Map.Entry::getKey,
+//                        ee -> 1
+//                ))
+//        ));
+//    };
 }

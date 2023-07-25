@@ -656,7 +656,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
             vertexTraitEnumRefinesBuilder.addStatement("default: return false");
             vertexTraitEnumRefinesBuilder.endControlFlow();
             var traitInnerClassBuilder = TypeSpec.classBuilder(trait.getSimpleName().toString())
-                    .addModifiers(Modifier.PUBLIC);
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC);
             if (processingEnv.getElementUtils().getDocComment(trait) == null) {
                 traitInnerClassBuilder.addJavadoc("Access methods for vertex trait $L.", trait.getQualifiedName().toString().replace(".", "::"));
             } else {

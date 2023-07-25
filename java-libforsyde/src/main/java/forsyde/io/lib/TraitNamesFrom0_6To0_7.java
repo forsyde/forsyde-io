@@ -33,6 +33,18 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                 if (vt.getName().contains("InstrumentedExecutable")) {
                     traitToAdd.add(ForSyDeHierarchy.VertexTraits.InstrumentedBehaviour);
                 }
+                if (vt.getName().contains("AbstractScheduler")) {
+                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.AbstractRuntime);
+                }
+                if (vt.getName().contains("FixedPriorityScheduler")) {
+                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.FixedPriorityScheduledRuntime);
+                }
+                if (vt.getName().contains("StaticCyclicScheduler")) {
+                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.SuperLoopRuntime);
+                }
+                if (vt.getName().contains("RoundRobinScheduler")) {
+                    traitToAdd.add(ForSyDeHierarchy.VertexTraits.TimeDivisionMultiplexingRuntime);
+                }
             }
             if (traitToAdd.contains(ForSyDeHierarchy.VertexTraits.RegisterLike)) {
                 var reg = ForSyDeHierarchy.RegisterLike.enforce(systemGraph, v);
@@ -46,6 +58,22 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                 var op = ForSyDeHierarchy.InstrumentedBehaviour.enforce(systemGraph, v);
                 op.computationalRequirements((Map<String, Map<String, Long>>) v.getProperty("operationRequirements"));
                 op.maxSizeInBits(Map.of("default", (Long) v.getProperty("sizeInBits")));
+            }
+            if (traitToAdd.contains(ForSyDeHierarchy.VertexTraits.AbstractRuntime)) {
+                ForSyDeHierarchy.AbstractRuntime.enforce(systemGraph, v);
+            }
+            if (traitToAdd.contains(ForSyDeHierarchy.VertexTraits.FixedPriorityScheduledRuntime)) {
+                var s = ForSyDeHierarchy.FixedPriorityScheduledRuntime.enforce(systemGraph, v);
+                s.supportsPreemption((Boolean) v.getProperty("preemptive"));
+            }
+            if (traitToAdd.contains(ForSyDeHierarchy.VertexTraits.SuperLoopRuntime)) {
+                ForSyDeHierarchy.SuperLoopRuntime.enforce(systemGraph, v);
+            }
+            if (traitToAdd.contains(ForSyDeHierarchy.VertexTraits.TimeDivisionMultiplexingRuntime)) {
+                var s = ForSyDeHierarchy.TimeDivisionMultiplexingRuntime.enforce(systemGraph, v);
+                s.maximumTimeSliceInClockCycles((Long) v.getProperty("maximumTimeSliceInCycles"));
+                s.minimumTimeSliceInClockCycles((Long) v.getProperty("minimumTimeSliceInCycles"));
+                s.frameSizeInClockCycles(s.maximumTimeSliceInClockCycles() * ((Long) v.getProperty("maximumTimeSlices")));
             }
             v.addTraits(traitToAdd);
         }
