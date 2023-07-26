@@ -13,5 +13,5 @@ public interface CommunicatingTask extends Task {
     Map<String, Long> portDataReadSize();
 
     @Property
-    Map<String, Long> portWDataWriteSize();
+    Map<String, Long> portDataWrittenSize();
 }

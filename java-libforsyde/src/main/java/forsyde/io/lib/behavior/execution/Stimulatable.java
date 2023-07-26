@@ -2,6 +2,7 @@ package forsyde.io.lib.behavior.execution;
 
 import forsyde.io.core.VertexViewer;
 import forsyde.io.core.annotations.InPort;
+import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.core.annotations.WithEdgeTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
@@ -14,4 +15,7 @@ public interface Stimulatable extends VertexViewer {
     @InPort
     @WithEdgeTrait(EventEdge.class)
     Set<Stimulator> activators();
+
+    @Property
+    default Boolean hasORSemantics() {return false;}
 }

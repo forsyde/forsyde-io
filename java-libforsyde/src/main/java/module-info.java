@@ -11,6 +11,9 @@ module forsyde.io.libforsyde {
     exports forsyde.io.lib.behavior.moc;
     exports forsyde.io.lib.behavior.parallel;
     exports forsyde.io.lib.behavior;
+    exports forsyde.io.lib.constraints;
+    exports forsyde.io.lib.decision;
+    exports forsyde.io.lib.decision.sdf;
     exports forsyde.io.lib.implementation.code;
     exports forsyde.io.lib.implementation.functional;
     exports forsyde.io.lib.platform.hardware;

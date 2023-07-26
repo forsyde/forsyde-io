@@ -22,4 +22,8 @@ build-java-all:
     COPY --dir java-sdf3 .
     COPY --dir java-bridge-forsyde-shallow .
     RUN sed -i 's/\r//g' gradlew # make sure that it is readable in linux by bash
-    RUN ./gradlew jar
+    RUN ./gradlew build
+
+publish-java-all:
+    FROM +build-java-all
+    RUN --secret GPG_SIGNING_KEY --secret GPG_SIGNING_PASSWORD ./gradlew build publish closeAndReleaseSonatypeStagingRepository
