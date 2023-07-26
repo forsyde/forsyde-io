@@ -6,7 +6,7 @@ build-java-all:
     WORKDIR java-workdir
     RUN apt-get update
     RUN apt-get install -y curl bash wget
-    RUN curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | JABBA_COMMAND="install ${jabba_jdk} -o /jdk" bash
+    RUN curl -sL https://github.com/Jabba-Team/jabba/raw/main/install.sh | JABBA_COMMAND="install ${jabba_jdk} -o /jdk" bash
     ENV JAVA_HOME /jdk
     ENV PATH $JAVA_HOME/bin:$PATH
     COPY gradlew .

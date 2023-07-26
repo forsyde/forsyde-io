@@ -8,6 +8,12 @@ on:
     branches: [ master, develop ]
   pull_request:
     branches: [ master, develop ]
+
+concurrency:
+  group: Building Python Supporting Libraries @ ${{ github.ref }}
+  cancel-in-progress: true
+
+
 jobs:
   test-build-python:
     strategy:
