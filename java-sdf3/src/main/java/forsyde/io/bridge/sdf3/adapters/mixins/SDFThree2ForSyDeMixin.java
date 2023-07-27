@@ -62,7 +62,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                                             // find the one without consumer, as it could be expanded with delays beforehand.
                                             // find the equivalent signal to connect. Should not NPE.
                                             if (sdfChannel.producer().isEmpty()) {
-                                                sdfChannel.producer(ForSyDeHierarchy.SDFActor.enforce(systemGraph, srcActorV), ForSyDeHierarchy.EdgeTraits.VisualConnection);
+                                                sdfChannel.producer(channel.getSrcPort(), ForSyDeHierarchy.SDFActor.enforce(systemGraph, srcActorV), ForSyDeHierarchy.EdgeTraits.VisualConnection);
                                             }
                                         });
                                 sdf3.getApplicationGraph().getSdf().getActor().stream()
@@ -72,7 +72,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                                             // find the one without consumer, as it could be expanded with delays beforehand.
                                             // find the equivalent signal to connect. Should not NPE.
                                             if (sdfChannel.consumer().isEmpty()) {
-                                                sdfChannel.consumer(ForSyDeHierarchy.SDFActor.enforce(systemGraph, dstActorV), ForSyDeHierarchy.EdgeTraits.VisualConnection);
+                                                sdfChannel.consumer(channel.getDstPort(), ForSyDeHierarchy.SDFActor.enforce(systemGraph, dstActorV), ForSyDeHierarchy.EdgeTraits.VisualConnection);
                                             }
                                         });
                             });

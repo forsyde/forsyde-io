@@ -1,5 +1,6 @@
 package forsyde.io.lib;
 
+import forsyde.io.core.OpaqueTrait;
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Trait;
 import forsyde.io.core.migrations.SystemGraphMigrator;
@@ -15,7 +16,7 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
             var prevTraits = new HashSet<Trait>(v.getTraits());
             for (var vt : prevTraits) {
                 for (var t : ForSyDeHierarchy.containedTraits) {
-                    if (!vt.getName().equals(t.getName()) && t.getName().contains(vt.getName())) {
+                    if (vt instanceof OpaqueTrait opaqueTrait && t.getName().contains(opaqueTrait.getName())) {
                         v.addTraits(t);
                     }
                 }
@@ -62,7 +63,7 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
             var traitToAdd = new HashSet<Trait>();
             for (var et : e.getTraits()) {
                 for (var t : ForSyDeHierarchy.containedTraits) {
-                    if (t.getName().contains(et.getName())) {
+                    if (et instanceof OpaqueTrait opaqueTrait && t.getName().contains(opaqueTrait.getName())) {
                         traitToAdd.add(t);
                     }
                 }

@@ -138,6 +138,12 @@ public final class ModelHandler {
 		for (int i = 0; i < registeredDrivers.size(); i++) {
 			if (registeredDriversInputMatchers.get(i).matches(inPath)) {
 				final SystemGraph systemGraph = registeredDrivers.get(i).loadModel(inPath);
+				// migrate what possible
+				for (SystemGraphMigrator systemGraphMigrator : registeredMigrators) {
+					if (!systemGraphMigrator.effect(systemGraph)) {
+						throw new Exception("Migrator " + systemGraphMigrator.getName() + " has failed its migration.");
+					}
+				}
 				// use trait hierarchies to remove opaque traits
 				for (var v : systemGraph.vertexSet()) {
 					var toDelete = new HashSet<Trait>();
@@ -157,17 +163,12 @@ public final class ModelHandler {
 					v.getTraits().addAll(toAdd);
 				}
 				// pre migration validation
-				for (SystemGraphValidation validation : registesteredValidators) {
-					final Optional<String> validationResult = validation.validate(systemGraph);
-					if (validationResult.isPresent()) {
-						throw new SystemGraphValidation.InvalidSystemGraph(validationResult.get());
-					}
-				}
-				for (SystemGraphMigrator systemGraphMigrator : registeredMigrators) {
-					if (!systemGraphMigrator.effect(systemGraph)) {
-						throw new Exception("Migrator " + systemGraphMigrator.getName() + " has failed its migration.");
-					}
-				}
+//				for (SystemGraphValidation validation : registesteredValidators) {
+//					final Optional<String> validationResult = validation.validate(systemGraph);
+//					if (validationResult.isPresent()) {
+//						throw new SystemGraphValidation.InvalidSystemGraph(validationResult.get());
+//					}
+//				}
 				// post migration validation
 				for (SystemGraphValidation validation : registesteredValidators) {
 					final Optional<String> validationResult = validation.validate(systemGraph);

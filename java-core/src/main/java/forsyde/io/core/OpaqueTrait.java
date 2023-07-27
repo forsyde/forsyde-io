@@ -54,4 +54,11 @@ public final class OpaqueTrait implements Trait, CharSequence, EdgeTrait, Vertex
     public int hashCode() {
         return Objects.hash(opaqueTraitName);
     }
+
+    @Override
+    public String toString() {
+        return "Opaque(" +
+                opaqueTraitName +
+                ')';
+    }
 }

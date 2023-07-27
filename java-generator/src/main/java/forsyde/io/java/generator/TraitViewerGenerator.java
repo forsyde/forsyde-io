@@ -148,6 +148,23 @@ public class TraitViewerGenerator extends AbstractProcessor {
         for (var propSetter : generatePropertySetters(traitInterface)) {
             viewerClassBuilder.addMethod(propSetter);
         }
+
+        viewerClassBuilder.addMethod(MethodSpec.methodBuilder("equals")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .addParameter(Object.class, "other")
+                .returns(TypeName.BOOLEAN)
+                .addStatement("if (other instanceof $T vw) return vw.getIdentifier().equals(getIdentifier())", VertexViewer.class)
+                .addStatement("return false")
+                .build());
+
+        viewerClassBuilder.addMethod(MethodSpec.methodBuilder("hashCode")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .returns(TypeName.INT)
+                .addStatement("return $T.hash(getIdentifier())", Objects.class)
+                .build());
+
         return viewerClassBuilder.build();
     }
 
