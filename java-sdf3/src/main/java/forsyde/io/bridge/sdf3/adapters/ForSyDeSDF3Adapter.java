@@ -11,7 +11,7 @@ public class ForSyDeSDF3Adapter implements ModelAdapter<Sdf3> {
         final SDF3ToForSyDeAdapter sdf3ToForSyDeAdapter = new SDF3ToForSyDeAdapter();
         final SystemGraph systemGraph = new SystemGraph();
         sdf3ToForSyDeAdapter.fromActorsToVertexes(inputModel, systemGraph);
-        sdf3ToForSyDeAdapter.fromChannelstoSignalsAndPrefix(inputModel, systemGraph);
+        sdf3ToForSyDeAdapter.fromChannelsToSignalsAndPrefix(inputModel, systemGraph);
         sdf3ToForSyDeAdapter.fromChannelsToEdges(inputModel, systemGraph);
         sdf3ToForSyDeAdapter.fromChannelPropertiesToSDFChannels(inputModel, systemGraph);
         sdf3ToForSyDeAdapter.fromActorPropertiesToSDFActor(inputModel, systemGraph);

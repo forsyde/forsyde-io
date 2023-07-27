@@ -6,8 +6,6 @@ import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Vertex;
 import forsyde.io.bridge.sdf3.adapters.mixins.elems.Sdf3;
 import forsyde.io.lib.ForSyDeHierarchy;
-import forsyde.io.lib.behavior.moc.sdf.SDFActorViewer;
-import forsyde.io.lib.behavior.moc.sdf.SDFChannelViewer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +16,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
 
     default void fromActorsToVertexes(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getActor().forEach(a -> {
-            var sdfActor = SDFActorViewer.enforce(systemGraph, systemGraph.newVertex(a.getName()));
+            var sdfActor = ForSyDeHierarchy.SDFActor.enforce(systemGraph, systemGraph.newVertex(a.getName()));
             ForSyDeHierarchy.Visualizable.enforce(sdfActor);
             final HashMap<String, Integer> consumption = new HashMap<>();
             final HashMap<String, Integer> production = new HashMap<>();
@@ -35,10 +33,10 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
         });
     }
 
-    default void fromChannelstoSignalsAndPrefix(final Sdf3 sdf3, final SystemGraph systemGraph) {
+    default void fromChannelsToSignalsAndPrefix(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getChannel().forEach(channel -> {
             // initial channel if no initial token exists
-            var sdfChannel = SDFChannelViewer.enforce(systemGraph, systemGraph.newVertex(channel.getName()));
+            var sdfChannel = ForSyDeHierarchy.SDFChannel.enforce(systemGraph, systemGraph.newVertex(channel.getName()));
             ForSyDeHierarchy.Visualizable.enforce(sdfChannel);
             addEquivalence(channel, sdfChannel.getViewedVertex());
             // additional tokens and prefixes until the prefixing chain is over
@@ -64,8 +62,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                                             // find the one without consumer, as it could be expanded with delays beforehand.
                                             // find the equivalent signal to connect. Should not NPE.
                                             if (sdfChannel.producer().isEmpty()) {
-                                                sdfChannel.producer(ForSyDeHierarchy.SDFActor.enforce(systemGraph, srcActorV));
-                                                systemGraph.connect(srcActorV, sdfChannel.getViewedVertex(), channel.getSrcPort(), "producer", ForSyDeHierarchy.EdgeTraits.VisualConnection);
+                                                sdfChannel.producer(ForSyDeHierarchy.SDFActor.enforce(systemGraph, srcActorV), ForSyDeHierarchy.EdgeTraits.VisualConnection);
                                             }
                                         });
                                 sdf3.getApplicationGraph().getSdf().getActor().stream()
@@ -75,8 +72,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                                             // find the one without consumer, as it could be expanded with delays beforehand.
                                             // find the equivalent signal to connect. Should not NPE.
                                             if (sdfChannel.consumer().isEmpty()) {
-                                                sdfChannel.consumer(ForSyDeHierarchy.SDFActor.enforce(systemGraph, dstActorV));
-                                                systemGraph.connect(sdfChannel.getViewedVertex(), dstActorV, "consumer", channel.getDstPort(), ForSyDeHierarchy.EdgeTraits.VisualConnection);
+                                                sdfChannel.consumer(ForSyDeHierarchy.SDFActor.enforce(systemGraph, dstActorV), ForSyDeHierarchy.EdgeTraits.VisualConnection);
                                             }
                                         });
                             });

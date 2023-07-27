@@ -153,7 +153,7 @@ final public class Vertex {
         ) {
             return properties.put(propertyName, propertyValue) == null;
         } else {
-            throw new IllegalArgumentException("Only allowed vertex properties types are numeric values, strings, lists and maps.");
+            throw new IllegalArgumentException("Only allowed vertex properties types are numeric values, strings, lists and maps. Throwing vertex is " + getIdentifier());
         }
     }
 
@@ -216,7 +216,6 @@ final public class Vertex {
         }
         return mergeDefined;
     }
-
     private boolean mergeInPlace(Object main, Object other) {
         if (main instanceof List<?> && other instanceof List<?>) {
             final Iterator<Object> otherIt = ((List<Object>) other).iterator();
