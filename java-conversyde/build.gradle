@@ -17,7 +17,7 @@ dependencies {
     implementation project(":java-graphviz")
 }
 
-mainClassName = 'forsyde.io.java.conversyde.ConverSyDeStandalone'
+mainClassName = 'forsyde.io.conversyde.ConverSyDeStandalone'
 
 application {
     mainClass = mainClassName
