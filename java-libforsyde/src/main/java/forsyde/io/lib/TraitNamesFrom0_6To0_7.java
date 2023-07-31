@@ -20,6 +20,20 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                         v.addTraits(t);
                     }
                 }
+                // mapping for the hardware parts of the platform
+                if (vt.getName().contains("platform::")) {
+                    for (var t : ForSyDeHierarchy.containedTraits) {
+                        if (t.getName().contains("platform::hardware::")) {
+                            var splitVt = vt.getName().split("::");
+                            var splitT = t.getName().split("::");
+                            var traitNameVt = splitVt[splitVt.length -1];
+                            var traitNameT = splitT[splitT.length - 1];
+                            if (traitNameVt.equals(traitNameT)) {
+                                v.addTraits(t); // this assumes they are 1-to-1 mapping
+                            }
+                        }
+                    }
+                }
                 if (vt.getName().contains("DataBlock")) {
                     var reg = ForSyDeHierarchy.RegisterLike.enforce(systemGraph, v);
                     reg.sizeInBits((Long) v.getProperty("maxSizeInBits"));
@@ -57,6 +71,18 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     s.minimumTimeSliceInClockCycles((Long) v.getProperty("minimumTimeSliceInCycles"));
                     s.frameSizeInClockCycles(s.maximumTimeSliceInClockCycles() * ((Long) v.getProperty("maximumTimeSlices")));
                 }
+//                if (vt.getName().contains("InstrumentedCommunicationModule")) {
+//                    ForSyDeHierarchy.InstrumentedCommunicationModule.enforce(systemGraph, v);
+//                }
+//                if (vt.getName().contains("GenericCommunicationModule")) {
+//                    ForSyDeHierarchy.GenericCommunicationModule.enforce(systemGraph, v);
+//                }
+//                if (vt.getName().contains("InstrumentedProcessingModule")) {
+//                    ForSyDeHierarchy.InstrumentedProcessingModule.enforce(systemGraph, v);
+//                }
+//                if (vt.getName().contains("GenericProcessingModule")) {
+//                    ForSyDeHierarchy.GenericProcessingModule.enforce(systemGraph, v);
+//                }
             }
         }
         for (var e : systemGraph.edgeSet()) {
@@ -65,6 +91,20 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                 for (var t : ForSyDeHierarchy.containedTraits) {
                     if (et instanceof OpaqueTrait opaqueTrait && t.getName().contains(opaqueTrait.getName())) {
                         traitToAdd.add(t);
+                    }
+                }
+                // mapping for the hardware parts of the platform
+                if (et.getName().contains("platform::")) {
+                    for (var t : ForSyDeHierarchy.containedTraits) {
+                        if (t.getName().contains("platform::hardware::")) {
+                            var splitVt = et.getName().split("::");
+                            var splitT = t.getName().split("::");
+                            var traitNameVt = splitVt[splitVt.length -1];
+                            var traitNameT = splitT[splitT.length - 1];
+                            if (traitNameVt.equals(traitNameT)) {
+                                e.addTraits(t); // this assumes they are 1-to-1 mapping
+                            }
+                        }
                     }
                 }
                 // also change edge traits named 'DataEdge' to 'NetworkEdge' and other specialties
