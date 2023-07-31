@@ -367,23 +367,7 @@ gradle-app.setting
 
 # dont add the generated types to the repo
 **/types.py
-java/src/main/java/forsyde/io/java/types
+**/src/main/gen
 haskell/src/ForSyDe/IO/Haskell/Types*
-
-# dont add the generated sql to the repo
-python/forsyde/io/python/sql
-java/src/main/java/forsyde/io/java/sql
-haskell/src/ForSyDe/IO/Haskell/sql
-python/sql
-java/src/main/java/sql
-haskell/src/sql
-
-# dont add xtext stuff
-src/main/xtend-gen
-epsilon/gradle.properties
-java/gradle.properties
-
-# do not add generated things
-**/src-gen
 
 gradle.properties
