@@ -22,10 +22,12 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
             final HashMap<String, Integer> production = new HashMap<>();
             a.getPort().forEach(port -> {
                 sdfActor.getPorts().add(port.getName());
-                if (port.getType().equals("in"))
+                if (port.getType().equals("in")) {
                     consumption.put(port.getName(), port.getRate().intValueExact());
-                else if (port.getType().equals("out"))
+                }
+                else if (port.getType().equals("out")) {
                     production.put(port.getName(), port.getRate().intValueExact());
+                }
             });
             sdfActor.consumption(consumption);
             sdfActor.production(production);

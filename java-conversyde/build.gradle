@@ -21,7 +21,7 @@ mainClassName = 'forsyde.io.java.conversyde.ConverSyDeStandalone'
 
 application {
     mainClass = mainClassName
-    mainModule = "forsyde.io.java.conversyde"
+    mainModule = "forsyde.io.conversyde"
 }
 
 task zipJpackage(type: Zip, dependsOn: tasks.jpackageImage) {

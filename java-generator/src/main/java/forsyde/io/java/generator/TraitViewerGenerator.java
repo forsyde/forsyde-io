@@ -788,13 +788,13 @@ public class TraitViewerGenerator extends AbstractProcessor {
         for (var member : traitInterface.getEnclosedElements()) {
             if (member instanceof ExecutableElement execMember && (member.getAnnotation(Property.class) != null)) {
                 if (execMember.getReturnType().toString().contains("Map")) {
-                    enforceMethodBuilder.addStatement("vertex.putProperty($S, new $T())", execMember.getSimpleName().toString(), HashMap.class);
+                    enforceMethodBuilder.addStatement("if (!vertex.hasProperty($S)) vertex.putProperty($S, new $T())", execMember.getSimpleName().toString(), execMember.getSimpleName().toString(), HashMap.class);
                 } else if (execMember.getReturnType().toString().contains("Set")) {
-                    enforceMethodBuilder.addStatement("vertex.putProperty($S, new $T())", execMember.getSimpleName().toString(), HashSet.class);
+                    enforceMethodBuilder.addStatement("if (!vertex.hasProperty($S)) vertex.putProperty($S, new $T())", execMember.getSimpleName().toString(), execMember.getSimpleName().toString(), HashSet.class);
                 } else if (execMember.getReturnType().toString().contains("List")) {
-                    enforceMethodBuilder.addStatement("vertex.putProperty($S, new $T())", execMember.getSimpleName().toString(), ArrayList.class);
+                    enforceMethodBuilder.addStatement("if (!vertex.hasProperty($S)) vertex.putProperty($S, new $T())", execMember.getSimpleName().toString(), execMember.getSimpleName().toString(), ArrayList.class);
                 } else if (execMember.isDefault()) {
-                    enforceMethodBuilder.addStatement("vertex.putProperty($S, viewer.$L())", execMember.getSimpleName().toString(), execMember.getSimpleName().toString());
+                    enforceMethodBuilder.addStatement("if (!vertex.hasProperty($S)) vertex.putProperty($S, viewer.$L())", execMember.getSimpleName().toString(), execMember.getSimpleName().toString(), execMember.getSimpleName().toString());
                 }
 //                else {
 //                    enforceMethodBuilder.addStatement("vertex.putProperty($S, new $T())", execMember.getSimpleName().toString(), execMember.getReturnType());
