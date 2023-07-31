@@ -73,20 +73,11 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     var s = ForSyDeHierarchy.TimeDivisionMultiplexingRuntime.enforce(systemGraph, v);
                     s.maximumTimeSliceInClockCycles((Long) v.getProperty("maximumTimeSliceInCycles"));
                     s.minimumTimeSliceInClockCycles((Long) v.getProperty("minimumTimeSliceInCycles"));
-                    s.frameSizeInClockCycles(s.maximumTimeSliceInClockCycles() * ((Long) v.getProperty("maximumTimeSlices")));
+                    s.frameSizeInClockCycles(s.maximumTimeSliceInClockCycles() * ((Integer) v.getProperty("maximumTimeSlices")));
                 }
-//                if (vt.getName().contains("InstrumentedCommunicationModule")) {
-//                    ForSyDeHierarchy.InstrumentedCommunicationModule.enforce(systemGraph, v);
-//                }
-//                if (vt.getName().contains("GenericCommunicationModule")) {
-//                    ForSyDeHierarchy.GenericCommunicationModule.enforce(systemGraph, v);
-//                }
-//                if (vt.getName().contains("InstrumentedProcessingModule")) {
-//                    ForSyDeHierarchy.InstrumentedProcessingModule.enforce(systemGraph, v);
-//                }
-//                if (vt.getName().contains("GenericProcessingModule")) {
-//                    ForSyDeHierarchy.GenericProcessingModule.enforce(systemGraph, v);
-//                }
+                if (vt.getName().contains("PeriodicStimulus")) {
+                    ForSyDeHierarchy.PeriodicStimulator.enforce(systemGraph, v);
+                }
             }
         }
         for (var e : systemGraph.edgeSet()) {

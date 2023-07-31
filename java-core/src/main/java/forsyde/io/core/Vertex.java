@@ -153,7 +153,7 @@ final public class Vertex {
         ) {
             return properties.put(propertyName, propertyValue) == null;
         } else {
-            throw new IllegalArgumentException("Only allowed vertex properties types are numeric values, strings, lists and maps. Throwing vertex is " + getIdentifier());
+            throw new IllegalArgumentException("Allowed vertex properties types are numeric values, strings, lists and maps. Thrower is " + getIdentifier() + "." + propertyName);
         }
     }
 

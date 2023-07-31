@@ -48,4 +48,11 @@ public class PerformJavaTests {
             });
         });
     }
+
+    @Test
+    void testMigrationworkload() throws Exception {
+        var handler = new ModelHandler().registerTraitHierarchy(new ForSyDeHierarchy()).registerSystemGraphMigrator(new TraitNamesFrom0_6To0_7());
+        var m = handler.loadModel("examples/workload/case_study_radar.fiodl");
+        Assertions.assertEquals(5, m.vertexSet().stream().flatMap(v -> ForSyDeHierarchy.Task.tryView(m, v).stream()).count());
+    }
 }
