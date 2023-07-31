@@ -67,7 +67,7 @@ sourceSets {
       srcDirs += ['examples/programmatic/groovy']
     }
     java {
-      srcDirs += ['examples/programmatic/java']
+      srcDirs += ['examples/programmatic/java', 'examples']
     }
   }
 }

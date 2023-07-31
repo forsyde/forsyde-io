@@ -9,6 +9,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+/**
+ * This migrator is a best-effort migration from all LibForSyDe traits existing pre 0.7
+ * to all traits existing post 0.7.
+ */
 public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
     @Override
     public boolean effect(SystemGraph systemGraph) {
@@ -20,10 +24,8 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                         v.addTraits(t);
                     }
                 }
-                System.out.println(v.getIdentifier());
                 // mapping for the hardware parts of the platform
                 if (vt.getName().contains("platform::")) {
-                    System.out.println("matched");
                     for (var t : ForSyDeHierarchy.containedTraits) {
                         if (t.getName().contains("platform::hardware::")) {
                             var splitVt = vt.getName().split("::");
@@ -88,11 +90,11 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
             }
         }
         for (var e : systemGraph.edgeSet()) {
-            var traitToAdd = new HashSet<Trait>();
-            for (var et : e.getTraits()) {
+            var prevTraits = new HashSet<Trait>(e.getTraits());
+            for (var et : prevTraits) {
                 for (var t : ForSyDeHierarchy.containedTraits) {
                     if (et instanceof OpaqueTrait opaqueTrait && t.getName().contains(opaqueTrait.getName())) {
-                        traitToAdd.add(t);
+                        e.addTraits(t);
                     }
                 }
                 // mapping for the hardware parts of the platform
@@ -111,20 +113,18 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                 }
                 // also change edge traits named 'DataEdge' to 'NetworkEdge' and other specialties
                 if (et.getName().contains("SYDataEdge")) {
-                    traitToAdd.add(ForSyDeHierarchy.EdgeTraits.SYNetworkEdge);
+                    e.addTraits(ForSyDeHierarchy.EdgeTraits.SYNetworkEdge);
                 }
                 if (et.getName().contains("SDFDataEdge")) {
-                    traitToAdd.add(ForSyDeHierarchy.EdgeTraits.SDFNetworkEdge);
+                    e.addTraits(ForSyDeHierarchy.EdgeTraits.SDFNetworkEdge);
                 }
                 if (et.getName().contains("AbstractionEdge")) {
-                    traitToAdd.add(ForSyDeHierarchy.EdgeTraits.BehaviourCompositionEdge);
+                    e.addTraits(ForSyDeHierarchy.EdgeTraits.BehaviourCompositionEdge);
                 }
                 if (et.getName().contains("ParallelContainer")) {
-                    traitToAdd.add(ForSyDeHierarchy.EdgeTraits.BehaviourCompositionEdge);
+                    e.addTraits(ForSyDeHierarchy.EdgeTraits.BehaviourCompositionEdge);
                 }
             }
-
-            e.addTraits(traitToAdd);
         }
         return true;
     }
