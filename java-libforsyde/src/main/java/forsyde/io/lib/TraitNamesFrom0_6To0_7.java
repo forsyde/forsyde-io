@@ -20,8 +20,10 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                         v.addTraits(t);
                     }
                 }
+                System.out.println(v.getIdentifier());
                 // mapping for the hardware parts of the platform
                 if (vt.getName().contains("platform::")) {
+                    System.out.println("matched");
                     for (var t : ForSyDeHierarchy.containedTraits) {
                         if (t.getName().contains("platform::hardware::")) {
                             var splitVt = vt.getName().split("::");
