@@ -13,6 +13,9 @@ build-java-all:
     COPY --dir gradle .
     COPY settings.gradle .
     COPY build.gradle .
+    IF $(test -z "$GPG_SIGNING_KEY" && test -z "$GPG_SIGNING_PASSWORD")
+        COPY gradle.properties .
+    END
     COPY --dir buildSrc .
     COPY --dir java-core .
     COPY --dir java-generator .
@@ -23,6 +26,14 @@ build-java-all:
     COPY --dir java-bridge-forsyde-shallow .
     RUN sed -i 's/\r//g' gradlew # make sure that it is readable in linux by bash
     RUN ./gradlew build
+
+build-conversyde-linux:
+    ARG jabba_jdk='amazon-corretto@1.17.0-0.35.1'
+    FROM +build-java-all
+    WORKDIR java-workdir
+    RUN ./gradlew jar shadowJar java-conversyde:zipJPackage
+    SAVE ARTIFACT java-conversyde/build/distributions/*.zip AS LOCAL dist/
+
 
 publish-java-all:
     FROM +build-java-all

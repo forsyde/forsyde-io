@@ -4,6 +4,7 @@
 package forsyde.io.core;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.*;
 import java.util.*;
 
@@ -126,6 +127,14 @@ public final class ModelHandler {
 		);
 	}
 
+	/**
+	 * This is a shortcut to loadModel(File) where the String is simply
+	 * the stringfied path of the model file.
+	 *
+	 * @param filePath stringified path for the model file.
+	 * @return the loaded model, if was possible to load.
+	 * @throws Exception
+	 */
 	public SystemGraph loadModel(String filePath) throws Exception {
 		return loadModel(Paths.get(filePath));
 	}
@@ -134,63 +143,61 @@ public final class ModelHandler {
 		return loadModel(file.toPath());
 	}
 
+	public SystemGraph loadModel(InputStream in) throws Exception {
+		for (int i = 0; i < registeredDrivers.size(); i++) {
+			try {
+				return loadModel(in, registeredDrivers.get(i));
+			} catch (Exception ignored) {
+
+			}
+		}
+		throw new Exception("No driver succeeded in reading the input stream");
+	}
+
+	private SystemGraph loadModel(InputStream in, ModelDriver driver) throws Exception {
+		final SystemGraph systemGraph = driver.loadModel(in);
+		// migrate what possible
+		for (SystemGraphMigrator systemGraphMigrator : registeredMigrators) {
+			if (!systemGraphMigrator.effect(systemGraph)) {
+				throw new SystemGraphMigrator.SystemGraphMigrationException("Migrator " + systemGraphMigrator.getName() + " has failed its migration.");
+			}
+		}
+		// use trait hierarchies to remove opaque traits
+		for (var v : systemGraph.vertexSet()) {
+			var toDelete = new HashSet<Trait>();
+			var toAdd = new HashSet<Trait>();
+			for (var t : v.getTraits()) {
+				if (t instanceof OpaqueTrait) {
+					for (var traitHierarchies : registeredTraitHierarchies) {
+						var newT = traitHierarchies.fromName(t.getName());
+						if (!(newT instanceof OpaqueTrait)) {
+							toDelete.add(t);
+							toAdd.add(newT);
+						}
+					}
+				}
+			}
+			v.getTraits().removeAll(toDelete);
+			v.getTraits().addAll(toAdd);
+		}
+		// post migration validation
+		for (SystemGraphValidation validation : registesteredValidators) {
+			final Optional<String> validationResult = validation.validate(systemGraph);
+			if (validationResult.isPresent()) {
+				throw new SystemGraphValidation.InvalidSystemGraph(validationResult.get());
+			}
+		}
+		registeredInferences.forEach(inference -> inference.infer(systemGraph));
+		return systemGraph;
+	}
+
 	public SystemGraph loadModel(Path inPath) throws Exception {
 		for (int i = 0; i < registeredDrivers.size(); i++) {
 			if (registeredDriversInputMatchers.get(i).matches(inPath)) {
-				final SystemGraph systemGraph = registeredDrivers.get(i).loadModel(inPath);
-				// migrate what possible
-				for (SystemGraphMigrator systemGraphMigrator : registeredMigrators) {
-					if (!systemGraphMigrator.effect(systemGraph)) {
-						throw new Exception("Migrator " + systemGraphMigrator.getName() + " has failed its migration.");
-					}
-				}
-				// use trait hierarchies to remove opaque traits
-				for (var v : systemGraph.vertexSet()) {
-					var toDelete = new HashSet<Trait>();
-					var toAdd = new HashSet<Trait>();
-					for (var t : v.getTraits()) {
-						if (t instanceof OpaqueTrait) {
-							for (var traitHierarchies : registeredTraitHierarchies) {
-								var newT = traitHierarchies.fromName(t.getName());
-								if (!(newT instanceof OpaqueTrait)) {
-									toDelete.add(t);
-									toAdd.add(newT);
-								}
-							}
-						}
-					}
-					v.getTraits().removeAll(toDelete);
-					v.getTraits().addAll(toAdd);
-				}
-				// pre migration validation
-//				for (SystemGraphValidation validation : registesteredValidators) {
-//					final Optional<String> validationResult = validation.validate(systemGraph);
-//					if (validationResult.isPresent()) {
-//						throw new SystemGraphValidation.InvalidSystemGraph(validationResult.get());
-//					}
-//				}
-				// post migration validation
-				for (SystemGraphValidation validation : registesteredValidators) {
-					final Optional<String> validationResult = validation.validate(systemGraph);
-					if (validationResult.isPresent()) {
-						throw new SystemGraphValidation.InvalidSystemGraph(validationResult.get());
-					}
-				}
-				registeredInferences.forEach(inference -> inference.infer(systemGraph));
-				return systemGraph;
+				return loadModel(Files.newInputStream(inPath), registeredDrivers.get(i));
 			}
 		}
 		throw new Exception("Unsupported read format for file: " + inPath.toString());
-//		if (forsydeMLMatcher.matches(inPath)) {
-//			driver = new ForSyDeMLDriver();
-//		} else if(linguaFrancaMatcher.matches(inPath)) {
-//			driver = new ForSyDeLFDriver();
-//		} else if(amaltheaMatcher.matches(inPath)) {
-//			driver = new ForSyDeAmaltheaDriver();
-//		} else {
-//
-//		}
-//		return driver.loadModel(inPath);
 	}
 	
 	public void writeModel(SystemGraph model, String filePath) throws Exception {
