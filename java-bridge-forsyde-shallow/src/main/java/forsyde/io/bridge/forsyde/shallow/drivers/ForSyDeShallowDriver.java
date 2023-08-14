@@ -37,4 +37,9 @@ public class ForSyDeShallowDriver extends ForSyDeShallowHaskellVisitor implement
     public void writeModel(SystemGraph model, OutputStream out) throws Exception {
 
     }
+
+    @Override
+    public String printModel(SystemGraph model) throws Exception {
+        return null;
+    }
 }

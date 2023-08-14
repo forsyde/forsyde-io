@@ -3,18 +3,16 @@
  */
 package forsyde.io.core;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 
 import forsyde.io.core.drivers.FiodlDriver;
 import forsyde.io.core.drivers.ModelDriver;
-import forsyde.io.core.inference.PopulateTaskCommunications;
 import forsyde.io.core.inference.SystemGraphInference;
 import forsyde.io.core.migrations.*;
 import forsyde.io.core.validation.BasicTraitsValidation;
-import forsyde.io.core.validation.SDFValidator;
 import forsyde.io.core.validation.SystemGraphValidation;
 
 /**
@@ -143,12 +141,22 @@ public final class ModelHandler {
 		return loadModel(file.toPath());
 	}
 
-	public SystemGraph loadModel(InputStream in) throws Exception {
-		for (int i = 0; i < registeredDrivers.size(); i++) {
-			try {
-				return loadModel(in, registeredDrivers.get(i));
-			} catch (Exception ignored) {
+	public SystemGraph loadModel(Reader inReader, String textualFormat) throws Exception {
+		char[] charBuffer = new char[8 * 1024];
+		final StringBuilder stringBuilder = new StringBuilder();
+		int numCharsRead;
+		while ((numCharsRead = inReader.read(charBuffer, 0, charBuffer.length)) != -1) {
+			stringBuilder.append(charBuffer, 0, numCharsRead);
+		}
+		try(final InputStream inputStream = new ByteArrayInputStream(stringBuilder.toString().getBytes(StandardCharsets.UTF_8))) {
+			return loadModel(inputStream, textualFormat);
+		}
+	}
 
+	public SystemGraph loadModel(InputStream in, String textualFormat) throws Exception {
+		for (int i = 0; i < registeredDrivers.size(); i++) {
+			if (registeredDrivers.get(i).inputExtensions().contains(textualFormat)) {
+				return loadModel(in, registeredDrivers.get(i));
 			}
 		}
 		throw new Exception("No driver succeeded in reading the input stream");
@@ -223,20 +231,37 @@ public final class ModelHandler {
 			}
 		}
 		throw new Exception("Unsupported write format for file: " + outPath.toString());
-//		if (forsydeMLMatcher.matches(outPath)) {
-//			driver = new ForSyDeMLDriver();
-//		} else if(graphMLMatcher.matches(outPath)) {
-//			driver = new ForSyDeGraphMLDriver();
-//		}  else if(dotMatcher.matches(outPath)) {
-//			driver = new ForSyDeDOTDriver();
-//		} else {
-//			throw new Exception("Supported write formats: ['forxml', 'forsyde.xml', 'graphml', 'dot', 'gv', 'graphviz'].");
-//		}
-//		if (outPath.getParent() != null)
-//			Files.createDirectories(outPath.getParent());
-//		try {
-//			Files.createFile(outPath);
-//		} catch (FileAlreadyExistsException ignored) {}
-//		driver.writeModel(model, outPath);
+	}
+
+	public void writeModel(SystemGraph model, OutputStream out, String textualFormat) throws Exception {
+		registeredInferences.forEach(inference -> inference.infer(model));
+		for (SystemGraphValidation validation : registesteredValidators) {
+			final Optional<String> validationResult = validation.validate(model);
+			if (validationResult.isPresent()) {
+				throw new Exception(validationResult.get());
+			}
+		}
+		for (int i = 0; i < registeredDrivers.size(); i++) {
+			if (registeredDrivers.get(i).outputExtensions().contains(textualFormat)) {
+				registeredDrivers.get(i).writeModel(model, out);
+				return;
+			}
+		}
+	}
+
+	public String printModel(SystemGraph model, String textualFormat) throws Exception {
+		registeredInferences.forEach(inference -> inference.infer(model));
+		for (SystemGraphValidation validation : registesteredValidators) {
+			final Optional<String> validationResult = validation.validate(model);
+			if (validationResult.isPresent()) {
+				throw new Exception(validationResult.get());
+			}
+		}
+		for (int i = 0; i < registeredDrivers.size(); i++) {
+			if (registeredDrivers.get(i).outputExtensions().contains(textualFormat)) {
+				return registeredDrivers.get(i).printModel(model);
+			}
+		}
+		throw new Exception("Unsupported format: " + textualFormat);
 	}
 }

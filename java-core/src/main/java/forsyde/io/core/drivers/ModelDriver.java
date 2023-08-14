@@ -51,6 +51,12 @@ public interface ModelDriver {
 	}
 	
 	SystemGraph loadModel(InputStream in) throws Exception;
+
+	default SystemGraph readModel(String text, String format) throws Exception {
+		final StringReader rs = new StringReader(text);
+		final SystemGraph model = loadModel(rs);
+		return model;
+	}
 	
 	default void writeModel(SystemGraph model, String filePath) throws Exception {
 		writeModel(model, Paths.get(filePath));
@@ -65,5 +71,7 @@ public interface ModelDriver {
 	}
 	
 	void writeModel(SystemGraph model, OutputStream out) throws Exception;
+
+	String printModel(SystemGraph model) throws Exception;
 
 }

@@ -29,6 +29,14 @@ public class KGTDriver implements ModelDriver, ForSyDe2KGTNode {
     }
 
     @Override
+    public String printModel(SystemGraph model) throws Exception {
+        final KlighDContainer klighDContainer = convert(model);
+        final PicoWriter topWriter = new PicoWriter();
+        klighDContainer.write(topWriter);
+        return topWriter.toString();
+    }
+
+    @Override
     public void writeModel(SystemGraph model, OutputStream out) throws Exception {
         final KlighDContainer klighDContainer = convert(model);
         final PicoWriter topWriter = new PicoWriter();

@@ -38,4 +38,11 @@ public class GraphVizDriver implements ModelDriver {
         final Graph vizGraph = forSyDeGraphVizAdapter.convert(model);
         Graphviz.fromGraph(vizGraph).render(Format.XDOT).toOutputStream(out);
     }
+
+    @Override
+    public String printModel(SystemGraph model) throws Exception {
+        final ForSyDeGraphVizAdapter forSyDeGraphVizAdapter = new ForSyDeGraphVizAdapter();
+        final Graph vizGraph = forSyDeGraphVizAdapter.convert(model);
+        return Graphviz.fromGraph(vizGraph).render(Format.XDOT).toString();
+    }
 }

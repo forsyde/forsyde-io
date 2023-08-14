@@ -54,21 +54,21 @@ public class FiodlDriver extends ForSyDeFioDLBaseVisitor<SystemGraph> implements
     }
 
     @Override
-    public void writeModel(SystemGraph model, OutputStream out) throws Exception {
+    public String printModel(SystemGraph model) throws Exception {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("systemgraph {\n");
         for (Vertex v: model.vertexSet()) {
             stringBuilder.append("  vertex ").append('"').append(v.getIdentifier()).append('"').append("\n")
-                .append("  [").append(v.getTraits().stream().map(Trait::getName).sorted().collect(Collectors.joining(", "))).append("]\n")
-                .append("  (").append(v.getPorts().stream().sorted().collect(Collectors.joining(", "))).append(")\n");
+                    .append("  [").append(v.getTraits().stream().map(Trait::getName).sorted().collect(Collectors.joining(", "))).append("]\n")
+                    .append("  (").append(v.getPorts().stream().sorted().collect(Collectors.joining(", "))).append(")\n");
             if (v.getPropertiesNames().isEmpty())
                 stringBuilder.append("  {}\n");
             else {
                 stringBuilder.append("  {\n")
-                    .append(v.getPropertiesNames().stream().map(name ->
-                    " ".repeat(4) + "\"" + name +"\": " + writeVertexPropertyCode(v.getProperty(name), 4)
-                ).collect(Collectors.joining(",\n")))
-                    .append("\n  }\n");
+                        .append(v.getPropertiesNames().stream().map(name ->
+                                " ".repeat(4) + "\"" + name +"\": " + writeVertexPropertyCode(v.getProperty(name), 4)
+                        ).collect(Collectors.joining(",\n")))
+                        .append("\n  }\n");
             }
         }
         for (EdgeInfo e : model.edgeSet()) {
@@ -81,7 +81,12 @@ public class FiodlDriver extends ForSyDeFioDLBaseVisitor<SystemGraph> implements
             stringBuilder.append("\n");
         }
         stringBuilder.append("}");
-        out.write(stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        return stringBuilder.toString();
+    }
+
+    @Override
+    public void writeModel(SystemGraph model, OutputStream out) throws Exception {
+        out.write(printModel(model).getBytes(StandardCharsets.UTF_8));
     }
 
     public String writeVertexPropertyCode(Object property, int identLevel) {

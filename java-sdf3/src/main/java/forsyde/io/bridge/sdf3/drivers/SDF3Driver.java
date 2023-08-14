@@ -8,6 +8,7 @@ import jakarta.xml.bind.JAXBContext;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.List;
 
 public class SDF3Driver implements ModelDriver {
@@ -36,5 +37,15 @@ public class SDF3Driver implements ModelDriver {
         final Sdf3 sdf3 = forSyDeSDF3Adapter.convert(model);
         final JAXBContext jaxbContext = JAXBContext.newInstance(Sdf3.class);
         jaxbContext.createMarshaller().marshal(sdf3, out);
+    }
+
+    @Override
+    public String printModel(SystemGraph model) throws Exception {
+        final ForSyDeSDF3Adapter forSyDeSDF3Adapter = new ForSyDeSDF3Adapter();
+        final Sdf3 sdf3 = forSyDeSDF3Adapter.convert(model);
+        final JAXBContext jaxbContext = JAXBContext.newInstance(Sdf3.class);
+        final StringWriter sw = new StringWriter();
+        jaxbContext.createMarshaller().marshal(sdf3, sw);
+        return sw.toString();
     }
 }
