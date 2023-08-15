@@ -52,7 +52,7 @@ public interface ModelDriver {
 	
 	SystemGraph loadModel(InputStream in) throws Exception;
 
-	default SystemGraph readModel(String text, String format) throws Exception {
+	default SystemGraph readModel(String text) throws Exception {
 		final StringReader rs = new StringReader(text);
 		final SystemGraph model = loadModel(rs);
 		return model;

@@ -164,39 +164,40 @@ public final class ModelHandler {
 
 	private SystemGraph loadModel(InputStream in, ModelDriver driver) throws Exception {
 		final SystemGraph systemGraph = driver.loadModel(in);
+		return standardSystemGraphProcessing(driver.loadModel(in));
 		// migrate what possible
-		for (SystemGraphMigrator systemGraphMigrator : registeredMigrators) {
-			if (!systemGraphMigrator.effect(systemGraph)) {
-				throw new SystemGraphMigrator.SystemGraphMigrationException("Migrator " + systemGraphMigrator.getName() + " has failed its migration.");
-			}
-		}
-		// use trait hierarchies to remove opaque traits
-		for (var v : systemGraph.vertexSet()) {
-			var toDelete = new HashSet<Trait>();
-			var toAdd = new HashSet<Trait>();
-			for (var t : v.getTraits()) {
-				if (t instanceof OpaqueTrait) {
-					for (var traitHierarchies : registeredTraitHierarchies) {
-						var newT = traitHierarchies.fromName(t.getName());
-						if (!(newT instanceof OpaqueTrait)) {
-							toDelete.add(t);
-							toAdd.add(newT);
-						}
-					}
-				}
-			}
-			v.getTraits().removeAll(toDelete);
-			v.getTraits().addAll(toAdd);
-		}
-		// post migration validation
-		for (SystemGraphValidation validation : registesteredValidators) {
-			final Optional<String> validationResult = validation.validate(systemGraph);
-			if (validationResult.isPresent()) {
-				throw new SystemGraphValidation.InvalidSystemGraph(validationResult.get());
-			}
-		}
-		registeredInferences.forEach(inference -> inference.infer(systemGraph));
-		return systemGraph;
+//		for (SystemGraphMigrator systemGraphMigrator : registeredMigrators) {
+//			if (!systemGraphMigrator.effect(systemGraph)) {
+//				throw new SystemGraphMigrator.SystemGraphMigrationException("Migrator " + systemGraphMigrator.getName() + " has failed its migration.");
+//			}
+//		}
+//		// use trait hierarchies to remove opaque traits
+//		for (var v : systemGraph.vertexSet()) {
+//			var toDelete = new HashSet<Trait>();
+//			var toAdd = new HashSet<Trait>();
+//			for (var t : v.getTraits()) {
+//				if (t instanceof OpaqueTrait) {
+//					for (var traitHierarchies : registeredTraitHierarchies) {
+//						var newT = traitHierarchies.fromName(t.getName());
+//						if (!(newT instanceof OpaqueTrait)) {
+//							toDelete.add(t);
+//							toAdd.add(newT);
+//						}
+//					}
+//				}
+//			}
+//			v.getTraits().removeAll(toDelete);
+//			v.getTraits().addAll(toAdd);
+//		}
+//		// post migration validation
+//		for (SystemGraphValidation validation : registesteredValidators) {
+//			final Optional<String> validationResult = validation.validate(systemGraph);
+//			if (validationResult.isPresent()) {
+//				throw new SystemGraphValidation.InvalidSystemGraph(validationResult.get());
+//			}
+//		}
+//		registeredInferences.forEach(inference -> inference.infer(systemGraph));
+//		return systemGraph;
 	}
 
 	public SystemGraph loadModel(Path inPath) throws Exception {
@@ -214,6 +215,15 @@ public final class ModelHandler {
 
 	public void writeModel(SystemGraph model, File file) throws Exception {
 		writeModel(model, file.toPath());
+	}
+
+	public SystemGraph readModel(String text, String textualFormat) throws Exception {
+		for (int i = 0; i < registeredDrivers.size(); i++) {
+			if (registeredDrivers.get(i).inputExtensions().contains(textualFormat)) {
+				return standardSystemGraphProcessing(registeredDrivers.get(i).readModel(text));
+			}
+		}
+		throw new Exception("Unsupported read format: " + textualFormat);
 	}
 
 	public void writeModel(SystemGraph model, Path outPath) throws Exception {
@@ -263,5 +273,41 @@ public final class ModelHandler {
 			}
 		}
 		throw new Exception("Unsupported format: " + textualFormat);
+	}
+
+	public SystemGraph standardSystemGraphProcessing(SystemGraph systemGraph) throws Exception {
+		// migrate what possible
+		for (SystemGraphMigrator systemGraphMigrator : registeredMigrators) {
+			if (!systemGraphMigrator.effect(systemGraph)) {
+				throw new SystemGraphMigrator.SystemGraphMigrationException("Migrator " + systemGraphMigrator.getName() + " has failed its migration.");
+			}
+		}
+		// use trait hierarchies to remove opaque traits
+		for (var v : systemGraph.vertexSet()) {
+			var toDelete = new HashSet<Trait>();
+			var toAdd = new HashSet<Trait>();
+			for (var t : v.getTraits()) {
+				if (t instanceof OpaqueTrait) {
+					for (var traitHierarchies : registeredTraitHierarchies) {
+						var newT = traitHierarchies.fromName(t.getName());
+						if (!(newT instanceof OpaqueTrait)) {
+							toDelete.add(t);
+							toAdd.add(newT);
+						}
+					}
+				}
+			}
+			v.getTraits().removeAll(toDelete);
+			v.getTraits().addAll(toAdd);
+		}
+		// post migration validation
+		for (SystemGraphValidation validation : registesteredValidators) {
+			final Optional<String> validationResult = validation.validate(systemGraph);
+			if (validationResult.isPresent()) {
+				throw new SystemGraphValidation.InvalidSystemGraph(validationResult.get());
+			}
+		}
+		registeredInferences.forEach(inference -> inference.infer(systemGraph));
+		return systemGraph;
 	}
 }
