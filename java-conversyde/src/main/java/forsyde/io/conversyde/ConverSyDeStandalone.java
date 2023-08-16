@@ -5,6 +5,7 @@ import forsyde.io.core.SystemGraph;
 import forsyde.io.core.ModelHandler;
 import forsyde.io.bridge.sdf3.drivers.SDF3Driver;
 import forsyde.io.lib.ForSyDeHierarchy;
+import forsyde.io.lib.SDFValidator;
 import forsyde.io.lib.TraitNamesFrom0_6To0_7;
 import forsyde.io.visual.kgt.drivers.KGTDriver;
 import picocli.CommandLine;
@@ -37,6 +38,7 @@ public class ConverSyDeStandalone implements Callable<Integer> {
 //        modelHandler.registerDriver(new GraphVizDriver(), 0);
         modelHandler.registerDriver(new KGTDriver());
         modelHandler.registerSystemGraphMigrator(new TraitNamesFrom0_6To0_7());
+        modelHandler.registerValidation(new SDFValidator());
     }
 
     @Override

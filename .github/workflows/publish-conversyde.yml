@@ -40,7 +40,7 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{ github.workspace }}/java-conversyde/build/libs/conversyde-${{ steps.get_version.outputs.version-without-v }}-all.jar
+        file: ${{ github.workspace }}/java-conversyde/build/libs/forsyde-io-java-conversyde-${{ steps.get_version.outputs.version-without-v }}-all.jar
         asset_name: conversyde-all-cli-${{ steps.get_version.outputs.version-without-v }}.jar
         tag: "${{ github.ref }}"
         overwrite: true
@@ -49,7 +49,7 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{ github.workspace }}/java-conversyde/build/distributions/conversyde-${{ steps.get_version.outputs.version-without-v }}.zip
+        file: ${{ github.workspace }}/java-conversyde/build/distributions/forsyde-io-java-conversyde-${{ steps.get_version.outputs.version-without-v }}.zip
         asset_name: conversyde-linux-${{ steps.get_version.outputs.version-without-v }}.zip
         tag: "${{ github.ref }}"
         overwrite: true
@@ -69,7 +69,7 @@ jobs:
         # if: ${{ matrix.os != 'windows-latest' }}
         run: |
           cd ${{ github.workspace }}
-          .\gradlew jar shadowJar java-conversyde:zipJPackage
+          .\gradlew.bat jar shadowJar java-conversyde:zipJPackage
       # - name: Zipping the image files
       #   run: |
       #     cd ${{ github.workspace }}/java-conversyde/build/jpackage
@@ -78,7 +78,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ github.workspace }}/java-conversyde/build/distributions/conversyde-${{ steps.get_version.outputs.version-without-v }}.zip
+          file: ${{ github.workspace }}/java-conversyde/build/distributions/forsyde-io-java-conversyde-${{ steps.get_version.outputs.version-without-v }}.zip
           asset_name: conversyde-windows-${{ steps.get_version.outputs.version-without-v }}.zip
           tag: "${{ github.ref }}"
           overwrite: true
