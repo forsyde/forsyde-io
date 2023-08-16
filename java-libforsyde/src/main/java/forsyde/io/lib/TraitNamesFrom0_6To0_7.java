@@ -20,7 +20,7 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
             var prevTraits = new HashSet<Trait>(v.getTraits());
             for (var vt : prevTraits) {
                 for (var t : ForSyDeHierarchy.containedTraits) {
-                    if (vt instanceof OpaqueTrait opaqueTrait && t.getName().contains(opaqueTrait.getName())) {
+                    if (t.getName().contains(vt.getName())) {
                         v.addTraits(t);
                     }
                 }
@@ -56,7 +56,12 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     var op = ForSyDeHierarchy.InstrumentedBehaviour.enforce(systemGraph, v);
                     op.computationalRequirements((Map<String, Map<String, Long>>) v.getProperty("operationRequirements"));
                     var m = new HashMap<String, Long>();
-                    m.put("default", (Long) v.getProperty("sizeInBits"));
+                    var s = v.getProperty("sizeInBits");
+                    if (s instanceof Integer) {
+                        m.put("default", ((Integer) s).longValue());
+                    } else {
+                        m.put("default", (Long) s);
+                    }
                     op.maxSizeInBits(m);
                 }
                 if (vt.getName().contains("AbstractScheduler")) {

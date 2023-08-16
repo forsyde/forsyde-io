@@ -154,50 +154,17 @@ public final class ModelHandler {
 	}
 
 	public SystemGraph loadModel(InputStream in, String textualFormat) throws Exception {
-		for (int i = 0; i < registeredDrivers.size(); i++) {
-			if (registeredDrivers.get(i).inputExtensions().contains(textualFormat)) {
-				return loadModel(in, registeredDrivers.get(i));
-			}
-		}
+        for (ModelDriver registeredDriver : registeredDrivers) {
+            if (registeredDriver.inputExtensions().contains(textualFormat)) {
+                return loadModel(in, registeredDriver);
+            }
+        }
 		throw new Exception("No driver succeeded in reading the input stream");
 	}
 
 	private SystemGraph loadModel(InputStream in, ModelDriver driver) throws Exception {
 		final SystemGraph systemGraph = driver.loadModel(in);
-		return standardSystemGraphProcessing(driver.loadModel(in));
-		// migrate what possible
-//		for (SystemGraphMigrator systemGraphMigrator : registeredMigrators) {
-//			if (!systemGraphMigrator.effect(systemGraph)) {
-//				throw new SystemGraphMigrator.SystemGraphMigrationException("Migrator " + systemGraphMigrator.getName() + " has failed its migration.");
-//			}
-//		}
-//		// use trait hierarchies to remove opaque traits
-//		for (var v : systemGraph.vertexSet()) {
-//			var toDelete = new HashSet<Trait>();
-//			var toAdd = new HashSet<Trait>();
-//			for (var t : v.getTraits()) {
-//				if (t instanceof OpaqueTrait) {
-//					for (var traitHierarchies : registeredTraitHierarchies) {
-//						var newT = traitHierarchies.fromName(t.getName());
-//						if (!(newT instanceof OpaqueTrait)) {
-//							toDelete.add(t);
-//							toAdd.add(newT);
-//						}
-//					}
-//				}
-//			}
-//			v.getTraits().removeAll(toDelete);
-//			v.getTraits().addAll(toAdd);
-//		}
-//		// post migration validation
-//		for (SystemGraphValidation validation : registesteredValidators) {
-//			final Optional<String> validationResult = validation.validate(systemGraph);
-//			if (validationResult.isPresent()) {
-//				throw new SystemGraphValidation.InvalidSystemGraph(validationResult.get());
-//			}
-//		}
-//		registeredInferences.forEach(inference -> inference.infer(systemGraph));
-//		return systemGraph;
+		return standardSystemGraphProcessing(systemGraph);
 	}
 
 	public SystemGraph loadModel(Path inPath) throws Exception {
@@ -218,11 +185,11 @@ public final class ModelHandler {
 	}
 
 	public SystemGraph readModel(String text, String textualFormat) throws Exception {
-		for (int i = 0; i < registeredDrivers.size(); i++) {
-			if (registeredDrivers.get(i).inputExtensions().contains(textualFormat)) {
-				return standardSystemGraphProcessing(registeredDrivers.get(i).readModel(text));
-			}
-		}
+        for (ModelDriver registeredDriver : registeredDrivers) {
+            if (registeredDriver.inputExtensions().contains(textualFormat)) {
+                return standardSystemGraphProcessing(registeredDriver.readModel(text));
+            }
+        }
 		throw new Exception("Unsupported read format: " + textualFormat);
 	}
 
@@ -251,12 +218,12 @@ public final class ModelHandler {
 				throw new Exception(validationResult.get());
 			}
 		}
-		for (int i = 0; i < registeredDrivers.size(); i++) {
-			if (registeredDrivers.get(i).outputExtensions().contains(textualFormat)) {
-				registeredDrivers.get(i).writeModel(model, out);
-				return;
-			}
-		}
+        for (ModelDriver registeredDriver : registeredDrivers) {
+            if (registeredDriver.outputExtensions().contains(textualFormat)) {
+                registeredDriver.writeModel(model, out);
+                return;
+            }
+        }
 	}
 
 	public String printModel(SystemGraph model, String textualFormat) throws Exception {
@@ -267,11 +234,11 @@ public final class ModelHandler {
 				throw new Exception(validationResult.get());
 			}
 		}
-		for (int i = 0; i < registeredDrivers.size(); i++) {
-			if (registeredDrivers.get(i).outputExtensions().contains(textualFormat)) {
-				return registeredDrivers.get(i).printModel(model);
-			}
-		}
+        for (ModelDriver registeredDriver : registeredDrivers) {
+            if (registeredDriver.outputExtensions().contains(textualFormat)) {
+                return registeredDriver.printModel(model);
+            }
+        }
 		throw new Exception("Unsupported format: " + textualFormat);
 	}
 
