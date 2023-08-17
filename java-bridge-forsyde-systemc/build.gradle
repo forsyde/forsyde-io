@@ -1,0 +1,31 @@
+plugins {
+    id 'forsydeio.public-module'
+    id 'antlr'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    antlr 'org.antlr:antlr4:4.10.1'
+    implementation 'org.antlr:antlr4-runtime:4.10.1'
+}
+
+generateGrammarSource {
+    maxHeapSize = "512m"
+    arguments += ['-package', 'forsyde.io.bridge.forsyde.systemc', '-visitor']
+    outputDirectory new File(getBuildDir().toString(), "generated/antlr4/forsyde/io/bridge/forsyde/systemc")
+}
+
+sourceSets {
+    main {
+        java.srcDir new File(getBuildDir().toString(), "generated/antlr4")
+    }
+}
+
+tasks.sourcesJar.dependsOn generateGrammarSource
+
+test {
+    useJUnitPlatform()
+}
