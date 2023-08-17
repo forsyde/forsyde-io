@@ -45,31 +45,10 @@ public class ForSyDeShallowHaskellVisitor extends HaskellParserBaseVisitor<Syste
      * It identifies they model type and starts building the related model object
      */
     public SystemGraph visitBody(SystemGraph systemGraph, HaskellParser.BodyContext ctx) {
-
-        if (parseTreeSatisfies(ctx, (n) -> n.getText().contains("actorSDF"))) {
-
-//            System.out.println("Model Type: SDF Model");
-
-//            AntlrToSDFModel sdfModelVisitor = new AntlrToSDFModel();
-//            Model model = sdfModelVisitor.visitTopdecls(ctx.topdecls());
-//
-//            return model;
-
-        } else {
-
-//            System.out.println("This files does not represent any legal model!");
-//            System.exit(1);
-        }
         return visitTopdecls(systemGraph, ctx.topdecls());
-
     }
 
     public SystemGraph visitTopdecls(SystemGraph systemGraph, HaskellParser.TopdeclsContext ctx) {
-
-//        SDFModel sdfModel = new SDFModel();
-//        ModelComponents modelComponents = new ModelComponents();
-//
-//        List<TopdeclContext> modelComponentTrees = ctx.topdecl();
         for (HaskellParser.TopdeclContext topdeclContext : ctx.topdecl()) {
             if (topdeclContext.decl_no_th() != null) {
                 if (topdeclContext.decl_no_th().rhs() != null && topdeclContext.decl_no_th().rhs().exp().infixexp() != null) {

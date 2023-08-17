@@ -1,3 +1,4 @@
+import forsyde.io.bridge.forsyde.systemc.ForSyDeSystemCDriver;
 import forsyde.io.bridge.sdf3.drivers.SDF3Driver;
 import forsyde.io.core.ModelHandler;
 import forsyde.io.lib.ForSyDeHierarchy;
@@ -56,5 +57,12 @@ public class PerformJavaTests {
         var handler = new ModelHandler().registerTraitHierarchy(new ForSyDeHierarchy()).registerSystemGraphMigrator(new TraitNamesFrom0_6To0_7());
         var m = handler.loadModel(Paths.get("examples/workload/case_study_radar.fiodl"));
         Assertions.assertEquals(5, m.vertexSet().stream().flatMap(v -> ForSyDeHierarchy.Task.tryView(m, v).stream()).count());
+    }
+
+    @Test
+    void justReadSystemC() throws Exception {
+        var driver = new ForSyDeSystemCDriver();
+        var m = driver.loadModel(Paths.get("examples/systemc/toy_sy.cpp"));
+        System.out.println(m);
     }
 }
