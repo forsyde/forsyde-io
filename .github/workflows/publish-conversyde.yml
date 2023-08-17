@@ -44,7 +44,6 @@ jobs:
         asset_name: conversyde-all-cli-${{ steps.get_version.outputs.version-without-v }}.jar
         tag: "${{ github.ref }}"
         overwrite: true
-        body: "Executable ConverSyDe Crossplatform Jar"
     - name: Upload Bundle to release
       uses: svenstaro/upload-release-action@v2
       with:
@@ -53,7 +52,6 @@ jobs:
         asset_name: conversyde-linux-${{ steps.get_version.outputs.version-without-v }}.zip
         tag: "${{ github.ref }}"
         overwrite: true
-        body: "Executable ConverSyDe Linux"
   publish-conversyde-windows:
     runs-on: windows-latest
     steps:
@@ -82,4 +80,3 @@ jobs:
           asset_name: conversyde-windows-${{ steps.get_version.outputs.version-without-v }}.zip
           tag: "${{ github.ref }}"
           overwrite: true
-          body: "Executable ConverSyDe Windows"

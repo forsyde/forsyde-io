@@ -21,4 +21,6 @@ include 'java-graphviz'
 include 'java-libforsyde'
 include 'java-bridge-forsyde-shallow'
 include 'groovy-frontsyde'
+include 'java-bridge-forsyde-systemc:java-bridge-forsyde-systemc'
+findProject(':java-bridge-forsyde-systemc:java-bridge-forsyde-systemc')?.name = 'java-bridge-forsyde-systemc'
 
