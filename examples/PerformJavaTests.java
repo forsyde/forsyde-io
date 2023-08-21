@@ -3,6 +3,7 @@ import forsyde.io.bridge.sdf3.drivers.SDF3Driver;
 import forsyde.io.core.ModelHandler;
 import forsyde.io.lib.ForSyDeHierarchy;
 import forsyde.io.lib.TraitNamesFrom0_6To0_7;
+import forsyde.io.visual.kgt.drivers.KGTDriver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -62,7 +63,9 @@ public class PerformJavaTests {
     @Test
     void justReadSystemC() throws Exception {
         var driver = new ForSyDeSystemCDriver();
-        var m = driver.loadModel(Paths.get("examples/systemc/toy_sy.cpp"));
-        System.out.println(m);
+        var handler = new ModelHandler().registerDriver(driver).registerDriver(new KGTDriver()).registerTraitHierarchy(new ForSyDeHierarchy());
+        var m = handler.loadModel(Paths.get("examples/systemc/toy_sy.cpp"));
+        handler.writeModel(m, "from_systemc.fiodl");
+        handler.writeModel(m, "from_systemc.kgt");
     }
 }

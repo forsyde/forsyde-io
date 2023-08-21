@@ -19,7 +19,7 @@ public class ForSyDeSystemCDriver implements ModelDriver, ForSyDeSystemCAdapter 
 
     @Override
     public List<String> outputExtensions() {
-        return null;
+        return List.of();
     }
 
     @Override

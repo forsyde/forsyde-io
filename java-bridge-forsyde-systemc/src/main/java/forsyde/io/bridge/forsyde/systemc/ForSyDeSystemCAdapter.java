@@ -1,10 +1,9 @@
 package forsyde.io.bridge.forsyde.systemc;
 
 import forsyde.io.core.SystemGraph;
+import forsyde.io.core.VertexViewer;
 import forsyde.io.lib.ForSyDeHierarchy;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -24,28 +23,61 @@ interface ForSyDeSystemCAdapter {
             var clsName = matchResult.group(1);
             var varName = matchResult.group(2);
             var instName = matchResult.group(3);
-            ForSyDeHierarchy.MoCEntity.enforce(systemGraph, systemGraph.newVertex(instName));
-            inspectModuleDeclaration(systemGraph, sourceCode, clsName, instName);
+            var entity = ForSyDeHierarchy.MoCEntity.enforce(systemGraph, systemGraph.newVertex(instName));
+            inspectModuleDeclaration(entity, sourceCode, clsName, instName);
         });
         return systemGraph;
     }
 
-    default SystemGraph inspectModuleDeclaration(SystemGraph systemGraph, String sourceCode, String clsName, String instName) {
+    default VertexViewer inspectModuleDeclaration(VertexViewer container, String sourceCode, String clsName, String instName) {
         var mainStart = sourceCode.indexOf("SC_MODULE(" + clsName + ")");
         var parenStart = sourceCode.indexOf('{', mainStart + 1);
         var parenEnd = getRegionEnd(sourceCode, parenStart + 1);
+        collectContents(container, sourceCode.substring(parenStart + 1, parenEnd), sourceCode, clsName, instName);
+        return container;
+    }
+
+    default VertexViewer collectContents(VertexViewer container, String resgionSource, String sourceCode, String clsName, String instName) {
+        var systemGraph = container.getViewedSystemGraph();
         // get all signals
-        signalDefPattern.matcher(sourceCode.substring(parenStart, parenEnd)).results().forEach(matchResult -> {
+        signalDefPattern.matcher(resgionSource).results().forEach(matchResult -> {
             for (var name: matchResult.group(3).split(",")) {
-                var sigName = instName + "_" + name.trim();
+                var sigName = instName.isBlank() ? name.trim() : instName + "_" + name.trim();
                 if (matchResult.group(1).equalsIgnoreCase("SY")) {
                     var sig = ForSyDeHierarchy.SYSignal.enforce(systemGraph, systemGraph.newVertex(sigName));
+                    ForSyDeHierarchy.GreyBox.enforce(container).addContained(ForSyDeHierarchy.Visualizable.enforce(sig));
                 } else if (matchResult.group(1).equalsIgnoreCase("SDF")) {
                     var sig = ForSyDeHierarchy.SDFChannel.enforce(systemGraph, systemGraph.newVertex(sigName));
+                    ForSyDeHierarchy.GreyBox.enforce(container).addContained(ForSyDeHierarchy.Visualizable.enforce(sig));
                 }
             }
         });
-        return systemGraph;
+        // get all input ports
+        inPortPattern.matcher(resgionSource).results().forEach(matchResult -> {
+            for (var name: matchResult.group(3).split(",")) {
+                var portName = instName.isBlank() ? name.trim() : instName + "_" + name.trim();
+                container.addPorts(portName);
+            }
+        });
+        // get all output ports
+        outPortPattern.matcher(resgionSource).results().forEach(matchResult -> {
+            for (var name: matchResult.group(3).split(",")) {
+                var portName = instName.isBlank() ? name.trim() : instName + "_" + name.trim();
+                container.addPorts(portName);
+            }
+        });
+        // get children instantiated processes
+        instantiateNewProcess.matcher(resgionSource).results().forEach(matchResult -> {
+            var subInstName = instName.isBlank() ? matchResult.group(3).trim() : instName + "_" + matchResult.group(3).trim();
+            var subContainer = ForSyDeHierarchy.MoCEntity.enforce(systemGraph, systemGraph.newVertex(subInstName));
+            var created = inspectModuleDeclaration(subContainer, sourceCode, matchResult.group(2), subInstName);
+            ForSyDeHierarchy.GreyBox.enforce(container).addContained(ForSyDeHierarchy.Visualizable.enforce(created));
+        });
+        // get process constructors
+        makeNewProcess.matcher(resgionSource).results().forEach(matchResult -> {
+            var subInstName = instName.isBlank() ? matchResult.group(3).trim() : instName + "_" + matchResult.group(3).trim();
+        });
+        return container;
     }
 
     private int getRegionEnd(String sourceCode, int start) {
@@ -63,4 +95,6 @@ interface ForSyDeSystemCAdapter {
     static Pattern inPortPattern = Pattern.compile("(?<moc>\\w+)::in_port<(?<sigType>\\w+)> ([ ,\\w]+);");
     static Pattern outPortPattern = Pattern.compile("(?<moc>\\w+)::out_port<(?<sigType>\\w+)> ([ ,\\w]+);");
     static Pattern signalDefPattern = Pattern.compile("(?<moc>\\w+)::signal<(?<sigType>\\w+)> ([ ,\\w]+);");
+    static Pattern instantiateNewProcess = Pattern.compile("[<>:\\w]+ (?<varname>\\w+) = new (?<clsName>\\w+)\\(\"(?<instName>\\w+)\"\\);");
+    static Pattern makeNewProcess = Pattern.compile("[<>:\\w]+ (?<varname>\\w+) = [<>\\w]+::make_(?<clsName>\\w+)\\(\"(?<instName>\\w+)\"(?:, (?<parameters>[\\w, ]+))?\\);");
 }
