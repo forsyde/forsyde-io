@@ -1,3 +1,8 @@
+void add_func(int& out1, const int& inp1, const int& inp2)
+{
+    out1 = inp1 + inp2;
+}
+
 
 void mul_func(int& out1, const int& inp1, const int& inp2)
 {
