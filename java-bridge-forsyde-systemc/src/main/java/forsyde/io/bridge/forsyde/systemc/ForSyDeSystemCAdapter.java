@@ -122,14 +122,7 @@ interface ForSyDeSystemCAdapter {
         instantiateNewProcessWithMake.matcher(regionSource).results().forEach(matchResult -> {
             var subInstName = instName.isBlank() ? matchResult.group(3).trim() : instName + "_" + matchResult.group(3).trim();
             if (matchResult.group(2).trim().startsWith("scomb")) {
-                var syProc = collectProcessConstructor(container, sourceCode, subInstName, matchResult.group(2).trim(), Arrays);
-            }
-        });
-        // and other written in other formats
-        newProcessWithMake.matcher(regionSource).results().forEach(matchResult -> {
-            var subInstName = instName.isBlank() ? matchResult.group(2).trim() : instName + "_" + matchResult.group(2).trim();
-            if (matchResult.group(1).trim().startsWith("scomb")) {
-                var syProc = collectProcessConstructor(container, sourceCode, subInstName, matchResult);
+                var syProc = collectProcessConstructor(container, sourceCode, subInstName, matchResult.group(2).trim(), Arrays.stream(matchResult.group(4).split(", ")).toList());
             }
         });
         // get the port connections
@@ -177,7 +170,7 @@ interface ForSyDeSystemCAdapter {
     static Pattern outPortPattern = Pattern.compile("(?<moc>\\w+)::out_port<(?<sigType>\\w+)> ([ ,\\w]+);");
     static Pattern signalDefPattern = Pattern.compile("(?<moc>\\w+)::signal<(?<sigType>\\w+)> ([ ,\\w]+);");
     static Pattern instantiateNewProcess = Pattern.compile("[<>:\\w]+ (?<varname>\\w+) = new (?<clsName>\\w+)\\(\"(?<instName>\\w+)\"\\);");
-    static Pattern instantiateNewProcessWithMake = Pattern.compile("[<>:\\w]+ (?<varname>\\w+) = [<>\\w]+::make_(?<clsName>\\w+)\\(\"(?<instName>\\w+)\"(?:, (?<parameters>[\\w, ]+))?\\);");
+    static Pattern instantiateNewProcessWithMake = Pattern.compile("(?:[<>:\\w]+ (?<varname>\\w+) = )?[<>\\w]+::make_(?<clsName>\\w+)\\(\"(?<instName>\\w+)\"(?:, (?<parameters>[\\w, ]+))?\\);");
 
     static Pattern newProcessWithMake = Pattern.compile("[<>\\w]+::make_(?<clsName>\\w+)\\(\"(?<instName>\\w+)\"(?:, (?<parameters>[\\w, ]+))?\\);");
 
