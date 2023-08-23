@@ -76,7 +76,7 @@ interface ForSyDeSystemCAdapter {
                 systemGraph.queryVertex(instName.isBlank() ? parameters.get(i - 2).trim() : instName + "_" + parameters.get(1).trim())
                         .flatMap(outSig -> ForSyDeHierarchy.SYSignal.tryView(systemGraph, outSig))
                         .ifPresentOrElse(outSig -> outSig.addConsumers("iport" + (finalI - 1), syProc, ForSyDeHierarchy.EdgeTraits.VisualConnection), () ->
-                                systemGraph.connect(container, syProc, parameters[1].trim(), "iport" + (finalI - 1), ForSyDeHierarchy.EdgeTraits.VisualConnection, ForSyDeHierarchy.EdgeTraits.BehaviourCompositionEdge)
+                                systemGraph.connect(container, syProc, parameters.get(1).trim(), "iport" + (finalI - 1), ForSyDeHierarchy.EdgeTraits.VisualConnection, ForSyDeHierarchy.EdgeTraits.BehaviourCompositionEdge)
                         );
             }
             return syProc;
