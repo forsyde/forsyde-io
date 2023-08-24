@@ -1,28 +1,21 @@
 package forsyde.io.java.generator.specs;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Objects;
 import java.util.Optional;
 
+@JsonSerialize
 public class PropertySpec {
 
     public String name;
 //    @JsonProperty("default")
-//    public VertexProperty defaultValue;
+    @JsonAlias("initialization_code")
+    public Optional<String> initializationCode = Optional.empty();
+    @JsonAlias("default_value")
+    public Optional<Object> defaultValue = Optional.empty();
     public PropertyTypeSpec type;
-    public Optional<String> comment = Optional.empty();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PropertySpec that = (PropertySpec) o;
-        return Objects.equals(name, that.name) && Objects.equals(type, that.type);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, type);
-    }
 }

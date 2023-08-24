@@ -1,5 +1,5 @@
 {
-    "python.formatting.provider": "black",
+    "python.formatting.provider": "none",
     "files.exclude": {
         "**/.classpath": true,
         "**/.project": true,
@@ -10,5 +10,8 @@
     "java.configuration.updateBuildConfiguration": "automatic",
     "files.watcherExclude": {
         "**/target": true
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
     }
 }

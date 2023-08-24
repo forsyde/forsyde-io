@@ -150,8 +150,8 @@ class ForSyDeIOTraitDSL(ForSyDeTraitDSLVisitor):
     # Visit a parse tree produced by ForSyDeTraitDSLParser#traitHierarchy.
     def visitTraitHierarchy(
         self, ctx: ForSyDeTraitDSLParser.TraitHierarchyContext
-    ) -> TraitHierarchy:
-        traitHierarchy = TraitHierarchy()
+    ) -> TraitHierarchySpec:
+        traitHierarchy = TraitHierarchySpec()
         namespace = ""
         traitHierarchies = [
             self.visitTraitHierarchy(t) for t in ctx.traitHierarchy() or []
@@ -184,8 +184,8 @@ class ForSyDeIOTraitDSL(ForSyDeTraitDSLVisitor):
     # Visit a parse tree produced by ForSyDeTraitDSLParser#rootTraitHierarchy.
     def visitRootTraitHierarchy(
         self, ctx: ForSyDeTraitDSLParser.RootTraitHierarchyContext
-    ) -> TraitHierarchy:
-        traitHierarchy = TraitHierarchy()
+    ) -> TraitHierarchySpec:
+        traitHierarchy = TraitHierarchySpec()
         namespace = ""
         traitHierarchies = [
             self.visitTraitHierarchy(t) for t in ctx.traitHierarchy() or []
