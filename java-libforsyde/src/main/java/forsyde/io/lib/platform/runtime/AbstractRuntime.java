@@ -7,6 +7,7 @@ import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
 import forsyde.io.lib.platform.hardware.GenericProcessingModule;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**

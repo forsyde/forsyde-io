@@ -8,6 +8,7 @@ import forsyde.io.core.migrations.SystemGraphMigrator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This migrator is a best-effort migration from all LibForSyDe traits existing pre 0.7
@@ -16,6 +17,43 @@ import java.util.Map;
 public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
     @Override
     public boolean effect(SystemGraph systemGraph) {
+        for (var e : systemGraph.edgeSet()) {
+            var prevTraits = new HashSet<Trait>(e.getTraits());
+            for (var et : prevTraits) {
+                for (var t : ForSyDeHierarchy.containedTraits) {
+                    if (et instanceof OpaqueTrait opaqueTrait && t.getName().contains(opaqueTrait.getName())) {
+                        e.addTraits(t);
+                    }
+                }
+                // mapping for the hardware parts of the platform
+                if (et.getName().contains("platform::")) {
+                    for (var t : ForSyDeHierarchy.containedTraits) {
+                        if (t.getName().contains("platform::hardware::")) {
+                            var splitVt = et.getName().split("::");
+                            var splitT = t.getName().split("::");
+                            var traitNameVt = splitVt[splitVt.length -1];
+                            var traitNameT = splitT[splitT.length - 1];
+                            if (traitNameVt.equals(traitNameT)) {
+                                e.addTraits(t); // this assumes they are 1-to-1 mapping
+                            }
+                        }
+                    }
+                }
+                // also change edge traits named 'DataEdge' to 'NetworkEdge' and other specialties
+                if (et.getName().contains("SYDataEdge")) {
+                    e.addTraits(ForSyDeHierarchy.EdgeTraits.SYNetworkEdge);
+                }
+                if (et.getName().contains("SDFDataEdge")) {
+                    e.addTraits(ForSyDeHierarchy.EdgeTraits.SDFNetworkEdge);
+                }
+                if (et.getName().contains("AbstractionEdge")) {
+                    e.addTraits(ForSyDeHierarchy.EdgeTraits.BehaviourCompositionEdge);
+                }
+                if (et.getName().contains("ParallelContainer")) {
+                    e.addTraits(ForSyDeHierarchy.EdgeTraits.BehaviourCompositionEdge);
+                }
+            }
+        }
         for (var v : systemGraph.vertexSet()) {
             var prevTraits = new HashSet<Trait>(v.getTraits());
             for (var vt : prevTraits) {
@@ -65,7 +103,10 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     op.maxSizeInBits(m);
                 }
                 if (vt.getName().contains("AbstractScheduler")) {
-                    ForSyDeHierarchy.AbstractRuntime.enforce(systemGraph, v);
+                    var sched = ForSyDeHierarchy.AbstractRuntime.enforce(systemGraph, v);
+                    systemGraph.outgoingEdgesOf(v).stream().map(systemGraph::getEdgeTarget).filter(dst -> dst.getTraits().stream().anyMatch(t -> t.getName().contains("ProcessingModule"))).forEach(
+                            dst -> sched.host(ForSyDeHierarchy.GenericProcessingModule.enforce(systemGraph, dst))
+                    );
                 }
                 if (vt.getName().contains("FixedPriorityScheduler")) {
                     var s = ForSyDeHierarchy.FixedPriorityScheduledRuntime.enforce(systemGraph, v);
@@ -85,42 +126,11 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                 }
             }
         }
-        for (var e : systemGraph.edgeSet()) {
-            var prevTraits = new HashSet<Trait>(e.getTraits());
-            for (var et : prevTraits) {
-                for (var t : ForSyDeHierarchy.containedTraits) {
-                    if (et instanceof OpaqueTrait opaqueTrait && t.getName().contains(opaqueTrait.getName())) {
-                        e.addTraits(t);
-                    }
-                }
-                // mapping for the hardware parts of the platform
-                if (et.getName().contains("platform::")) {
-                    for (var t : ForSyDeHierarchy.containedTraits) {
-                        if (t.getName().contains("platform::hardware::")) {
-                            var splitVt = et.getName().split("::");
-                            var splitT = t.getName().split("::");
-                            var traitNameVt = splitVt[splitVt.length -1];
-                            var traitNameT = splitT[splitT.length - 1];
-                            if (traitNameVt.equals(traitNameT)) {
-                                e.addTraits(t); // this assumes they are 1-to-1 mapping
-                            }
-                        }
-                    }
-                }
-                // also change edge traits named 'DataEdge' to 'NetworkEdge' and other specialties
-                if (et.getName().contains("SYDataEdge")) {
-                    e.addTraits(ForSyDeHierarchy.EdgeTraits.SYNetworkEdge);
-                }
-                if (et.getName().contains("SDFDataEdge")) {
-                    e.addTraits(ForSyDeHierarchy.EdgeTraits.SDFNetworkEdge);
-                }
-                if (et.getName().contains("AbstractionEdge")) {
-                    e.addTraits(ForSyDeHierarchy.EdgeTraits.BehaviourCompositionEdge);
-                }
-                if (et.getName().contains("ParallelContainer")) {
-                    e.addTraits(ForSyDeHierarchy.EdgeTraits.BehaviourCompositionEdge);
-                }
-            }
+        // last post-mapping transformations
+        for (var v : systemGraph.vertexSet()) {
+            ForSyDeHierarchy.AbstractRuntime.tryView(systemGraph, v).ifPresent(runtime -> {
+                systemGraph.outgoingEdgesOf(v).stream().map(systemGraph::getEdgeTarget).flatMap(dst -> ForSyDeHierarchy.GenericProcessingModule.tryView(systemGraph, dst).stream()).forEach(runtime::host);
+            });
         }
         return true;
     }

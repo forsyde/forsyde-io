@@ -807,6 +807,13 @@ public class TraitViewerGenerator extends AbstractProcessor {
                 enforceMethodBuilder.addStatement("vertex.addPort($S)", execMember.getSimpleName().toString());
             }
         }
+        for (var sup : traitInterface.getInterfaces()) {
+            if (!sup.toString().contains("VertexViewer")) {
+                var elem = processingEnv.getTypeUtils().asElement(sup);
+                var viewerClass = ClassName.get(processingEnv.getElementUtils().getPackageOf(elem).toString(), elem.getSimpleName().toString() + "Viewer");
+                enforceMethodBuilder.addStatement("$T.enforce(systemGraph, vertex)", viewerClass);
+            }
+        }
         enforceMethodBuilder.addStatement("return viewer", viewerClassSimpleName);
 
         return enforceMethodBuilder.build();
