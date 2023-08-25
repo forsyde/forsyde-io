@@ -21,7 +21,7 @@ import java.util.Set;
 public interface AbstractRuntime extends VertexViewer {
 
     @OutPort
-    GenericProcessingModule host();
+    Optional<GenericProcessingModule> host();
 
     @OutPort
     Set<GenericProcessingModule> managed();

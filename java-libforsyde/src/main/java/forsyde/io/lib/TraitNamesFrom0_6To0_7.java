@@ -103,10 +103,7 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     op.maxSizeInBits(m);
                 }
                 if (vt.getName().contains("AbstractScheduler")) {
-                    var sched = ForSyDeHierarchy.AbstractRuntime.enforce(systemGraph, v);
-                    systemGraph.outgoingEdgesOf(v).stream().map(systemGraph::getEdgeTarget).filter(dst -> dst.getTraits().stream().anyMatch(t -> t.getName().contains("ProcessingModule"))).forEach(
-                            dst -> sched.host(ForSyDeHierarchy.GenericProcessingModule.enforce(systemGraph, dst))
-                    );
+                    ForSyDeHierarchy.AbstractRuntime.enforce(systemGraph, v);
                 }
                 if (vt.getName().contains("FixedPriorityScheduler")) {
                     var s = ForSyDeHierarchy.FixedPriorityScheduledRuntime.enforce(systemGraph, v);
@@ -129,7 +126,11 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
         // last post-mapping transformations
         for (var v : systemGraph.vertexSet()) {
             ForSyDeHierarchy.AbstractRuntime.tryView(systemGraph, v).ifPresent(runtime -> {
-                systemGraph.outgoingEdgesOf(v).stream().map(systemGraph::getEdgeTarget).flatMap(dst -> ForSyDeHierarchy.GenericProcessingModule.tryView(systemGraph, dst).stream()).forEach(runtime::host);
+                var dstPEs = systemGraph.outgoingEdgesOf(v).stream().map(systemGraph::getEdgeTarget).flatMap(dst -> ForSyDeHierarchy.GenericProcessingModule.tryView(systemGraph, dst).stream()).collect(Collectors.toSet());
+                for (var pe : dstPEs) {
+                    runtime.host(pe);
+                    runtime.addManaged(pe);
+                }
             });
         }
         return true;
