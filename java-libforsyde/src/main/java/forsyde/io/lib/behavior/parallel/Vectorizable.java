@@ -2,10 +2,13 @@ package forsyde.io.lib.behavior.parallel;
 
 import forsyde.io.core.annotations.*;
 import forsyde.io.lib.IForSyDeHierarchy;
+import forsyde.io.lib.behavior.BehaviourCompositionEdge;
 import forsyde.io.lib.behavior.BehaviourEntity;
+import forsyde.io.lib.behavior.DataTypeLike;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -21,7 +24,7 @@ import java.util.Set;
  * generate the appropriate number of parallel processes.
  */
 @RegisterTrait(IForSyDeHierarchy.class)
-public interface Vectorizable extends BehaviourEntity {
+public interface Vectorizable extends DataTypeLike {
 
     @Property
     default List<Integer> dimensions() {return new ArrayList<>();}
@@ -33,5 +36,9 @@ public interface Vectorizable extends BehaviourEntity {
     @OutPort
     @WithEdgeTrait(ParallelComputationEdge.class)
     Set<ParallelSkeleton> consumers();
+
+    @OutPort
+    @WithEdgeTrait(BehaviourCompositionEdge.class)
+    Optional<DataTypeLike> arrayItemType();
 
 }

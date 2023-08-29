@@ -2,6 +2,8 @@ package forsyde.io.lib.behavior.moc.sdf;
 
 import forsyde.io.core.annotations.*;
 import forsyde.io.lib.IForSyDeHierarchy;
+import forsyde.io.lib.behavior.BehaviourCompositionEdge;
+import forsyde.io.lib.behavior.DataTypeLike;
 import forsyde.io.lib.behavior.moc.MoCEntity;
 
 import java.util.Optional;
@@ -18,5 +20,9 @@ public interface SDFChannel extends MoCEntity {
     @OutPort
     @WithEdgeTrait(SDFNetworkEdge.class)
     Optional<SDFActor> consumer();
+
+    @OutPort
+    @WithEdgeTrait(BehaviourCompositionEdge.class)
+    Optional<DataTypeLike> tokenDataType();
 
 }

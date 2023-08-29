@@ -1,15 +1,19 @@
 package forsyde.io.lib.behavior.parallel;
 
+import forsyde.io.core.EdgeTrait;
 import forsyde.io.core.annotations.OutPort;
 import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.core.annotations.WithEdgeTrait;
+import forsyde.io.lib.ForSyDeHierarchy;
 import forsyde.io.lib.IForSyDeHierarchy;
 import forsyde.io.lib.behavior.BehaviourEntity;
 import forsyde.io.lib.behavior.BehaviourCompositionEdge;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -38,5 +42,66 @@ public interface MapV extends ParallelSkeleton {
 
     @Property
     List<String> inputPorts();
+
+    /**
+     * Convenience method to connect a new vectorizable input.
+     */
+    default MapV addInput(String portName, Vectorizable vectorizable, EdgeTrait... extraTraits) {
+        inputPorts().add(portName);
+        getViewedSystemGraph().connect(vectorizable.getViewedVertex(), getViewedVertex(), "consumers", portName,  ForSyDeHierarchy.EdgeTraits.ParallelComputationEdge);
+        if (extraTraits.length > 0) {
+            getViewedSystemGraph().connect(vectorizable.getViewedVertex(), getViewedVertex(), "consumers", portName, extraTraits);
+        }
+        return this;
+    }
+
+    /**
+     * Convenience method to connect a new vectorizable output.
+     *
+     * Be careful: a vectorizable admits onle ONE producer. If you by accident connect the output of more than two algorithmic
+     * skeletons to the same vectorizable element, the model is considered ambiguous.
+     */
+    default MapV addOutput(String portName, Vectorizable vectorizable, EdgeTrait... extraTraits) {
+        outputPorts().add(portName);
+        getViewedSystemGraph().connect(getViewedVertex(), vectorizable.getViewedVertex(), "producer", portName, ForSyDeHierarchy.EdgeTraits.ParallelComputationEdge);
+        if (extraTraits.length > 0) {
+            getViewedSystemGraph().connect(getViewedVertex(), vectorizable.getViewedVertex(), "producer", portName, extraTraits);
+        }
+        return this;
+    }
+
+    /**
+     * Convenience method for the vectorizable outputs.
+     * This list is immutable, if you wish to add another output port,
+     * do so with:
+     *
+     * mapv.addOutput(portName, vectorizableElement)
+     */
+    default Map<String, Vectorizable> outputs() {
+        return getViewedSystemGraph().outgoingEdgesOf(getViewedVertex()).stream()
+                .filter(e -> e.getSourcePort().map(x -> outputPorts().contains(x)).orElse(false))
+                .filter(e -> ForSyDeHierarchy.Vectorizable.tryView(getViewedSystemGraph(), getViewedSystemGraph().getEdgeTarget(e)).isPresent())
+                .collect(Collectors.toMap(
+                        e -> e.getSourcePort().get(),
+                        e -> ForSyDeHierarchy.Vectorizable.tryView(getViewedSystemGraph(), getViewedSystemGraph().getEdgeTarget(e)).get()
+                ));
+    }
+
+    /**
+     * Convenience method for the vectorizable inputs.
+     * This list is immutable, if you wish to add another input port,
+     * do so with:
+     *
+     * mapv.addInput(portName, vectorizableElement)
+     */
+    default Map<String, Vectorizable> inputs() {
+        return getViewedSystemGraph().incomingEdgesOf(getViewedVertex()).stream()
+                .filter(e -> e.getSourcePort().map(x -> inputPorts().contains(x)).orElse(false))
+                .filter(e -> ForSyDeHierarchy.Vectorizable.tryView(getViewedSystemGraph(), getViewedSystemGraph().getEdgeSource(e)).isPresent())
+                .collect(Collectors.toMap(
+                        e -> e.getSourcePort().get(),
+                        e -> ForSyDeHierarchy.Vectorizable.tryView(getViewedSystemGraph(), getViewedSystemGraph().getEdgeSource(e)).get()
+                ));
+    }
 
 }

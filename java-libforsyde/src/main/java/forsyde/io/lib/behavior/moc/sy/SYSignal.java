@@ -6,8 +6,11 @@ import forsyde.io.core.annotations.OutPort;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.core.annotations.WithEdgeTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
+import forsyde.io.lib.behavior.BehaviourCompositionEdge;
+import forsyde.io.lib.behavior.DataTypeLike;
 import forsyde.io.lib.behavior.moc.MoCEntity;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -26,5 +29,9 @@ public interface SYSignal extends MoCEntity {
     @OutPort
     @WithEdgeTrait(SYNetworkEdge.class)
     Set<SYProcess> consumers();
+
+    @OutPort
+    @WithEdgeTrait(BehaviourCompositionEdge.class)
+    Optional<DataTypeLike> dataType();
 
 }
