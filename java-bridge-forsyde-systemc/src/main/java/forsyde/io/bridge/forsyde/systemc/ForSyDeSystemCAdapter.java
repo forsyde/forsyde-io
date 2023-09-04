@@ -45,10 +45,10 @@ interface ForSyDeSystemCAdapter {
         var parenStart = sourceCode.indexOf('{', mainStart + 1);
         var parenEnd = getRegionEnd(sourceCode, parenStart + 1);
         var systemGraph = container.getViewedSystemGraph();
-        var funcVertex = ForSyDeHierarchy.HasANSICImplementation.enforce(systemGraph, systemGraph.newVertex(funcName));
-        funcVertex.inlinedCode(sourceCode.substring(parenStart + 1, parenEnd).trim());
+        var funcVertex = ForSyDeHierarchy.HasANSICImplementations.enforce(systemGraph, systemGraph.newVertex(funcName));
+        funcVertex.inlinedCodes().put("generic", sourceCode.substring(parenStart + 1, parenEnd).trim());
         var visu = ForSyDeHierarchy.VisualizableWithProperties.enforce(funcVertex);
-        visu.visualizedPropertiesNames(List.of("inlinedCode"));
+        visu.visualizedPropertiesNames(List.of("inlinedCodes"));
         return funcVertex;
     }
 

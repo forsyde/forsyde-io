@@ -1,11 +1,11 @@
 package forsyde.io.lib.behavior.parallel;
 
 import forsyde.io.core.EdgeTrait;
+import forsyde.io.core.OpaqueTrait;
 import forsyde.io.core.annotations.OutPort;
 import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.core.annotations.WithEdgeTrait;
-import forsyde.io.lib.ForSyDeHierarchy;
 import forsyde.io.lib.IForSyDeHierarchy;
 import forsyde.io.lib.behavior.BehaviourEntity;
 import forsyde.io.lib.behavior.BehaviourCompositionEdge;
@@ -48,7 +48,7 @@ public interface MapV extends ParallelSkeleton {
      */
     default MapV addInput(String portName, Vectorizable vectorizable, EdgeTrait... extraTraits) {
         inputPorts().add(portName);
-        getViewedSystemGraph().connect(vectorizable.getViewedVertex(), getViewedVertex(), "consumers", portName,  ForSyDeHierarchy.EdgeTraits.ParallelComputationEdge);
+        getViewedSystemGraph().connect(vectorizable.getViewedVertex(), getViewedVertex(), "consumers", portName, new OpaqueTrait("forsyde::io::lib::behavior::parallel::ParallelComputationEdge"));
         if (extraTraits.length > 0) {
             getViewedSystemGraph().connect(vectorizable.getViewedVertex(), getViewedVertex(), "consumers", portName, extraTraits);
         }
@@ -63,7 +63,7 @@ public interface MapV extends ParallelSkeleton {
      */
     default MapV addOutput(String portName, Vectorizable vectorizable, EdgeTrait... extraTraits) {
         outputPorts().add(portName);
-        getViewedSystemGraph().connect(getViewedVertex(), vectorizable.getViewedVertex(), "producer", portName, ForSyDeHierarchy.EdgeTraits.ParallelComputationEdge);
+        getViewedSystemGraph().connect(getViewedVertex(), vectorizable.getViewedVertex(), "producer", portName, new OpaqueTrait("forsyde::io::lib::behavior::parallel::ParallelComputationEdge"));
         if (extraTraits.length > 0) {
             getViewedSystemGraph().connect(getViewedVertex(), vectorizable.getViewedVertex(), "producer", portName, extraTraits);
         }
@@ -77,15 +77,15 @@ public interface MapV extends ParallelSkeleton {
      *
      * mapv.addOutput(portName, vectorizableElement)
      */
-    default Map<String, Vectorizable> outputs() {
-        return getViewedSystemGraph().outgoingEdgesOf(getViewedVertex()).stream()
-                .filter(e -> e.getSourcePort().map(x -> outputPorts().contains(x)).orElse(false))
-                .filter(e -> ForSyDeHierarchy.Vectorizable.tryView(getViewedSystemGraph(), getViewedSystemGraph().getEdgeTarget(e)).isPresent())
-                .collect(Collectors.toMap(
-                        e -> e.getSourcePort().get(),
-                        e -> ForSyDeHierarchy.Vectorizable.tryView(getViewedSystemGraph(), getViewedSystemGraph().getEdgeTarget(e)).get()
-                ));
-    }
+//    default Map<String, Vectorizable> outputs() {
+//        return getViewedSystemGraph().outgoingEdgesOf(getViewedVertex()).stream()
+//                .filter(e -> e.getSourcePort().map(x -> outputPorts().contains(x)).orElse(false))
+//                .filter(e -> getViewedSystemGraph().getEdgeTarget(e).hasTrait(new OpaqueTrait("forsyde::io::lib::behavior::parallel::Vectorizable")))
+//                .collect(Collectors.toMap(
+//                        e -> e.getSourcePort().get(),
+//                        e -> ForSyDeHierarchy.Vectorizable.tryView(getViewedSystemGraph(), getViewedSystemGraph().getEdgeTarget(e)).get()
+//                ));
+//    }
 
     /**
      * Convenience method for the vectorizable inputs.
@@ -94,14 +94,14 @@ public interface MapV extends ParallelSkeleton {
      *
      * mapv.addInput(portName, vectorizableElement)
      */
-    default Map<String, Vectorizable> inputs() {
-        return getViewedSystemGraph().incomingEdgesOf(getViewedVertex()).stream()
-                .filter(e -> e.getSourcePort().map(x -> inputPorts().contains(x)).orElse(false))
-                .filter(e -> ForSyDeHierarchy.Vectorizable.tryView(getViewedSystemGraph(), getViewedSystemGraph().getEdgeSource(e)).isPresent())
-                .collect(Collectors.toMap(
-                        e -> e.getSourcePort().get(),
-                        e -> ForSyDeHierarchy.Vectorizable.tryView(getViewedSystemGraph(), getViewedSystemGraph().getEdgeSource(e)).get()
-                ));
-    }
+//    default Map<String, Vectorizable> inputs() {
+//        return getViewedSystemGraph().incomingEdgesOf(getViewedVertex()).stream()
+//                .filter(e -> e.getSourcePort().map(x -> inputPorts().contains(x)).orElse(false))
+//                .filter(e -> ForSyDeHierarchy.Vectorizable.tryView(getViewedSystemGraph(), getViewedSystemGraph().getEdgeSource(e)).isPresent())
+//                .collect(Collectors.toMap(
+//                        e -> e.getSourcePort().get(),
+//                        e -> ForSyDeHierarchy.Vectorizable.tryView(getViewedSystemGraph(), getViewedSystemGraph().getEdgeSource(e)).get()
+//                ));
+//    }
 
 }

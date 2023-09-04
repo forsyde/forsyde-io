@@ -5,6 +5,7 @@ import forsyde.io.core.SystemGraph;
 import forsyde.io.core.ModelHandler;
 import forsyde.io.bridge.sdf3.drivers.SDF3Driver;
 import forsyde.io.lib.ForSyDeHierarchy;
+import forsyde.io.lib.LibForSyDeModelHandler;
 import forsyde.io.lib.SDFValidator;
 import forsyde.io.lib.TraitNamesFrom0_6To0_7;
 import forsyde.io.visual.kgt.drivers.KGTDriver;
@@ -29,21 +30,18 @@ public class ConverSyDeStandalone implements Callable<Integer> {
     private List<File> outputFiles = new ArrayList<>();
 
     public ConverSyDeStandalone() {
-        // register additional drivers that do not come with the default model handler.
 //        modelHandler.registerDriver(new AmaltheaDriver());
-        //forSyDeModelHandler.registerDriver(new ForSyDeLFDriver());
-        modelHandler.registerTraitHierarchy(new ForSyDeHierarchy());
+        LibForSyDeModelHandler.registerLibForSyDe(modelHandler);
+
         modelHandler.registerDriver(new SDF3Driver());
         // put it at high priority to override the core graphviz driver
 //        modelHandler.registerDriver(new GraphVizDriver(), 0);
         modelHandler.registerDriver(new KGTDriver());
-        modelHandler.registerSystemGraphMigrator(new TraitNamesFrom0_6To0_7());
-        modelHandler.registerValidation(new SDFValidator());
     }
 
     @Override
     public Integer call() throws Exception {
-        if (getInputFiles() != null && getOutputFiles().size() > 0) {
+        if (getInputFiles() != null && !getOutputFiles().isEmpty()) {
             final List<Path> filteredInput = new ArrayList<>(inputFiles.size());
             final List<SystemGraph> models = new ArrayList<>(inputFiles.size());
             for (final File input : inputFiles) {

@@ -12,8 +12,6 @@ import forsyde.io.lib.IForSyDeHierarchy;
  * be read and written at will. Be sure to also read the "RegisterLike" documentation to understand what this
  * is refining.
  *
- * The additional property here is "elementSizeInBits" which also enables one to compute the maximum number
- * of elements storable in this array-like element.
  */
 @RegisterTrait(IForSyDeHierarchy.class)
 public interface RegisterArrayLike extends RegisterLike {

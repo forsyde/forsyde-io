@@ -84,12 +84,15 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
     default void fromChannelPropertiesToSDFChannels(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdfProperties().getChannelProperties().forEach(channelProperties -> {
             systemGraph.queryVertex(channelProperties.getChannel()).flatMap(v -> ForSyDeHierarchy.SDFChannel.tryView(systemGraph, v)).ifPresent(sdfChannel -> {
-                if (channelProperties.getBufferSize() != null) {
-                    var tokenizableDataBlock = ForSyDeHierarchy.RegisterArrayLike.enforce(sdfChannel);
-                    var max = channelProperties.getBufferSize().getSz().longValueExact();
+                if (!channelProperties.getTokenSize().isEmpty()) {
+                    var tokenizableDataBlock = ForSyDeHierarchy.BufferLike.enforce(sdfChannel);
                     var sz = channelProperties.getTokenSize().stream().mapToLong(t -> t.getSz().longValueExact()).sum();
-                    tokenizableDataBlock.sizeInBits(max);
                     tokenizableDataBlock.elementSizeInBits(sz);
+                }
+                if (channelProperties.getBufferSize() != null) {
+                    var tokenizableDataBlock = ForSyDeHierarchy.BoundedBufferLike.enforce(sdfChannel);
+                    var max = channelProperties.getBufferSize().getSz().longValueExact();
+                    tokenizableDataBlock.maxElements((int) max / tokenizableDataBlock.elementSizeInBits().intValue());
                 }
             });
         });

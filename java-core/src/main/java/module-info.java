@@ -16,6 +16,7 @@ module forsyde.io.core {
     exports forsyde.io.java.adapters;
     exports forsyde.io.core.drivers;
     exports forsyde.io.core.migrations;
+    exports forsyde.io.core.inference;
     exports forsyde.io.core.validation;
     exports forsyde.io.core.annotations;
 

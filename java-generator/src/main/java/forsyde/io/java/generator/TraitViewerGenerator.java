@@ -68,7 +68,7 @@ public class TraitViewerGenerator extends AbstractProcessor {
         var viewerClassSimpleName = traitInterface.getSimpleName().toString() + "Viewer";
         var generatedHierarchy = ClassName.get(processingEnv.getElementUtils().getPackageOf(hierarchyInterface).toString(), hierarchyElemToName(hierarchyInterface));
         final TypeSpec.Builder viewerClassBuilder = TypeSpec.classBuilder(ClassName.get(processingEnv.getElementUtils().getPackageOf(traitInterface).toString(), viewerClassSimpleName))
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(ClassName.get(traitInterface))
                 .addSuperinterface(VertexViewer.class)
                 .addJavadoc("Generated vertex viewer class for trait $L.\n {@inheritDoc}", traitInterface.getQualifiedName().toString().replace(".", "::"))
@@ -648,7 +648,8 @@ public class TraitViewerGenerator extends AbstractProcessor {
         final TypeElement viewerT = processingEnv.getElementUtils().getTypeElement(VertexViewer.class.getCanonicalName());
         final TypeElement edgeT = processingEnv.getElementUtils().getTypeElement(EdgeTrait.class.getCanonicalName());
         var hierarchyElemName = hierarchyElemToName(hierarchy);
-        var hierarchySpecBuilder = TypeSpec.classBuilder(hierarchyElemName).addModifiers(Modifier.PUBLIC).addSuperinterface(hierarchy.asType());
+        var hierarchySpecBuilder = TypeSpec.classBuilder(hierarchyElemName).addModifiers(Modifier.PUBLIC).addSuperinterface(hierarchy.asType())
+                .addJavadoc("This class provides easy access to the generated viewers and elements of trait hierarchy %s.\n\n{@inheritDoc}".formatted(hierarchy.getSimpleName()));
         var containedVertexTraits = containedTraits.stream().filter(t -> processingEnv.getTypeUtils().isSubtype(t.asType(), viewerT.asType())).collect(Collectors.toSet());
         var containedEdgeTraits = Stream.concat(
                 containedTraits.stream().filter(t -> processingEnv.getTypeUtils().isSubtype(t.asType(), edgeT.asType())),

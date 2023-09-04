@@ -79,6 +79,11 @@ public final class ModelHandler {
 		return this;
 	}
 
+	public ModelHandler registerInference(SystemGraphInference inference) {
+		registeredInferences.add(inference);
+		return this;
+	}
+
 	public ModelHandler registerSystemGraphMigrator(SystemGraphMigrator systemGraphMigrator) {
 		registeredMigrators.add(systemGraphMigrator);
 		return this;

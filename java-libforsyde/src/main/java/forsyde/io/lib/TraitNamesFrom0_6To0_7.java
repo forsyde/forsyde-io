@@ -84,8 +84,9 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     var buf = ForSyDeHierarchy.RegisterArrayLike.enforce(systemGraph, v);
                     buf.elementSizeInBits((Long) v.getProperty("tokenSizeInBits"));
                 }
-                if (vt.getName().contains("ANSICBlackBoxExecutable")) {
-                    ForSyDeHierarchy.HasANSICImplementation.enforce(systemGraph, v);
+                if (vt.getName().endsWith("ANSICBlackBoxExecutable") || vt.getName().endsWith("HasANSICImplementation")) {
+                    var impl = ForSyDeHierarchy.HasANSICImplementations.enforce(systemGraph, v);
+                    impl.inlinedCodes().put("generic", (String) v.getProperty("inlinedCode"));
                 }
                 if (vt.getName().contains("Executable")) {
                     ForSyDeHierarchy.BehaviourEntity.enforce(systemGraph, v);
