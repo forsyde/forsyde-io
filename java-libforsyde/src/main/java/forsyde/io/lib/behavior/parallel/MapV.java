@@ -9,6 +9,7 @@ import forsyde.io.core.annotations.WithEdgeTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
 import forsyde.io.lib.behavior.BehaviourEntity;
 import forsyde.io.lib.behavior.BehaviourCompositionEdge;
+import forsyde.io.lib.behavior.FunctionLikeEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public interface MapV extends ParallelSkeleton {
 
     @OutPort
     @WithEdgeTrait(BehaviourCompositionEdge.class)
-    Set<BehaviourEntity> kernels();
+    Set<FunctionLikeEntity> kernels();
 
     @Property
     List<String> outputPorts();

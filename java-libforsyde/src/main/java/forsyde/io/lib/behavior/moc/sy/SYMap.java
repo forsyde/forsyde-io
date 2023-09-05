@@ -2,12 +2,12 @@ package forsyde.io.lib.behavior.moc.sy;
 
 import forsyde.io.core.VertexViewer;
 import forsyde.io.core.annotations.OutPort;
-import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.core.annotations.WithEdgeTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
 import forsyde.io.lib.behavior.BehaviourEntity;
 import forsyde.io.lib.behavior.BehaviourCompositionEdge;
+import forsyde.io.lib.behavior.FunctionLikeEntity;
 import org.jgrapht.alg.shortestpath.FloydWarshallShortestPaths;
 
 import java.util.ArrayList;
@@ -35,15 +35,9 @@ public interface SYMap extends SYProcess {
 
     @OutPort
     @WithEdgeTrait(BehaviourCompositionEdge.class)
-    Set<BehaviourEntity> combFunctions();
+    Set<FunctionLikeEntity> combFunctions();
 
-    @Property
-    List<String> outputPorts();
-
-    @Property
-    List<String> inputPorts();
-
-    default List<BehaviourEntity> combinatorsOrdered() {
+    default List<FunctionLikeEntity> combinatorsOrdered() {
         if (getViewedVertex().hasProperty("__combinators_ordering__") && getViewedVertex().getProperty("__combinators_ordering__") instanceof List<?> list
         && combFunctions().stream().map(VertexViewer::getIdentifier).allMatch(list::contains)) {
             var ordered = new ArrayList<>(combFunctions());

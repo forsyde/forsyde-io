@@ -1,8 +1,12 @@
 package forsyde.io.lib.behavior.moc.sy;
 
+import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
+import forsyde.io.lib.behavior.FunctionLikeEntity;
 import forsyde.io.lib.behavior.moc.MoCEntity;
+
+import java.util.List;
 
 /**
  * A SY process is either a SY combination or a SY delay.
@@ -10,5 +14,11 @@ import forsyde.io.lib.behavior.moc.MoCEntity;
  */
 @RegisterTrait(IForSyDeHierarchy.class)
 public interface SYProcess extends MoCEntity {
+
+    @Property
+    List<String> outputPorts();
+
+    @Property
+    List<String> inputPorts();
 
 }

@@ -1,18 +1,27 @@
-void add_func(int& out1, const int& inp1, const int& inp2)
+
+void siggen_func(int &out1, const int &inp1)
+{
+    out1 = inp1 + 1;
+}
+
+void report_func(const int &inp1)
+{
+    std::cout << "output value: " << inp1 << std::endl;
+}
+
+void add_func(int &out1, const int &inp1, const int &inp2)
 {
     out1 = inp1 + inp2;
 }
 
-
-void mul_func(int& out1, const int& inp1, const int& inp2)
+void mul_func(int &out1, const int &inp1, const int &inp2)
 {
     out1 = inp1 * inp2;
 }
 
-
 SC_MODULE(mulacc)
 {
-    SY::in_port<int>  a, b;
+    SY::in_port<int> a, b;
     SY::out_port<int> result;
 
     SY::signal<int> addi1, addi2, acci;
@@ -27,7 +36,6 @@ SC_MODULE(mulacc)
         SY::make_sdelay("accum", 0, addi2, acci);
     }
 };
-
 
 SC_MODULE(top)
 {
@@ -47,7 +55,6 @@ SC_MODULE(top)
         SY::make_ssink("report1", report_func, result);
     }
 };
-
 
 int sc_main(int argc, char **argv)
 {

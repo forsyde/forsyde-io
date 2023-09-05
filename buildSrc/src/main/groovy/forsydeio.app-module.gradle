@@ -5,7 +5,7 @@ plugins {
     id 'eclipse'
     id 'com.github.johnrengelman.shadow'
     id 'org.beryx.jlink'
-//    id 'org.graalvm.buildtools.native' version '0.9.13'
+//    id 'org.graalvm.buildtools.native'
 }
 
 // apply plugin: 'io.github.fvarrui.javapackager.plugin'

@@ -5,6 +5,7 @@ import forsyde.io.core.Vertex;
 import forsyde.io.core.VertexViewer;
 import forsyde.io.core.inference.SystemGraphInference;
 import forsyde.io.lib.behavior.BehaviourEntity;
+import forsyde.io.lib.behavior.FunctionLikeEntity;
 import forsyde.io.lib.behavior.moc.sy.SYMap;
 import forsyde.io.lib.behavior.parallel.MapV;
 import forsyde.io.lib.behavior.parallel.ReduceV;
@@ -31,7 +32,7 @@ public class ComputationalRequirementsPropagator implements SystemGraphInference
         // now the heap-based recursion can start
     }
 
-    private Map<String, Map<String, Long>> propagate(BehaviourEntity behaviourEntity) {
+    private Map<String, Map<String, Long>> propagate(FunctionLikeEntity behaviourEntity) {
         return ForSyDeHierarchy.InstrumentedBehaviour.tryView(behaviourEntity).map(InstrumentedBehaviourViewer::computationalRequirements)
                 .orElseGet(() ->
                 ForSyDeHierarchy.SYMap.tryView(behaviourEntity).map(this::propagate).orElseGet(() ->
@@ -60,7 +61,7 @@ public class ComputationalRequirementsPropagator implements SystemGraphInference
         for (var e : mapV.getViewedSystemGraph().incomingEdgesOf(mapV)) {
             if (e.getTargetPort().map(p -> mapV.inputPorts().contains(p)).orElse(false)) {
                 var dimMult = ForSyDeHierarchy.Vectorizable.tryView(mapV.getViewedSystemGraph(), mapV.getViewedSystemGraph().getEdgeSource(e)).map(vectorizableViewer ->
-                    vectorizableViewer.dimensions().stream().reduce(1, (a, b) -> a * b)
+                        vectorizableViewer.dimensions().isEmpty() ? 1 : vectorizableViewer.dimensions().get(0)
                 ).orElse(1);
                 multiplier = Math.max(dimMult, multiplier);
             }
@@ -69,7 +70,7 @@ public class ComputationalRequirementsPropagator implements SystemGraphInference
         for (var e : mapV.getViewedSystemGraph().outgoingEdgesOf(mapV)) {
             if (e.getSourcePort().map(p -> mapV.outputPorts().contains(p)).orElse(false)) {
                 var dimMult = ForSyDeHierarchy.Vectorizable.tryView(mapV.getViewedSystemGraph(), mapV.getViewedSystemGraph().getEdgeTarget(e)).map(vectorizableViewer ->
-                        vectorizableViewer.dimensions().stream().reduce(1, (a, b) -> a * b)
+                        vectorizableViewer.dimensions().isEmpty() ? 1 : vectorizableViewer.dimensions().get(0)
                 ).orElse(1);
                 multiplier = Math.max(dimMult, multiplier);
             }
@@ -95,7 +96,7 @@ public class ComputationalRequirementsPropagator implements SystemGraphInference
         for (var e : reduceV.getViewedSystemGraph().incomingEdgesOf(reduceV)) {
             if (e.getTargetPort().map(p -> reduceV.inputArray().equals(p)).orElse(false)) {
                 var dimMult = ForSyDeHierarchy.Vectorizable.tryView(reduceV.getViewedSystemGraph(), reduceV.getViewedSystemGraph().getEdgeSource(e)).map(vectorizableViewer ->
-                        vectorizableViewer.dimensions().get(0)
+                        vectorizableViewer.dimensions().isEmpty() ? 1 : vectorizableViewer.dimensions().get(0)
                 ).orElse(1);
                 multiplier = Math.max(dimMult, multiplier);
             }

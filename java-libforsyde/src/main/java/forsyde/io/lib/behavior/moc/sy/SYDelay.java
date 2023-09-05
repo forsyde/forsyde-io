@@ -3,6 +3,8 @@ package forsyde.io.lib.behavior.moc.sy;
 import forsyde.io.core.annotations.*;
 import forsyde.io.lib.IForSyDeHierarchy;
 
+import java.util.List;
+
 /**
  * An SY Delay is an SY process creates a signal with one discrete step phaing.
  * Or better saying, for every discrete step, the created signal by SY Delay outputs the value of its inputs
@@ -23,6 +25,16 @@ public interface SYDelay extends SYProcess {
     @OutPort
     @WithEdgeTrait(SYNetworkEdge.class)
     SYSignal delayed();
+
+    @Override
+    default List<String> outputPorts() {
+        return List.of("delayed");
+    };
+
+    @Override
+    default List<String> inputPorts() {
+        return List.of("input");
+    };
 
     /**
      * @return the delayed signal

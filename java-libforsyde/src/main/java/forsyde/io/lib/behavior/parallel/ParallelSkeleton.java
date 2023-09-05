@@ -3,6 +3,7 @@ package forsyde.io.lib.behavior.parallel;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.lib.IForSyDeHierarchy;
 import forsyde.io.lib.behavior.BehaviourEntity;
+import forsyde.io.lib.behavior.FunctionLikeEntity;
 
 /**
  * An algorithmic parallel skeleton is a specification that explicitly
@@ -13,5 +14,5 @@ import forsyde.io.lib.behavior.BehaviourEntity;
  * inpendently if the implementation is made in sequential software, parallel software or even hardware.
  */
 @RegisterTrait(IForSyDeHierarchy.class)
-public interface ParallelSkeleton extends BehaviourEntity {
+public interface ParallelSkeleton extends FunctionLikeEntity {
 }

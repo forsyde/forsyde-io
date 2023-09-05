@@ -6,4 +6,6 @@ import forsyde.io.lib.IForSyDeHierarchy;
 
 @RegisterTrait(IForSyDeHierarchy.class)
 public interface MoCEntity extends VertexViewer {
+
+
 }

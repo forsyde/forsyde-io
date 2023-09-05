@@ -11,10 +11,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
@@ -557,15 +554,21 @@ public class TraitViewerGenerator extends AbstractProcessor {
 
     protected Set<MethodSpec> generatePropertyGetters(TypeElement viewerInterface) {
         var methods = new HashSet<MethodSpec>();
-        var members = Stream.concat(viewerInterface.getInterfaces().stream().map(t -> processingEnv.getTypeUtils().asElement(t))
-                                .flatMap(e -> e.getEnclosedElements().stream()),
-                        viewerInterface.getEnclosedElements().stream()
-                )
-                .filter(e -> e.getKind().equals(ElementKind.METHOD))
-                .map(e -> (ExecutableElement) e)
-                .filter(e -> e.getAnnotation(Property.class) != null)
-                .collect(Collectors.toSet());
-        for (var execMember : members) {
+        var methodMembers = new HashSet<ExecutableElement>();
+        var open = new ArrayDeque<TypeElement>();
+        open.add(viewerInterface);
+        while (!open.isEmpty()) {
+            var current = open.poll();
+            current.getInterfaces().stream().map(t -> processingEnv.getTypeUtils().asElement(t))
+                    .filter(t -> !t.getSimpleName().contentEquals("VertexViewer"))
+                    .forEach(t -> {if (t instanceof TypeElement tt) {open.add(tt);}});
+            current.getEnclosedElements().stream()
+                    .filter(e -> e.getKind().equals(ElementKind.METHOD))
+                    .map(e -> (ExecutableElement) e)
+                    .filter(e -> e.getAnnotation(Property.class) != null)
+                    .forEach(methodMembers::add);
+        }
+        for (var execMember : methodMembers) {
             var name = execMember.getSimpleName().toString();
             var getMethodBuilder = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(TypeName.get(execMember.getReturnType()));
             if (execMember.isDefault()) {
@@ -587,15 +590,21 @@ public class TraitViewerGenerator extends AbstractProcessor {
 
     protected Set<MethodSpec> generatePropertySetters(TypeElement viewerInterface) {
         var methods = new HashSet<MethodSpec>();
-        var members = Stream.concat(viewerInterface.getInterfaces().stream().map(t -> processingEnv.getTypeUtils().asElement(t))
-                                .flatMap(e -> e.getEnclosedElements().stream()),
-                        viewerInterface.getEnclosedElements().stream()
-                )
-                .filter(e -> e.getKind().equals(ElementKind.METHOD))
-                .map(e -> (ExecutableElement) e)
-                .filter(e -> e.getAnnotation(Property.class) != null)
-                .collect(Collectors.toSet());
-        for (var member : members) {
+        var methodMembers = new HashSet<ExecutableElement>();
+        var open = new ArrayDeque<TypeElement>();
+        open.add(viewerInterface);
+        while (!open.isEmpty()) {
+            var current = open.poll();
+            current.getInterfaces().stream().map(t -> processingEnv.getTypeUtils().asElement(t))
+                    .filter(t -> !t.getSimpleName().contentEquals("VertexViewer"))
+                    .forEach(t -> {if (t instanceof TypeElement tt) {open.add(tt);}});
+            current.getEnclosedElements().stream()
+                    .filter(e -> e.getKind().equals(ElementKind.METHOD))
+                    .map(e -> (ExecutableElement) e)
+                    .filter(e -> e.getAnnotation(Property.class) != null)
+                    .forEach(methodMembers::add);
+        }
+        for (var member : methodMembers) {
             var name = member.getSimpleName().toString();
             if (member.getReturnType() instanceof DeclaredType declaredType && declaredType.asElement().getSimpleName().toString().contains("Optional")) {
                 var inner = declaredType.getTypeArguments().get(0);
