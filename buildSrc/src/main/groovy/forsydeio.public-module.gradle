@@ -3,7 +3,7 @@ plugins {
     id 'idea'
     id 'eclipse'
     id 'publishing'
-    id 'signing'
+//    id 'signing'
     id 'maven-publish'
     id 'java-library'
 }
@@ -60,14 +60,14 @@ publishing {
 //      }
     }
     repositories {
-        maven {
-            name = 'OSSRH'
-            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-            credentials {
-                username = rootProject.hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('MAVEN_USERNAME') ?: System.getenv('OSSRH_USERNAME') ?: ''
-                password = rootProject.hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('MAVEN_PASSWORD') ?: System.getenv('OSSRH_PASSWORD') ?: ''
-            }
-        }
+//        maven {
+//            name = 'OSSRH'
+//            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+//            credentials {
+//                username = rootProject.hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('MAVEN_USERNAME') ?: System.getenv('OSSRH_USERNAME') ?: ''
+//                password = rootProject.hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('MAVEN_PASSWORD') ?: System.getenv('OSSRH_PASSWORD') ?: ''
+//            }
+//        }
 //      maven {
 //        name = "GitHubPackages"
 //        url = uri("https://maven.pkg.github.com/forsyde/forsyde-io")
@@ -89,20 +89,20 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
-signing {
-    // small hack to work offline or online
-    sign publishing.publications.mavenJava
-    sign configurations.archives
-    if (rootProject.hasProperty('signing.useGpgCommand')) {
-        useGpgCmd()
-    } else {
-        useInMemoryPgpKeys(
-                System.getenv('GPG_SIGNING_KEY') ?: rootProject.findProperty('signing.gnupg.key'),
-                System.getenv('GPG_SIGNING_PASSWORD') ?: rootProject.findProperty('signing.gnupg.password') ?: '' //default to an empty password
-        )
-    }
-}
+//signing {
+//    // small hack to work offline or online
+//    sign publishing.publications.mavenJava
+//    sign configurations.archives
+//    if (rootProject.hasProperty('signing.useGpgCommand')) {
+//        useGpgCmd()
+//    } else {
+//        useInMemoryPgpKeys(
+//                System.getenv('GPG_SIGNING_KEY') ?: rootProject.findProperty('signing.gnupg.key'),
+//                System.getenv('GPG_SIGNING_PASSWORD') ?: rootProject.findProperty('signing.gnupg.password') ?: '' //default to an empty password
+//        )
+//    }
+//}
 
-tasks.publish.dependsOn tasks.signArchives
-tasks.publishMavenJavaPublicationToSonatypeRepository.dependsOn tasks.signArchives
-tasks.publishMavenJavaPublicationToOSSRHRepository.dependsOn tasks.signArchives
+//tasks.publish.dependsOn tasks.signArchives
+//tasks.publishMavenJavaPublicationToSonatypeRepository.dependsOn tasks.signArchives
+//tasks.publishMavenJavaPublicationToOSSRHRepository.dependsOn tasks.signArchives
