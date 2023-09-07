@@ -1,22 +1,11 @@
 package forsyde.io.java.generator;
 
-import forsyde.io.java.generator.dsl.ForSyDeTraitDSLLexer;
-import forsyde.io.java.generator.dsl.ForSyDeTraitDSLParser;
-import forsyde.io.java.generator.exceptions.InconsistentTraitHierarchyException;
-import forsyde.io.java.generator.specs.EdgeTraitSpec;
-import forsyde.io.java.generator.specs.TraitHierarchy;
-import forsyde.io.java.generator.specs.VertexTraitSpec;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 //import org.gradle.api.DefaultTask;
 //import org.gradle.api.Task;
 //import org.gradle.api.file.RegularFileProperty;
 //import org.gradle.api.tasks.InputFile;
 //import org.gradle.api.tasks.TaskAction;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 public abstract class GetAllNamespaces { // extends DefaultTask implements Task {
 

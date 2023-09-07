@@ -15,6 +15,8 @@ import java.util.Set;
 public class EdgeTraitSpec {
 
     public String name;
+
+    public List<String> prefixNamespace = new ArrayList<>();
     @JsonAlias("html_description")
     public String htmlDescription = "";
     @JsonAlias("refined_traits")
@@ -27,5 +29,7 @@ public class EdgeTraitSpec {
     public transient List<VertexTraitSpec> targetTraits = new ArrayList<>();
     public transient List<String> sourceTraitNames = new ArrayList<>();
     public transient List<String> targetTraitNames = new ArrayList<>();
+
+    public transient TraitHierarchySpec traitHierarchySpec;
 
 }

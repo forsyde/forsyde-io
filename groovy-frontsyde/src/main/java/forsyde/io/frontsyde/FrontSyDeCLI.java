@@ -1,8 +1,8 @@
 package forsyde.io.frontsyde;
 
 import forsyde.io.core.ModelHandler;
-import forsyde.io.lib.ForSyDeHierarchy;
 import forsyde.io.lib.TraitNamesFrom0_6To0_7;
+import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
 import forsyde.io.visual.kgt.drivers.KGTDriver;
 import picocli.CommandLine;
 

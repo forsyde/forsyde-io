@@ -2,8 +2,9 @@ package forsyde.io.lib;
 
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.validation.SystemGraphValidation;
-import forsyde.io.lib.behavior.moc.sdf.SDFActor;
-import forsyde.io.lib.behavior.moc.sdf.SDFChannel;
+import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
+import forsyde.io.lib.hierarchy.behavior.moc.sdf.SDFActor;
+import forsyde.io.lib.hierarchy.behavior.moc.sdf.SDFChannel;
 
 import java.util.List;
 import java.util.Map;

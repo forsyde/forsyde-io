@@ -5,7 +5,7 @@ import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Vertex;
 import forsyde.io.bridge.sdf3.adapters.mixins.elems.Sdf3;
-import forsyde.io.lib.ForSyDeHierarchy;
+import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
 
 import java.util.HashMap;
 import java.util.Map;

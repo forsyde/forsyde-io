@@ -2,10 +2,10 @@ package forsyde.io.frontsyde.sdf
 
 import forsyde.io.core.SystemGraph
 import forsyde.io.core.Vertex
-import forsyde.io.lib.ForSyDeHierarchy
-import forsyde.io.lib.behavior.moc.sdf.SDFActor
-import forsyde.io.lib.behavior.moc.sdf.SDFActorViewer
-import forsyde.io.lib.behavior.moc.sdf.SDFChannelViewer
+import forsyde.io.lib.hierarchy.ForSyDeHierarchy
+import forsyde.io.lib.hierarchy.behavior.moc.sdf.SDFActor
+import forsyde.io.lib.hierarchy.behavior.moc.sdf.SDFActorViewer
+import forsyde.io.lib.hierarchy.behavior.moc.sdf.SDFChannelViewer
 
 class SDFActorDef {
 

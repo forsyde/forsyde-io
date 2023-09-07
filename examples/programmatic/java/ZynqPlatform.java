@@ -1,6 +1,6 @@
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.ModelHandler;
-import forsyde.io.lib.ForSyDeHierarchy;
+import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
 import forsyde.io.visual.kgt.drivers.KGTDriver;
 
 class ZynqPlatform {

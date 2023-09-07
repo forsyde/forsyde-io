@@ -2,13 +2,12 @@ package forsyde.io.bridge.forsyde.systemc;
 
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.VertexViewer;
-import forsyde.io.lib.ForSyDeHierarchy;
-import forsyde.io.lib.behavior.FunctionLikeEntity;
+import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
+import forsyde.io.lib.hierarchy.behavior.FunctionLikeEntity;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 interface ForSyDeSystemCAdapter {

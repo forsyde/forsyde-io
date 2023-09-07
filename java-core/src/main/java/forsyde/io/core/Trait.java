@@ -2,8 +2,8 @@ package forsyde.io.core;
 
 public interface Trait {
 
-	public boolean refines(Trait other);
+	boolean refines(Trait other);
 
-	public String getName();
+	String getName();
 
 }

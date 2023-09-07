@@ -4,9 +4,11 @@ import forsyde.io.core.OpaqueTrait;
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Trait;
 import forsyde.io.core.migrations.SystemGraphMigrator;
+import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -87,9 +89,13 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                 if (vt.getName().endsWith("ANSICBlackBoxExecutable") || vt.getName().endsWith("HasANSICImplementation")) {
                     var impl = ForSyDeHierarchy.HasANSICImplementations.enforce(systemGraph, v);
                     impl.inlinedCodes().put("generic", (String) v.getProperty("inlinedCode"));
+                    var f = ForSyDeHierarchy.FunctionLikeEntity.enforce(systemGraph, v);
+                    f.inputPorts((List<String>) v.getProperty("inputArgumentPorts"));
+                    f.outputPorts((List<String>) v.getProperty("outputArgumentPorts"));
+                    f.outputPorts().add((String) v.getProperty("returnPort"));
                 }
                 if (vt.getName().contains("Executable")) {
-                    ForSyDeHierarchy.BehaviourEntity.enforce(systemGraph, v);
+                    var f = ForSyDeHierarchy.FunctionLikeEntity.enforce(systemGraph, v);
                 }
                 if (vt.getName().contains("InstrumentedExecutable")) {
                     var op = ForSyDeHierarchy.InstrumentedBehaviour.enforce(systemGraph, v);

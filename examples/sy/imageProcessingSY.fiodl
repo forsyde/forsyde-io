@@ -1,7 +1,7 @@
 systemgraph {
 vertex "graySY"
-  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::GreyBox]
-  (combFunctions, inSig, graySig,contained)
+  [moc::sy::SYMap, visualization::GreyBox]
+  (combFunctions,inSig,graySig,contained)
   {
     "inputPorts": [
       "inSig"
@@ -12,10 +12,114 @@ vertex "graySY"
     "visualizedPropertiesNames": []
   }
 
+vertex "grayMapVA"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels,inSig,interleavedVec, contained)
+  {
+    "inputPorts": [
+      "inSig"
+    ],
+    "outputPorts": [
+      "interleavedVec"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "grayInterliveV"
+  [impl::InstrumentedExecutable, impl::Executable, parallel::InterleaveV, visualization::GreyBox]
+  (kernels,inSig,interleavedVec, contained)
+  {
+    "operationRequirements": {
+        "impl1": {
+            "cpy": 96_l
+        }
+    },
+    "sizeInBits": 0_l,
+    "inputPorts": [
+      "inSig"
+    ],
+    "outputPorts": [
+      "interleavedVec"
+    ],
+    "stride": 3_i,
+    "radius": 3_i,
+    "visualizedPropertiesNames": []
+  }
+
+vertex "grayMapVB"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels,interleavedVec,graySig, contained)
+  {
+    "inputPorts": [
+      "interleavedVec"
+    ],
+    "outputPorts": [
+      "graySig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+  
+vertex "grayMapMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels,interleavedVec,graySig, contained)
+  {
+    "inputPorts": [
+      "interleavedVec"
+    ],
+    "outputPorts": [
+      "graySig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+  
+vertex "grayMapMapMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels,interleavedVec,grayMapMapMapVec, contained)
+  {
+    "inputPorts": [
+      "interleavedVec"
+    ],
+    "outputPorts": [
+      "grayMapMapMapVec"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "grayMapMapReduceV"
+  [impl::Executable, parallel::ReduceV, visualization::GreyBox]
+  (kernels,grayMapMapMapVec,graySig, contained)
+  {
+    "inputArray": "grayMapMapMapVec",
+    "outputScalar": "graySig",
+    "inputPorts": [
+      "grayMapMapMapVec"
+    ],
+    "outputPorts": [
+      "graySig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "intDivisionto3"
+    [impl::InstrumentedExecutable, impl::ANSICBlackBoxExecutable, visualization::VisualizableWithProperties]
+    (a, res)
+  {
+    "inlinedCode": "res = a/3;",
+    "inputArgumentPorts": ["a"],
+    "outputArgumentPorts": [],
+    "returnPort": "res",
+    "visualizedPropertiesNames": ["inlinedCode"],
+    "operationRequirements": {
+      "impl1": {
+        "intDiv": 1_l
+      }
+    },
+    "sizeInBits": 0_l
+  }
 
 vertex "resizeSY"
-  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::VisualizableWithProperties]
-  (combFunctions, graySig, resizedSig)
+  [moc::sy::SYMap, visualization::GreyBox]
+  (combFunctions, graySig, resizedSig, contained)
   {
     "inputPorts": [
       "graySig"
@@ -25,9 +129,197 @@ vertex "resizeSY"
     ],
     "visualizedPropertiesNames": []
   }
+
+
+vertex "resizeMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels, sumRowsVec, resizedSig, contained)
+  {
+    "inputPorts": [
+      "sumRowsVec"
+    ],
+    "outputPorts": [
+      "resizedSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+  
+vertex "resizeMapMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels, sumRowsVec, resizedSig, contained)
+  {
+   "inputPorts": [
+      "sumRowsVec"
+    ],
+    "outputPorts": [
+      "resizedSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+  
+vertex "floatDivisionto4"
+    [impl::InstrumentedExecutable, impl::ANSICBlackBoxExecutable, visualization::VisualizableWithProperties]
+    (rgb, res)
+  {
+    "inlinedCode": "res = a/4;",
+    "inputArgumentPorts": ["a"],
+    "outputArgumentPorts": [],
+    "returnPort": "res",
+    "visualizedPropertiesNames": ["inlinedCode"],
+    "operationRequirements": {
+      "impl1": {
+        "floatDiv": 1_l
+      }
+    },
+    "sizeInBits": 0_l
+  }
+
+
+vertex "sumRowsMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels, resizeInterleaveVec, sumRowsVec, contained)
+  {
+    "inputPorts": [
+      "resizeInterleaveVec"
+    ],
+    "outputPorts": [
+      "sumRowsVec"
+    ],
+    "visualizedPropertiesNames": []
+  }
+  
+vertex "sumRowsMapReduceV"
+  [impl::Executable, parallel::ReduceV, visualization::GreyBox]
+  (kernels, resizeInterleaveVec, sumRowsVec, contained)
+  {
+    "inputArray": "resizeInterleaveVec",
+    "outputScalar": "sumCRowsVec",
+    "inputPorts": [
+      "resizeInterleaveVec"
+    ],
+    "outputPorts": [
+      "sumCRowsVec"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "sumRowsMapReduceZipWithV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels, resizeInterleaveVec, sumRowsVec, contained)
+  {
+    "inputPorts": [
+      "resizeInterleaveVec"
+    ],
+    "outputPorts": [
+      "sumRowsVec"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "sumColsMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels, graySig, sumColsVec, contained)
+  {
+    "inputPorts": [
+      "graySig"
+    ],
+    "outputPorts": [
+      "sumColsVec"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "sumColsMapVInterliveV"
+  [impl::InstrumentedExecutable, parallel::InterleaveV, visualization::GreyBox]
+  (kernels,graySig,sumColsInterleavedVec, contained)
+  {
+  "operationRequirements": {
+          "impl1": {
+              "cpy": 96_l
+          }
+      },
+      "sizeInBits": 0_l,
+    "inputPorts": [
+      "graySig"
+    ],
+    "outputPorts": [
+      "sumColsInterleavedVec"
+    ],
+    "stride": 2_i,
+    "radius": 2_i,
+    "visualizedPropertiesNames": []
+  }
+  
+vertex "sumClosMapMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels, sumColsInterleavedVec, sumColsVec, contained)
+  {
+    "inputPorts": [
+      "sumColsInterleavedVec"
+    ],
+    "outputPorts": [
+      "sumColsVec"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "sumClosMapMapVReduceV"
+  [impl::Executable, parallel::ReduceV, visualization::GreyBox]
+  (kernels, sumColsInterleavedVec, sumColsVec, contained)
+  {
+   "inputArray": "sumColsInterleavedVec",
+   "outputScalar": "sumColsVec",
+   "inputPorts": [
+      "sumColsInterleavedVec"
+    ],
+    "outputPorts": [
+      "sumColsVec"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "resizeInterleaveV"
+  [impl::InstrumentedExecutable, parallel::InterleaveV, visualization::GreyBox]
+  (kernels,sumColsVec,resizeInterleaveVec, contained)
+  {
+  "operationRequirements": {
+          "impl1": {
+              "cpy": 96_l
+          }
+      },
+      "sizeInBits": 0_l,
+    "inputPorts": [
+      "sumColsVec"
+    ],
+    "outputPorts": [
+      "resizeInterleaveVec"
+    ],
+    "stride": 2_i,
+    "radius": 2_i,
+    "visualizedPropertiesNames": []
+  }
+  
+  
+vertex "floatAdd"
+    [impl::InstrumentedExecutable, impl::ANSICBlackBoxExecutable, visualization::VisualizableWithProperties]
+    (rgb, res)
+  {
+    "inlinedCode": "res = a+b;",
+    "inputArgumentPorts": ["a", "b"],
+    "outputArgumentPorts": [],
+    "returnPort": "res",
+    "visualizedPropertiesNames": ["inlinedCode"],
+    "operationRequirements": {
+      "impl1": {
+        "floatAdd": 1_l
+      }
+    },
+    "sizeInBits": 0_l
+  }
+
   
 vertex "maxBrightnessSY"
-  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::GreyBox]
+  [moc::sy::SYMap, visualization::GreyBox]
   (combFunctions, resizedSig, maxBrightnessSig, contained)
   {
     "inputPorts": [
@@ -56,12 +348,12 @@ vertex "maxBrightnessReduceVA"
   [impl::Executable, parallel::ReduceV, visualization::GreyBox]
   (kernels, resizedSig, maxMapVReduceVVec, contained)
   {
-    "inputArray": [
+    "inputArray":
       "resizedSig"
-    ],
-    "outputScalar": [
+    ,
+    "outputScalar":
       "maxMapVReduceVVec"
-    ],
+    ,
     "visualizedPropertiesNames": []
   }
 
@@ -69,28 +361,34 @@ vertex "maxBrightnessReduceVB"
   [impl::Executable, parallel::ReduceV, visualization::GreyBox]
   (kernels, maxMapVReduceVVec, maxBrightnessSig, contained)
   {
-    "inputArray": [
+    "inputArray":
       "maxMapVReduceVVec"
-    ],
-    "outputScalar": [
+    ,
+    "outputScalar":
       "maxBrightnessSig"
-    ],
+    ,
     "visualizedPropertiesNames": []
   }
 
 vertex "max"
-    [impl::ANSICBlackBoxExecutable, visualization::VisualizableWithProperties]
+    [impl::InstrumentedExecutable, impl::ANSICBlackBoxExecutable, visualization::VisualizableWithProperties]
     (a, b, res)
   {
     "inlinedCode": "res = a > b ? a : b;",
     "inputArgumentPorts": ["a", "b"],
     "outputArgumentPorts": [],
     "returnPort": "res",
-    "visualizedPropertiesNames": ["inlinedCode"]
+    "visualizedPropertiesNames": ["inlinedCode"],
+    "operationRequirements": {
+      "impl1": {
+        "comparision": 1_l
+      }
+    },
+    "sizeInBits": 0_l
   }
 
 vertex "minBrightnessSY"
-  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::GreyBox]
+  [moc::sy::SYMap, visualization::GreyBox]
   (combFunctions, resizedSig, minBrightnessSig, contained)
   {
     "inputPorts": [
@@ -119,12 +417,12 @@ vertex "minBrightnessReduceVA"
   [impl::Executable, parallel::ReduceV, visualization::GreyBox]
   (kernels, resizedSig, minMapVReduceVVec, contained)
   {
-    "inputArray": [
+    "inputArray":
       "resizedSig"
-    ],
-    "outputScalar": [
+    ,
+    "outputScalar":
       "minMapVReduceVVec"
-    ],
+    ,
     "visualizedPropertiesNames": []
   }
 
@@ -132,24 +430,30 @@ vertex "minBrightnessReduceVB"
   [impl::Executable, parallel::ReduceV, visualization::GreyBox]
   (kernels, minMapVReduceVVec, minBrightnessSig, contained)
   {
-    "inputArray": [
+    "inputArray":
       "minMapVReduceVVec"
-    ],
-    "outputScalar": [
+    ,
+    "outputScalar":
       "minBrightnessSig"
-    ],
+    ,
     "visualizedPropertiesNames": []
   }
 
 vertex "min"
-    [impl::ANSICBlackBoxExecutable, visualization::VisualizableWithProperties]
+    [impl::InstrumentedExecutable, impl::ANSICBlackBoxExecutable, visualization::VisualizableWithProperties]
     (a, b, res)
   {
     "inlinedCode": "res = a < b ? a : b;",
     "inputArgumentPorts": ["a", "b"],
     "outputArgumentPorts": [],
     "returnPort": "res",
-    "visualizedPropertiesNames": ["inlinedCode"]
+    "visualizedPropertiesNames": ["inlinedCode"],
+    "operationRequirements": {
+      "impl1": {
+        "comparison": 1_l
+      }
+    },
+    "sizeInBits": 0_l
   }
 
 vertex "controlSY"
@@ -163,12 +467,34 @@ vertex "controlSY"
     "outputPorts": [
       "controlSig"
     ],
+    "operationRequirements": {
+      "impl1": {
+        "mooreFSM": 1_l
+      }
+    },
+    "sizeInBits": 0_l,
     "visualizedPropertiesNames": []
   }
 
 vertex "correctionSY"
-  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::VisualizableWithProperties]
-  (combFunctions, controlSig, resizedSig, maxBrightnessSig, minBrightnessSig, correctedSig)
+  [moc::sy::SYMap, visualization::GreyBox]
+  (combFunctions, controlSig, resizedSig, maxBrightnessSig, minBrightnessSig, correctedSig, contained)
+  {
+    "inputPorts": [
+      "controlSig",
+      "resizedSig",
+      "maxBrightnessSig",
+      "minBrightnessSig"
+    ],
+    "outputPorts": [
+      "correctedSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+
+vertex "correctionMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels, controlSig, resizedSig, maxBrightnessSig, minBrightnessSig, correctedSig, contained)
   {
     "inputPorts": [
       "controlSig",
@@ -182,6 +508,46 @@ vertex "correctionSY"
     "visualizedPropertiesNames": []
   }
   
+vertex "correctionMapMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels, controlSig, resizedSig, maxBrightnessSig, minBrightnessSig, correctedSig, contained)
+  {
+    "inputPorts": [
+      "controlSig",
+      "resizedSig",
+      "maxBrightnessSig",
+      "minBrightnessSig"
+    ],
+    "outputPorts": [
+      "correctedSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+  
+
+vertex "rescale"
+    [impl::InstrumentedExecutable, impl::ANSICBlackBoxExecutable, visualization::VisualizableWithProperties]
+    (a, b, c, res)
+  {
+    "inlinedCode": "res = (hmax - hmin > 127) ? h 
+                        : (hmax - hmin > 63) ? (h - hmin) * 2 
+                        : (hmax - hmin > 31) ? (h - hmin) * 4 
+                        : (hmax - hmin > 15) ? (h - hmin) * 8 
+                        : (h - hmin) * 16;",
+    "inputArgumentPorts": ["h", "hmin", "hmax"],
+    "outputArgumentPorts": [],
+    "returnPort": "res",
+    "visualizedPropertiesNames": ["inlinedCode"],
+    "operationRequirements": {
+      "impl1": {
+        "comparision": 4_l,
+        "subtraction": 8_l,
+        "intMulti": 4_l
+      }
+    },
+    "sizeInBits": 0_l
+  }
+  
 vertex "sobelSY"
   [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::VisualizableWithProperties]
   (combFunctions, correctedSig, sobelSig)
@@ -192,12 +558,21 @@ vertex "sobelSY"
     "outputPorts": [
       "sobelSig"
     ],
-    "visualizedPropertiesNames": []
+    "operationRequirements": {
+      "impl1": {
+        "intAdd": 55296_l,
+        "intMulti": 18432_l,
+        "power2": 2048_l,
+        "sqr": 1024_l
+      }
+    },
+    "visualizedPropertiesNames": [],
+    "sizeInBits": 0_l
   }
   
 vertex "asciiSY"
-  [impl::InstrumentedExecutable, moc::sy::SYMap, visualization::VisualizableWithProperties]
-  (combFunctions, sobelSig, processedImageSig)
+  [moc::sy::SYMap, visualization::GreyBox]
+  (combFunctions, sobelSig, processedImageSig, contained)
   {
     "inputPorts": [
       "sobelSig"
@@ -208,25 +583,111 @@ vertex "asciiSY"
     "visualizedPropertiesNames": []
   }
 
+vertex "asciiMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels, sobelSig, processedImageSig, contained)
+  {
+    "inputPorts": [
+      "sobelSig"
+    ],
+    "outputPorts": [
+      "processedImageSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+  
+vertex "asciiMapMapV"
+  [impl::Executable, parallel::MapV, visualization::GreyBox]
+  (kernels, sobelSig, processedImageSig, contained)
+  {
+    "inputPorts": [
+     "sobelSig"
+    ],
+    "outputPorts": [
+      "processedImageSig"
+    ],
+    "visualizedPropertiesNames": []
+  }
+  
+
+vertex "num2char"
+    [impl::InstrumentedExecutable, impl::ANSICBlackBoxExecutable, visualization::VisualizableWithProperties]
+    (a, b, res)
+  {
+    "inlinedCode": "
+            numLevels = sizeof(a) / sizeof(a[0]) - 1;
+            level = (numLevels * in[i]) / 255;
+            res[i] = a[level];
+            ",
+    "inputArgumentPorts": ["in"],
+    "outputArgumentPorts": [],
+    "returnPort": "res",
+    "visualizedPropertiesNames": ["inlinedCode"],
+    "operationRequirements": {
+      "impl1": {
+        "intDiv": 2_l,
+        "intMulti": 1_l,
+        "intSub": 1_l
+      }
+    },
+    "sizeInBits": 0_l
+  }
+
 vertex "inSig"
-  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
-  (input, output)
+  [impl::DataBlock, moc::sy::SYSignal, visualization::GreyBox]
+  (input, output, dataType, contained)
   {
     "maxSizeInBits": 0_l,
     "visualizedPropertiesNames": []
   }
 
-vertex "graySig"
-  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
+vertex "inV"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
   (input, output)
+  {
+    "dimensions": [32_i, 96_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
+  }
+
+vertex "interleavedVec"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "dimensions": [32_i, 32_i, 3_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
+  }
+
+vertex "grayMapMapMapVec"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "dimensions": [32_i, 32_i, 3_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
+  }
+
+vertex "graySig"
+  [impl::DataBlock, moc::sy::SYSignal, visualization::GreyBox]
+  (input, output, dataType, contained)
   {
     "maxSizeInBits": 0_l,
     "visualizedPropertiesNames": []
   }
-  
+
+vertex "grayV"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "dimensions": [32_i, 32_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
+  }
+
 vertex "resizedSig"
   [impl::DataBlock, moc::sy::SYSignal, visualization::GreyBox]
-  (input, output, contained)
+  (input, output, dataType, contained)
   {
     "maxSizeInBits": 0_l,
     "visualizedPropertiesNames": []
@@ -236,7 +697,26 @@ vertex "resizedV"
   [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
   (input, output)
   {
-    "dimensions": [8_i, 4_i],
+    "dimensions": [16_i, 16_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
+  }
+
+vertex "sumColsInterleavedVec"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "dimensions": [32_i, 16_i, 2_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
+  }
+
+vertex "resizeInterleaveVec"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "dimensions": [16_i, 2_i, 16_i],
+    "maxSizeInBits": 0_l,
     "visualizedPropertiesNames": ["dimensions"]
   }
 
@@ -267,34 +747,79 @@ vertex "controlSig"
   }
 
 vertex "correctedSig"
-  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
-  (input, output)
+  [impl::DataBlock, moc::sy::SYSignal, visualization::GreyBox]
+  (input, output, dataType, contained)
   {
     "maxSizeInBits": 0_l,
     "visualizedPropertiesNames": []
   }
 
-vertex "sobelSig"
-  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
+vertex "correctedV"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
   (input, output)
+  {
+    "dimensions": [16_i, 16_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
+  }
+
+vertex "sobelSig"
+  [impl::DataBlock, moc::sy::SYSignal, visualization::GreyBox]
+  (input, output, dataType, contained)
   {
     "maxSizeInBits": 0_l,
     "visualizedPropertiesNames": []
   }
+
+vertex "sobelV"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "dimensions": [16_i, 16_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
+  }
   
 vertex "processedImageSig"
-  [impl::DataBlock, moc::sy::SYSignal, visualization::VisualizableWithProperties]
-  (input, output)
+  [impl::DataBlock, moc::sy::SYSignal, visualization::GreyBox]
+  (input, output, dataType, contained)
   {
     "maxSizeInBits": 0_l,
     "visualizedPropertiesNames": []
+  }
+
+vertex "processedImageV"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "dimensions": [16_i, 16_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
   } 
+
+vertex "sumRowsVec"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "dimensions": [16_i, 16_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
+  }
+
+vertex "sumColsVec"
+  [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
+  (input, output)
+  {
+    "dimensions": [32_i, 16_i],
+    "maxSizeInBits": 0_l,
+    "visualizedPropertiesNames": ["dimensions"]
+  }
 
 vertex "maxMapVReduceVVec"
   [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
   (input, output)
   {
-      "dimensions": [8_i],
+    "dimensions": [16_i, 16_i],
     "maxSizeInBits": 0_l,
     "visualizedPropertiesNames": ["dimensions"]
   }
@@ -303,7 +828,7 @@ vertex "minMapVReduceVVec"
   [impl::DataBlock, parallel::Vectorizable, visualization::VisualizableWithProperties]
   (input, output)
   {
-      "dimensions": [8_i],
+    "dimensions": [16_i],
     "maxSizeInBits": 0_l,
     "visualizedPropertiesNames": ["dimensions"]
   }
@@ -313,9 +838,92 @@ vertex "application"
   (contained)
   {}
 
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "inSig" port "input" to "inV" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "inV" port "output" to "inSig" port "output"
+
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "inSig" port "output" to "graySY" port "inSig"
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "graySY" port "graySig" to "graySig" port "input"
+
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "graySig" port "input" to "grayV" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "grayV" port "output" to "graySig" port "output"
+
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "graySY" port "inSig" to "grayMapVA" port "inSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "grayMapVA" port "inSig" to "grayInterliveV" port "inSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "grayInterliveV" port "interleavedVec" to "grayMapVA" port "interleavedVec"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "grayMapVA" port "interleavedVec" to "interleavedVec" port "input"
+
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "interleavedVec" port "output" to "grayMapVB" port "interleavedVec"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "grayMapVB" port "interleavedVec" to "grayMapMapV" port "interleavedVec"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "grayMapMapV" port "interleavedVec" to "grayMapMapMapV" port "interleavedVec"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "grayMapMapMapV" port "grayMapMapMapVec" to "grayMapMapMapVec" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "grayMapMapMapVec" port "output" to "grayMapMapReduceV" port "grayMapMapMapVec"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "grayMapMapReduceV" port "graySig" to "grayMapMapV" port "graySig"
+
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "grayMapMapV" port "graySig" to "grayMapVB" port "graySig"
+
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "grayMapVB" port "graySig" to "graySY" port "graySig"
+
+edge [moc::AbstractionEdge] from "graySY" port "combFunctions" to "grayMapVA"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "grayMapVA" port "kernels" to "grayInterliveV"
+edge [moc::AbstractionEdge] from "graySY" port "combFunctions" to "grayMapVB"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "grayMapVB" port "kernels" to "grayMapMapV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "grayMapMapV" port "kernels" to "grayMapMapMapV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "grayMapMapV" port "kernels" to "grayMapMapReduceV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "grayMapMapReduceV" port "kernels" to "floatAdd"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "grayMapMapMapV" port "kernels" to "intDivisionto3"
+
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "graySig" port "output" to "resizeSY" port "graySig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizeSY" port "resizedSig" to "resizedSig" port "input"
+edge [moc::AbstractionEdge] from "resizeSY" port "combFunctions" to "resizeMapV"
+edge [moc::AbstractionEdge] from "resizeSY" port "combFunctions" to "resizeInterleaveV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "resizeMapV" port "kernels" to "resizeMapMapV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "resizeMapMapV" port "kernels" to "floatDivisionto4"
+
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "resizeSY" port "graySig" to "sumColsMapV" port "graySig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumColsMapV" port "sumColsVec" to "sumColsVec" port "input"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumRowsMapV" port "sumRowsVec" to "sumRowsVec" port "input"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumRowsVec" port "output" to "resizeMapV" port "sumRowsVec"
+
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "resizeMapV" port "sumRowsVec" to "resizeMapMapV" port "sumRowsVec"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "resizeMapMapV" port "resizedSig" to "resizeMapV" port "resizedSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "resizeMapV" port "resizedSig" to "resizeSY" port "resizedSig"
+
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumRowsMapV" port "resizeInterleaveVec" to "sumRowsMapReduceV" port "resizeInterleaveVec"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumRowsMapReduceV" port "resizeInterleaveVec" to "sumRowsMapReduceZipWithV" port "resizeInterleaveVec"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumRowsMapReduceZipWithV" port "sumRowsVec" to "sumRowsMapReduceV" port "sumRowsVec"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumRowsMapReduceV" port "sumRowsVec" to "sumRowsMapV" port "sumRowsVec"
+
+edge [moc::AbstractionEdge] from "sumRowsMapV" port "kernels" to "sumRowsMapReduceV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumRowsMapReduceV" port "kernels" to "sumRowsMapReduceZipWithV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumRowsMapReduceZipWithV" port "kernels" to "floatAdd"
+
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumColsMapV" port "graySig" to "sumColsMapVInterliveV" port "graySig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumColsMapVInterliveV" port "sumColsInterleavedVec" to "sumColsInterleavedVec" port "input"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumColsInterleavedVec" port "output" to "sumClosMapMapV" port "sumColsInterleavedVec"
+
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumClosMapMapV" port "sumColsInterleavedVec" to "sumClosMapMapVReduceV" port "sumColsInterleavedVec"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumClosMapMapVReduceV" port "sumColsVec" to "sumClosMapMapV" port "sumColsVec"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumClosMapMapV" port "sumColsVec" to "sumColsMapV" port "sumColsVec"
+
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumColsVec" port "output" to "resizeInterleaveV" port "sumColsVec"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "resizeInterleaveV" port "resizeInterleaveVec" to "resizeInterleaveVec" port "input"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "resizeInterleaveVec" port "output" to "sumRowsMapV" port "resizeInterleaveVec"
+
+
+
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumColsMapV" port "kernels" to "sumClosMapMapV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumColsMapV" port "kernels" to "sumColsMapVInterliveV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumClosMapMapV" port "kernels" to "sumClosMapMapVReduceV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumClosMapMapVReduceV" port "kernels" to "floatAdd"
+
+edge [moc::AbstractionEdge] from "resizeSY" port "combFunctions" to "sumRowsMapV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumRowsMapV" port "kernels" to "sumRowsMapReduceV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumRowsMapReduceV" port "kernels" to "sumRowsMapReduceZipWithV"
+edge [moc::AbstractionEdge] from "resizeSY" port "combFunctions" to "sumColsMapV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumColsMapV" port "kernels" to "sumClosMapMapV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "sumClosMapMapV" port "kernels" to "sumClosMapMapVReduceV"
+
+
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizeSY" port "resizedSig" to "resizedSig" port "input"
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizedSig" port "output" to "maxBrightnessSY" port "resizedSig"
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizedSig" port "output" to "minBrightnessSY" port "resizedSig"
@@ -323,6 +931,7 @@ edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizedSig" po
 
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizedSig" port "input" to "resizedV" port "input"
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "resizedV" port "output" to "resizedSig" port "output"
+
 
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "maxBrightnessSY" port "maxBrightnessSig" to "maxBrightnessSig" port "input"
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "minBrightnessSY" port "minBrightnessSig" to "minBrightnessSig" port "input"
@@ -333,10 +942,41 @@ edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "controlSig" po
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "maxBrightnessSig" port "output" to "correctionSY" port "maxBrightnessSig"
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "minBrightnessSig" port "output" to "correctionSY" port "minBrightnessSig"
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "correctionSY" port "correctedSig" to "correctedSig" port "input"
+
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "correctedSig" port "input" to "correctedV" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "correctedV" port "output" to "correctedSig" port "output"
+
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "correctionSY" port "resizedSig" to "correctionMapV" port "resizedSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "correctionSY" port "minBrightnessSig" to "correctionMapV" port "minBrightnessSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "correctionSY" port "maxBrightnessSig" to "correctionMapV" port "maxBrightnessSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "correctionSY" port "controlSig" to "correctionMapV" port "controlSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "correctionMapV" port "resizedSig" to "correctionMapMapV" port "resizedSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "correctionMapV" port "minBrightnessSig" to "correctionMapMapV" port "minBrightnessSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "correctionMapV" port "maxBrightnessSig" to "correctionMapMapV" port "maxBrightnessSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "correctionMapV" port "controlSig" to "correctionMapMapV" port "controlSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "correctionMapMapV" port "correctedSig" to "correctionMapV" port "correctedSig"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "correctionMapV" port "correctedSig" to "correctionSY" port "correctedSig"
+
+edge [moc::AbstractionEdge] from "correctionSY" port "combFunctions" to "correctionMapV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "correctionMapV" port "kernels" to "correctionMapMapV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "correctionMapMapV" port "kernels" to "rescale"
+
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "correctedSig" port "output" to "sobelSY" port "correctedSig"
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "sobelSY" port "sobelSig" to "sobelSig" port "input"
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "sobelSig" port "output" to "asciiSY" port "sobelSig"
 edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "asciiSY" port "processedImageSig" to "processedImageSig" port "input"
+
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "sobelSig" port "input" to "sobelV" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "sobelV" port "output" to "sobelSig" port "output"
+
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "asciiSY" port "sobelSig" to "asciiMapV" port "sobelSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "asciiMapV" port "sobelSig" to "asciiMapMapV" port "sobelSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "asciiMapMapV" port "processedImageSig" to "asciiMapV" port "processedImageSig"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "asciiMapV" port "processedImageSig" to "asciiSY" port "processedImageSig"
+
+edge [moc::AbstractionEdge] from "asciiSY" port "combFunctions" to "asciiMapV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "asciiMapV" port "kernels" to "asciiMapMapV"
+edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "asciiMapMapV" port "kernels" to "num2char"
 
 edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "maxBrightnessSY" port "resizedSig" to "maxBrightnessMapV" port "resizedSig"
 edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "maxBrightnessMapV" port "resizedSig" to "maxBrightnessReduceVA" port "resizedSig"
@@ -363,6 +1003,8 @@ edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "mi
 edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "minBrightnessReduceVA" port "kernels" to "min"
 edge [parallel::ParallelContainerEdge, visualization::VisualConnection] from "minBrightnessReduceVB" port "kernels" to "min"
 
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "processedImageSig" port "input" to "processedImageV" port "input"
+edge [moc::sy::SYDataEdge, visualization::VisualConnection] from "processedImageV" port "output" to "processedImageSig" port "output"
 
 edge [visualization::VisualContainment] from "application" port "contained" to "graySY"
 edge [visualization::VisualContainment] from "application" port "contained" to "resizeSY"
@@ -381,6 +1023,42 @@ edge [visualization::VisualContainment] from "application" port "contained" to "
 edge [visualization::VisualContainment] from "application" port "contained" to "correctedSig"
 edge [visualization::VisualContainment] from "application" port "contained" to "sobelSig"
 edge [visualization::VisualContainment] from "application" port "contained" to "processedImageSig"
+
+edge [visualization::VisualContainment] from "graySY" port "contained" to "grayMapVA"
+edge [visualization::VisualContainment] from "grayMapVA" port "contained" to "grayInterliveV"
+edge [visualization::VisualContainment] from "graySY" port "contained" to "interleavedVec"
+edge [visualization::VisualContainment] from "graySY" port "contained" to "grayMapVB"
+edge [visualization::VisualContainment] from "grayMapVB" port "contained" to "grayMapMapV"
+edge [visualization::VisualContainment] from "grayMapMapV" port "contained" to "grayMapMapMapV"
+edge [visualization::VisualContainment] from "grayMapMapV" port "contained" to "grayMapMapReduceV"
+edge [visualization::VisualContainment] from "grayMapMapV" port "contained" to "grayMapMapMapVec"
+edge [visualization::VisualContainment] from "grayMapMapMapV" port "contained" to "intDivisionto3"
+edge [visualization::VisualContainment] from "grayMapMapReduceV" port "contained" to "floatAdd"
+
+edge [visualization::VisualContainment] from "resizeSY" port "contained" to "resizeInterleaveV"
+edge [visualization::VisualContainment] from "resizeSY" port "contained" to "resizeInterleaveVec"
+
+edge [visualization::VisualContainment] from "resizeSY" port "contained" to "resizeMapV"
+edge [visualization::VisualContainment] from "resizeMapV" port "contained" to "resizeMapMapV"
+edge [visualization::VisualContainment] from "resizeMapMapV" port "contained" to "floatDivisionto4"
+edge [visualization::VisualContainment] from "resizeSY" port "contained" to "sumRowsMapV"
+edge [visualization::VisualContainment] from "sumRowsMapV" port "contained" to "sumRowsMapReduceV"
+edge [visualization::VisualContainment] from "sumRowsMapReduceV" port "contained" to "sumRowsMapReduceZipWithV"
+edge [visualization::VisualContainment] from "resizeSY" port "contained" to "sumColsMapV"
+edge [visualization::VisualContainment] from "sumColsMapV" port "contained" to "sumClosMapMapV"
+edge [visualization::VisualContainment] from "sumClosMapMapV" port "contained" to "sumClosMapMapVReduceV"
+edge [visualization::VisualContainment] from "resizeSY" port "contained" to "sumRowsVec"
+edge [visualization::VisualContainment] from "resizeSY" port "contained" to "sumColsVec"
+edge [visualization::VisualContainment] from "sumRowsMapReduceZipWithV" port "contained" to "floatAdd"
+edge [visualization::VisualContainment] from "sumClosMapMapVReduceV" port "contained" to "floatAdd"
+edge [visualization::VisualContainment] from "sumColsMapV" port "contained" to "sumColsMapVInterliveV"
+edge [visualization::VisualContainment] from "sumColsMapV" port "contained" to "sumColsInterleavedVec"
+
+
+edge [visualization::VisualContainment] from "correctionSY" port "contained" to "correctionMapV"
+edge [visualization::VisualContainment] from "correctionMapV" port "contained" to "correctionMapMapV"
+edge [visualization::VisualContainment] from "correctionMapMapV" port "contained" to "rescale"
+
 edge [visualization::VisualContainment] from "maxBrightnessSY" port "contained" to "maxBrightnessMapV"
 edge [visualization::VisualContainment] from "maxBrightnessSY" port "contained" to "maxMapVReduceVVec"
 edge [visualization::VisualContainment] from "maxBrightnessMapV" port "contained" to "maxBrightnessReduceVA"
@@ -393,10 +1071,24 @@ edge [visualization::VisualContainment] from "minBrightnessMapV" port "contained
 edge [visualization::VisualContainment] from "minBrightnessSY" port "contained" to "minBrightnessReduceVB"
 edge [visualization::VisualContainment] from "minBrightnessReduceVA" port "contained" to "min"
 edge [visualization::VisualContainment] from "minBrightnessReduceVB" port "contained" to "min"
+
+edge [visualization::VisualContainment] from "asciiSY" port "contained" to "asciiMapV"
+edge [visualization::VisualContainment] from "asciiMapV" port "contained" to "asciiMapMapV"
+edge [visualization::VisualContainment] from "asciiMapMapV" port "contained" to "num2char"
+
+edge [visualization::VisualContainment] from "inSig" port "contained" to "inV"
+edge [visualization::VisualContainment] from "graySig" port "contained" to "grayV"
 edge [visualization::VisualContainment] from "resizedSig" port "contained" to "resizedV"
+edge [visualization::VisualContainment] from "correctedSig" port "contained" to "correctedV"
+edge [visualization::VisualContainment] from "sobelSig" port "contained" to "sobelV"
+edge [visualization::VisualContainment] from "processedImageSig" port "contained" to "processedImageV"
 
-
+edge [moc::AbstractionEdge] from "inSig" port "dataType" to "inV"
+edge [moc::AbstractionEdge] from "graySig" port "dataType" to "grayV"
+edge [moc::AbstractionEdge] from "resizedSig" port "dataType" to "resizedV"
+edge [moc::AbstractionEdge] from "correctedSig" port "dataType" to "correctedV"
+edge [moc::AbstractionEdge] from "sobelSig" port "dataType" to "sobelV"
+edge [moc::AbstractionEdge] from "processedImageSig" port "dataType" to "processedImageV"
 
 }
-
 

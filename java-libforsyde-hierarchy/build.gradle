@@ -1,0 +1,9 @@
+plugins {
+    id 'forsydeio.public-module'
+}
+
+dependencies {
+    api project(':java-core')
+    compileOnly project(":java-generator")
+    annotationProcessor project(':java-generator')
+}

@@ -10,5 +10,6 @@ module forsyde.io.java.generator {
     requires java.compiler;
 
     exports forsyde.io.java.generator;
+    exports forsyde.io.java.generator.specs;
 
 }

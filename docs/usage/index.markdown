@@ -199,7 +199,7 @@ Now, on your `main` method inside the `App` class (or equivalent in your bigger 
 
     // add this imports....
     import forsyde.io.core.ModelHandler;
-    import forsyde.io.lib.ForSyDeHierarchy;
+    import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
 
     // within the main class, interface etc
     public static void main(String[] args) {

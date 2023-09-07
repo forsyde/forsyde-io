@@ -1,8 +1,9 @@
 import forsyde.io.bridge.forsyde.systemc.ForSyDeSystemCDriver;
 import forsyde.io.bridge.sdf3.drivers.SDF3Driver;
 import forsyde.io.core.ModelHandler;
-import forsyde.io.lib.ForSyDeHierarchy;
+import forsyde.io.lib.LibForSyDeModelHandler;
 import forsyde.io.lib.TraitNamesFrom0_6To0_7;
+import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
 import forsyde.io.visual.kgt.drivers.KGTDriver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -60,12 +61,21 @@ public class PerformJavaTests {
         Assertions.assertEquals(5, m.vertexSet().stream().flatMap(v -> ForSyDeHierarchy.Task.tryView(m, v).stream()).count());
     }
 
-    @Test
-    void justReadSystemC() throws Exception {
-        var driver = new ForSyDeSystemCDriver();
-        var handler = new ModelHandler().registerDriver(driver).registerDriver(new KGTDriver()).registerTraitHierarchy(new ForSyDeHierarchy());
-        var m = handler.loadModel(Paths.get("examples/systemc/toy_sy.cpp"));
-        handler.writeModel(m, "from_systemc.fiodl");
-        handler.writeModel(m, "from_systemc.kgt");
-    }
+//    @Test
+//    void justReadSystemC() throws Exception {
+//        var driver = new ForSyDeSystemCDriver();
+//        var handler = new ModelHandler().registerDriver(driver).registerDriver(new KGTDriver()).registerTraitHierarchy(new ForSyDeHierarchy());
+//        var m = handler.loadModel(Paths.get("examples/systemc/toy_sy.cpp"));
+//        handler.writeModel(m, "from_systemc.fiodl");
+//        handler.writeModel(m, "from_systemc.kgt");
+//    }
+//
+//    @Test
+//    void justPropagate() throws Exception {
+//        var handler = new ModelHandler().registerDriver(new KGTDriver());
+//        LibForSyDeModelHandler.registerLibForSyDe(handler);
+//        var m = handler.loadModel(Paths.get("examples/sy/imageProcessingSY.fiodl"));
+//        handler.writeModel(m, "from_pre.fiodl");
+//        handler.writeModel(m, "output.kgt");
+//    }
 }

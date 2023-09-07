@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -11,9 +13,9 @@ import java.util.Optional;
 public class PropertySpec {
 
     public String name;
-//    @JsonProperty("default")
+    // @JsonProperty("default")
     @JsonAlias("initialization_code")
-    public Optional<String> initializationCode = Optional.empty();
+    public Map<String, String> initializationCode = new HashMap<>();
     @JsonAlias("default_value")
     public Optional<Object> defaultValue = Optional.empty();
     public PropertyTypeSpec type;

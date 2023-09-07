@@ -1,11 +1,9 @@
 package forsyde.io.visual.kgt.adapter;
 
-import forsyde.io.core.EdgeTrait;
-import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Trait;
-import forsyde.io.lib.ForSyDeHierarchy;
-import forsyde.io.lib.visualization.Visualizable;
-import forsyde.io.lib.visualization.VisualizableWithPropertiesViewer;
+import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
+import forsyde.io.lib.hierarchy.visualization.Visualizable;
+import forsyde.io.lib.hierarchy.visualization.VisualizableWithPropertiesViewer;
 import org.ainslec.picocog.PicoWriter;
 
 import java.util.*;

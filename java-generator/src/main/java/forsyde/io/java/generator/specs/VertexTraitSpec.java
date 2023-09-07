@@ -10,6 +10,8 @@ import java.util.*;
 public class VertexTraitSpec {
 
     public String name;
+
+    public List<String> prefixNamespace = new ArrayList<>();
     @JsonAlias("html_description")
     public String htmlDescription = "";
     @JsonAlias("refined_traits")
@@ -22,6 +24,8 @@ public class VertexTraitSpec {
     public Map<String, PortSpec> requiredPorts = new HashMap<>();
     @JsonAlias("required_properties")
     public Map<String, PropertySpec> requiredProperties = new HashMap<>();
+
+    public transient TraitHierarchySpec hierarchySpec = null;
 
 //    @Override
 //    public String getName() {

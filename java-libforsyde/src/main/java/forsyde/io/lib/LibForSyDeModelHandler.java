@@ -1,6 +1,7 @@
 package forsyde.io.lib;
 
 import forsyde.io.core.ModelHandler;
+import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
 
 /**
  * This is an utility class which injects into a {@link forsyde.io.core.ModelHandler} the necessary
