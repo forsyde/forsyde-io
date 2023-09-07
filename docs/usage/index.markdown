@@ -179,11 +179,17 @@ You should have now a directory like
                 gradle-wrapper.properties
 
 The most import file for now is `build.gradle`, which declaritely defines the project's dependencies and also fetches them.
-To enable and fetch ForSyDe IO in your new project, you need to add to the `dependencies` section of this file:
+To enable and fetch ForSyDe IO in your new project, you need to first enable [JitPack](https://jitpack.io/#forsyde/forsyde-io) as a repository:
 
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+
+And then add to the modules to the `dependencies` section of your `build.gradle`:
+    
     dependencies {
-        implementation 'io.github.forsyde:forsyde-io-java-core:0.7.0' // or newer
-        implementation 'io.github.forsyde:forsyde-io-java-libforsyde:0.7.0' // or newer
+        implementation "com.github.forsyde.forsyde-io:forsyde-io-java-core:0.7.10" // or newer
+        implementation "com.github.forsyde.forsyde-io:forsyde-io-java-libforsyde:0.7.10" // or newer
     }
 
 The first added dependency is actually independent of ForSyDe (as in, the umbrella project).
