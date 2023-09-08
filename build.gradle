@@ -16,7 +16,7 @@ plugins {
 group = 'io.github.forsyde'
 archivesBaseName = project.name
 if (file(".git").exists()) {
-  version = gitVersion().substring(1)
+  version = gitVersion().substring(1).replace(".dirty", "")
 } else {
   version = "latest"
 }
