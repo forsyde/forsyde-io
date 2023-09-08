@@ -10,6 +10,7 @@ Here you can find some quick links to help you navigate the documentation
 and also to situate you about the tool and its methods. 
 
  * [ForSyDe IO for the ForSyDe end-user: quick start](usage)
+ * [ForSyDe IO for the ForSyDe end-user: LibForSyDe trait hierarchy catalog](usage/catalog)
  * [ForSyDe IO: what it is and where it fits.](about)
  * [ForSyDe IO and its meta-modelling for the general developer](extend)
 

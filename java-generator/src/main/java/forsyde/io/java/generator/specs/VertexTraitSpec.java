@@ -4,14 +4,13 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @JsonSerialize
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
 public class VertexTraitSpec {
 
-    public String name;
-
-    public List<String> prefixNamespace = new ArrayList<>();
+    public String canonicalName;
     @JsonAlias("html_description")
     public String htmlDescription = "";
     @JsonAlias("refined_traits")
@@ -35,10 +34,24 @@ public class VertexTraitSpec {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("VertexTraitSpec{");
-        sb.append("name='").append(name).append('\'');
+        sb.append("name='").append(canonicalName).append('\'');
         sb.append(", refinedTraits=").append(refinedTraits);
         sb.append('}');
         return sb.toString();
+    }
+
+    public List<String> prefixNamespace() {
+        var l = canonicalName.split("::");
+        return Arrays.stream(l).limit(l.length - 1).collect(Collectors.toList());
+    }
+
+    public String getSimpleName() {
+        var l = canonicalName.split("::");
+        return l[l.length - 1];
+    }
+
+    public String getJavaCanonicalName() {
+        return canonicalName.replace("::", ".");
     }
 
 }

@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public interface HasSpecExtractors {
 
@@ -38,10 +37,9 @@ public interface HasSpecExtractors {
             final TypeElement typeElement, final TraitHierarchySpec containingTraitHierarchySpec) {
         var vertexSpec = new VertexTraitSpec();
         var vertexPackage = processingEnv.getElementUtils().getPackageOf(typeElement);
-        vertexSpec.name = typeElement.getSimpleName().toString();
+        vertexSpec.canonicalName = typeElement.getQualifiedName().toString().replace(".", "::");
         vertexSpec.hierarchySpec = containingTraitHierarchySpec;
         vertexSpec.htmlDescription = processingEnv.getElementUtils().getDocComment(typeElement);
-        vertexSpec.prefixNamespace = Arrays.stream(vertexPackage.getQualifiedName().toString().split("\\.")).toList();
         return vertexSpec;
     }
 
@@ -75,10 +73,9 @@ public interface HasSpecExtractors {
             final Map<TypeElement, EdgeTraitSpec> elementsToSpecs) {
         var edgeSpec = new EdgeTraitSpec();
         var vertexPackage = processingEnv.getElementUtils().getPackageOf(typeElement);
-        edgeSpec.name = typeElement.getSimpleName().toString();
+        edgeSpec.canonicalName = typeElement.getQualifiedName().toString().replace(".", "::");
         edgeSpec.traitHierarchySpec = containingTraitHierarchySpec;
         edgeSpec.htmlDescription = processingEnv.getElementUtils().getDocComment(typeElement);
-        edgeSpec.prefixNamespace = Arrays.stream(vertexPackage.getQualifiedName().toString().split("\\.")).toList();
         typeElement.getInterfaces().stream().map(t -> processingEnv.getTypeUtils().asElement(t))
                 .filter(elementsToSpecs::containsKey)
                 .map(elementsToSpecs::get)
@@ -138,9 +135,7 @@ public interface HasSpecExtractors {
         var propSpec = new PropertySpec();
         propSpec.name = executableElement.getSimpleName().toString();
         if (executableElement.isDefault()) {
-            var clsName = containingVertex.prefixNamespace.isEmpty() ? containingVertex.name
-                    : containingVertex.prefixNamespace.stream().collect(Collectors.joining(".")) + '.'
-                            + containingVertex.name;
+            var clsName = containingVertex.getJavaCanonicalName();
             propSpec.initializationCode.put("java",
                     "if (!getViewedVertex().hasProperty(\"%s\")) getViewedVertex().putProperty(\"%s\", %s.super.%s())"
                             .formatted(propSpec.name, propSpec.name, clsName, propSpec.name));

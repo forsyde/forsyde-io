@@ -5,6 +5,7 @@ import forsyde.io.core.annotations.InPort;
 import forsyde.io.core.annotations.OutPort;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
+import forsyde.io.lib.hierarchy.behavior.DataTypeLike;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,10 +14,10 @@ import java.util.stream.Collectors;
 public interface Plus extends BasicOperation {
 
     @InPort
-    Set<VertexViewer> inputs();
+    Set<DataTypeLike> inputs();
 
     @OutPort
-    Set<VertexViewer> outputs();
+    Set<DataTypeLike> outputs();
 
     default Set<BasicOperation> inputBasicOperations() {
         return inputs().stream().filter(op -> op instanceof BasicOperation).map(op -> (BasicOperation) op).collect(Collectors.toSet());

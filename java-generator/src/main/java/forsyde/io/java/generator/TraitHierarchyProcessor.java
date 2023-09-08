@@ -8,16 +8,17 @@ import forsyde.io.java.generator.specs.EdgeTraitSpec;
 import forsyde.io.java.generator.specs.TraitHierarchySpec;
 import forsyde.io.java.generator.specs.VertexTraitSpec;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.util.ElementFilter;
+import javax.tools.StandardLocation;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -25,7 +26,7 @@ import java.util.stream.Stream;
 
 @SupportedAnnotationTypes({ "forsyde.io.core.annotations.RegisterTrait" })
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
-public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpecExtractors {
+public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpecExtractors, HasSpecCatalogGeneration {
 
     protected Optional<? extends TypeElement> getValueOfAnnotationMirror(AnnotationMirror annotationMirror) {
         return annotationMirror.getElementValues().entrySet().stream()
@@ -79,10 +80,7 @@ public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpe
                         .ifPresent(t -> {
                             if (!elementsToHierarchies.containsKey(t)) {
                                 var traitHierarchySpec = new TraitHierarchySpec();
-                                var traitHierarchyPackage = processingEnv.getElementUtils().getPackageOf(t);
-                                traitHierarchySpec.prefixNamespace = Arrays
-                                        .stream(traitHierarchyPackage.getQualifiedName().toString().split("\\."))
-                                        .toList();
+                                traitHierarchySpec.canonicalName = t.getQualifiedName().toString().replace(".", "::");
                                 elementsToHierarchies.put(t, traitHierarchySpec);
                             }
                             var traitHierarchySpec = elementsToHierarchies.get(t);
@@ -90,12 +88,12 @@ public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpe
                                 var vertexSpec = extractVertexSpecFromTypeElement(processingEnv, typeElement,
                                         traitHierarchySpec);
                                 elementsToVertexSpecs.put(typeElement, vertexSpec);
-                                traitHierarchySpec.vertexTraits.put(vertexSpec.name, vertexSpec);
+                                traitHierarchySpec.vertexTraits.put(vertexSpec.canonicalName, vertexSpec);
                             } else if (processingEnv.getTypeUtils().isSubtype(typeElement.asType(), edgeT.asType())) {
                                 var edgeSpec = extractEdgeSpecFromTypeElement(processingEnv, typeElement,
                                         traitHierarchySpec, elementsToEdgeSpecs);
                                 elementsToEdgeSpecs.put(typeElement, edgeSpec);
-                                traitHierarchySpec.edgeTraits.put(edgeSpec.name, edgeSpec);
+                                traitHierarchySpec.edgeTraits.put(edgeSpec.canonicalName, edgeSpec);
                             }
                         });
                 var hierarchy = getRegisteredHierarchy(typeElement.getAnnotation(RegisterTrait.class));
@@ -125,6 +123,20 @@ public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpe
                         .builder(processingEnv.getElementUtils().getPackageOf(typeHierarchy).toString(), genTH).build();
                 javaFile.writeTo(processingEnv.getFiler());
             }
+            try {
+                var res = processingEnv.getFiler().createResource(StandardLocation.SOURCE_OUTPUT, "", "java-generated-hierarchies.md");
+                try (var oWriter = res.openWriter()) {
+                    oWriter.write(getMarkdownDocumentation(elementsToHierarchies.values(), 1));
+                }
+            } catch (FilerException ignored) {
+//
+            }
+//            try {
+//                var res = processingEnv.getFiler().getResource(StandardLocation.ANNOTATION_PROCESSOR_PATH, "", "java-generated-hierarchies.md");
+//                res.delete();
+//
+//
+//            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -24,9 +24,11 @@ public class ComputationalRequirementsPropagator implements SystemGraphInference
     @Override
     public void infer(SystemGraph systemGraph) {
         // first, we do the SY + SDF collection
-        for (var v : systemGraph.vertexSet()) {
-            ForSyDeHierarchy.SYMap.tryView(systemGraph, v).ifPresent(this::propagate);
+        if (systemGraph.vertexSet().stream().anyMatch(v -> ForSyDeHierarchy.InstrumentedBehaviour.tryView(systemGraph, v).isPresent())) {
+            for (var v : systemGraph.vertexSet()) {
+                ForSyDeHierarchy.SYMap.tryView(systemGraph, v).ifPresent(this::propagate);
 //            ForSyDeHierarchy.SDFActor.tryView(systemGraph, v).ifPresent(queue::add);
+            }
         }
         // now the heap-based recursion can start
     }
