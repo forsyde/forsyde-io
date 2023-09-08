@@ -32,7 +32,10 @@ public class KlighDNodeView {
     }
 
     public String getLabel() {
-        return viewed.getIdentifier() + " [" + viewed.getVertexTraitNames().stream().filter(t -> !t.getName().contains("visualization")).map(Trait::getName).collect(Collectors.joining(", ")) + "]";
+        return viewed.getIdentifier() + " [" + viewed.getVertexTraitNames().stream().filter(t -> !t.getName().contains("visualization")).map(Trait::getName).map(x -> {
+            var spl = x.split("::");
+            return spl[spl.length - 1];
+        }).collect(Collectors.joining(", ")) + "]";
     }
 
     public List<KlighDNodeView> getChildren() {
