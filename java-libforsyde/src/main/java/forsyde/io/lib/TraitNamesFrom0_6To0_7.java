@@ -1,15 +1,13 @@
 package forsyde.io.lib;
 
+import forsyde.io.core.EdgeTrait;
 import forsyde.io.core.OpaqueTrait;
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Trait;
 import forsyde.io.core.migrations.SystemGraphMigrator;
 import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -127,6 +125,49 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                 }
                 if (vt.getName().contains("PeriodicStimulus")) {
                     ForSyDeHierarchy.PeriodicStimulator.enforce(systemGraph, v);
+                }
+                if (vt.getName().contains("SYSignal")) {
+                    var sig = ForSyDeHierarchy.SYSignal.enforce(systemGraph, v);
+                    for (var e : Set.copyOf(systemGraph.incomingEdgesOf(v))) {
+                        if (e.connectsTargetPort("input")) {
+                            var src = ForSyDeHierarchy.SYProcess.enforce(systemGraph, systemGraph.getEdgeSource(e));
+                            e.getSourcePort().ifPresentOrElse(port -> {
+                                sig.addConsumers(port, src);
+                                for (var t : e.getTraits()) {
+                                    if (t instanceof EdgeTrait edgeTrait) {
+                                        sig.addConsumers(port, src, edgeTrait);
+                                    }
+                                }
+                            }, () -> {
+                                sig.addConsumers(src);
+                                for (var t : e.getTraits()) {
+                                    if (t instanceof EdgeTrait edgeTrait) {
+                                        sig.addConsumers(src, edgeTrait);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                    for (var e : Set.copyOf(systemGraph.outgoingEdgesOf(v))) {
+                        if (e.connectsSourcePort("output")) {
+                            var src = ForSyDeHierarchy.SYProcess.enforce(systemGraph, systemGraph.getEdgeTarget(e));
+                            e.getTargetPort().ifPresentOrElse(port -> {
+                                sig.producer(port, src);
+                                for (var t : e.getTraits()) {
+                                    if (t instanceof EdgeTrait edgeTrait) {
+                                        sig.producer(port, src, edgeTrait);
+                                    }
+                                }
+                            }, () -> {
+                                sig.producer(src);
+                                for (var t : e.getTraits()) {
+                                    if (t instanceof EdgeTrait edgeTrait) {
+                                        sig.addConsumers(src, edgeTrait);
+                                    }
+                                }
+                            });
+                        }
+                    }
                 }
             }
         }
