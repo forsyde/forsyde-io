@@ -36,7 +36,7 @@ public interface HasSpecCatalogGeneration {
         output.append("Refines: ").append(vertexTraitSpec.refinedTraits.stream().map(x -> '`' + x.canonicalName + '`').collect(Collectors.joining(", "))).append("\n\n");
         output.append("Required ports:").append("\n\n");
         for (var e : vertexTraitSpec.requiredPorts.entrySet()) {
-            output.append(" - ").append(e.getKey()).append(":\n").append("    - ");
+            output.append(" - **").append(e.getKey()).append("**: ");
             if (e.getValue().incoming && e.getValue().outgoing) {
                 output.append(" A bidirectional port of ");
             }
@@ -47,6 +47,11 @@ public interface HasSpecCatalogGeneration {
             if (e.getValue().edgeTrait != null) {
                 output.append(" connected by ").append('`').append(e.getValue().edgeTrait.canonicalName).append('`').append(" edges");
             }
+            output.append(".\n");
+        }
+        output.append("Required properties:").append("\n\n");
+        for (var e : vertexTraitSpec.requiredProperties.entrySet()) {
+            output.append(" - **").append(e.getKey()).append(":** ");
             output.append(".\n");
         }
         return output.toString();

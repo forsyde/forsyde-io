@@ -15,12 +15,12 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`
 
 Required ports:
 
-- tokenDataType:
-  - `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
-- producer:
-  - `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFActor` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFNetworkEdge` edges.
-- consumer:
-  - `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFActor` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFNetworkEdge` edges.
+- **tokenDataType**: `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+- **producer**: `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFActor` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFNetworkEdge` edges.
+- **consumer**: `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFActor` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFNetworkEdge` edges.
+  Required properties:
+
+- **numInitialTokens:** .
 
 ### forsyde::io::lib::hierarchy::implementation::functional::BoundedBufferLike
 
@@ -33,6 +33,9 @@ Refines: `forsyde::io::lib::hierarchy::implementation::functional::BufferLike`
 
 Required ports:
 
+Required properties:
+
+- **maxElements:** .
 
 ### forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity
 
@@ -42,13 +45,17 @@ Refines:
 
 Required ports:
 
+Required properties:
+
+- **outputPorts:** .
+- **inputPorts:** .
 
 ### forsyde::io::lib::hierarchy::implementation::code::HasANSICImplementations
 
 This trait enforces the vertex to have at least one inlined C-base implementation.
 
 There can be more than one, discriminted by a label for each inlined source code.
-For example, a vetex can have a chunck of code with the label "riscv" for RISC-V
+For example, a vertex can have a chunck of code with the label "riscv" for RISC-V
 based processors and one with label "cude" to be implemented directly in a CUDA
 based flow, whenever possible.
 
@@ -58,6 +65,12 @@ Refines:
 
 Required ports:
 
+Required properties:
+
+- **outputArgumentPorts:** .
+- **returnPort:** .
+- **inlinedCodes:** .
+- **inputArgumentPorts:** .
 
 ### forsyde::io::lib::hierarchy::visualization::Visualizable
 
@@ -66,6 +79,8 @@ No description exists.
 Refines:
 
 Required ports:
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::constraints::UtilizationBound
@@ -79,6 +94,9 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModu
 
 Required ports:
 
+Required properties:
+
+- **maxUtilization:** .
 
 ### forsyde::io::lib::hierarchy::behavior::parallel::InterleaveV
 
@@ -92,10 +110,12 @@ Refines: `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton`
 
 Required ports:
 
-- inputArray:
-  - `forsyde::io::lib::hierarchy::behavior::parallel::Vectorizable` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
-- outputArrayOfArray:
-  - `forsyde::io::lib::hierarchy::behavior::parallel::Vectorizable` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
+- **inputArray**: `forsyde::io::lib::hierarchy::behavior::parallel::Vectorizable` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
+- **outputArrayOfArray**: `forsyde::io::lib::hierarchy::behavior::parallel::Vectorizable` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
+  Required properties:
+
+- **stride:** .
+- **radius:** .
 
 ### forsyde::io::lib::hierarchy::decision::sdf::AnalyzedActor
 
@@ -107,6 +127,10 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFActor`
 
 Required ports:
 
+Required properties:
+
+- **setThroughputInSecsDenominator:** .
+- **setThroughputInSecsNumerator:** .
 
 ### forsyde::io::lib::hierarchy::decision::ConcurrentSlotsReserved
 
@@ -119,6 +143,9 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::GenericCommunicationM
 
 Required ports:
 
+Required properties:
+
+- **slotReservations:** .
 
 ### forsyde::io::lib::hierarchy::behavior::execution::CommunicatingTask
 
@@ -128,6 +155,10 @@ Refines: `forsyde::io::lib::hierarchy::behavior::execution::Task`
 
 Required ports:
 
+Required properties:
+
+- **portDataReadSize:** .
+- **portDataWrittenSize:** .
 
 ### forsyde::io::lib::hierarchy::platform::hardware::HardwareModule
 
@@ -140,6 +171,8 @@ for all traits relevant to the hardware parts of a platform.
 Refines:
 
 Required ports:
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::implementation::functional::RegisterArrayLike
@@ -156,6 +189,9 @@ Refines: `forsyde::io::lib::hierarchy::implementation::functional::RegisterLike`
 
 Required ports:
 
+Required properties:
+
+- **elementSizeInBits:** .
 
 ### forsyde::io::lib::hierarchy::behavior::moc::sy::SYSignal
 
@@ -169,12 +205,11 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`
 
 Required ports:
 
-- dataType:
-  - `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
-- producer:
-  - `forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
-- consumers:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
+- **dataType**: `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+- **producer**: `forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
+- **consumers**:  multiple `forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
+  Required properties:
+
 
 ### forsyde::io::lib::hierarchy::decision::MemoryMapped
 
@@ -187,8 +222,9 @@ Refines:
 
 Required ports:
 
-- mappingHost:
-  - `forsyde::io::lib::hierarchy::platform::hardware::GenericMemoryModule` vertices.
+- **mappingHost**: `forsyde::io::lib::hierarchy::platform::hardware::GenericMemoryModule` vertices.
+  Required properties:
+
 
 ### forsyde::io::lib::hierarchy::implementation::functional::RegisterLike
 
@@ -205,6 +241,9 @@ Refines:
 
 Required ports:
 
+Required properties:
+
+- **sizeInBits:** .
 
 ### forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFActor
 
@@ -214,8 +253,11 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`
 
 Required ports:
 
-- combFunctions:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::BehaviourEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+- **combFunctions**:  multiple `forsyde::io::lib::hierarchy::behavior::BehaviourEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+  Required properties:
+
+- **production:** .
+- **consumption:** .
 
 ### forsyde::io::lib::hierarchy::behavior::DataTypeLike
 
@@ -226,6 +268,8 @@ of a data type, whether an array, a record, a composition of both etc.
 Refines:
 
 Required ports:
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::behavior::parallel::Vectorizable
@@ -246,12 +290,12 @@ Refines: `forsyde::io::lib::hierarchy::behavior::DataTypeLike`
 
 Required ports:
 
-- producer:
-  - `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
-- arrayItemType:
-  - `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
-- consumers:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
+- **producer**: `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
+- **arrayItemType**: `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+- **consumers**:  multiple `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
+  Required properties:
+
+- **dimensions:** .
 
 ### forsyde::io::lib::hierarchy::platform::hardware::DigitalModule
 
@@ -263,6 +307,9 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::HardwareModule`
 
 Required ports:
 
+Required properties:
+
+- **operatingFrequencyInHertz:** .
 
 ### forsyde::io::lib::hierarchy::platform::runtime::TimeDivisionMultiplexingRuntime
 
@@ -277,6 +324,13 @@ Refines: `forsyde::io::lib::hierarchy::platform::runtime::AbstractRuntime`
 
 Required ports:
 
+Required properties:
+
+- **frameSizeInClockCycles:** .
+- **maximumTimeSliceInClockCycles:** .
+- **timeSliceProcess:** .
+- **timeSlicesSizesInClockCycles:** .
+- **minimumTimeSliceInClockCycles:** .
 
 ### forsyde::io::lib::hierarchy::behavior::parallel::ReduceV
 
@@ -296,8 +350,11 @@ Refines: `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton`
 
 Required ports:
 
-- kernels:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+- **kernels**:  multiple `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+  Required properties:
+
+- **inputArray:** .
+- **outputScalar:** .
 
 ### forsyde::io::lib::hierarchy::decision::Scheduled
 
@@ -310,8 +367,9 @@ Refines:
 
 Required ports:
 
-- runtimeHost:
-  - `forsyde::io::lib::hierarchy::platform::runtime::AbstractRuntime` vertices.
+- **runtimeHost**: `forsyde::io::lib::hierarchy::platform::runtime::AbstractRuntime` vertices.
+  Required properties:
+
 
 ### forsyde::io::lib::hierarchy::behavior::BehaviourEntity
 
@@ -320,6 +378,8 @@ No description exists.
 Refines:
 
 Required ports:
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::implementation::functional::BufferLike
@@ -332,6 +392,9 @@ Refines:
 
 Required ports:
 
+Required properties:
+
+- **elementSizeInBits:** .
 
 ### forsyde::io::lib::hierarchy::behavior::execution::ContinousStimulator
 
@@ -343,6 +406,10 @@ Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
 
 Required ports:
 
+Required properties:
+
+- **initialLatencyNumerator:** .
+- **initialLatencyDenominator:** .
 
 ### forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModule
 
@@ -362,6 +429,9 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::DigitalModule`
 
 Required ports:
 
+Required properties:
+
+- **maximumComputationParallelism:** .
 
 ### forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton
 
@@ -377,6 +447,8 @@ Refines: `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity`
 
 Required ports:
 
+Required properties:
+
 
 ### forsyde::io::lib::hierarchy::behavior::execution::PeriodicStimulator
 
@@ -386,6 +458,12 @@ Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
 
 Required ports:
 
+Required properties:
+
+- **offsetDenominator:** .
+- **periodDenominator:** .
+- **offsetNumerator:** .
+- **periodNumerator:** .
 
 ### forsyde::io::lib::hierarchy::behavior::parallel::MapV
 
@@ -407,16 +485,21 @@ Refines: `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton`
 
 Required ports:
 
-- kernels:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+- **kernels**:  multiple `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+  Required properties:
+
+- **outputPorts:** .
+- **inputPorts:** .
 
 ### forsyde::io::lib::hierarchy::behavior::execution::Task
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
 
 Required ports:
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::behavior::moc::sy::SYMap
@@ -439,8 +522,9 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess`
 
 Required ports:
 
-- combFunctions:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+- **combFunctions**:  multiple `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+  Required properties:
+
 
 ### forsyde::io::lib::hierarchy::behavior::moc::sy::SYDelay
 
@@ -458,10 +542,10 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess`
 
 Required ports:
 
-- input:
-  - `forsyde::io::lib::hierarchy::behavior::moc::sy::SYSignal` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
-- delayed:
-  - `forsyde::io::lib::hierarchy::behavior::moc::sy::SYSignal` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
+- **input**: `forsyde::io::lib::hierarchy::behavior::moc::sy::SYSignal` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
+- **delayed**: `forsyde::io::lib::hierarchy::behavior::moc::sy::SYSignal` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
+  Required properties:
+
 
 ### forsyde::io::lib::hierarchy::platform::hardware::GenericCommunicationModule
 
@@ -479,15 +563,21 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::DigitalModule`
 
 Required ports:
 
+Required properties:
+
 
 ### forsyde::io::lib::hierarchy::behavior::execution::Downsample
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
 
 Required ports:
 
+Required properties:
+
+- **repetitivePredecessorSkips:** .
+- **initialPredecessorSkips:** .
 
 ### forsyde::io::lib::hierarchy::implementation::functional::InstrumentedBehaviour
 
@@ -497,6 +587,10 @@ Refines: `forsyde::io::lib::hierarchy::behavior::BehaviourEntity`
 
 Required ports:
 
+Required properties:
+
+- **computationalRequirements:** .
+- **maxSizeInBits:** .
 
 ### forsyde::io::lib::hierarchy::implementation::synthetizable::PeriodicTask
 
@@ -508,8 +602,13 @@ Refines: `forsyde::io::lib::hierarchy::behavior::execution::Task`
 
 Required ports:
 
-- incomingStimulators:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::execution::PeriodicStimulator` vertices.
+- **incomingStimulators**:  multiple `forsyde::io::lib::hierarchy::behavior::execution::PeriodicStimulator` vertices.
+  Required properties:
+
+- **offsetNumerators:** .
+- **offsetDenominators:** .
+- **periodDenominators:** .
+- **periodNumerators:** .
 
 ### forsyde::io::lib::hierarchy::platform::runtime::SuperLoopRuntime
 
@@ -524,6 +623,9 @@ Refines: `forsyde::io::lib::hierarchy::platform::runtime::AbstractRuntime`
 
 Required ports:
 
+Required properties:
+
+- **superLoopEntries:** .
 
 ### forsyde::io::lib::hierarchy::behavior::execution::Stimulatable
 
@@ -533,8 +635,10 @@ Refines:
 
 Required ports:
 
-- activators:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::execution::Stimulator` vertices connected by `forsyde::io::lib::hierarchy::behavior::execution::EventEdge` edges.
+- **activators**:  multiple `forsyde::io::lib::hierarchy::behavior::execution::Stimulator` vertices connected by `forsyde::io::lib::hierarchy::behavior::execution::EventEdge` edges.
+  Required properties:
+
+- **hasORSemantics:** .
 
 ### forsyde::io::lib::hierarchy::platform::hardware::Structure
 
@@ -549,8 +653,9 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::HardwareModule`
 
 Required ports:
 
-- containedModules:
-  -  multiple `forsyde::io::lib::hierarchy::platform::hardware::HardwareModule` vertices connected by `forsyde::io::lib::hierarchy::platform::hardware::StructuralContainment` edges.
+- **containedModules**:  multiple `forsyde::io::lib::hierarchy::platform::hardware::HardwareModule` vertices connected by `forsyde::io::lib::hierarchy::platform::hardware::StructuralContainment` edges.
+  Required properties:
+
 
 ### forsyde::io::lib::hierarchy::platform::hardware::InstrumentedCommunicationModule
 
@@ -569,6 +674,12 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::GenericCommunicationM
 
 Required ports:
 
+Required properties:
+
+- **maxCyclesPerFlit:** .
+- **flitSizeInBits:** .
+- **initialLatency:** .
+- **maxConcurrentFlits:** .
 
 ### forsyde::io::lib::hierarchy::platform::hardware::GenericMemoryModule
 
@@ -591,6 +702,9 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::DigitalModule`
 
 Required ports:
 
+Required properties:
+
+- **spaceInBits:** .
 
 ### forsyde::io::lib::hierarchy::platform::runtime::AbstractRuntime
 
@@ -605,10 +719,10 @@ Refines:
 
 Required ports:
 
-- managed:
-  -  multiple `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModule` vertices.
-- host:
-  - `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModule` vertices.
+- **managed**:  multiple `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModule` vertices.
+- **host**: `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModule` vertices.
+  Required properties:
+
 
 ### forsyde::io::lib::hierarchy::behavior::execution::LoopingTask
 
@@ -618,10 +732,10 @@ Refines: `forsyde::io::lib::hierarchy::behavior::execution::Task`
 
 Required ports:
 
-- loopSequence:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::BehaviourEntity` vertices.
-- initSequence:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::BehaviourEntity` vertices.
+- **loopSequence**:  multiple `forsyde::io::lib::hierarchy::behavior::BehaviourEntity` vertices.
+- **initSequence**:  multiple `forsyde::io::lib::hierarchy::behavior::BehaviourEntity` vertices.
+  Required properties:
+
 
 ### forsyde::io::lib::hierarchy::behavior::basic::BasicOperation
 
@@ -630,6 +744,8 @@ No description exists.
 Refines: `forsyde::io::lib::hierarchy::behavior::BehaviourEntity`
 
 Required ports:
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::visualization::VisualizableWithProperties
@@ -640,6 +756,9 @@ Refines: `forsyde::io::lib::hierarchy::visualization::Visualizable`
 
 Required ports:
 
+Required properties:
+
+- **visualizedPropertiesNames:** .
 
 ### forsyde::io::lib::hierarchy::behavior::moc::MoCEntity
 
@@ -648,6 +767,8 @@ No description exists.
 Refines:
 
 Required ports:
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::platform::hardware::InstrumentedProcessingModule
@@ -666,6 +787,9 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModu
 
 Required ports:
 
+Required properties:
+
+- **modalInstructionsPerCycle:** .
 
 ### forsyde::io::lib::hierarchy::behavior::execution::Stimulator
 
@@ -675,8 +799,9 @@ Refines:
 
 Required ports:
 
-- activated:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable` vertices connected by `forsyde::io::lib::hierarchy::behavior::execution::EventEdge` edges.
+- **activated**:  multiple `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable` vertices connected by `forsyde::io::lib::hierarchy::behavior::execution::EventEdge` edges.
+  Required properties:
+
 
 ### forsyde::io::lib::hierarchy::visualization::GreyBox
 
@@ -686,8 +811,9 @@ Refines: `forsyde::io::lib::hierarchy::visualization::Visualizable`
 
 Required ports:
 
-- contained:
-  -  multiple `forsyde::io::lib::hierarchy::visualization::Visualizable` vertices connected by `forsyde::io::lib::hierarchy::visualization::VisualContainment` edges.
+- **contained**:  multiple `forsyde::io::lib::hierarchy::visualization::Visualizable` vertices connected by `forsyde::io::lib::hierarchy::visualization::VisualContainment` edges.
+  Required properties:
+
 
 ### forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess
 
@@ -699,13 +825,17 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`
 
 Required ports:
 
+Required properties:
+
+- **outputPorts:** .
+- **inputPorts:** .
 
 ### forsyde::io::lib::hierarchy::implementation::code::HasLLVMIRImplementations
 
 This trait enforces the vertex to have at least one inlined LLVM implementation.
 
 There can be more than one, discriminted by a label for each inlined source code.
-For example, a vetex can have a chunck of code with the label "riscv" for RISC-V
+For example, a vertex can have a chunck of code with the label "riscv" for RISC-V
 based processors and one with label "cude" to be implemented directly in a CUDA
 based flow, whenever possible.
 
@@ -715,6 +845,12 @@ Refines:
 
 Required ports:
 
+Required properties:
+
+- **outputArgumentPorts:** .
+- **returnPort:** .
+- **inlinedLLVMIR:** .
+- **inputArgumentPorts:** .
 
 ### forsyde::io::lib::hierarchy::behavior::basic::Plus
 
@@ -724,19 +860,23 @@ Refines: `forsyde::io::lib::hierarchy::behavior::basic::BasicOperation`
 
 Required ports:
 
-- outputs:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices.
-- inputs:
-  -  multiple `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices.
+- **outputs**:  multiple `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices.
+- **inputs**:  multiple `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices.
+  Required properties:
+
 
 ### forsyde::io::lib::hierarchy::behavior::execution::Upsample
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
 
 Required ports:
 
+Required properties:
+
+- **initialPredecessorHolds:** .
+- **repetitivePredecessorHolds:** .
 
 ### forsyde::io::lib::hierarchy::platform::runtime::FixedPriorityScheduledRuntime
 
@@ -753,5 +893,12 @@ Refines: `forsyde::io::lib::hierarchy::platform::runtime::AbstractRuntime`
 
 Required ports:
 
+Required properties:
+
+- **minimumActivationInSecsNumerator:** .
+- **minimumActivationInSecsDenominator:** .
+- **allowsInterCoreMigration:** .
+- **priorityAssignments:** .
+- **supportsPreemption:** .
 
 
