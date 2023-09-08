@@ -39,6 +39,10 @@ public interface HasSpecCatalogGeneration {
             output.append(" - **").append(e.getKey()).append("**: ");
             if (e.getValue().incoming && e.getValue().outgoing) {
                 output.append(" A bidirectional port of ");
+            } else if (e.getValue().incoming) {
+                output.append(" An incoming port of ");
+            } else if (e.getValue().outgoing) {
+                output.append(" An outgoing port of ");
             }
             if (e.getValue().multiple && !e.getValue().optional) {
                 output.append(" multiple ");
@@ -49,6 +53,7 @@ public interface HasSpecCatalogGeneration {
             }
             output.append(".\n");
         }
+        output.append("\n\n");
         output.append("Required properties:").append("\n\n");
         for (var e : vertexTraitSpec.requiredProperties.entrySet()) {
             output.append(" - **").append(e.getKey()).append(":** ");

@@ -84,13 +84,15 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     var buf = ForSyDeHierarchy.RegisterArrayLike.enforce(systemGraph, v);
                     buf.elementSizeInBits((Long) v.getProperty("tokenSizeInBits"));
                 }
-                if (vt.getName().endsWith("ANSICBlackBoxExecutable") || vt.getName().endsWith("HasANSICImplementation")) {
+                if (!vt.refines(ForSyDeHierarchy.VertexTraits.HasANSICImplementations) && (vt.getName().endsWith("ANSICBlackBoxExecutable") || vt.getName().endsWith("HasANSICImplementation"))) {
                     var impl = ForSyDeHierarchy.HasANSICImplementations.enforce(systemGraph, v);
                     impl.inlinedCodes().put("generic", (String) v.getProperty("inlinedCode"));
                     var f = ForSyDeHierarchy.FunctionLikeEntity.enforce(systemGraph, v);
                     f.inputPorts((List<String>) v.getProperty("inputArgumentPorts"));
-                    f.outputPorts((List<String>) v.getProperty("outputArgumentPorts"));
-                    f.outputPorts().add((String) v.getProperty("returnPort"));
+                    var outputs = new ArrayList<String>();
+                    outputs.addAll((List<String>) v.getProperty("outputArgumentPorts"));
+                    outputs.add((String) v.getProperty("returnPort"));
+                    f.outputPorts(outputs);
                 }
                 if (vt.getName().contains("Executable")) {
                     var f = ForSyDeHierarchy.FunctionLikeEntity.enforce(systemGraph, v);
