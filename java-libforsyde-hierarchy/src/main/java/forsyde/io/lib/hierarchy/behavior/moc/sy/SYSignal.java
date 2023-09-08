@@ -24,7 +24,7 @@ public interface SYSignal extends MoCEntity {
 
     @InPort
     @WithEdgeTrait(SYNetworkEdge.class)
-    SYProcess producer();
+    Optional<SYProcess> producer();
 
     @OutPort
     @WithEdgeTrait(SYNetworkEdge.class)
