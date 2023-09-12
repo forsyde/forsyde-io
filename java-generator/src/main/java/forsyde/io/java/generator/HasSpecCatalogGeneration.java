@@ -1,6 +1,7 @@
 package forsyde.io.java.generator;
 
 import forsyde.io.java.generator.specs.EdgeTraitSpec;
+import forsyde.io.java.generator.specs.PropertyTypeSpec;
 import forsyde.io.java.generator.specs.TraitHierarchySpec;
 import forsyde.io.java.generator.specs.VertexTraitSpec;
 
@@ -56,7 +57,8 @@ public interface HasSpecCatalogGeneration {
         output.append("\n\n");
         output.append("Required properties:").append("\n\n");
         for (var e : vertexTraitSpec.requiredProperties.entrySet()) {
-            output.append(" - **").append(e.getKey()).append(":** ");
+            output.append(" - **").append(e.getKey()).append("** (`").append(e.getValue().type != null ? getMarkdownDocumentation(e.getValue().type) : "Anything").append("`): ");
+            output.append(e.getValue().htmlDescription != null && !e.getValue().htmlDescription.isBlank() ? e.getValue().htmlDescription : "No description exists. ");
             output.append(".\n");
         }
         return output.toString();
@@ -69,5 +71,22 @@ public interface HasSpecCatalogGeneration {
         output.append(edgeTraitSpec.htmlDescription != null ? edgeTraitSpec.htmlDescription : "No description exists.").append("\n\n");
         output.append("#".repeat(Math.max(0, headerLevel + 1))).append(" ");
         return output.toString();
+    }
+
+    default String getMarkdownDocumentation(PropertyTypeSpec propertyTypeSpec) {
+        if (propertyTypeSpec instanceof PropertyTypeSpec.MapPropertyType mapPropertyType) {
+            return "Map<" + mapPropertyType.getKeyType().map(this::getMarkdownDocumentation).orElse("Anything") + "," + mapPropertyType.getValueType().map(this::getMarkdownDocumentation).orElse("Anything") + ">";
+        } else if (propertyTypeSpec instanceof PropertyTypeSpec.ArrayPropertyType arrayPropertyType) {
+            return "Array<" + arrayPropertyType.getValueType().map(this::getMarkdownDocumentation).orElse("Anything") + ">";
+        } else if (propertyTypeSpec instanceof PropertyTypeSpec.IntegerPropertyType integerPropertyType) {
+            return "Integer<" + integerPropertyType.bits + " bits, " + (integerPropertyType.unsigned ? "unsigned" : "signed") + ">";
+        } else if (propertyTypeSpec instanceof PropertyTypeSpec.RealPropertyType realPropertyType) {
+            return "Real<" + realPropertyType.bits + " bits>";
+        } else if (propertyTypeSpec instanceof PropertyTypeSpec.StringPropertyType stringPropertyType) {
+            return "String";
+        } else if (propertyTypeSpec instanceof PropertyTypeSpec.BooleanPropertyType booleanPropertyType) {
+            return "Boolean";
+        }
+        return "Anything";
     }
 }

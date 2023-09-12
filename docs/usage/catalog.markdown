@@ -15,12 +15,14 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`
 
 Required ports:
 
-- **tokenDataType**: `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
-- **producer**: `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFActor` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFNetworkEdge` edges.
-- **consumer**: `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFActor` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFNetworkEdge` edges.
-  Required properties:
+- **tokenDataType**:  An outgoing port of `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+- **producer**:  An incoming port of `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFActor` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFNetworkEdge` edges.
+- **consumer**:  An outgoing port of `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFActor` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFNetworkEdge` edges.
 
-- **numInitialTokens:** .
+
+Required properties:
+
+- **numInitialTokens** (`Integer<32 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::implementation::functional::BoundedBufferLike
 
@@ -33,9 +35,11 @@ Refines: `forsyde::io::lib::hierarchy::implementation::functional::BufferLike`
 
 Required ports:
 
+
+
 Required properties:
 
-- **maxElements:** .
+- **maxElements** (`Integer<32 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity
 
@@ -45,10 +49,12 @@ Refines:
 
 Required ports:
 
+
+
 Required properties:
 
-- **outputPorts:** .
-- **inputPorts:** .
+- **outputPorts** (`Array<String>`): No description exists. .
+- **inputPorts** (`Array<String>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::implementation::code::HasANSICImplementations
 
@@ -65,12 +71,14 @@ Refines:
 
 Required ports:
 
+
+
 Required properties:
 
-- **outputArgumentPorts:** .
-- **returnPort:** .
-- **inlinedCodes:** .
-- **inputArgumentPorts:** .
+- **outputArgumentPorts** (`Array<String>`): No description exists. .
+- **returnPort** (`Anything`): No description exists. .
+- **inlinedCodes** (`Map<String,String>`): No description exists. .
+- **inputArgumentPorts** (`Array<String>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::visualization::Visualizable
 
@@ -79,6 +87,8 @@ No description exists.
 Refines:
 
 Required ports:
+
+
 
 Required properties:
 
@@ -94,9 +104,11 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModu
 
 Required ports:
 
+
+
 Required properties:
 
-- **maxUtilization:** .
+- **maxUtilization** (`Real<64 bits>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::parallel::InterleaveV
 
@@ -110,12 +122,14 @@ Refines: `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton`
 
 Required ports:
 
-- **inputArray**: `forsyde::io::lib::hierarchy::behavior::parallel::Vectorizable` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
-- **outputArrayOfArray**: `forsyde::io::lib::hierarchy::behavior::parallel::Vectorizable` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
-  Required properties:
+- **inputArray**:  An incoming port of `forsyde::io::lib::hierarchy::behavior::parallel::Vectorizable` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
+- **outputArrayOfArray**:  An outgoing port of `forsyde::io::lib::hierarchy::behavior::parallel::Vectorizable` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
 
-- **stride:** .
-- **radius:** .
+
+Required properties:
+
+- **stride** (`Integer<32 bits, signed>`): No description exists. .
+- **radius** (`Integer<32 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::decision::sdf::AnalyzedActor
 
@@ -127,10 +141,12 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFActor`
 
 Required ports:
 
+
+
 Required properties:
 
-- **setThroughputInSecsDenominator:** .
-- **setThroughputInSecsNumerator:** .
+- **setThroughputInSecsDenominator** (`Integer<64 bits, signed>`): No description exists. .
+- **setThroughputInSecsNumerator** (`Integer<64 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::decision::ConcurrentSlotsReserved
 
@@ -143,9 +159,11 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::GenericCommunicationM
 
 Required ports:
 
+
+
 Required properties:
 
-- **slotReservations:** .
+- **slotReservations** (`Array<Array<String>>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::execution::CommunicatingTask
 
@@ -155,10 +173,12 @@ Refines: `forsyde::io::lib::hierarchy::behavior::execution::Task`
 
 Required ports:
 
+
+
 Required properties:
 
-- **portDataReadSize:** .
-- **portDataWrittenSize:** .
+- **portDataReadSize** (`Map<String,Integer<64 bits, signed>>`): No description exists. .
+- **portDataWrittenSize** (`Map<String,Integer<64 bits, signed>>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::platform::hardware::HardwareModule
 
@@ -171,6 +191,8 @@ for all traits relevant to the hardware parts of a platform.
 Refines:
 
 Required ports:
+
+
 
 Required properties:
 
@@ -189,9 +211,11 @@ Refines: `forsyde::io::lib::hierarchy::implementation::functional::RegisterLike`
 
 Required ports:
 
+
+
 Required properties:
 
-- **elementSizeInBits:** .
+- **elementSizeInBits** (`Integer<64 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::moc::sy::SYSignal
 
@@ -205,10 +229,12 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`
 
 Required ports:
 
-- **dataType**: `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
-- **producer**: `forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
-- **consumers**:  multiple `forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
-  Required properties:
+- **dataType**:  An outgoing port of `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+- **producer**:  An incoming port of `forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
+- **consumers**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
+
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::decision::MemoryMapped
@@ -222,8 +248,10 @@ Refines:
 
 Required ports:
 
-- **mappingHost**: `forsyde::io::lib::hierarchy::platform::hardware::GenericMemoryModule` vertices.
-  Required properties:
+- **mappingHost**:  An outgoing port of `forsyde::io::lib::hierarchy::platform::hardware::GenericMemoryModule` vertices.
+
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::implementation::functional::RegisterLike
@@ -241,9 +269,11 @@ Refines:
 
 Required ports:
 
+
+
 Required properties:
 
-- **sizeInBits:** .
+- **sizeInBits** (`Integer<64 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFActor
 
@@ -253,11 +283,13 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`
 
 Required ports:
 
-- **combFunctions**:  multiple `forsyde::io::lib::hierarchy::behavior::BehaviourEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
-  Required properties:
+- **combFunctions**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::behavior::BehaviourEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
 
-- **production:** .
-- **consumption:** .
+
+Required properties:
+
+- **production** (`Map<String,Integer<32 bits, signed>>`): No description exists. .
+- **consumption** (`Map<String,Integer<32 bits, signed>>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::DataTypeLike
 
@@ -268,6 +300,8 @@ of a data type, whether an array, a record, a composition of both etc.
 Refines:
 
 Required ports:
+
+
 
 Required properties:
 
@@ -290,12 +324,14 @@ Refines: `forsyde::io::lib::hierarchy::behavior::DataTypeLike`
 
 Required ports:
 
-- **producer**: `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
-- **arrayItemType**: `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
-- **consumers**:  multiple `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
-  Required properties:
+- **producer**:  An incoming port of `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
+- **arrayItemType**:  An outgoing port of `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+- **consumers**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges.
 
-- **dimensions:** .
+
+Required properties:
+
+- **dimensions** (`Array<Integer<32 bits, signed>>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::platform::hardware::DigitalModule
 
@@ -307,9 +343,11 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::HardwareModule`
 
 Required ports:
 
+
+
 Required properties:
 
-- **operatingFrequencyInHertz:** .
+- **operatingFrequencyInHertz** (`Integer<64 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::platform::runtime::TimeDivisionMultiplexingRuntime
 
@@ -324,13 +362,15 @@ Refines: `forsyde::io::lib::hierarchy::platform::runtime::AbstractRuntime`
 
 Required ports:
 
+
+
 Required properties:
 
-- **frameSizeInClockCycles:** .
-- **maximumTimeSliceInClockCycles:** .
-- **timeSliceProcess:** .
-- **timeSlicesSizesInClockCycles:** .
-- **minimumTimeSliceInClockCycles:** .
+- **frameSizeInClockCycles** (`Integer<64 bits, signed>`): No description exists. .
+- **maximumTimeSliceInClockCycles** (`Integer<64 bits, signed>`): No description exists. .
+- **timeSliceProcess** (`Array<String>`): No description exists. .
+- **timeSlicesSizesInClockCycles** (`Array<Integer<64 bits, signed>>`): No description exists. .
+- **minimumTimeSliceInClockCycles** (`Integer<64 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::parallel::ReduceV
 
@@ -350,11 +390,13 @@ Refines: `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton`
 
 Required ports:
 
-- **kernels**:  multiple `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
-  Required properties:
+- **kernels**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
 
-- **inputArray:** .
-- **outputScalar:** .
+
+Required properties:
+
+- **inputArray** (`String`): No description exists. .
+- **outputScalar** (`String`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::decision::Scheduled
 
@@ -367,8 +409,10 @@ Refines:
 
 Required ports:
 
-- **runtimeHost**: `forsyde::io::lib::hierarchy::platform::runtime::AbstractRuntime` vertices.
-  Required properties:
+- **runtimeHost**:  An outgoing port of `forsyde::io::lib::hierarchy::platform::runtime::AbstractRuntime` vertices.
+
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::behavior::BehaviourEntity
@@ -378,6 +422,8 @@ No description exists.
 Refines:
 
 Required ports:
+
+
 
 Required properties:
 
@@ -392,9 +438,11 @@ Refines:
 
 Required ports:
 
+
+
 Required properties:
 
-- **elementSizeInBits:** .
+- **elementSizeInBits** (`Integer<64 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::execution::ContinousStimulator
 
@@ -406,10 +454,12 @@ Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
 
 Required ports:
 
+
+
 Required properties:
 
-- **initialLatencyNumerator:** .
-- **initialLatencyDenominator:** .
+- **initialLatencyNumerator** (`Integer<64 bits, signed>`): No description exists. .
+- **initialLatencyDenominator** (`Integer<64 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModule
 
@@ -429,9 +479,11 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::DigitalModule`
 
 Required ports:
 
+
+
 Required properties:
 
-- **maximumComputationParallelism:** .
+- **maximumComputationParallelism** (`Integer<32 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton
 
@@ -447,6 +499,8 @@ Refines: `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity`
 
 Required ports:
 
+
+
 Required properties:
 
 
@@ -458,12 +512,14 @@ Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
 
 Required ports:
 
+
+
 Required properties:
 
-- **offsetDenominator:** .
-- **periodDenominator:** .
-- **offsetNumerator:** .
-- **periodNumerator:** .
+- **offsetDenominator** (`Integer<64 bits, signed>`): No description exists. .
+- **periodDenominator** (`Integer<64 bits, signed>`): No description exists. .
+- **offsetNumerator** (`Integer<64 bits, signed>`): No description exists. .
+- **periodNumerator** (`Integer<64 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::parallel::MapV
 
@@ -485,11 +541,13 @@ Refines: `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton`
 
 Required ports:
 
-- **kernels**:  multiple `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
-  Required properties:
+- **kernels**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
 
-- **outputPorts:** .
-- **inputPorts:** .
+
+Required properties:
+
+- **outputPorts** (`Array<String>`): No description exists. .
+- **inputPorts** (`Array<String>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::execution::Task
 
@@ -498,6 +556,8 @@ No description exists.
 Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
 
 Required ports:
+
+
 
 Required properties:
 
@@ -522,8 +582,10 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess`
 
 Required ports:
 
-- **combFunctions**:  multiple `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
-  Required properties:
+- **combFunctions**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges.
+
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::behavior::moc::sy::SYDelay
@@ -542,9 +604,11 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess`
 
 Required ports:
 
-- **input**: `forsyde::io::lib::hierarchy::behavior::moc::sy::SYSignal` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
-- **delayed**: `forsyde::io::lib::hierarchy::behavior::moc::sy::SYSignal` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
-  Required properties:
+- **input**:  An incoming port of `forsyde::io::lib::hierarchy::behavior::moc::sy::SYSignal` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
+- **delayed**:  An outgoing port of `forsyde::io::lib::hierarchy::behavior::moc::sy::SYSignal` vertices connected by `forsyde::io::lib::hierarchy::behavior::moc::sy::SYNetworkEdge` edges.
+
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::platform::hardware::GenericCommunicationModule
@@ -563,6 +627,8 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::DigitalModule`
 
 Required ports:
 
+
+
 Required properties:
 
 
@@ -574,10 +640,12 @@ Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `fors
 
 Required ports:
 
+
+
 Required properties:
 
-- **repetitivePredecessorSkips:** .
-- **initialPredecessorSkips:** .
+- **repetitivePredecessorSkips** (`Integer<64 bits, signed>`): No description exists. .
+- **initialPredecessorSkips** (`Integer<64 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::implementation::functional::InstrumentedBehaviour
 
@@ -587,10 +655,12 @@ Refines: `forsyde::io::lib::hierarchy::behavior::BehaviourEntity`
 
 Required ports:
 
+
+
 Required properties:
 
-- **computationalRequirements:** .
-- **maxSizeInBits:** .
+- **computationalRequirements** (`Map<String,Map<String,Integer<64 bits, signed>>>`): No description exists. .
+- **maxSizeInBits** (`Map<String,Integer<64 bits, signed>>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::implementation::synthetizable::PeriodicTask
 
@@ -602,13 +672,15 @@ Refines: `forsyde::io::lib::hierarchy::behavior::execution::Task`
 
 Required ports:
 
-- **incomingStimulators**:  multiple `forsyde::io::lib::hierarchy::behavior::execution::PeriodicStimulator` vertices.
-  Required properties:
+- **incomingStimulators**:  An incoming port of  multiple `forsyde::io::lib::hierarchy::behavior::execution::PeriodicStimulator` vertices.
 
-- **offsetNumerators:** .
-- **offsetDenominators:** .
-- **periodDenominators:** .
-- **periodNumerators:** .
+
+Required properties:
+
+- **offsetNumerators** (`Array<Integer<64 bits, signed>>`): No description exists. .
+- **offsetDenominators** (`Array<Integer<64 bits, signed>>`): No description exists. .
+- **periodDenominators** (`Array<Integer<64 bits, signed>>`): No description exists. .
+- **periodNumerators** (`Array<Integer<64 bits, signed>>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::platform::runtime::SuperLoopRuntime
 
@@ -623,9 +695,11 @@ Refines: `forsyde::io::lib::hierarchy::platform::runtime::AbstractRuntime`
 
 Required ports:
 
+
+
 Required properties:
 
-- **superLoopEntries:** .
+- **superLoopEntries** (`Array<String>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::execution::Stimulatable
 
@@ -635,10 +709,12 @@ Refines:
 
 Required ports:
 
-- **activators**:  multiple `forsyde::io::lib::hierarchy::behavior::execution::Stimulator` vertices connected by `forsyde::io::lib::hierarchy::behavior::execution::EventEdge` edges.
-  Required properties:
+- **activators**:  An incoming port of  multiple `forsyde::io::lib::hierarchy::behavior::execution::Stimulator` vertices connected by `forsyde::io::lib::hierarchy::behavior::execution::EventEdge` edges.
 
-- **hasORSemantics:** .
+
+Required properties:
+
+- **hasORSemantics** (`Boolean`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::platform::hardware::Structure
 
@@ -653,8 +729,10 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::HardwareModule`
 
 Required ports:
 
-- **containedModules**:  multiple `forsyde::io::lib::hierarchy::platform::hardware::HardwareModule` vertices connected by `forsyde::io::lib::hierarchy::platform::hardware::StructuralContainment` edges.
-  Required properties:
+- **containedModules**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::platform::hardware::HardwareModule` vertices connected by `forsyde::io::lib::hierarchy::platform::hardware::StructuralContainment` edges.
+
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::platform::hardware::InstrumentedCommunicationModule
@@ -674,12 +752,14 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::GenericCommunicationM
 
 Required ports:
 
+
+
 Required properties:
 
-- **maxCyclesPerFlit:** .
-- **flitSizeInBits:** .
-- **initialLatency:** .
-- **maxConcurrentFlits:** .
+- **maxCyclesPerFlit** (`Integer<32 bits, signed>`): No description exists. .
+- **flitSizeInBits** (`Integer<64 bits, signed>`): No description exists. .
+- **initialLatency** (`Integer<64 bits, signed>`): No description exists. .
+- **maxConcurrentFlits** (`Integer<32 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::platform::hardware::GenericMemoryModule
 
@@ -702,9 +782,11 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::DigitalModule`
 
 Required ports:
 
+
+
 Required properties:
 
-- **spaceInBits:** .
+- **spaceInBits** (`Integer<64 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::platform::runtime::AbstractRuntime
 
@@ -719,9 +801,11 @@ Refines:
 
 Required ports:
 
-- **managed**:  multiple `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModule` vertices.
-- **host**: `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModule` vertices.
-  Required properties:
+- **managed**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModule` vertices.
+- **host**:  An outgoing port of `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModule` vertices.
+
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::behavior::execution::LoopingTask
@@ -732,9 +816,11 @@ Refines: `forsyde::io::lib::hierarchy::behavior::execution::Task`
 
 Required ports:
 
-- **loopSequence**:  multiple `forsyde::io::lib::hierarchy::behavior::BehaviourEntity` vertices.
-- **initSequence**:  multiple `forsyde::io::lib::hierarchy::behavior::BehaviourEntity` vertices.
-  Required properties:
+- **loopSequence**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::behavior::BehaviourEntity` vertices.
+- **initSequence**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::behavior::BehaviourEntity` vertices.
+
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::behavior::basic::BasicOperation
@@ -744,6 +830,8 @@ No description exists.
 Refines: `forsyde::io::lib::hierarchy::behavior::BehaviourEntity`
 
 Required ports:
+
+
 
 Required properties:
 
@@ -756,9 +844,11 @@ Refines: `forsyde::io::lib::hierarchy::visualization::Visualizable`
 
 Required ports:
 
+
+
 Required properties:
 
-- **visualizedPropertiesNames:** .
+- **visualizedPropertiesNames** (`Array<String>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::moc::MoCEntity
 
@@ -767,6 +857,8 @@ No description exists.
 Refines:
 
 Required ports:
+
+
 
 Required properties:
 
@@ -787,9 +879,11 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModu
 
 Required ports:
 
+
+
 Required properties:
 
-- **modalInstructionsPerCycle:** .
+- **modalInstructionsPerCycle** (`Map<String,Map<String,Real<64 bits>>>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::execution::Stimulator
 
@@ -799,8 +893,10 @@ Refines:
 
 Required ports:
 
-- **activated**:  multiple `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable` vertices connected by `forsyde::io::lib::hierarchy::behavior::execution::EventEdge` edges.
-  Required properties:
+- **activated**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable` vertices connected by `forsyde::io::lib::hierarchy::behavior::execution::EventEdge` edges.
+
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::visualization::GreyBox
@@ -811,8 +907,10 @@ Refines: `forsyde::io::lib::hierarchy::visualization::Visualizable`
 
 Required ports:
 
-- **contained**:  multiple `forsyde::io::lib::hierarchy::visualization::Visualizable` vertices connected by `forsyde::io::lib::hierarchy::visualization::VisualContainment` edges.
-  Required properties:
+- **contained**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::visualization::Visualizable` vertices connected by `forsyde::io::lib::hierarchy::visualization::VisualContainment` edges.
+
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::behavior::moc::sy::SYProcess
@@ -825,10 +923,12 @@ Refines: `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`
 
 Required ports:
 
+
+
 Required properties:
 
-- **outputPorts:** .
-- **inputPorts:** .
+- **outputPorts** (`Array<String>`): No description exists. .
+- **inputPorts** (`Array<String>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::implementation::code::HasLLVMIRImplementations
 
@@ -845,12 +945,14 @@ Refines:
 
 Required ports:
 
+
+
 Required properties:
 
-- **outputArgumentPorts:** .
-- **returnPort:** .
-- **inlinedLLVMIR:** .
-- **inputArgumentPorts:** .
+- **outputArgumentPorts** (`Map<String,String>`): No description exists. .
+- **returnPort** (`Map<String,String>`): No description exists. .
+- **inlinedLLVMIR** (`Map<String,String>`): No description exists. .
+- **inputArgumentPorts** (`Map<String,String>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::behavior::basic::Plus
 
@@ -860,9 +962,11 @@ Refines: `forsyde::io::lib::hierarchy::behavior::basic::BasicOperation`
 
 Required ports:
 
-- **outputs**:  multiple `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices.
-- **inputs**:  multiple `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices.
-  Required properties:
+- **outputs**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices.
+- **inputs**:  An incoming port of  multiple `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices.
+
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::behavior::execution::Upsample
@@ -873,10 +977,12 @@ Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `fors
 
 Required ports:
 
+
+
 Required properties:
 
-- **initialPredecessorHolds:** .
-- **repetitivePredecessorHolds:** .
+- **initialPredecessorHolds** (`Integer<64 bits, signed>`): No description exists. .
+- **repetitivePredecessorHolds** (`Integer<64 bits, signed>`): No description exists. .
 
 ### forsyde::io::lib::hierarchy::platform::runtime::FixedPriorityScheduledRuntime
 
@@ -893,12 +999,14 @@ Refines: `forsyde::io::lib::hierarchy::platform::runtime::AbstractRuntime`
 
 Required ports:
 
+
+
 Required properties:
 
-- **minimumActivationInSecsNumerator:** .
-- **minimumActivationInSecsDenominator:** .
-- **allowsInterCoreMigration:** .
-- **priorityAssignments:** .
-- **supportsPreemption:** .
+- **minimumActivationInSecsNumerator** (`Integer<32 bits, signed>`): No description exists. .
+- **minimumActivationInSecsDenominator** (`Integer<32 bits, signed>`): No description exists. .
+- **allowsInterCoreMigration** (`Boolean`): No description exists. .
+- **priorityAssignments** (`Map<String,Integer<32 bits, signed>>`): No description exists. .
+- **supportsPreemption** (`Boolean`): No description exists. .
 
 

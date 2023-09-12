@@ -10,6 +10,25 @@ import java.util.Optional;
 
 public abstract class PropertyTypeSpec {
 
+    abstract public String getCategory();
+
+    public Optional<PropertyTypeSpec> getValueType() {
+        if (this instanceof ArrayPropertyType arrayPropertyType) {
+            return Optional.of(arrayPropertyType.valueType);
+        } else if (this instanceof MapPropertyType mapPropertyType) {
+            return Optional.of(mapPropertyType.valueType);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<PropertyTypeSpec> getKeyType() {
+        if (this instanceof MapPropertyType mapPropertyType) {
+            return Optional.of(mapPropertyType.keyType);
+        }
+        return Optional.empty();
+    }
+
+
     @JsonSerialize
     public static class IntegerPropertyType extends PropertyTypeSpec {
         public int bits = 32;
@@ -18,6 +37,11 @@ public abstract class PropertyTypeSpec {
         public IntegerPropertyType(int bits, boolean unsigned) {
             this.bits = bits;
             this.unsigned = unsigned;
+        }
+
+        @Override
+        public String getCategory() {
+            return "Integer";
         }
     }
 
@@ -28,16 +52,29 @@ public abstract class PropertyTypeSpec {
         public RealPropertyType(int bits) {
             this.bits = bits;
         }
+
+        @Override
+        public String getCategory() {
+            return "Real";
+        }
     }
 
     @JsonSerialize
     public static class BooleanPropertyType extends PropertyTypeSpec {
 
+        @Override
+        public String getCategory() {
+            return "Boolean";
+        }
     }
 
     @JsonSerialize
     public static class StringPropertyType extends PropertyTypeSpec {
 
+        @Override
+        public String getCategory() {
+            return "String";
+        }
     }
 
     @JsonSerialize
@@ -46,6 +83,15 @@ public abstract class PropertyTypeSpec {
         PropertyTypeSpec valueType;
 
         public ArrayPropertyType(PropertyTypeSpec valueType) {
+            this.valueType = valueType;
+        }
+
+        @Override
+        public String getCategory() {
+            return "Array";
+        }
+
+        public void setValueType(PropertyTypeSpec valueType) {
             this.valueType = valueType;
         }
     }
@@ -59,6 +105,19 @@ public abstract class PropertyTypeSpec {
 
         public MapPropertyType(PropertyTypeSpec keyType, PropertyTypeSpec valueType) {
             this.keyType = keyType;
+            this.valueType = valueType;
+        }
+
+        @Override
+        public String getCategory() {
+            return "Map";
+        }
+
+        public void setKeyType(PropertyTypeSpec keyType) {
+            this.keyType = keyType;
+        }
+
+        public void setValueType(PropertyTypeSpec valueType) {
             this.valueType = valueType;
         }
     }

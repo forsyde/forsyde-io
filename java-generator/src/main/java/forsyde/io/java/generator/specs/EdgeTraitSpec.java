@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "canonicalName")
 public class EdgeTraitSpec {
 
     public String canonicalName;
@@ -17,7 +17,7 @@ public class EdgeTraitSpec {
     public String htmlDescription = "";
     @JsonAlias("refined_traits")
     @JsonIdentityReference(alwaysAsId = true)
-    @JsonSerialize(contentAs = VertexTraitSpec.class)
+    @JsonSerialize(contentAs = EdgeTraitSpec.class)
     public Set<EdgeTraitSpec> refinedTraits = new HashSet<>();
     public transient List<String> absoluteRefinedTraitNames = new ArrayList<>();
     public transient List<String> relativeRefinedTraitNames = new ArrayList<>();

@@ -1,5 +1,7 @@
 package forsyde.io.java.generator;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.squareup.javapoet.*;
 import forsyde.io.core.*;
 import forsyde.io.core.VertexTrait;
@@ -58,6 +60,7 @@ public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpe
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        var objectMapper = new ObjectMapper().registerModule(new Jdk8Module());
         var elementsToHierarchies = new HashMap<TypeElement, TraitHierarchySpec>();
         var elementsToVertexSpecs = new HashMap<TypeElement, VertexTraitSpec>();
         var elementsToEdgeSpecs = new HashMap<TypeElement, EdgeTraitSpec>();
@@ -131,6 +134,17 @@ public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpe
             } catch (FilerException ignored) {
 //
             }
+            for (var hierarchy : elementsToHierarchies.values()) {
+                try {
+                    var res = processingEnv.getFiler().createResource(StandardLocation.SOURCE_OUTPUT, "", hierarchy.getJavaCanonicalName() + ".json");
+                    try (var oWriter = res.openWriter()) {
+                        oWriter.write(objectMapper.writeValueAsString(hierarchy));
+                    }
+                } catch (FilerException ignored) {
+//
+                }
+            }
+
 //            try {
 //                var res = processingEnv.getFiler().getResource(StandardLocation.ANNOTATION_PROCESSOR_PATH, "", "java-generated-hierarchies.md");
 //                res.delete();

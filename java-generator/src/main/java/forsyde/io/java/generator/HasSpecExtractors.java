@@ -5,20 +5,16 @@ import forsyde.io.core.annotations.InPort;
 import forsyde.io.core.annotations.OutPort;
 import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.WithEdgeTrait;
-import forsyde.io.java.generator.specs.EdgeTraitSpec;
-import forsyde.io.java.generator.specs.PortSpec;
-import forsyde.io.java.generator.specs.PropertySpec;
-import forsyde.io.java.generator.specs.TraitHierarchySpec;
-import forsyde.io.java.generator.specs.VertexTraitSpec;
+import forsyde.io.java.generator.specs.*;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import javax.lang.model.type.PrimitiveType;
+import javax.lang.model.type.TypeMirror;
+import java.lang.reflect.ParameterizedType;
+import java.util.*;
 
 public interface HasSpecExtractors {
 
@@ -140,6 +136,47 @@ public interface HasSpecExtractors {
                     "if (!getViewedVertex().hasProperty(\"%s\")) getViewedVertex().putProperty(\"%s\", %s.super.%s())"
                             .formatted(propSpec.name, propSpec.name, clsName, propSpec.name));
         }
+        var propTypeSpec = extractPropertyTypeSpecFromTypeMirror(processingEnv, executableElement.getReturnType());
+        if (propTypeSpec != null) {
+            propSpec.type = propTypeSpec;
+        }
         return propSpec;
+    }
+
+    private PropertyTypeSpec extractPropertyTypeSpecFromTypeMirror(final ProcessingEnvironment processingEnv, final TypeMirror typeMirror) {
+        var setT = processingEnv.getElementUtils().getTypeElement(Set.class.getCanonicalName());
+        var listT = processingEnv.getElementUtils().getTypeElement(List.class.getCanonicalName());
+        var mapT = processingEnv.getElementUtils().getTypeElement(Map.class.getCanonicalName());
+        var stringT = processingEnv.getElementUtils().getTypeElement(String.class.getCanonicalName());
+        var intT = processingEnv.getElementUtils().getTypeElement(Integer.class.getCanonicalName());
+        var longT = processingEnv.getElementUtils().getTypeElement(Long.class.getCanonicalName());
+        var floatT = processingEnv.getElementUtils().getTypeElement(Float.class.getCanonicalName());
+        var doubleT = processingEnv.getElementUtils().getTypeElement(Double.class.getCanonicalName());
+        var booleanT = processingEnv.getElementUtils().getTypeElement(Boolean.class.getCanonicalName());
+        if (typeMirror instanceof DeclaredType declaredType) {
+            if (processingEnv.getTypeUtils().isAssignable(declaredType.asElement().asType(), setT.asType()) || processingEnv.getTypeUtils().isAssignable(declaredType.asElement().asType(), listT.asType())) {
+                var innerType = extractPropertyTypeSpecFromTypeMirror(processingEnv, declaredType.getTypeArguments().get(0));
+                return new PropertyTypeSpec.ArrayPropertyType(innerType);
+            } else if (processingEnv.getTypeUtils().isAssignable(declaredType.asElement().asType(), mapT.asType())) {
+                var keyType = extractPropertyTypeSpecFromTypeMirror(processingEnv, declaredType.getTypeArguments().get(0));
+                var valType = extractPropertyTypeSpecFromTypeMirror(processingEnv, declaredType.getTypeArguments().get(1));
+                return new PropertyTypeSpec.MapPropertyType(keyType, valType);
+            } else if (processingEnv.getTypeUtils().isSubtype(typeMirror, stringT.asType())) {
+                return new PropertyTypeSpec.StringPropertyType();
+            } else if (processingEnv.getTypeUtils().isSubtype(typeMirror, intT.asType())) {
+                return new PropertyTypeSpec.IntegerPropertyType(32, false);
+            } else if (processingEnv.getTypeUtils().isSubtype(typeMirror, longT.asType())) {
+                return new PropertyTypeSpec.IntegerPropertyType(64, false);
+            } else if (processingEnv.getTypeUtils().isSubtype(typeMirror, floatT.asType())) {
+                return new PropertyTypeSpec.RealPropertyType(32);
+            } else if (processingEnv.getTypeUtils().isSubtype(typeMirror, doubleT.asType())) {
+                return new PropertyTypeSpec.RealPropertyType(64);
+            } else if (processingEnv.getTypeUtils().isSubtype(typeMirror, booleanT.asType())) {
+                return new PropertyTypeSpec.BooleanPropertyType();
+            }
+        } else if (typeMirror instanceof PrimitiveType primitiveType) {
+            return extractPropertyTypeSpecFromTypeMirror(processingEnv, processingEnv.getTypeUtils().boxedClass(primitiveType).asType());
+        }
+        return null;
     }
 }

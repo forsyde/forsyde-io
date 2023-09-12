@@ -9,6 +9,9 @@ import java.util.Optional;
 public class PortSpec {
 
     public String name;
+
+    @JsonAlias("html_description")
+    public String htmlDescription = "";
     @JsonAlias("vertex_trait")
     @JsonIdentityReference(alwaysAsId = true)
     public VertexTraitSpec vertexTrait;

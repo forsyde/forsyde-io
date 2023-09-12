@@ -14,6 +14,9 @@ public class PropertySpec {
 
     public String name;
     // @JsonProperty("default")
+    @JsonAlias("html_description")
+    public String htmlDescription = "";
+
     @JsonAlias("initialization_code")
     public Map<String, String> initializationCode = new HashMap<>();
     @JsonAlias("default_value")

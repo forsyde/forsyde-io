@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @JsonSerialize
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "canonicalName")
 public class VertexTraitSpec {
 
     public String canonicalName;
