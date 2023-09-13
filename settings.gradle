@@ -23,5 +23,5 @@ include 'java-libforsyde-hierarchy'
 include 'java-bridge-forsyde-shallow'
 include 'groovy-frontsyde'
 include 'java-bridge-forsyde-systemc'
-include 'kotlin-freertos-synth'
+include 'java-freertos-synth'
 

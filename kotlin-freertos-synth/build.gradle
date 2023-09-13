@@ -1,8 +1,0 @@
-plugins {
-    id "forsydeio.public-module"
-}
-
-dependencies {
-    implementation project(":java-core")
-    implementation project(":java-libforsyde")
-}
