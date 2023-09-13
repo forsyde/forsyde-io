@@ -9,6 +9,8 @@ import picocli.CommandLine;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 public class FreeRTOSGeneratorCLI implements Callable<Integer> {
 
     @CommandLine.Parameters(index = "0..*", description = "The input ForSyDe IO models (files).")
-    private File[] modelFiles;
+    private List<File> modelFiles = new ArrayList<>();
 
     @CommandLine.Option(names = {"-o", "--output"}, description = "The base path used as the root for the generation. Default is the current directory.")
     private Path outputRoot = Path.of(".");
@@ -43,5 +45,10 @@ public class FreeRTOSGeneratorCLI implements Callable<Integer> {
             }
         }
         return 0;
+    }
+
+    public static void main(String... args) {
+        int exitCode = new CommandLine(new FreeRTOSGeneratorCLI()).execute(args);
+        System.exit(exitCode);
     }
 }
