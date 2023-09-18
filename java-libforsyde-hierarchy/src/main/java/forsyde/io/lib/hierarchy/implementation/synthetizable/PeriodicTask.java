@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 /**
  * This simple refinement stores the amount of simply periodic
- * sub tasks that a task can generate given its incoming stimulators.
+ * subtasks that a task can generate given its incoming stimulators.
  */
 @RegisterTrait(IForSyDeHierarchy.class)
 public interface PeriodicTask extends Task {
