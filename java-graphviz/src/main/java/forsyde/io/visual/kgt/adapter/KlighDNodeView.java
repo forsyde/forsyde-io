@@ -93,8 +93,7 @@ public class KlighDNodeView {
     }
 
     public void write(PicoWriter picoWriter) {
-        final String vId = getId().replace(" ", "_").replace(".", "_");
-        picoWriter.writeln_r("knode " + vId + " {");
+        picoWriter.writeln_r("knode " + id + " {");
         picoWriter.writeln("klabel \"" + getLabel() + "\"");
         for (String port : getActiveKports()) {
             final String portString = port.replace(" ", "_").replace(".", "_");
@@ -103,7 +102,7 @@ public class KlighDNodeView {
             picoWriter.writeln_l("}");
         }
         if (hasVisualizableProperties()) {
-            picoWriter.writeln_r("knode " + vId + "vProperties {");
+            picoWriter.writeln_r("knode " + id + "vProperties {");
             // TODO: until I figure out how to make the size of the node label be respected,
             // this small sizing hack with width and height stays.
             final int width = 5 * getVisualizedProperties().entrySet().stream().mapToInt(e -> ("\\n " + e.getKey() + ": " + e.getValue()).length()).sum();

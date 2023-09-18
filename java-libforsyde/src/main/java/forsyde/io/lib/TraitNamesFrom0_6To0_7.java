@@ -58,12 +58,12 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
             var prevTraits = new HashSet<Trait>(v.getTraits());
             for (var vt : prevTraits) {
                 for (var t : ForSyDeHierarchy.containedTraits) {
-                    if (t.getName().contains(vt.getName())) {
+                    if (t.getName().endsWith(vt.getName())) {
                         v.addTraits(t);
                     }
                 }
                 // mapping for the hardware parts of the platform
-                if (vt.getName().contains("platform::")) {
+                if (vt.getName().startsWith("platform::")) {
                     for (var t : ForSyDeHierarchy.containedTraits) {
                         if (t.getName().contains("platform::hardware::")) {
                             var splitVt = vt.getName().split("::");
@@ -76,11 +76,11 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                         }
                     }
                 }
-                if (vt.getName().contains("DataBlock")) {
+                if (vt.getName().endsWith("DataBlock")) {
                     var reg = ForSyDeHierarchy.RegisterLike.enforce(systemGraph, v);
                     reg.sizeInBits((Long) v.getProperty("maxSizeInBits"));
                 }
-                if (vt.getName().contains("TokenizableDataBlock")) {
+                if (vt.getName().endsWith("TokenizableDataBlock")) {
                     var buf = ForSyDeHierarchy.RegisterArrayLike.enforce(systemGraph, v);
                     buf.elementSizeInBits((Long) v.getProperty("tokenSizeInBits"));
                 }
@@ -94,10 +94,10 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     outputs.add((String) v.getProperty("returnPort"));
                     f.outputPorts(outputs);
                 }
-                if (vt.getName().contains("Executable")) {
+                if (vt.getName().endsWith("Executable")) {
                     var f = ForSyDeHierarchy.FunctionLikeEntity.enforce(systemGraph, v);
                 }
-                if (vt.getName().contains("InstrumentedExecutable")) {
+                if (vt.getName().endsWith("InstrumentedExecutable")) {
                     var op = ForSyDeHierarchy.InstrumentedBehaviour.enforce(systemGraph, v);
                     op.computationalRequirements((Map<String, Map<String, Long>>) v.getProperty("operationRequirements"));
                     var m = new HashMap<String, Long>();
@@ -109,26 +109,26 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     }
                     op.maxSizeInBits(m);
                 }
-                if (vt.getName().contains("AbstractScheduler")) {
+                if (vt.getName().endsWith("AbstractScheduler")) {
                     ForSyDeHierarchy.AbstractRuntime.enforce(systemGraph, v);
                 }
-                if (vt.getName().contains("FixedPriorityScheduler")) {
+                if (vt.getName().endsWith("FixedPriorityScheduler")) {
                     var s = ForSyDeHierarchy.FixedPriorityScheduledRuntime.enforce(systemGraph, v);
                     s.supportsPreemption((Boolean) v.getProperty("preemptive"));
                 }
-                if (vt.getName().contains("StaticCyclicScheduler")) {
+                if (vt.getName().endsWith("StaticCyclicScheduler")) {
                     ForSyDeHierarchy.SuperLoopRuntime.enforce(systemGraph, v);
                 }
-                if (vt.getName().contains("RoundRobinScheduler")) {
+                if (vt.getName().endsWith("RoundRobinScheduler")) {
                     var s = ForSyDeHierarchy.TimeDivisionMultiplexingRuntime.enforce(systemGraph, v);
                     s.maximumTimeSliceInClockCycles((Long) v.getProperty("maximumTimeSliceInCycles"));
                     s.minimumTimeSliceInClockCycles((Long) v.getProperty("minimumTimeSliceInCycles"));
                     s.frameSizeInClockCycles(s.maximumTimeSliceInClockCycles() * ((Integer) v.getProperty("maximumTimeSlices")));
                 }
-                if (vt.getName().contains("PeriodicStimulus")) {
+                if (vt.getName().endsWith("PeriodicStimulus")) {
                     ForSyDeHierarchy.PeriodicStimulator.enforce(systemGraph, v);
                 }
-                if (vt.getName().contains("SYSignal")) {
+                if (vt.getName().endsWith("SYSignal")) {
                     var sig = ForSyDeHierarchy.SYSignal.enforce(systemGraph, v);
                     for (var e : Set.copyOf(systemGraph.incomingEdgesOf(v))) {
                         if (e.connectsTargetPort("input")) {
