@@ -24,4 +24,5 @@ include 'java-bridge-forsyde-shallow'
 include 'groovy-frontsyde'
 include 'java-bridge-forsyde-systemc'
 include 'java-freertos-synth'
+include 'java-posix-synth'
 

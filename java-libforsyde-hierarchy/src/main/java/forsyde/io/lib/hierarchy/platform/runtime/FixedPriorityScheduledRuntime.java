@@ -5,6 +5,7 @@ import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,5 +34,9 @@ public interface FixedPriorityScheduledRuntime extends AbstractRuntime {
 
     @Property
     default Map<String, Integer> priorityAssignments() {return new HashMap<>();}
+
+    default Map<String, List<String>> taskToProcessingElementsAffinity() {
+        return new HashMap<>();
+    }
 
 }

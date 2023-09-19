@@ -1,0 +1,18 @@
+plugins {
+    id 'forsydeio.app-module'
+}
+
+dependencies {
+    implementation 'org.ainslec:picocog:1.0.7'
+    implementation 'info.picocli:picocli:4.6.3'
+    annotationProcessor 'info.picocli:picocli-codegen:4.6.3'
+    implementation project(":java-core")
+    implementation project(":java-libforsyde")
+}
+
+mainClassName = 'forsyde.io.posix.synth.POSIXGeneratorCLI'
+
+application {
+    mainClass = mainClassName
+    mainModule = "forsyde.io.posix.synth"
+}
