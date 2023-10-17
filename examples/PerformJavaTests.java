@@ -79,11 +79,11 @@ public class PerformJavaTests {
 //        handler.writeModel(m, "output.kgt");
 //    }
 
-    @Test
-    void generateVisual() throws Exception {
-        var handler = new ModelHandler().registerTraitHierarchy(new ForSyDeHierarchy()).registerSystemGraphMigrator(new TraitNamesFrom0_6To0_7()).registerDriver(new KGTDriver());
-//        var m = handler.loadModel(Paths.get("examples/sdf/toy_sdf_tiny.fiodl"));
-        var m = handler.loadModel(Paths.get("zynq.fiodl"));
-        handler.writeModel(m, "visual.kgt");
-    }
+//    @Test
+//    void generateVisual() throws Exception {
+//        var handler = new ModelHandler().registerTraitHierarchy(new ForSyDeHierarchy()).registerSystemGraphMigrator(new TraitNamesFrom0_6To0_7()).registerDriver(new KGTDriver());
+////        var m = handler.loadModel(Paths.get("examples/sdf/toy_sdf_tiny.fiodl"));
+//        var m = handler.loadModel(Paths.get("zynq.fiodl"));
+//        handler.writeModel(m, "visual.kgt");
+//    }
 }
