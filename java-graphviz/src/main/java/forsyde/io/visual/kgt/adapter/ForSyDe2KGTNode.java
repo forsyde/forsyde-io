@@ -38,7 +38,7 @@ public interface ForSyDe2KGTNode extends ModelAdapter<KlighDContainer> {
             var kcur = kqueue.poll();
             allNodes.add(kcur);
             ForSyDeHierarchy.GreyBox.tryView(kcur.getViewed()).ifPresent(greyBox -> {
-                // add them as childre
+                // add them as children
                 for (Visualizable visualizable : greyBox.contained()) {
                     final KlighDNodeView knode = new KlighDNodeView(visualizable, kcur.getId() + "_v_" + visualizable.getIdentifier());
                     kcur.addChild(knode);
