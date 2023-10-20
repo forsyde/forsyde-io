@@ -4,6 +4,7 @@ import forsyde.io.core.VertexViewer;
 import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
+import forsyde.io.lib.hierarchy.behavior.DataTypeLike;
 
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import java.util.Map;
  * necessary. Say, in academic studies or pre-design studies.
  */
 @RegisterTrait(IForSyDeHierarchy.class)
-public interface InstrumentedDataType extends VertexViewer {
+public interface InstrumentedDataType extends DataTypeLike {
 
     /**
      * <p>
