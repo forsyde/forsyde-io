@@ -18,6 +18,7 @@ public class LibForSyDeModelHandler {
         modelHandler.registerSystemGraphMigrator(new SDFActorsWithFunctionMigrator());
         modelHandler.registerValidation(new SDFValidator());
         modelHandler.registerInference(new ComputationalRequirementsPropagator());
+        modelHandler.registerInference(new MemoryRequirementsPropagator());
         return modelHandler;
     }
 }
