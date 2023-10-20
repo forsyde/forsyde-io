@@ -19,7 +19,7 @@ public interface InstrumentedDataType extends DataTypeLike {
 
     /**
      * <p>
-     * A map of memory requirements for different implementations of this instrumented data type.
+     * A map of memory requirements for different implementations of this instrumented data type for different instruction categories.
      * These are <b>memory requirements</b>.
      * When a number of a certain operation is "x" larger, it means semantically that a host storage element
      * must give "x" more space to this data type so that it can be stored.
@@ -27,19 +27,19 @@ public interface InstrumentedDataType extends DataTypeLike {
      * </p>
      *
      * <p>
-     * For example, there could be a "ANSI-C" data type, a "CUDA" data type and a
-     * "FPGA logic area implementation" data type so that the memory requirements can be expressed
+     * For example, there could be a "RISCV" data type, a "niosII" data type and a
+     * "FPGA logic area implementation" data type so that the computational requirements can be expressed
      * as an associative array with these three possibilities as follow.
      * </p>
      *
      * <pre>
      * maxSizeInBits: {
-     *     "ANSI-C": 1000L,
-     *     "CUDA": 500L,
+     *     "RISCV": 1000L,
+     *     "niosII": 500L,
      *     "FPGA logic area implementation": 200L
      * }
      * </pre>
-     * In this case, the FPGA implementation tries to capture the logic area consumed by the synthesized data-type.
+     * In this case, the FPGA implementation tries to capture the logic area consumed by the synthesized behaviour.
      *
      */
     @Property

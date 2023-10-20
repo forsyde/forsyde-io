@@ -245,7 +245,7 @@ so that the instrumentation information can be used in a courser-grain fashion w
 necessary. Say, in academic studies or pre-design studies.
 
 
-Refines:
+Refines: `forsyde::io::lib::hierarchy::behavior::DataTypeLike`
 
 Required ports:
 
@@ -253,8 +253,8 @@ Required ports:
 
 Required properties:
 
-- **maxSizeInBits** (`Map<String,Integer<64 bits, signed>>`):  <p>
-  A map of memory requirements for different implementations of this instrumented data type.
+- **maxSizeInBits** (`Map<String,Integer<64 bits, signed>>`):    <p>
+  A map of memory requirements for different implementations of this instrumented data type for different instruction categories.
   These are <b>memory requirements</b>.
   When a number of a certain operation is "x" larger, it means semantically that a host storage element
   must give "x" more space to this data type so that it can be stored.
@@ -262,19 +262,19 @@ Required properties:
  </p>
 
  <p>
- For example, there could be a "ANSI-C" data type, a "CUDA" data type and a
- "FPGA logic area implementation" data type so that the memory requirements can be expressed
+ For example, there could be a "RISCV" data type, a "niosII" data type and a
+ "FPGA logic area implementation" data type so that the computational requirements can be expressed
  as an associative array with these three possibilities as follow.
  </p>
 
  <pre>
  maxSizeInBits: {
-     "ANSI-C": 1000L,
-     "CUDA": 500L,
+     "RISCV": 1000L,
+     "niosII": 500L,
      "FPGA logic area implementation": 200L
  }
  </pre>
-In this case, the FPGA implementation tries to capture the logic area consumed by the synthesized data-type.
+In this case, the FPGA implementation tries to capture the logic area consumed by the synthesized behaviour.
 
 
 
@@ -594,7 +594,7 @@ Required properties:
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
 
 Required ports:
 
@@ -677,7 +677,7 @@ Required properties:
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
 
 Required ports:
 
@@ -704,7 +704,7 @@ Required ports:
 
 Required properties:
 
-- **computationalRequirements** (`Map<String,Map<String,Integer<64 bits, signed>>>`):  <p>
+- **computationalRequirements** (`Map<String,Map<String,Integer<64 bits, signed>>>`):    <p>
   A map of computational requirements for different implementations of this instrumented behavior.
   These are <b>performance requirements</b>.
   When a number of a certain operation is "x" larger, it means semantically that a host processing element
@@ -713,7 +713,7 @@ Required properties:
 
  <p>
  For example, there could be a "ANSI-C" implementation, a "CUDA" implementation and a
- "FPGA logic area implementation" so that the memory requirements can be expressed
+ "FPGA logic area implementation" so that the requirements can be expressed
  as an associative array with these three possibilties as follow.
  </p>
 
@@ -730,15 +730,15 @@ Required properties:
          ...
      },
      "FPGA logic area implementation": {
-         "LUTS": 4,
+         "hwadd": 1,
          ...
      }
  }
  </pre>
 
 
-- **maxSizeInBits** (`Map<String,Integer<64 bits, signed>>`):  <p>
-  A map of memory requirements for different implementations of this instrumented behavior.
+- **maxSizeInBits** (`Map<String,Integer<64 bits, signed>>`):    <p>
+  A map of memory requirements for different implementations of this instrumented behavior for different instruction categories.
   These are <b>memory requirements</b>.
   When a number of a certain operation is "x" larger, it means semantically that a host storage element
   must give "x" more space to this behaviour so that it can be stored.
@@ -747,15 +747,15 @@ Required properties:
  </p>
 
  <p>
- For example, there could be a "ANSI-C" implementation, a "CUDA" implementation and a
+ For example, there could be a "RISCV" implementation, a "niosII" implementation and a
  "FPGA logic area implementation" so that the computational requirements can be expressed
  as an associative array with these three possibilities as follow.
  </p>
 
  <pre>
  maxSizeInBits: {
-     "ANSI-C": 1000L,
-     "CUDA": 500L,
+     "RISCV": 1000L,
+     "niosII": 500L,
      "FPGA logic area implementation": 200L
  }
  </pre>
@@ -830,7 +830,7 @@ Refines: `forsyde::io::lib::hierarchy::platform::hardware::HardwareModule`
 
 Required ports:
 
-- **containedModules**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::platform::hardware::HardwareModule` vertices connected by `forsyde::io::lib::hierarchy::platform::hardware::StructuralContainment` edges.  Returns the contained modules for this Structure vertex.
+- **containedModules**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::platform::hardware::HardwareModule` vertices connected by `forsyde::io::lib::hierarchy::platform::hardware::StructuralContainment` edges.    Returns the contained modules for this Structure vertex.
 
 
 
@@ -987,11 +987,11 @@ Required properties:
 A InstrumentedProcessingModule enriches `GenericProcessingModule` with provision numbers so that
 an analysis and synthesis tool is able to estimate the total amount of execution time is required to execute
 a bunch of instructions in this processing element.
-
-If this processing element exhibits higher level of parallelism (see `GenericProcessingModule`), then the provisions
-should always be provided _per parallel "thread"_.
-For example, if the processing element is a typical dual-core, the model instructions per cycle property
-should be as the intructions per cycle _per core_, not their summed total.
+ <p>
+ If this processing element exhibits higher level of parallelism (see `GenericProcessingModule`), then the provisions
+ should always be provided _per parallel "thread"_.
+ For example, if the processing element is a typical dual-core, the model instructions per cycle property
+ should be as the intructions per cycle _per core_, not their summed total.
 
 
 Refines: `forsyde::io::lib::hierarchy::platform::hardware::GenericProcessingModule`
@@ -1002,7 +1002,69 @@ Required ports:
 
 Required properties:
 
-- **modalInstructionsPerCycle** (`Map<String,Map<String,Real<64 bits>>>`): No description exists.
+- **modalInstructionCategory** (`Array<String>`):    <p>
+  A set of possible instructions categories, e.g. instruction set architectures, so that the memory requirements
+  can be properly determined.
+  These are <b>memory requirements</b>.
+ </p>
+
+ <p>
+ For example, there could be a "RISCV" instruction category and a "niosII" instruction category
+ as a set as follows.
+ </p>
+
+ <pre>
+ modalInstructionCategory: [
+      "RISCV",
+      "niosII"
+ ]
+ </pre>
+In this case, the FPGA implementation tries to capture the logic area consumed by the synthesized behaviour.
+
+- **modalInstructionsPerCycle** (`Map<String,Map<String,Real<64 bits>>>`):    <p>
+  A map of computational provisions per cycle for different instantiations of this instrumented processing module.
+  These are <b>performance provision</b>.
+  When a number of a certain instruction is given "x" more, it means semantically that a hosted process element
+  uses "x" operations in the same time period.
+ </p>
+
+ <p>
+ For example, there could be a "generic" instantiation, a "power" instantiation and a
+ "slow" so that the provisions can be expressed
+ as an associative array with these three possibilties as follow.
+ </p>
+
+ <pre>
+ computationalRequirements: {
+     "generic": {
+         "intadd": 0.5,
+         "floatadd": 0.001,
+         "branch": 1.0,
+         ...
+     },
+     "slow": {
+          "intadd": 0.05,
+          "floatadd": 0.00001,
+          "branch": 0.2,
+           ...
+      },
+     "power": {
+         "intadd": 1.0,
+         ...
+     }
+ }
+ </pre>
+
+ <p>
+ Where the real numbers describe the amount of the requirements (provisions) is provided per clock cycle.
+ So, if you want the amount of requirements (provisions) this processing element is giving per second, you
+ simply do:
+ </p>
+
+ <pre>
+   instructions per second = clock frequency * instructions per clock cycle
+ </pre>
+
 
 ### forsyde::io::lib::hierarchy::behavior::execution::Stimulator
 
@@ -1092,7 +1154,7 @@ Required properties:
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
 
 Required ports:
 
@@ -1126,6 +1188,6 @@ Required properties:
 - **minimumActivationInSecsDenominator** (`Integer<32 bits, signed>`): No description exists.
 - **allowsInterCoreMigration** (`Boolean`): No description exists.
 - **priorityAssignments** (`Map<String,Integer<32 bits, signed>>`): No description exists.
-- **supportsPreemption** (`Boolean`): No description exists. 
+- **supportsPreemption** (`Boolean`): No description exists.
 
 

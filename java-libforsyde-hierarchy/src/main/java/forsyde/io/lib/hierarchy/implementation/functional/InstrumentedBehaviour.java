@@ -26,7 +26,7 @@ public interface InstrumentedBehaviour extends BehaviourEntity {
      *
      * <p>
      * For example, there could be a "ANSI-C" implementation, a "CUDA" implementation and a
-     * "FPGA logic area implementation" so that the memory requirements can be expressed
+     * "FPGA logic area implementation" so that the requirements can be expressed
      * as an associative array with these three possibilties as follow.
      * </p>
      *
@@ -43,7 +43,7 @@ public interface InstrumentedBehaviour extends BehaviourEntity {
      *         ...
      *     },
      *     "FPGA logic area implementation": {
-     *         "LUTS": 4,
+     *         "hwadd": 1,
      *         ...
      *     }
      * }
@@ -55,7 +55,7 @@ public interface InstrumentedBehaviour extends BehaviourEntity {
 
     /**
      * <p>
-     * A map of memory requirements for different implementations of this instrumented behavior.
+     * A map of memory requirements for different implementations of this instrumented behavior for different instruction categories.
      * These are <b>memory requirements</b>.
      * When a number of a certain operation is "x" larger, it means semantically that a host storage element
      * must give "x" more space to this behaviour so that it can be stored.
@@ -64,15 +64,15 @@ public interface InstrumentedBehaviour extends BehaviourEntity {
      * </p>
      *
      * <p>
-     * For example, there could be a "ANSI-C" implementation, a "CUDA" implementation and a
+     * For example, there could be a "RISCV" implementation, a "niosII" implementation and a
      * "FPGA logic area implementation" so that the computational requirements can be expressed
      * as an associative array with these three possibilities as follow.
      * </p>
      *
      * <pre>
      * maxSizeInBits: {
-     *     "ANSI-C": 1000L,
-     *     "CUDA": 500L,
+     *     "RISCV": 1000L,
+     *     "niosII": 500L,
      *     "FPGA logic area implementation": 200L
      * }
      * </pre>
