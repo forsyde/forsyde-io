@@ -53,14 +53,22 @@ public interface HasSpecCatalogGeneration {
                 output.append(" connected by ").append('`').append(e.getValue().edgeTrait.canonicalName).append('`').append(" edges");
             }
             output.append(". ");
-            output.append(e.getValue().htmlDescription != null && !e.getValue().htmlDescription.isBlank() ? e.getValue().htmlDescription : "No description exists.");
+            if (e.getValue().htmlDescription != null && !e.getValue().htmlDescription.isBlank()) {
+                output.append("  ").append(e.getValue().htmlDescription);
+            } else {
+                output.append("No description exists.");
+            }
             output.append("\n");
         }
         output.append("\n\n");
         output.append("Required properties:").append("\n\n");
         for (var e : vertexTraitSpec.requiredProperties.entrySet()) {
             output.append(" - **").append(e.getKey()).append("** (`").append(e.getValue().type != null ? getMarkdownDocumentation(e.getValue().type) : "Anything").append("`): ");
-            output.append(e.getValue().htmlDescription != null && !e.getValue().htmlDescription.isBlank() ? e.getValue().htmlDescription : "No description exists. ");
+            if (e.getValue().htmlDescription != null && !e.getValue().htmlDescription.isBlank()) {
+                output.append("  ").append(e.getValue().htmlDescription);
+            } else {
+                output.append("No description exists.");
+            }
             output.append("\n");
         }
         return output.toString();
