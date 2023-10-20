@@ -15,6 +15,7 @@ public class LibForSyDeModelHandler {
     public static ModelHandler registerLibForSyDe(ModelHandler modelHandler) {
         modelHandler.registerTraitHierarchy(new ForSyDeHierarchy());
         modelHandler.registerSystemGraphMigrator(new TraitNamesFrom0_6To0_7());
+        modelHandler.registerSystemGraphMigrator(new SDFActorsWithFunctionMigrator());
         modelHandler.registerValidation(new SDFValidator());
         modelHandler.registerInference(new ComputationalRequirementsPropagator());
         return modelHandler;

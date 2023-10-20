@@ -237,6 +237,24 @@ Required ports:
 Required properties:
 
 
+### forsyde::io::lib::hierarchy::implementation::functional::InstrumentedDataType
+
+This class adds instrumentation data to any data-like vertex.
+This trait is made separate from other data-like traits, e.g. vectorizable,
+so that the instrumentation information can be used in a courser-grain fashion whenever
+necessary. Say, in academic studies or pre-design studies.
+
+
+Refines:
+
+Required ports:
+
+
+
+Required properties:
+
+- **maxSizeInBits** (`Map<String,Integer<64 bits, signed>>`): No description exists. .
+
 ### forsyde::io::lib::hierarchy::decision::MemoryMapped
 
 A MemoryMapped trait describes the mapping of any kind of a process or buffer/channel to a memory.
@@ -553,7 +571,7 @@ Required properties:
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
 
 Required ports:
 
@@ -636,7 +654,7 @@ Required properties:
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
 
 Required ports:
 
@@ -649,7 +667,11 @@ Required properties:
 
 ### forsyde::io::lib::hierarchy::implementation::functional::InstrumentedBehaviour
 
-No description exists.
+This class adds instrumentation data to any behaviour-like vertex.
+This trait is made separate from other behaviour-like traits, e.g. synchronous processes,
+so that the instrumentation information can be used in a courser-grain fashion whenever
+necessary. Say, in academic studies or pre-design studies.
+
 
 Refines: `forsyde::io::lib::hierarchy::behavior::BehaviourEntity`
 
@@ -665,7 +687,7 @@ Required properties:
 ### forsyde::io::lib::hierarchy::implementation::synthetizable::PeriodicTask
 
 This simple refinement stores the amount of simply periodic
-sub tasks that a task can generate given its incoming stimulators.
+subtasks that a task can generate given its incoming stimulators.
 
 
 Refines: `forsyde::io::lib::hierarchy::behavior::execution::Task`
@@ -850,6 +872,23 @@ Required properties:
 
 - **visualizedPropertiesNames** (`Array<String>`): No description exists. .
 
+### forsyde::io::lib::hierarchy::decision::AnalyzedBehavior
+
+This trait attaches analysis and optimisation data to a behavior entity.
+It contains information like the behaviour's throughput.
+
+
+Refines: `forsyde::io::lib::hierarchy::behavior::BehaviourEntity`
+
+Required ports:
+
+
+
+Required properties:
+
+- **setThroughputInSecsDenominator** (`Integer<64 bits, signed>`): No description exists. .
+- **setThroughputInSecsNumerator** (`Integer<64 bits, signed>`): No description exists. .
+
 ### forsyde::io::lib::hierarchy::behavior::moc::MoCEntity
 
 No description exists.
@@ -973,7 +1012,7 @@ Required properties:
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
 
 Required ports:
 
