@@ -90,6 +90,7 @@ public interface HasSpecExtractors {
         var withEdgeT = processingEnv.getElementUtils().getTypeElement(WithEdgeTrait.class.getCanonicalName());
         var portSpec = new PortSpec();
         portSpec.name = executableElement.getSimpleName().toString();
+        portSpec.htmlDescription = processingEnv.getElementUtils().getDocComment(executableElement);
         portSpec.incoming = processingEnv.getElementUtils().getAllAnnotationMirrors(executableElement).stream()
                 .anyMatch(annotationMirror -> processingEnv.getTypeUtils()
                         .isSubtype(annotationMirror.getAnnotationType(), inPorT.asType()));
@@ -130,6 +131,7 @@ public interface HasSpecExtractors {
             final VertexTraitSpec containingVertex) {
         var propSpec = new PropertySpec();
         propSpec.name = executableElement.getSimpleName().toString();
+        propSpec.htmlDescription = processingEnv.getElementUtils().getDocComment(executableElement);
         if (executableElement.isDefault()) {
             var clsName = containingVertex.getJavaCanonicalName();
             propSpec.initializationCode.put("java",
