@@ -5,6 +5,12 @@ to make sense of on-disk files, e.g. fiodl files, but also to manipulate them ma
 The last part is quite important, as any LibForSyDe-based tool consuming on-disk files might reject a model that
 is not consistent with the trait hierarchy presented here.
 
+Don't be overwhelmed by the size of the LibForSyDe trait heirarchy.
+It would be suprising if it **wasn't** extensive, as it aims to cover
+specification aspects of applications, platforms, synthesis etc.
+Try to use this catalog as *a catalog*. Search for what you need
+in it and slowly increase your understanding via a by-demand basis.
+
 ## forsyde::io::lib::hierarchy::IForSyDeHierarchy
 
 ### forsyde::io::lib::hierarchy::behavior::moc::sdf::SDFChannel
@@ -485,6 +491,48 @@ Required properties:
 
 - **elementSizeInBits** (`Integer<64 bits, signed>`): No description exists.
 
+### forsyde::io::lib::hierarchy::behavior::moc::MoCSource
+
+A boundary signal between a MoC process network and anything outside this network.
+
+ <p>
+     All MoCs can use this source trait since all MoCs can be compared in the light of a discrete-event model,
+     or, the tagged-signal model (see the reference of <code>MoCEntity</code>).
+     The key element of this trait is the timing beahviour of the events it generates.
+     That is, their periodicity or lack of any periodicity thereof.
+     Note that a MoCSource is a data-type-like entity, as it is intended to capture MoC signals that get
+     "replenished" due to their connection with the outside world.
+ </p>
+
+
+Refines: `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`, `forsyde::io::lib::hierarchy::behavior::DataTypeLike`
+
+Required ports:
+
+
+
+Required properties:
+
+- **eventProductionRateNumerator** (`Integer<64 bits, signed>`):    The numerator part of the "eventProductionRate" property.
+
+ <p>
+     The event inter-arrival rate defines how fast this MoC source gets replenished in the light of
+     tagged-signal model, or the discrete-event model, equivalently.
+     The faster the rate, the faster the data present in this boundary signal is "fresh".
+     This notion can differ along different MoCs.
+     For example, in the Synchronous MoC, this means that a new data is available in the signal (<code>SYSignal</code>) and
+     <b>should be consumed at all costs</b>. In the SDF MoC, this means that a new token is available
+     in the signal and can be consumed anytime as long as the buffer implementing this boundary signal (<code>SDFChannel</code>) does
+     not overflow.
+ </p>
+
+- **eventProductionRateDenominator** (`Integer<64 bits, signed>`):    The denominator part of the "eventProductionRate" property. Defaults to 1.
+ <p>
+     see <code>eventProductionRateNumerator</code> for the full information on this property.
+ </p>
+
+
+
 ### forsyde::io::lib::hierarchy::behavior::execution::ContinousStimulator
 
 Once this trait is connected to a stimulatable element,
@@ -594,7 +642,7 @@ Required properties:
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
 
 Required ports:
 
@@ -677,7 +725,7 @@ Required properties:
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
 
 Required ports:
 
@@ -971,7 +1019,23 @@ Required properties:
 
 ### forsyde::io::lib::hierarchy::behavior::moc::MoCEntity
 
-No description exists.
+The common parent of all MoC elements in a system graph.
+
+ <p>
+ A MoC in this hierarchy is understood as in the paper:
+</p>
+<p>
+   Lee, E.A., Sangiovanni-Vincentelli, A., 1998. A framework for comparing models of computation.
+   IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems 17, 1217–1229.
+   <a href="https://doi.org/10.1109/43.736561">DOI</a>
+ </p>
+ <p>
+     This trait does not enforce anything on its own, but serves as a "categorical"
+     trait which can be used to susbet any MoCs present in a system graph.
+     To get more information on a vertex and its MoC-like behaviour, one should
+     directly query for specific MoCs, e.g. SYProcess or SDFActor.
+ </p>
+
 
 Refines:
 
@@ -980,6 +1044,48 @@ Required ports:
 
 
 Required properties:
+
+
+### forsyde::io::lib::hierarchy::behavior::moc::MoCSink
+
+A boundary signal between a MoC process network and anything outside this network.
+
+ <p>
+     All MoCs can use this sink trait since all MoCs can be compared in the light of a discrete-event model,
+     or, the tagged-signal model (see the reference of <code>MoCEntity</code>).
+     The key element of this trait is the timing beahviour of the events it generates.
+     That is, their periodicity or lack of any periodicity thereof.
+     Note that a MoCSink is a data-type-like entity, as it is intended to capture MoC signals that get
+     "consumed" due to their connection with the outside world.
+ </p>
+
+
+Refines: `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`, `forsyde::io::lib::hierarchy::behavior::DataTypeLike`
+
+Required ports:
+
+
+
+Required properties:
+
+- **eventConsumptionRateNumerator** (`Integer<64 bits, signed>`):    The numerator part of the "eventConsumptionRate" property.
+
+ <p>
+     The event departure rate defines how fast this MoC source gets consumed in the light of
+     tagged-signal model, or the discrete-event model, equivalently.
+     The faster the rate, the faster the data present in this boundary signal is "gone".
+     This notion can differ along different MoCs.
+     For example, in the Synchronous MoC, this means that the data available in the signal (<code>SYSignal</code>) is consumed and
+     <b>should be replenished at all costs</b>. In the SDF MoC, this means that a token is consumed
+     in the signal and can be replenished anytime as long as the buffer implementing this boundary signal (<code>SDFChannel</code>) does
+     not underflow.
+ </p>
+
+- **eventConsumptionRateDenominator** (`Integer<64 bits, signed>`):    The denominator part of the "eventConsumptionRate" property. Defaults to 1.
+ <p>
+     see <code>eventConsumptionRateNumerator</code> for the full information on this property.
+ </p>
+
 
 
 ### forsyde::io::lib::hierarchy::platform::hardware::InstrumentedProcessingModule
@@ -1154,7 +1260,7 @@ Required properties:
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
 
 Required ports:
 
