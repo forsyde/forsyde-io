@@ -1166,10 +1166,9 @@ In this case, the FPGA implementation tries to capture the logic area consumed b
  So, if you want the amount of requirements (provisions) this processing element is giving per second, you
  simply do:
  </p>
-
- <pre>
-   instructions per second = clock frequency * instructions per clock cycle
- </pre>
+<p>
+instructions per second = clock frequency * instructions per clock cycle
+</p>
 
 
 ### forsyde::io::lib::hierarchy::behavior::execution::Stimulator
