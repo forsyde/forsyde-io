@@ -216,7 +216,7 @@ public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpe
                         ClassName.get(processingEnv.getElementUtils().getPackageOf(traitInterface).toString(),
                                 traitInterface.getSimpleName().toString() + "Viewer")))
                 .build();
-        viewerClassBuilder.addMethod(tryViewMethod);
+        viewerClassBuilder.addMethod(makeTryViewMethod(traitInterface, generatedHierarchy));
         var tryViewMethodFromViewer = MethodSpec.methodBuilder("tryView")
                 .addTypeVariable(TypeVariableName.get("T").withBounds(ClassName.get(VertexViewer.class)))
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -229,7 +229,7 @@ public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpe
                 .build();
         viewerClassBuilder.addMethod(tryViewMethodFromViewer);
 
-        var enforceMethod = makeEnforceMethod(traitInterface);
+        var enforceMethod = makeEnforceMethod(traitInterface, generatedHierarchy);
         viewerClassBuilder.addMethod(enforceMethod);
         var enforceFromViewer = MethodSpec.methodBuilder("enforce")
                 .addTypeVariable(TypeVariableName.get("T").withBounds(ClassName.get(VertexViewer.class)))
@@ -1112,7 +1112,7 @@ public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpe
 
     ;
 
-    protected MethodSpec makeEnforceMethod(TypeElement traitInterface) {
+    protected MethodSpec makeEnforceMethod(TypeElement traitInterface, ClassName generatedHierarchy) {
         var viewerClassSimpleName = traitInterface.getSimpleName().toString() + "Viewer";
         var enforceMethodBuilder = MethodSpec.methodBuilder("enforce")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -1120,7 +1120,7 @@ public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpe
                 .addParameter(Vertex.class, "vertex")
                 .returns(ClassName.get(processingEnv.getElementUtils().getPackageOf(traitInterface).toString(),
                         traitInterface.getSimpleName().toString() + "Viewer"))
-                .addStatement("vertex.addTrait($S)", traitInterface.getQualifiedName().toString().replace(".", "::"));
+                .addStatement("vertex.addTrait($T.VertexTraits.$L)", generatedHierarchy, traitInterface.getSimpleName().toString());
         enforceMethodBuilder.addStatement("final $L viewer = new $L(systemGraph, vertex)", viewerClassSimpleName,
                 viewerClassSimpleName);
         // properties
@@ -1168,6 +1168,70 @@ public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpe
         enforceMethodBuilder.addStatement("return viewer", viewerClassSimpleName);
 
         return enforceMethodBuilder.build();
+    }
+
+    protected MethodSpec makeTryViewMethod(TypeElement traitInterface, ClassName generatedHierarchy) {
+        var viewerClassSimpleName = traitInterface.getSimpleName().toString() + "Viewer";
+        var tryViewMethodBuilder = MethodSpec.methodBuilder("tryView")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(SystemGraph.class, "systemGraph")
+                .addParameter(Vertex.class, "vertex")
+                .returns(ParameterizedTypeName.get(ClassName.get(Optional.class),
+                        ClassName.get(processingEnv.getElementUtils().getPackageOf(traitInterface).toString(),
+                                traitInterface.getSimpleName().toString() + "Viewer")));
+        var bodyBlockBuilder = CodeBlock.builder()
+                .beginControlFlow("if (vertex.hasTrait($T.VertexTraits.$L))", generatedHierarchy,
+                        traitInterface.getSimpleName().toString())
+                .addStatement("final $L viewer = new $L(systemGraph, vertex);", viewerClassSimpleName, viewerClassSimpleName);
+        // properties
+        for (var member : traitInterface.getEnclosedElements()) {
+            if (member instanceof ExecutableElement execMember && (member.getAnnotation(Property.class) != null)) {
+                if (execMember.getReturnType().toString().contains("Map")) {
+                    bodyBlockBuilder.addStatement("if (!vertex.hasProperty($S)) vertex.putProperty($S, new $T())",
+                            execMember.getSimpleName().toString(), execMember.getSimpleName().toString(),
+                            HashMap.class);
+                } else if (execMember.getReturnType().toString().contains("Set")) {
+                    bodyBlockBuilder.addStatement("if (!vertex.hasProperty($S)) vertex.putProperty($S, new $T())",
+                            execMember.getSimpleName().toString(), execMember.getSimpleName().toString(),
+                            HashSet.class);
+                } else if (execMember.getReturnType().toString().contains("List")) {
+                    bodyBlockBuilder.addStatement("if (!vertex.hasProperty($S)) vertex.putProperty($S, new $T())",
+                            execMember.getSimpleName().toString(), execMember.getSimpleName().toString(),
+                            ArrayList.class);
+                } else if (execMember.isDefault()) {
+                    bodyBlockBuilder.addStatement(
+                            "if (!vertex.hasProperty($S)) vertex.putProperty($S, viewer.$L())",
+                            execMember.getSimpleName().toString(), execMember.getSimpleName().toString(),
+                            execMember.getSimpleName().toString());
+                }
+                // else {
+                // enforceMethodBuilder.addStatement("vertex.putProperty($S, new $T())",
+                // execMember.getSimpleName().toString(), execMember.getReturnType());
+                // }
+            }
+        }
+        // ports
+        for (var member : traitInterface.getEnclosedElements()) {
+            if (member instanceof ExecutableElement execMember
+                    && (member.getAnnotation(InPort.class) != null || member.getAnnotation(OutPort.class) != null)) {
+                bodyBlockBuilder.addStatement("vertex.addPort($S)", execMember.getSimpleName().toString());
+            }
+        }
+        for (var sup : traitInterface.getInterfaces()) {
+            if (!sup.toString().contains("VertexViewer")) {
+                var elem = processingEnv.getTypeUtils().asElement(sup);
+                var viewerClass = ClassName.get(processingEnv.getElementUtils().getPackageOf(elem).toString(),
+                        elem.getSimpleName().toString() + "Viewer");
+                bodyBlockBuilder.addStatement("$T.enforce(systemGraph, vertex)", viewerClass);
+            }
+        }
+        bodyBlockBuilder.addStatement("return $T.of(viewer)", Optional.class)
+                .nextControlFlow("else")
+                .addStatement("return $T.empty()", Optional.class)
+                .endControlFlow();
+        tryViewMethodBuilder.addCode(bodyBlockBuilder.build());
+
+        return tryViewMethodBuilder.build();
     }
 
     protected String hierarchyElemToName(TypeElement hierarchy) {

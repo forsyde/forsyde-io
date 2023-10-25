@@ -102,6 +102,10 @@ final public class Vertex {
         vertexTraits.add(new OpaqueTrait(traitName));
     }
 
+    public void addTrait(Trait trait) {
+        vertexTraits.add(trait);
+    }
+
 //    public Boolean hasTrait(String traitName) {
 //        return vertexTraits.stream().map(Trait::getName).anyMatch(t -> t.equals(traitName))
 //        try {
