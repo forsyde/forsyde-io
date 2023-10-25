@@ -4,6 +4,7 @@ import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -90,7 +91,7 @@ public interface InstrumentedProcessingModule extends GenericProcessingModule {
      * In this case, the FPGA implementation tries to capture the logic area consumed by the synthesized behaviour.
      */
     @Property
-    Set<String> modalInstructionCategory();
+    List<String> modalInstructionCategory();
 
 //    @Property
 //    default Map<String, Map<String, Integer>> modalInstructionsPerCycleDenominators() {
