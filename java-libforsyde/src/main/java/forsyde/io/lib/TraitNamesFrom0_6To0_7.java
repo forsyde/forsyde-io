@@ -132,19 +132,19 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     var sig = ForSyDeHierarchy.SYSignal.enforce(systemGraph, v);
                     for (var e : Set.copyOf(systemGraph.incomingEdgesOf(v))) {
                         if (e.connectsTargetPort("input")) {
-                            var dst = ForSyDeHierarchy.SYProcess.enforce(systemGraph, systemGraph.getEdgeTarget(e));
+                            var src = ForSyDeHierarchy.SYProcess.enforce(systemGraph, systemGraph.getEdgeSource(e));
                             e.getTargetPort().ifPresentOrElse(port -> {
-                                sig.producer(port, dst);
+                                sig.producer(port, src);
                                 for (var t : e.getTraits()) {
                                     if (t instanceof EdgeTrait edgeTrait) {
-                                        sig.producer(port, dst, edgeTrait);
+                                        sig.producer(port, src, edgeTrait);
                                     }
                                 }
                             }, () -> {
-                                sig.producer(dst);
+                                sig.producer(src);
                                 for (var t : e.getTraits()) {
                                     if (t instanceof EdgeTrait edgeTrait) {
-                                        sig.producer(dst, edgeTrait);
+                                        sig.producer(src, edgeTrait);
                                     }
                                 }
                             });
@@ -153,19 +153,19 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     }
                     for (var e : Set.copyOf(systemGraph.outgoingEdgesOf(v))) {
                         if (e.connectsSourcePort("output")) {
-                            var src = ForSyDeHierarchy.SYProcess.enforce(systemGraph, systemGraph.getEdgeSource(e));
+                            var dst = ForSyDeHierarchy.SYProcess.enforce(systemGraph, systemGraph.getEdgeTarget(e));
                             e.getSourcePort().ifPresentOrElse(port -> {
-                                sig.addConsumers(port, src);
+                                sig.addConsumers(port, dst);
                                 for (var t : e.getTraits()) {
                                     if (t instanceof EdgeTrait edgeTrait) {
-                                        sig.addConsumers(port, src, edgeTrait);
+                                        sig.addConsumers(port, dst, edgeTrait);
                                     }
                                 }
                             }, () -> {
-                                sig.addConsumers(src);
+                                sig.addConsumers(dst);
                                 for (var t : e.getTraits()) {
                                     if (t instanceof EdgeTrait edgeTrait) {
-                                        sig.addConsumers(src, edgeTrait);
+                                        sig.addConsumers(dst, edgeTrait);
                                     }
                                 }
                             });
