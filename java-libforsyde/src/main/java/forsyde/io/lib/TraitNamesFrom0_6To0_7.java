@@ -78,7 +78,20 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                 }
                 if (vt.getName().endsWith("DataBlock")) {
                     var reg = ForSyDeHierarchy.RegisterLike.enforce(systemGraph, v);
-                    reg.sizeInBits((Long) v.getProperty("maxSizeInBits"));
+                    var prop = v.getProperty("maxSizeInBits");
+                    if (prop instanceof Long l) {
+                        reg.sizeInBits(l);
+                    } else if (prop instanceof Map<?, ?> map && !map.isEmpty()) {
+                        var maxL = -1L;
+                        for (var mapVal : map.values()) {
+                            if (mapVal instanceof Long mapL) {
+                                maxL = Math.max(mapL, maxL);
+                            }
+                        }
+                        if (maxL > -1L) {
+                            reg.sizeInBits(maxL);
+                        }
+                    }
                 }
                 if (vt.getName().endsWith("TokenizableDataBlock")) {
                     var buf = ForSyDeHierarchy.RegisterArrayLike.enforce(systemGraph, v);
@@ -129,49 +142,7 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     ForSyDeHierarchy.PeriodicStimulator.enforce(systemGraph, v);
                 }
                 if (vt.getName().endsWith("SYSignal")) {
-                    var sig = ForSyDeHierarchy.SYSignal.enforce(systemGraph, v);
-                    for (var e : Set.copyOf(systemGraph.incomingEdgesOf(v))) {
-                        if (e.connectsTargetPort("input")) {
-                            ForSyDeHierarchy.SYProcess.tryView(systemGraph, systemGraph.getEdgeSource(e)).ifPresent(src -> {
-                                e.getTargetPort().ifPresentOrElse(port -> {
-                                    sig.producer(port, src);
-                                    for (var t : e.getTraits()) {
-                                        if (t instanceof EdgeTrait edgeTrait) {
-                                            sig.producer(port, src, edgeTrait);
-                                        }
-                                    }
-                                }, () -> {
-                                    sig.producer(src);
-                                    for (var t : e.getTraits()) {
-                                        if (t instanceof EdgeTrait edgeTrait) {
-                                            sig.producer(src, edgeTrait);
-                                        }
-                                    }
-                                });
-                            });
-                        }
-                    }
-                    for (var e : Set.copyOf(systemGraph.outgoingEdgesOf(v))) {
-                        if (e.connectsSourcePort("output")) {
-                            ForSyDeHierarchy.SYProcess.tryView(systemGraph, systemGraph.getEdgeTarget(e)).ifPresent(dst -> {
-                                e.getSourcePort().ifPresentOrElse(port -> {
-                                    sig.addConsumers(port, dst);
-                                    for (var t : e.getTraits()) {
-                                        if (t instanceof EdgeTrait edgeTrait) {
-                                            sig.addConsumers(port, dst, edgeTrait);
-                                        }
-                                    }
-                                }, () -> {
-                                    sig.addConsumers(dst);
-                                    for (var t : e.getTraits()) {
-                                        if (t instanceof EdgeTrait edgeTrait) {
-                                            sig.addConsumers(dst, edgeTrait);
-                                        }
-                                    }
-                                });
-                            });
-                        }
-                    }
+                    ForSyDeHierarchy.SYSignal.enforce(systemGraph, v);
                 }
             }
         }
@@ -183,6 +154,51 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                     runtime.host(pe);
                     runtime.addManaged(pe);
                 }
+            });
+            ForSyDeHierarchy.SYSignal.tryView(systemGraph, v).ifPresent(sig -> {
+                for (var e : Set.copyOf(systemGraph.incomingEdgesOf(v))) {
+                    if (e.connectsTargetPort("input")) {
+                        ForSyDeHierarchy.SYProcess.tryView(systemGraph, systemGraph.getEdgeSource(e)).ifPresent(src -> {
+                            e.getSourcePort().ifPresentOrElse(port -> {
+                                sig.producer(port, src);
+                                for (var t : e.getTraits()) {
+                                    if (t instanceof EdgeTrait edgeTrait) {
+                                        sig.producer(port, src, edgeTrait);
+                                    }
+                                }
+                            }, () -> {
+                                sig.producer(src);
+                                for (var t : e.getTraits()) {
+                                    if (t instanceof EdgeTrait edgeTrait) {
+                                        sig.producer(src, edgeTrait);
+                                    }
+                                }
+                            });
+                        });
+                    }
+                }
+                for (var e : Set.copyOf(systemGraph.outgoingEdgesOf(v))) {
+                    if (e.connectsSourcePort("output")) {
+                        ForSyDeHierarchy.SYProcess.tryView(systemGraph, systemGraph.getEdgeTarget(e)).ifPresent(dst -> {
+                            e.getTargetPort().ifPresentOrElse(port -> {
+                                sig.addConsumers(port, dst);
+                                for (var t : e.getTraits()) {
+                                    if (t instanceof EdgeTrait edgeTrait) {
+                                        sig.addConsumers(port, dst, edgeTrait);
+                                    }
+                                }
+                            }, () -> {
+                                sig.addConsumers(dst);
+                                for (var t : e.getTraits()) {
+                                    if (t instanceof EdgeTrait edgeTrait) {
+                                        sig.addConsumers(dst, edgeTrait);
+                                    }
+                                }
+                            });
+                        });
+                    }
+                }
+
             });
         }
         return true;
