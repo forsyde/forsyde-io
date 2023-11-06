@@ -19,6 +19,7 @@ public class LibForSyDeModelHandler {
         modelHandler.registerValidation(new SDFValidator());
         modelHandler.registerInference(new ComputationalRequirementsPropagator());
         modelHandler.registerInference(new MemoryRequirementsPropagator());
+        modelHandler.registerInference(new FunctionLikePortsInference());
         return modelHandler;
     }
 }
