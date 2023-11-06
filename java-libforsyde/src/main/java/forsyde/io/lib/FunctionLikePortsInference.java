@@ -22,16 +22,20 @@ public class FunctionLikePortsInference implements SystemGraphInference {
                 }
             });
             ForSyDeHierarchy.SYProcess.tryView(systemGraph, v).ifPresent(syProcessViewer -> {
-                var inputs = systemGraph.incomingEdgesOf(v).stream().filter(e -> {
-                    var src = systemGraph.getEdgeSource(e);
-                    return ForSyDeHierarchy.SYSignal.tryView(systemGraph, src).map(sySignalViewer -> sySignalViewer.consumers().contains(syProcessViewer)).orElse(false);
-                }).flatMap(e -> e.getTargetPort().stream()).collect(Collectors.toList());
-                var outputs = systemGraph.incomingEdgesOf(v).stream().filter(e -> {
-                    var dst = systemGraph.getEdgeTarget(e);
-                    return ForSyDeHierarchy.SYSignal.tryView(systemGraph, dst).flatMap(sySignalViewer -> sySignalViewer.producer().map(prod -> prod.equals(syProcessViewer))).orElse(false);
-                }).flatMap(e -> e.getSourcePort().stream()).collect(Collectors.toList());
-                syProcessViewer.inputPorts(inputs);
-                syProcessViewer.outputPorts(outputs);
+                if (syProcessViewer.inputPorts().isEmpty()) {
+                    var inputs = systemGraph.incomingEdgesOf(v).stream().filter(e -> {
+                        var src = systemGraph.getEdgeSource(e);
+                        return ForSyDeHierarchy.SYSignal.tryView(systemGraph, src).map(sySignalViewer -> sySignalViewer.consumers().contains(syProcessViewer)).orElse(false);
+                    }).flatMap(e -> e.getTargetPort().stream()).collect(Collectors.toList());
+                    syProcessViewer.inputPorts(inputs);
+                }
+                if (syProcessViewer.outputPorts().isEmpty()) {
+                    var outputs = systemGraph.incomingEdgesOf(v).stream().filter(e -> {
+                        var dst = systemGraph.getEdgeTarget(e);
+                        return ForSyDeHierarchy.SYSignal.tryView(systemGraph, dst).flatMap(sySignalViewer -> sySignalViewer.producer().map(prod -> prod.equals(syProcessViewer))).orElse(false);
+                    }).flatMap(e -> e.getSourcePort().stream()).collect(Collectors.toList());
+                    syProcessViewer.outputPorts(outputs);
+                }
             });
 //            ForSyDeHierarchy.SDFActor.tryView(systemGraph, v).ifPresent(sdfActorViewer -> {
 //                var inputs = systemGraph.incomingEdgesOf(v).stream().filter(e -> {
