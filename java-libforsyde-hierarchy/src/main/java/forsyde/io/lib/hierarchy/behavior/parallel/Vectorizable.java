@@ -2,6 +2,7 @@ package forsyde.io.lib.hierarchy.behavior.parallel;
 
 import forsyde.io.core.annotations.*;
 import forsyde.io.lib.hierarchy.behavior.BehaviourCompositionEdge;
+import forsyde.io.lib.hierarchy.behavior.DataLikeCompositionEdge;
 import forsyde.io.lib.hierarchy.behavior.DataTypeLike;
 import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
 
@@ -37,7 +38,7 @@ public interface Vectorizable extends DataTypeLike {
     Set<ParallelSkeleton> consumers();
 
     @OutPort
-    @WithEdgeTrait(BehaviourCompositionEdge.class)
+    @WithEdgeTrait(DataLikeCompositionEdge.class)
     Optional<DataTypeLike> arrayItemType();
 
 }

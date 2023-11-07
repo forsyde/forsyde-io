@@ -30,6 +30,21 @@ Required properties:
 
 - **numInitialTokens** (`Integer<32 bits, signed>`): No description exists.
 
+### forsyde::io::lib::hierarchy::behavior::data::IEEE754Binary32FloatingPoint
+
+This trait captures a 32 bit IEEE 754 floating point number.
+
+
+Refines: `forsyde::io::lib::hierarchy::behavior::data::RealLike`
+
+Required ports:
+
+
+
+Required properties:
+
+- **numberOfBits** (`Integer<32 bits, signed>`): No description exists.
+
 ### forsyde::io::lib::hierarchy::implementation::functional::BoundedBufferLike
 
 A BoundedBuffer is a refinement of the potentially infinite BufferLike queue.
@@ -46,6 +61,30 @@ Required ports:
 Required properties:
 
 - **maxElements** (`Integer<32 bits, signed>`): No description exists.
+
+### forsyde::io::lib::hierarchy::behavior::data::IntegralLike
+
+This trait captures an integral datum type.
+That is, this is an integer with any number of encoding bits.
+
+
+Refines: `forsyde::io::lib::hierarchy::behavior::DataTypeLike`
+
+Required ports:
+
+
+
+Required properties:
+
+- **isSigned** (`Boolean`):    Denotes if the integer encoding also captures negative integers.
+  Unless specifically noted, the signed integer representation is two's complement.
+
+- **numberOfBits** (`Integer<32 bits, signed>`):    The number of bits in this encoding.
+  For example, if the vertex being veiwed is a 32-bit integer variable, this number is 32.
+  There is a high chance that this number os always powers of 2, as most comercial off-the-shelf machines
+  are built around these, but the range is _open_ so that a designer is able to use any number they desire
+  to seek a balance between performance vs precision.
+
 
 ### forsyde::io::lib::hierarchy::behavior::FunctionLikeEntity
 
@@ -372,7 +411,7 @@ Refines: `forsyde::io::lib::hierarchy::behavior::DataTypeLike`
 Required ports:
 
 - **producer**:  An incoming port of `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges. No description exists.
-- **arrayItemType**:  An outgoing port of `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::BehaviourCompositionEdge` edges. No description exists.
+- **arrayItemType**:  An outgoing port of `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::DataLikeCompositionEdge` edges. No description exists.
 - **consumers**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::behavior::parallel::ParallelSkeleton` vertices connected by `forsyde::io::lib::hierarchy::behavior::parallel::ParallelComputationEdge` edges. No description exists.
 
 
@@ -505,7 +544,7 @@ A boundary signal between a MoC process network and anything outside this networ
  </p>
 
 
-Refines: `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`, `forsyde::io::lib::hierarchy::behavior::DataTypeLike`
+Refines: `forsyde::io::lib::hierarchy::behavior::DataTypeLike`, `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`
 
 Required ports:
 
@@ -642,7 +681,7 @@ Required properties:
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
 
 Required ports:
 
@@ -700,6 +739,21 @@ Required ports:
 Required properties:
 
 
+### forsyde::io::lib::hierarchy::behavior::data::IEEE754Binary64FloatingPoint
+
+This trait captures a 32 bit IEEE 754 floating point number.
+
+
+Refines: `forsyde::io::lib::hierarchy::behavior::data::RealLike`
+
+Required ports:
+
+
+
+Required properties:
+
+- **numberOfBits** (`Integer<32 bits, signed>`): No description exists.
+
 ### forsyde::io::lib::hierarchy::platform::hardware::GenericCommunicationModule
 
 A GenericCommunicationModule represents any digital hardware module capable of doing "communication".
@@ -725,7 +779,7 @@ Required properties:
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
 
 Required ports:
 
@@ -1000,6 +1054,20 @@ Required properties:
 
 - **visualizedPropertiesNames** (`Array<String>`): No description exists.
 
+### forsyde::io::lib::hierarchy::behavior::data::BooleanLike
+
+A trait that captures boolean datums.
+
+
+Refines: `forsyde::io::lib::hierarchy::behavior::DataTypeLike`
+
+Required ports:
+
+
+
+Required properties:
+
+
 ### forsyde::io::lib::hierarchy::decision::AnalyzedBehavior
 
 This trait attaches analysis and optimisation data to a behavior entity.
@@ -1016,6 +1084,32 @@ Required properties:
 
 - **setThroughputInSecsDenominator** (`Integer<64 bits, signed>`): No description exists.
 - **setThroughputInSecsNumerator** (`Integer<64 bits, signed>`): No description exists.
+
+### forsyde::io::lib::hierarchy::behavior::data::RealLike
+
+This trait captures a real-like datum.
+By real-like, it means that it represents a real number, but the actual encoding is left open to
+be present in refinements of this trait.
+In other words, _do not assume_ that this trait implies that the vertex being viewed is a IEEE 754 floating point.
+Rather, look what refinements exist for this trait or create another to properly capture the desired real number
+encoding.
+
+The only property enforced in this trait is the total number of bits, which is universal across any real number
+encoding.
+
+
+Refines: `forsyde::io::lib::hierarchy::behavior::DataTypeLike`
+
+Required ports:
+
+
+
+Required properties:
+
+- **numberOfBits** (`Integer<32 bits, signed>`):    The _total_ number of bits encoded in this representation.
+  If a particular encoding separates bits in different categories, include all the categories.
+  Using 32-bit IEEE 754 as an example, this number is 32, despite the sign bit, the 8 exponent and 23 fraction bits.
+
 
 ### forsyde::io::lib::hierarchy::behavior::moc::MoCEntity
 
@@ -1060,7 +1154,7 @@ A boundary signal between a MoC process network and anything outside this networ
  </p>
 
 
-Refines: `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`, `forsyde::io::lib::hierarchy::behavior::DataTypeLike`
+Refines: `forsyde::io::lib::hierarchy::behavior::DataTypeLike`, `forsyde::io::lib::hierarchy::behavior::moc::MoCEntity`
 
 Required ports:
 
@@ -1166,9 +1260,27 @@ In this case, the FPGA implementation tries to capture the logic area consumed b
  So, if you want the amount of requirements (provisions) this processing element is giving per second, you
  simply do:
  </p>
-<p>
-instructions per second = clock frequency * instructions per clock cycle
-</p>
+
+ <pre>
+   instructions per second = clock frequency * instructions per clock cycle
+ </pre>
+
+
+### forsyde::io::lib::hierarchy::behavior::data::RecordLike
+
+This trait captures record datum.
+A record is an aggregate of data with labels where the data can be heterogeneous.
+An illustrative example of a record are structs in ANSI C.
+
+
+Refines: `forsyde::io::lib::hierarchy::behavior::DataTypeLike`
+
+Required ports:
+
+- **fields**:  An outgoing port of  multiple `forsyde::io::lib::hierarchy::behavior::DataTypeLike` vertices connected by `forsyde::io::lib::hierarchy::behavior::DataLikeCompositionEdge` edges. No description exists.
+
+
+Required properties:
 
 
 ### forsyde::io::lib::hierarchy::behavior::execution::Stimulator
@@ -1259,7 +1371,7 @@ Required properties:
 
 No description exists.
 
-Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`
+Refines: `forsyde::io::lib::hierarchy::behavior::execution::Stimulator`, `forsyde::io::lib::hierarchy::behavior::execution::Stimulatable`
 
 Required ports:
 
