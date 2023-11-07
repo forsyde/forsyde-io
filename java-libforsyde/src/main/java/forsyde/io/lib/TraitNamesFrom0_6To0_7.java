@@ -198,7 +198,9 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                         });
                     }
                 }
-
+            });
+            ForSyDeHierarchy.Vectorizable.tryView(systemGraph, v).ifPresent(vectorizableViewer -> {
+                systemGraph.outgoingEdgesOf(vectorizableViewer).stream().filter(e -> e.connectsSourcePort("arrayItemType")).forEach(e -> e.addTraits(ForSyDeHierarchy.EdgeTraits.DataLikeCompositionEdge));
             });
         }
         return true;

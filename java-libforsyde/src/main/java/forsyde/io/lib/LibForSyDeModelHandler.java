@@ -20,6 +20,7 @@ public class LibForSyDeModelHandler {
         modelHandler.registerInference(new ComputationalRequirementsPropagator());
         modelHandler.registerInference(new MemoryRequirementsPropagator());
         modelHandler.registerInference(new FunctionLikePortsInference());
+        modelHandler.registerInference(new EnforceBasicDataTypeConstraintsInference());
         return modelHandler;
     }
 }

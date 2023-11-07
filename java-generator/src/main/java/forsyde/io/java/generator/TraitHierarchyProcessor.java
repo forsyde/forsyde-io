@@ -810,8 +810,11 @@ public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpe
                     .filter(e -> e.getKind().equals(ElementKind.METHOD))
                     .map(e -> (ExecutableElement) e)
                     .filter(e -> e.getAnnotation(Property.class) != null)
+                    .filter(e -> methodMembers.stream().noneMatch(ee -> ee.getSimpleName().contentEquals(e.getSimpleName()) && ee.getAnnotation(Override.class) != null)) // there is no methods with the same name and @Override
                     .forEach(methodMembers::add);
         }
+        // make resolution to keep only the most refined overridden property
+
         for (var execMember : methodMembers) {
             var name = execMember.getSimpleName().toString();
             var getMethodBuilder = MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC)
