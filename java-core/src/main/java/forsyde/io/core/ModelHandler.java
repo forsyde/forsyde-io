@@ -124,6 +124,14 @@ public final class ModelHandler {
 		);
 	}
 
+	/**
+	 * Check whether the registered drivers can load the model with given input extension (or format).
+	 * @return true if a driver can load. False otherwise.
+	 */
+	public boolean canLoadModel(String format) {
+		return registeredDrivers.stream().anyMatch(d -> d.inputExtensions().contains(format));
+	}
+
 	public boolean canWriteModel(Path path) {
 		return registeredDriversOutputMatchers.stream().anyMatch(d ->
 				d.matches(path)
