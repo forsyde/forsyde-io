@@ -144,6 +144,12 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                 if (vt.getName().endsWith("SYSignal")) {
                     ForSyDeHierarchy.SYSignal.enforce(systemGraph, v);
                 }
+                if (vt.getName().endsWith("SDFChannel")) {
+                    var c = ForSyDeHierarchy.SDFChannel.enforce(systemGraph, v);
+                    if (c.numInitialTokens() == 0 && v.hasProperty("numOfInitialTokens") && v.getProperty("numOfInitialTokens") != c.numInitialTokens()) {
+                        c.numInitialTokens((Integer) v.getProperty("numOfInitialTokens"));
+                    }
+                }
             }
         }
         // last post-mapping transformations
