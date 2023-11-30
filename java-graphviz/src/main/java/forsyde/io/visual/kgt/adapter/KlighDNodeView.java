@@ -28,7 +28,7 @@ public class KlighDNodeView {
     }
 
     public String getId() {
-        return id;
+        return id.replace(".", "_");
     }
 
     public String getLabel() {
@@ -93,7 +93,7 @@ public class KlighDNodeView {
     }
 
     public void write(PicoWriter picoWriter) {
-        picoWriter.writeln_r("knode " + id + " {");
+        picoWriter.writeln_r("knode " + getId() + " {");
         picoWriter.writeln("klabel \"" + getLabel() + "\"");
         for (String port : getActiveKports()) {
             final String portString = port.replace(" ", "_").replace(".", "_");
@@ -119,14 +119,14 @@ public class KlighDNodeView {
         }
         for (KlighDEdge edge : getKedges()) {
             var dstId = edge.getTarget().getId().replace(" ", "_").replace(".", "_");
-            edge.getSrcPort().ifPresentOrElse(srcPort -> {
-                edge.getDstPort().ifPresentOrElse(dstPort -> {
+            edge.getSrcPort().filter(src -> getActiveKports().contains(src)).ifPresentOrElse(srcPort -> {
+                edge.getDstPort().filter(p -> edge.getTarget().getActiveKports().contains(p)).ifPresentOrElse(dstPort -> {
                     picoWriter.writeln("kedge ( " + ":" + srcPort + " -> " + dstId + ":" + dstPort + ")");
                 }, () -> {
                     picoWriter.writeln("kedge ( " + ":" + srcPort + " -> " + dstId + ")");
                 });
             }, () -> {
-                edge.getDstPort().ifPresentOrElse(dstPort -> {
+                edge.getDstPort().filter(p -> edge.getTarget().getActiveKports().contains(p)).ifPresentOrElse(dstPort -> {
                     picoWriter.writeln("kedge ( -> " + dstId + ":" + dstPort + ")");
                 }, () -> {
                     picoWriter.writeln("kedge ( " + " -> " + dstId + ")");

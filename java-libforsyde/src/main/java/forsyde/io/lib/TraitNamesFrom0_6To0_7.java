@@ -127,15 +127,21 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                 }
                 if (vt.getName().endsWith("FixedPriorityScheduler")) {
                     var s = ForSyDeHierarchy.FixedPriorityScheduledRuntime.enforce(systemGraph, v);
-                    s.supportsPreemption((Boolean) v.getProperty("preemptive"));
+                    if (v.hasProperty("preemption") && v.getProperty("preemption") instanceof Boolean b) {
+                        s.supportsPreemption(b);
+                    }
                 }
                 if (vt.getName().endsWith("StaticCyclicScheduler")) {
                     ForSyDeHierarchy.SuperLoopRuntime.enforce(systemGraph, v);
                 }
                 if (vt.getName().endsWith("RoundRobinScheduler")) {
                     var s = ForSyDeHierarchy.TimeDivisionMultiplexingRuntime.enforce(systemGraph, v);
-                    s.maximumTimeSliceInClockCycles((Long) v.getProperty("maximumTimeSliceInCycles"));
-                    s.minimumTimeSliceInClockCycles((Long) v.getProperty("minimumTimeSliceInCycles"));
+                    if (v.hasProperty("maximumTimeSliceInCycles") && v.getProperty("maximumTimeSliceInCycles") instanceof Long l) {
+                        s.maximumTimeSliceInClockCycles(l);
+                    }
+                    if (v.hasProperty("minimumTimeSliceInCycles") && v.getProperty("minimumTimeSliceInCycles") instanceof Long l) {
+                        s.minimumTimeSliceInClockCycles(l);
+                    }
                     s.frameSizeInClockCycles(s.maximumTimeSliceInClockCycles() * ((Integer) v.getProperty("maximumTimeSlices")));
                 }
                 if (vt.getName().endsWith("PeriodicStimulus")) {
