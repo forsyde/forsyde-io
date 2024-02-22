@@ -6,7 +6,9 @@ public interface SystemGraphMigrator {
 
     boolean effect(SystemGraph systemGraph);
 
-    String getName();
+    default String getName() {
+        return getClass().getCanonicalName();
+    };
 
     class SystemGraphMigrationException extends Exception {
 

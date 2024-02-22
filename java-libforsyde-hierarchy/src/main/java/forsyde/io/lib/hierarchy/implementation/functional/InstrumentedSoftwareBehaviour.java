@@ -12,13 +12,9 @@ import java.util.Map;
  * This trait is made separate from other behaviour-like traits, e.g. synchronous processes,
  * so that the instrumentation information can be used in a courser-grain fashion whenever
  * necessary. Say, in academic studies or pre-design studies.
- *
- * @deprecated This interface trait has been renamed to "InstrumentedSoftwareBehaviour".
- * Please update your code accordingly.
  */
 @RegisterTrait(IForSyDeHierarchy.class)
-@Deprecated
-public interface InstrumentedBehaviour extends BehaviourEntity {
+public interface InstrumentedSoftwareBehaviour extends BehaviourEntity {
 
     /**
      * <p>
@@ -49,6 +45,7 @@ public interface InstrumentedBehaviour extends BehaviourEntity {
      * }
      * </pre>
      *
+     * The names of the each implementation should match the ones of "maxSizeInBits".
      */
     @Property
     Map<String, Map<String, Long>> computationalRequirements();
@@ -64,8 +61,8 @@ public interface InstrumentedBehaviour extends BehaviourEntity {
      * </p>
      *
      * <p>
-     * For example, there could be a "RISCV" implementation, a "niosII" implementation and a
-     * "FPGA logic area implementation" so that the computational requirements can be expressed
+     * For example, there could be a "RISCV" implementation and a "niosII" implementation
+     * so that the computational requirements can be expressed
      * as an associative array with these three possibilities as follow.
      * </p>
      *
@@ -73,11 +70,10 @@ public interface InstrumentedBehaviour extends BehaviourEntity {
      * maxSizeInBits: {
      *     "RISCV": 1000L,
      *     "niosII": 500L,
-     *     "FPGA logic area implementation": 200L
      * }
      * </pre>
-     * In this case, the FPGA implementation tries to capture the logic area consumed by the synthesized behaviour.
      *
+     * The names of the each implementation should match the ones of "computationalRequirements".
      */
     @Property
     Map<String, Long> maxSizeInBits();
