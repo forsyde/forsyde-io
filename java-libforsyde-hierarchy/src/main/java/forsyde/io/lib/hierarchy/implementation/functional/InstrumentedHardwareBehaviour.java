@@ -31,7 +31,7 @@ public interface InstrumentedHardwareBehaviour extends BehaviourEntity {
      * </p>
      *
      * <pre>
-     * computationalRequirements: {
+     * resourceRequirements: {
      *     "ANSI-C": {
      *         "intadd": 4,
      *         "floatadd": 10,
