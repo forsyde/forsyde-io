@@ -32,14 +32,13 @@ public interface InstrumentedHardwareBehaviour extends BehaviourEntity {
      *
      * <pre>
      * resourceRequirements: {
-     *     "ANSI-C": {
-     *         "intadd": 4,
-     *         "floatadd": 10,
-     *         "branch": 200,
+     *     "FPGA": {
+     *         "LUTS": 10,
+     *         "gates" 100,
      *         ...
      *     },
-     *     "CUDA": {
-     *         "kerneladd": 5,
+     *     "SiLago": {
+     *         "FFTFIMP": 1,
      *         ...
      *     }
      * }
