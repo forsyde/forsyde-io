@@ -1,6 +1,6 @@
 ---
 layout: default
-title: IDeSyDe
+title: {{ site.title }}
 description: {{ site.description }}
 isHome: true
 ---
@@ -9,8 +9,9 @@ Welcome to ForSyDe IO's documentation page.
 Here you can find some quick links to help you navigate the documentation
 and also to situate you about the tool and its methods. 
 
- * [ForSyDe IO for the ForSyDe end-user: quick start](usage)
- * [ForSyDe IO for the ForSyDe end-user: LibForSyDe trait hierarchy catalog](usage/catalog)
+ * [ForSyDe IO for the general end-user: quick start](usage)
+ * [ForSyDe IO for the ForSyDe end-user: LibForSyDe quick start trait hierarchy catalog](usage/libforsyde-quick-start)
+ * [ForSyDe IO for the ForSyDe advanced end-user: LibForSyDe trait hierarchy catalog](usage/catalog)
  * [ForSyDe IO: what it is and where it fits.](about)
  * [ForSyDe IO and its meta-modelling for the general developer](extend)
 
