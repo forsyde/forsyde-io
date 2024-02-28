@@ -28,7 +28,7 @@ public class KlighDNodeView {
     }
 
     public String getId() {
-        return id.replace(".", "_");
+        return id.replace(".", "_dot_").replace(" ", "_space_").replace("-", "_dash_");
     }
 
     public String getLabel() {
