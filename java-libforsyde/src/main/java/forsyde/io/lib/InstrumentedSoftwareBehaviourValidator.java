@@ -14,7 +14,7 @@ public class InstrumentedSoftwareBehaviourValidator implements SystemGraphValida
                 systemGraph.vertexSet()) {
             return ForSyDeHierarchy.InstrumentedSoftwareBehaviour.tryView(systemGraph, v).flatMap(instrumentedSoftwareBehaviourViewer -> {
                 if (!instrumentedSoftwareBehaviourViewer.computationalRequirements().keySet().equals(instrumentedSoftwareBehaviourViewer.maxSizeInBits().keySet())) {
-                    return Optional.of("The vertex '%s' declares InstrumentedSoftwareBehaviour but computationalRequirements and maxSizeInBits  do not have matching implementation names.");
+                    return Optional.of("The vertex '%s' declares InstrumentedSoftwareBehaviour but computationalRequirements and maxSizeInBits  do not have matching implementation names.".formatted(instrumentedSoftwareBehaviourViewer.getIdentifier()));
                 } else {
                     return Optional.empty();
                 }

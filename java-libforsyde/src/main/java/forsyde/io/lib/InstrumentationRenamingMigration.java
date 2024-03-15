@@ -13,9 +13,11 @@ public class InstrumentationRenamingMigration implements SystemGraphMigrator {
     public boolean effect(SystemGraph systemGraph) {
         for (var v :
                 systemGraph.vertexSet()) {
-            ForSyDeHierarchy.InstrumentedBehaviour.tryView(systemGraph, v).ifPresent(ForSyDeHierarchy.InstrumentedSoftwareBehaviour::enforce);
+            ForSyDeHierarchy.InstrumentedBehaviour.tryView(systemGraph, v).ifPresent(instrumentedBehaviourViewer -> {
+              var newIn = ForSyDeHierarchy.InstrumentedSoftwareBehaviour.enforce(instrumentedBehaviourViewer);
+            });
         }
-        return false;
+        return true;
     }
 
 }
