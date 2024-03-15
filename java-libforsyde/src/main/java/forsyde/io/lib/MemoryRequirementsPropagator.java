@@ -15,6 +15,7 @@ import forsyde.io.lib.hierarchy.behavior.parallel.Vectorizable;
 import forsyde.io.lib.hierarchy.behavior.parallel.VectorizableViewer;
 import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedBehaviourViewer;
 import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedDataType;
+import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedSoftwareBehaviourViewer;
 
 import java.util.*;
 
@@ -26,7 +27,7 @@ public class MemoryRequirementsPropagator implements SystemGraphInference {
     @Override
     public void infer(SystemGraph systemGraph) {
         // first, we do the SY + SDF collection
-        if (systemGraph.vertexSet().stream().anyMatch(v -> ForSyDeHierarchy.InstrumentedBehaviour.tryView(systemGraph, v).isPresent())) {
+        if (systemGraph.vertexSet().stream().anyMatch(v -> ForSyDeHierarchy.InstrumentedSoftwareBehaviour.tryView(systemGraph, v).isPresent())) {
             for (var v : systemGraph.vertexSet()) {
                 ForSyDeHierarchy.SYMap.tryView(systemGraph, v).ifPresent(this::propagate);
                 ForSyDeHierarchy.SYSignal.tryView(systemGraph, v).ifPresent(this::propagate);
@@ -38,7 +39,7 @@ public class MemoryRequirementsPropagator implements SystemGraphInference {
     }
 
     private Map<String, Long> propagate(FunctionLikeEntity behaviourEntity) {
-        return ForSyDeHierarchy.InstrumentedBehaviour.tryView(behaviourEntity).map(InstrumentedBehaviourViewer::maxSizeInBits)
+        return ForSyDeHierarchy.InstrumentedSoftwareBehaviour.tryView(behaviourEntity).map(InstrumentedSoftwareBehaviourViewer::maxSizeInBits)
                 .orElseGet(() ->
                 ForSyDeHierarchy.SYMap.tryView(behaviourEntity).map(this::propagate).orElseGet(() ->
                 ForSyDeHierarchy.MapV.tryView(behaviourEntity).map(this::propagate).orElseGet(() ->
@@ -49,7 +50,7 @@ public class MemoryRequirementsPropagator implements SystemGraphInference {
     }
 
     private Map<String, Long> propagate(SDFActor sdfActor) {
-        var ins = ForSyDeHierarchy.InstrumentedBehaviour.enforce(sdfActor);
+        var ins = ForSyDeHierarchy.InstrumentedSoftwareBehaviour.enforce(sdfActor);
         var internalVariables = new HashSet<DataTypeLike>();
         sdfActor.combFunctions().forEach(functionLikeEntity -> {
             functionLikeEntity.getViewedSystemGraph().incomingEdgesOf(functionLikeEntity)
@@ -69,7 +70,7 @@ public class MemoryRequirementsPropagator implements SystemGraphInference {
     }
 
     private Map<String, Long> propagate(SYMap syMap) {
-        var ins = ForSyDeHierarchy.InstrumentedBehaviour.enforce(syMap);
+        var ins = ForSyDeHierarchy.InstrumentedSoftwareBehaviour.enforce(syMap);
         var internalVariables = new HashSet<DataTypeLike>();
         syMap.combFunctions().forEach(functionLikeEntity -> {
             functionLikeEntity.getViewedSystemGraph().incomingEdgesOf(functionLikeEntity)
@@ -89,7 +90,7 @@ public class MemoryRequirementsPropagator implements SystemGraphInference {
     }
 
     private Map<String, Long> propagate(MapV mapV) {
-        var ins = ForSyDeHierarchy.InstrumentedBehaviour.enforce(mapV);
+        var ins = ForSyDeHierarchy.InstrumentedSoftwareBehaviour.enforce(mapV);
         var internalVectors = new HashSet<Vectorizable>();
         // check on input vectors
         mapV.kernels().forEach(functionLikeEntity -> {
@@ -112,7 +113,7 @@ public class MemoryRequirementsPropagator implements SystemGraphInference {
     }
 
     private Map<String, Long> propagate(ReduceV reduceV) {
-        var ins = ForSyDeHierarchy.InstrumentedBehaviour.enforce(reduceV);
+        var ins = ForSyDeHierarchy.InstrumentedSoftwareBehaviour.enforce(reduceV);
         var internalVectors = new HashSet<Vectorizable>();
         // get size of input array
         reduceV.kernels().forEach(functionLikeEntity -> {
