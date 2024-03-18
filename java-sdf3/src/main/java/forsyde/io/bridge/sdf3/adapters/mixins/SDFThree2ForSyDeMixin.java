@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Object, Vertex> {
 
-
     default void fromActorsToVertexes(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdf().getActor().forEach(a -> {
             var sdfActor = ForSyDeHierarchy.SDFActor.enforce(systemGraph, systemGraph.newVertex(a.getName()));
@@ -24,8 +23,7 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                 sdfActor.getPorts().add(port.getName());
                 if (port.getType().equals("in")) {
                     consumption.put(port.getName(), port.getRate().intValueExact());
-                }
-                else if (port.getType().equals("out")) {
+                } else if (port.getType().equals("out")) {
                     production.put(port.getName(), port.getRate().intValueExact());
                 }
             });
@@ -61,20 +59,26 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
                                         .filter(srcActor -> srcActor.getName().equals(channel.getSrcActor()))
                                         .flatMap(this::equivalents)
                                         .forEach(srcActorV -> {
-                                            // find the one without consumer, as it could be expanded with delays beforehand.
+                                            // find the one without consumer, as it could be expanded with delays
+                                            // beforehand.
                                             // find the equivalent signal to connect. Should not NPE.
                                             if (sdfChannel.producer().isEmpty()) {
-                                                sdfChannel.producer(channel.getSrcPort(), ForSyDeHierarchy.SDFActor.enforce(systemGraph, srcActorV), ForSyDeHierarchy.EdgeTraits.VisualConnection);
+                                                sdfChannel.producer(channel.getSrcPort(),
+                                                        ForSyDeHierarchy.SDFActor.enforce(systemGraph, srcActorV),
+                                                        ForSyDeHierarchy.EdgeTraits.VisualConnection);
                                             }
                                         });
                                 sdf3.getApplicationGraph().getSdf().getActor().stream()
                                         .filter(dstActor -> dstActor.getName().equals(channel.getDstActor()))
                                         .flatMap(this::equivalents)
                                         .forEach(dstActorV -> {
-                                            // find the one without consumer, as it could be expanded with delays beforehand.
+                                            // find the one without consumer, as it could be expanded with delays
+                                            // beforehand.
                                             // find the equivalent signal to connect. Should not NPE.
                                             if (sdfChannel.consumer().isEmpty()) {
-                                                sdfChannel.consumer(channel.getDstPort(), ForSyDeHierarchy.SDFActor.enforce(systemGraph, dstActorV), ForSyDeHierarchy.EdgeTraits.VisualConnection);
+                                                sdfChannel.consumer(channel.getDstPort(),
+                                                        ForSyDeHierarchy.SDFActor.enforce(systemGraph, dstActorV),
+                                                        ForSyDeHierarchy.EdgeTraits.VisualConnection);
                                             }
                                         });
                             });
@@ -83,36 +87,44 @@ public interface SDFThree2ForSyDeMixin extends EquivalenceModel2ModelMixin<Objec
 
     default void fromChannelPropertiesToSDFChannels(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdfProperties().getChannelProperties().forEach(channelProperties -> {
-            systemGraph.queryVertex(channelProperties.getChannel()).flatMap(v -> ForSyDeHierarchy.SDFChannel.tryView(systemGraph, v)).ifPresent(sdfChannel -> {
-                if (!channelProperties.getTokenSize().isEmpty()) {
-                    var tokenizableDataBlock = ForSyDeHierarchy.BufferLike.enforce(sdfChannel);
-                    var sz = channelProperties.getTokenSize().stream().mapToLong(t -> t.getSz().longValueExact()).sum();
-                    tokenizableDataBlock.elementSizeInBits(sz);
-                }
-                if (channelProperties.getBufferSize() != null) {
-                    var tokenizableDataBlock = ForSyDeHierarchy.BoundedBufferLike.enforce(sdfChannel);
-                    var max = channelProperties.getBufferSize().getSz().longValueExact();
-                    tokenizableDataBlock.maxElements((int) max / tokenizableDataBlock.elementSizeInBits().intValue());
-                }
-            });
+            systemGraph.queryVertex(channelProperties.getChannel())
+                    .flatMap(v -> ForSyDeHierarchy.SDFChannel.tryView(systemGraph, v)).ifPresent(sdfChannel -> {
+                        if (!channelProperties.getTokenSize().isEmpty()) {
+                            var tokenizableDataBlock = ForSyDeHierarchy.BufferLike.enforce(sdfChannel);
+                            var sz = channelProperties.getTokenSize().stream()
+                                    .mapToLong(t -> t.getSz().longValueExact()).sum();
+                            tokenizableDataBlock.elementSizeInBits(sz);
+                        }
+                        if (channelProperties.getBufferSize() != null) {
+                            var tokenizableDataBlock = ForSyDeHierarchy.BoundedBufferLike.enforce(sdfChannel);
+                            var max = channelProperties.getBufferSize().getSz().longValueExact();
+                            tokenizableDataBlock
+                                    .maxElements((int) max / tokenizableDataBlock.elementSizeInBits().intValue());
+                        }
+                    });
         });
     }
 
     default void fromActorPropertiesToSDFActor(final Sdf3 sdf3, final SystemGraph systemGraph) {
         sdf3.getApplicationGraph().getSdfProperties().getActorProperties().forEach(actorProperties -> {
-            systemGraph.queryVertex(actorProperties.getActor()).flatMap(v -> ForSyDeHierarchy.SDFActor.tryView(systemGraph, v)).ifPresent(sdfActor -> {
-                var instrumentedExecutable = ForSyDeHierarchy.InstrumentedBehaviour.enforce(sdfActor);
-                final Map<String, Map<String, Long>> ops = actorProperties.getProcessor().stream().collect(Collectors.toMap(
-                        Processor::getType,
-                        p -> Map.of("all", p.getExecutionTime().getTime().longValueExact())
-                ));
-                instrumentedExecutable.computationalRequirements(ops);
+            systemGraph.queryVertex(actorProperties.getActor())
+                    .flatMap(v -> ForSyDeHierarchy.SDFActor.tryView(systemGraph, v)).ifPresent(sdfActor -> {
+                        var instrumentedExecutable = ForSyDeHierarchy.InstrumentedSoftwareBehaviour.enforce(sdfActor);
+                        final Map<String, Map<String, Long>> ops = actorProperties.getProcessor().stream()
+                                .collect(Collectors.toMap(
+                                        Processor::getType,
+                                        p -> Map.of("all", p.getExecutionTime().getTime().longValueExact())));
+                        instrumentedExecutable.computationalRequirements(ops);
 
-                final Long stateSize = actorProperties.getProcessor().stream().map(Processor::getMemory)
-                        .mapToLong(m -> m != null ? m.getStateSize() != null ? m.getStateSize().getMax() != null ?
-                                m.getStateSize().getMax().longValueExact() : 0L : 0L : 0L).sum();
-                instrumentedExecutable.maxSizeInBits(Map.of("all", stateSize));
-            });
+                        final Map<String, Long> stateSizes = actorProperties.getProcessor().stream()
+                                .collect(Collectors.toMap(Processor::getType,
+                                        p -> p.getMemory() != null ? p.getMemory().getStateSize() != null
+                                                ? p.getMemory().getStateSize().getMax() != null
+                                                        ? p.getMemory().getStateSize().getMax().longValueExact()
+                                                        : 0L
+                                                : 0L : 0L));
+                        instrumentedExecutable.maxSizeInBits(stateSizes);
+                    });
         });
     }
 
