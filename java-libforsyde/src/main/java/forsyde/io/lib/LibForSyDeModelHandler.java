@@ -17,6 +17,7 @@ public class LibForSyDeModelHandler {
         modelHandler.registerSystemGraphMigrator(new TraitNamesFrom0_6To0_7());
         modelHandler.registerSystemGraphMigrator(new SDFActorsWithFunctionMigrator());
         modelHandler.registerSystemGraphMigrator(new InstrumentationRenamingMigration());
+        modelHandler.registerSystemGraphMigrator(new AnalyzedBehaviourThroughputNameMigration());
         modelHandler.registerValidation(new SDFValidator());
         modelHandler.registerValidation(new InstrumentedSoftwareBehaviourValidator());
         modelHandler.registerInference(new ComputationalRequirementsPropagator());

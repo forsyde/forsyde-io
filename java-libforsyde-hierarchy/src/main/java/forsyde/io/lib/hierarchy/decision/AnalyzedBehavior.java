@@ -14,10 +14,10 @@ import forsyde.io.lib.hierarchy.behavior.BehaviourEntity;
 public interface AnalyzedBehavior extends BehaviourEntity {
 
     @Property
-    Long setThroughputInSecsNumerator();
+    default Long throughputInSecsNumerator() {return -1L;};
 
     @Property
-    Long setThroughputInSecsDenominator();
+    default Long throughputInSecsDenominator() {return 1L;};
 
 
 }
