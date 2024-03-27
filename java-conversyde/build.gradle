@@ -12,7 +12,7 @@ dependencies {
     implementation project(":java-core")
 //    implementation project(":java-amalthea")
     //implementation project(":java-linguafranca")
-    implementation project(":java-sdf3")
+    implementation project(":java-bridge-sdf3")
     implementation project(":java-libforsyde")
     implementation project(":java-graphviz")
 }

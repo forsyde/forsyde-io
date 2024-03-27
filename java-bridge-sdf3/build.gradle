@@ -1,5 +1,5 @@
 plugins {
-    id 'forsydeio.public-module'
+    id 'forsydeio.app-module'
 }
 
 project.ext.niceName = "Java SDF3 Bridge"
@@ -12,6 +12,16 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
 
+    implementation 'info.picocli:picocli:4.6.3'
+    annotationProcessor 'info.picocli:picocli-codegen:4.6.3'
+
     implementation project(':java-core')
     implementation project(':java-libforsyde')
+}
+
+mainClassName = 'forsyde.io.bridge.sdf3.SDF3Converter'
+
+application {
+    mainClass = mainClassName
+    mainModule = "forsyde.io.java.sdfThree"
 }

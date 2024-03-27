@@ -1,29 +1,35 @@
 plugins {
-    id 'antlr'
+    // id 'antlr'
     id 'forsydeio.public-module'
 }
 
 dependencies {
-    antlr 'org.antlr:antlr4:4.10.1'
-    implementation 'org.antlr:antlr4-runtime:4.10.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // antlr 'org.antlr:antlr4:4.10.1'
+    // implementation 'org.antlr:antlr4-runtime:4.10.1'
     implementation project(":java-core")
     implementation project(":java-libforsyde")
     compileOnly project(":java-generator")
     annotationProcessor project(":java-generator")
 }
 
-generateGrammarSource {
-    maxHeapSize = "512m"
-    arguments += ['-package', 'forsyde.io.bridge.forsyde.shallow.haskell', '-visitor']
-    outputDirectory layout.buildDirectory.dir("generated/${name}/main/java/forsyde/io/bridge/forsyde/shallow/haskell").get().getAsFile()
+test {
+    useJUnitPlatform()
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs += layout.buildDirectory.dir("generated/generateGrammarSource/main/java")
-        }
-    }
-}
+// generateGrammarSource {
+//     maxHeapSize = "512m"
+//     arguments += ['-package', 'forsyde.io.bridge.forsyde.shallow.haskell', '-visitor']
+//     outputDirectory layout.buildDirectory.dir("generated/${name}/main/java/forsyde/io/bridge/forsyde/shallow/haskell").get().getAsFile()
+// }
 
-tasks.sourcesJar.dependsOn tasks.generateGrammarSource
+// sourceSets {
+//     main {
+//         java {
+//             srcDirs += layout.buildDirectory.dir("generated/generateGrammarSource/main/java")
+//         }
+//     }
+// }
+
+// tasks.sourcesJar.dependsOn tasks.generateGrammarSource

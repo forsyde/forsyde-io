@@ -17,6 +17,6 @@ public class AnalyzedBehaviourThroughputNameMigration implements SystemGraphMigr
                 }
             });
         }
-        return false;
+        return true;
     }
 }

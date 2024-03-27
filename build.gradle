@@ -46,7 +46,7 @@ dependencies {
   testImplementation project(":java-core")
   testImplementation project(":java-libforsyde")
   testImplementation project(":java-graphviz")
-  testImplementation project(":java-sdf3")
+  testImplementation project(":java-bridge-sdf3")
   testImplementation project(":java-bridge-forsyde-systemc")
 //  testImplementation project(":java-bridge-forsyde-shallow")
 }
