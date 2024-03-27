@@ -1,4 +1,5 @@
 plugins {
+    id 'forsydeio.public-module'
     id 'forsydeio.app-module'
 }
 
