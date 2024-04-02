@@ -17,6 +17,10 @@ import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
  * which is 1 by default.
  */
 @RegisterTrait(IForSyDeHierarchy.class)
-public interface LogicProgrammableModule extends DigitalModule {
+public interface LogicProgrammableModule extends HardwareModule {
 
+    @Property
+    default int availableLogicArea() {
+        return 1;
+    }
 }
