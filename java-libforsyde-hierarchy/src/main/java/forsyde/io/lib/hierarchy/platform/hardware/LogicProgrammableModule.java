@@ -20,7 +20,5 @@ import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
 public interface LogicProgrammableModule extends HardwareModule {
 
     @Property
-    default int availableLogicArea() {
-        return 1;
-    }
+    int availableLogicArea();
 }
