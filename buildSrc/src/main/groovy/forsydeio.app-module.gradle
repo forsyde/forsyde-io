@@ -1,7 +1,6 @@
 plugins {
     id 'java'
     id 'application'
-    id 'idea'
     id 'eclipse'
     id 'com.github.johnrengelman.shadow'
     id 'org.beryx.jlink'

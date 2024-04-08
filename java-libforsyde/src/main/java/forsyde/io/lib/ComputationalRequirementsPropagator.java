@@ -9,7 +9,8 @@ import forsyde.io.lib.hierarchy.behavior.parallel.InterleaveV;
 import forsyde.io.lib.hierarchy.behavior.parallel.MapV;
 import forsyde.io.lib.hierarchy.behavior.parallel.ReduceV;
 import forsyde.io.lib.hierarchy.behavior.parallel.VectorizableViewer;
-import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedBehaviourViewer;
+import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedSoftwareBehaviour;
+import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedSoftwareBehaviourViewer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class ComputationalRequirementsPropagator implements SystemGraphInference
     @Override
     public void infer(SystemGraph systemGraph) {
         // first, we do the SY + SDF collection
-        if (systemGraph.vertexSet().stream().anyMatch(v -> ForSyDeHierarchy.InstrumentedBehaviour.tryView(systemGraph, v).isPresent())) {
+        if (systemGraph.vertexSet().stream().anyMatch(v -> ForSyDeHierarchy.InstrumentedSoftwareBehaviour.tryView(systemGraph, v).isPresent())) {
             for (var v : systemGraph.vertexSet()) {
                 ForSyDeHierarchy.SYMap.tryView(systemGraph, v).ifPresent(this::propagate);
 //            ForSyDeHierarchy.SDFActor.tryView(systemGraph, v).ifPresent(queue::add);
@@ -48,7 +49,7 @@ public class ComputationalRequirementsPropagator implements SystemGraphInference
     }
 
     private Map<String, Map<String, Long>> propagate(FunctionLikeEntity behaviourEntity, List<Integer> containerInputDimensions, List<Integer> containerOutputDimensions) {
-        return ForSyDeHierarchy.InstrumentedBehaviour.tryView(behaviourEntity).map(InstrumentedBehaviourViewer::computationalRequirements)
+        return ForSyDeHierarchy.InstrumentedSoftwareBehaviour.tryView(behaviourEntity).filter(x -> !x.computationalRequirements().isEmpty()).map(InstrumentedSoftwareBehaviour::computationalRequirements)
                 .orElseGet(() ->
                 ForSyDeHierarchy.SYMap.tryView(behaviourEntity).map(this::propagate).orElseGet(() ->
                 ForSyDeHierarchy.MapV.tryView(behaviourEntity).map(m -> propagate(m, containerInputDimensions, containerOutputDimensions)).orElseGet(() ->
@@ -59,7 +60,7 @@ public class ComputationalRequirementsPropagator implements SystemGraphInference
     }
 
     private Map<String, Map<String, Long>> propagate(SYMap syMap) {
-        var ins = ForSyDeHierarchy.InstrumentedBehaviour.enforce(syMap);
+        var ins = ForSyDeHierarchy.InstrumentedSoftwareBehaviour.enforce(syMap);
         if (ins.computationalRequirements().isEmpty()) {
             var inputVectors = syMap.getViewedSystemGraph().incomingEdgesOf(syMap.getViewedVertex()).stream().filter(e -> e.getTargetPort().map(p -> syMap.inputPorts().contains(p)).orElse(false))
                     .map(e -> syMap.getViewedSystemGraph().getEdgeSource(e))
@@ -82,7 +83,7 @@ public class ComputationalRequirementsPropagator implements SystemGraphInference
     }
 
     private Map<String, Map<String, Long>> propagate(MapV mapV, List<Integer> containerInputDimensions, List<Integer> containerOutputDimensions) {
-        var ins = ForSyDeHierarchy.InstrumentedBehaviour.enforce(mapV);
+        var ins = ForSyDeHierarchy.InstrumentedSoftwareBehaviour.enforce(mapV);
         // check on input vectors
         var inputVectors = mapV.getViewedSystemGraph().incomingEdgesOf(mapV)
                 .stream().filter(e -> e.getTargetPort().map(p -> mapV.inputPorts().contains(p)).orElse(false))
@@ -113,7 +114,7 @@ public class ComputationalRequirementsPropagator implements SystemGraphInference
     }
 
     private Map<String, Map<String, Long>> propagate(ReduceV reduceV, List<Integer> containerInputDimensions, List<Integer> containerOutputDimensions) {
-        var ins = ForSyDeHierarchy.InstrumentedBehaviour.enforce(reduceV);
+        var ins = ForSyDeHierarchy.InstrumentedSoftwareBehaviour.enforce(reduceV);
         // get size of input array
         var inputVectors = reduceV.getViewedSystemGraph().incomingEdgesOf(reduceV)
                 .stream().filter(e -> e.getTargetPort().map(p -> reduceV.inputArray().equals(p)).orElse(false))
@@ -125,8 +126,7 @@ public class ComputationalRequirementsPropagator implements SystemGraphInference
                 .flatMap(e -> ForSyDeHierarchy.Vectorizable.tryView(reduceV.getViewedSystemGraph(), reduceV.getViewedSystemGraph().getEdgeTarget(e)).stream())
                 .map(VectorizableViewer::dimensions)
                 .reduce(List.of(), this::merge);
-        var inputMultiplier = inputVectors.isEmpty() ? containerInputDimensions.get(0) : inputVectors.get(0);
-        var multiplier = inputMultiplier;
+        var multiplier = inputVectors.isEmpty() ? containerInputDimensions.get(0) : inputVectors.get(0);
         var m = reduceV.kernels().stream().map(comb -> {
             var newInputs = (inputVectors.isEmpty() ? containerInputDimensions : inputVectors);
             var newOuputs = (outputVectors.isEmpty() ? containerOutputDimensions : outputVectors);
