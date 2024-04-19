@@ -15,6 +15,7 @@ import forsyde.io.lib.hierarchy.behavior.parallel.Vectorizable;
 import forsyde.io.lib.hierarchy.behavior.parallel.VectorizableViewer;
 import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedBehaviourViewer;
 import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedDataType;
+import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedSoftwareBehaviour;
 import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedSoftwareBehaviourViewer;
 
 import java.util.*;
@@ -39,7 +40,7 @@ public class MemoryRequirementsPropagator implements SystemGraphInference {
     }
 
     private Map<String, Long> propagate(FunctionLikeEntity behaviourEntity) {
-        return ForSyDeHierarchy.InstrumentedSoftwareBehaviour.tryView(behaviourEntity).map(InstrumentedSoftwareBehaviourViewer::maxSizeInBits)
+        return ForSyDeHierarchy.InstrumentedSoftwareBehaviour.tryView(behaviourEntity).filter(x -> !x.maxSizeInBits().isEmpty()).map(InstrumentedSoftwareBehaviour::maxSizeInBits)
                 .orElseGet(() ->
                 ForSyDeHierarchy.SYMap.tryView(behaviourEntity).map(this::propagate).orElseGet(() ->
                 ForSyDeHierarchy.MapV.tryView(behaviourEntity).map(this::propagate).orElseGet(() ->
@@ -65,7 +66,8 @@ public class MemoryRequirementsPropagator implements SystemGraphInference {
                     .forEach(internalVariables::add);
         });
         var m = sdfActor.combFunctions().stream().map(this::propagate).reduce(new HashMap<>(), this::merge);
-        m = internalVariables.stream().map(this::propagate).reduce(new HashMap<>(), this::merge);
+        var sigs = internalVariables.stream().map(this::propagate).reduce(new HashMap<>(), this::merge);
+        ins.maxSizeInBits(merge(m, sigs));
         return ins.maxSizeInBits();
     }
 
@@ -85,7 +87,8 @@ public class MemoryRequirementsPropagator implements SystemGraphInference {
                     .forEach(internalVariables::add);
         });
         var m = syMap.combFunctions().stream().map(this::propagate).reduce(new HashMap<>(), this::merge);
-        m = internalVariables.stream().map(this::propagate).reduce(new HashMap<>(), this::merge);
+        var sigs = internalVariables.stream().map(this::propagate).reduce(new HashMap<>(), this::merge);
+        ins.maxSizeInBits(merge(m, sigs));
         return ins.maxSizeInBits();
     }
 
@@ -106,10 +109,10 @@ public class MemoryRequirementsPropagator implements SystemGraphInference {
                     .forEach(internalVectors::add);
         });
         var m = mapV.kernels().stream().map(this::propagate).reduce(new HashMap<>(), this::merge);
-        m = internalVectors.stream().map(this::propagate).reduce(new HashMap<>(), this::merge);
+        var sigs = internalVectors.stream().map(this::propagate).reduce(new HashMap<>(), this::merge);
         // multiply all entries
-        ins.maxSizeInBits(m);
-        return m;
+        ins.maxSizeInBits(merge(m, sigs));
+        return ins.maxSizeInBits();
     }
 
     private Map<String, Long> propagate(ReduceV reduceV) {
@@ -129,9 +132,10 @@ public class MemoryRequirementsPropagator implements SystemGraphInference {
                     .forEach(internalVectors::add);
         });
         var m = reduceV.kernels().stream().map(this::propagate).reduce(new HashMap<>(), this::merge);
-        m = internalVectors.stream().map(this::propagate).reduce(new HashMap<>(), this::merge);
-        ins.maxSizeInBits(m);
-        return m;
+        var sigs = internalVectors.stream().map(this::propagate).reduce(new HashMap<>(), this::merge);
+        // multiply all entries
+        ins.maxSizeInBits(merge(m, sigs));
+        return ins.maxSizeInBits();
     }
 
     private Map<String, Long> propagate(SYSignal sySignal) {
