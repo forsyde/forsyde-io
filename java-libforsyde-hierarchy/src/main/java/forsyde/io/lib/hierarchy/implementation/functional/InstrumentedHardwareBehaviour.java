@@ -103,7 +103,9 @@ public interface InstrumentedHardwareBehaviour extends BehaviourEntity {
     Map<String, Double> energyPerExecutionInJoules();
 
     /**
+     * <p>
      * This property captures the amount of hardware area required to implement this behaviour.
+     * </p>
      */
     @Property
     int requiredHardwareImplementationArea();
