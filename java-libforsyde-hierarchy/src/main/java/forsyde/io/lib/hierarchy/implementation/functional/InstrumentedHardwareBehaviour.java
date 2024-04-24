@@ -102,4 +102,12 @@ public interface InstrumentedHardwareBehaviour extends BehaviourEntity {
     @Property
     Map<String, Double> energyPerExecutionInJoules();
 
+    /**
+     * <p>
+     * This property captures the amount of hardware area required to implement this behaviour at FPGA elements uniformly.
+     * </p>
+     */
+     default long requiredFPGAHardwareImplementationArea() {
+         return resourceRequirements().getOrDefault("FPGA", Map.of()).getOrDefault("Area", 0L);
+     }
 }
