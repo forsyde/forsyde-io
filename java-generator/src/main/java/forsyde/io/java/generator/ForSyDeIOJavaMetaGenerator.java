@@ -7,9 +7,6 @@ package forsyde.io.java.generator;
 //import org.gradle.api.plugins.internal.DefaultJavaPluginConvention;
 //import org.gradle.api.tasks.SourceSetContainer;
 
-import java.util.List;
-import java.util.Objects;
-
 public class ForSyDeIOJavaMetaGenerator { //implements Plugin<Project> {
 
 	//final GenerateForSyDeModelTask generateForSyDeModelTask = new GenerateForSyDeModelTask();

@@ -3,9 +3,6 @@ package forsyde.io.lib;
 import forsyde.io.core.SystemGraph;
 import forsyde.io.core.migrations.SystemGraphMigrator;
 import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
-import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedBehaviour;
-import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedBehaviourViewer;
-import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedSoftwareBehaviour;
 
 public class InstrumentationRenamingMigration implements SystemGraphMigrator {
     @Override

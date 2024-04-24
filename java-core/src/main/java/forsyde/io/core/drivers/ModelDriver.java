@@ -3,6 +3,8 @@
  */
 package forsyde.io.core.drivers;
 
+import forsyde.io.core.SystemGraph;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -10,8 +12,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-
-import forsyde.io.core.SystemGraph;
 
 /**
  * Interface for reading and writing different formats from and to models.

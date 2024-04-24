@@ -1,7 +1,6 @@
 package forsyde.io.core;
 
 import java.util.List;
-import java.util.Set;
 
 public interface EdgeTrait extends Trait {
 

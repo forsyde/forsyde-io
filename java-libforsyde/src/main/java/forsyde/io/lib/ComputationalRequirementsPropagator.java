@@ -5,12 +5,10 @@ import forsyde.io.core.inference.SystemGraphInference;
 import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
 import forsyde.io.lib.hierarchy.behavior.FunctionLikeEntity;
 import forsyde.io.lib.hierarchy.behavior.moc.sy.SYMap;
-import forsyde.io.lib.hierarchy.behavior.parallel.InterleaveV;
 import forsyde.io.lib.hierarchy.behavior.parallel.MapV;
 import forsyde.io.lib.hierarchy.behavior.parallel.ReduceV;
 import forsyde.io.lib.hierarchy.behavior.parallel.VectorizableViewer;
 import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedSoftwareBehaviour;
-import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedSoftwareBehaviourViewer;
 
 import java.util.ArrayList;
 import java.util.HashMap;

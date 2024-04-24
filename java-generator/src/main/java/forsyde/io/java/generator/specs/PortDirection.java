@@ -1,8 +1,5 @@
 package forsyde.io.java.generator.specs;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 public enum PortDirection {
     OUTGOING,
     INCOMING,

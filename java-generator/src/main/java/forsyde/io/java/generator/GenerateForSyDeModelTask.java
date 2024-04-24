@@ -1,23 +1,6 @@
 package forsyde.io.java.generator;
 
-import com.squareup.javapoet.*;
-import forsyde.io.java.generator.dsl.ForSyDeTraitDSLLexer;
-import forsyde.io.java.generator.dsl.ForSyDeTraitDSLParser;
-import forsyde.io.java.generator.exceptions.InconsistentTraitHierarchyException;
-import forsyde.io.java.generator.specs.*;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import forsyde.io.java.generator.specs.PortDirection;
 
 public abstract class GenerateForSyDeModelTask { //extends DefaultTask implements Task {
 

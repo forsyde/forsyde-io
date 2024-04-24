@@ -1,13 +1,15 @@
 package forsyde.io.visual.kgt.adapter;
 
 
-import forsyde.io.java.adapters.ModelAdapter;
 import forsyde.io.core.SystemGraph;
+import forsyde.io.java.adapters.ModelAdapter;
 import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
-import forsyde.io.lib.hierarchy.visualization.GreyBox;
 import forsyde.io.lib.hierarchy.visualization.Visualizable;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Queue;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface ForSyDe2KGTNode extends ModelAdapter<KlighDContainer> {

@@ -1,6 +1,5 @@
 package forsyde.io.lib.hierarchy.behavior.basic;
 
-import forsyde.io.core.VertexViewer;
 import forsyde.io.core.annotations.InPort;
 import forsyde.io.core.annotations.OutPort;
 import forsyde.io.core.annotations.RegisterTrait;

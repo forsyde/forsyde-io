@@ -1,9 +1,9 @@
 package forsyde.io.lib.hierarchy.behavior.moc.sdf;
 
 import forsyde.io.core.annotations.*;
+import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
 import forsyde.io.lib.hierarchy.behavior.BehaviourCompositionEdge;
 import forsyde.io.lib.hierarchy.behavior.DataTypeLike;
-import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
 import forsyde.io.lib.hierarchy.behavior.moc.MoCEntity;
 
 import java.util.Optional;

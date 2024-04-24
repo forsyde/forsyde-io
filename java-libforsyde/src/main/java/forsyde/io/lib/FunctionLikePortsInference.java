@@ -1,8 +1,6 @@
 package forsyde.io.lib;
 
-import forsyde.io.core.EdgeInfo;
 import forsyde.io.core.SystemGraph;
-import forsyde.io.core.Vertex;
 import forsyde.io.core.inference.SystemGraphInference;
 import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
 

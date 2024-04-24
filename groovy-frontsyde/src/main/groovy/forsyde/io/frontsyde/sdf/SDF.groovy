@@ -1,8 +1,6 @@
 package forsyde.io.frontsyde.sdf
 
 import forsyde.io.core.SystemGraph
-import forsyde.io.core.Trait
-
 
 /**
  * @author     Joakim Savegren and Joar Edling, 2022

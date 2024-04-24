@@ -5,7 +5,6 @@ import forsyde.io.lib.hierarchy.behavior.moc.sdf.SDFActor;
 import forsyde.io.lib.hierarchy.behavior.moc.sy.SYDelay;
 import forsyde.io.lib.hierarchy.behavior.moc.sy.SYMap;
 import forsyde.io.lib.hierarchy.implementation.synthetizable.PeriodicTask;
-import forsyde.io.lib.hierarchy.platform.hardware.GenericProcessingModule;
 import forsyde.io.lib.hierarchy.platform.runtime.FixedPriorityScheduledRuntime;
 import org.ainslec.picocog.PicoWriter;
 

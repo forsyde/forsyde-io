@@ -3,17 +3,17 @@
  */
 package forsyde.io.core;
 
+import forsyde.io.core.drivers.FiodlDriver;
+import forsyde.io.core.drivers.ModelDriver;
+import forsyde.io.core.inference.SystemGraphInference;
+import forsyde.io.core.migrations.SystemGraphMigrator;
+import forsyde.io.core.validation.BasicTraitsValidation;
+import forsyde.io.core.validation.SystemGraphValidation;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
-
-import forsyde.io.core.drivers.FiodlDriver;
-import forsyde.io.core.drivers.ModelDriver;
-import forsyde.io.core.inference.SystemGraphInference;
-import forsyde.io.core.migrations.*;
-import forsyde.io.core.validation.BasicTraitsValidation;
-import forsyde.io.core.validation.SystemGraphValidation;
 
 /**
  * @author rjordao

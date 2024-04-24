@@ -1,10 +1,7 @@
-import forsyde.io.bridge.forsyde.systemc.ForSyDeSystemCDriver;
 import forsyde.io.bridge.sdf3.drivers.SDF3Driver;
 import forsyde.io.core.ModelHandler;
-import forsyde.io.lib.LibForSyDeModelHandler;
 import forsyde.io.lib.TraitNamesFrom0_6To0_7;
 import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
-import forsyde.io.visual.kgt.drivers.KGTDriver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

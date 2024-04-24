@@ -1,21 +1,7 @@
 package forsyde.io.bridge.sdf3.adapters.mixins;
 
-import forsyde.io.bridge.sdf3.adapters.mixins.elems.*;
-import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
-import forsyde.io.core.EdgeInfo;
-import forsyde.io.core.SystemGraph;
 import forsyde.io.core.Vertex;
-import org.jgrapht.Graph;
-import org.jgrapht.alg.shortestpath.FloydWarshallShortestPaths;
-import org.jgrapht.graph.AsWeightedGraph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.jgrapht.graph.builder.GraphBuilder;
-
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import forsyde.io.java.adapters.EquivalenceModel2ModelMixin;
 
 public interface ForSyDe2SDFThreeMixin extends EquivalenceModel2ModelMixin<Vertex, Object> {
 

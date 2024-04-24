@@ -5,6 +5,4 @@ plugins {
 dependencies {
     api project(':java-core')
     api project(':java-libforsyde-hierarchy')
-    compileOnly project(":java-generator")
-    annotationProcessor project(':java-generator')
 }

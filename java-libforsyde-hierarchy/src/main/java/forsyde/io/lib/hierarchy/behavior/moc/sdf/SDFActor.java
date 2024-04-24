@@ -4,11 +4,10 @@ import forsyde.io.core.annotations.OutPort;
 import forsyde.io.core.annotations.Property;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.core.annotations.WithEdgeTrait;
+import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
 import forsyde.io.lib.hierarchy.behavior.BehaviourCompositionEdge;
-import forsyde.io.lib.hierarchy.behavior.BehaviourEntity;
 import forsyde.io.lib.hierarchy.behavior.FunctionLikeEntity;
 import forsyde.io.lib.hierarchy.behavior.moc.MoCEntity;
-import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
 
 import java.util.Map;
 import java.util.Set;

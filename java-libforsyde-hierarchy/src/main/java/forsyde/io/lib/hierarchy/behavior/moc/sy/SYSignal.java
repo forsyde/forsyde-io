@@ -5,9 +5,9 @@ import forsyde.io.core.annotations.InPort;
 import forsyde.io.core.annotations.OutPort;
 import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.core.annotations.WithEdgeTrait;
+import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
 import forsyde.io.lib.hierarchy.behavior.BehaviourCompositionEdge;
 import forsyde.io.lib.hierarchy.behavior.DataTypeLike;
-import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
 import forsyde.io.lib.hierarchy.behavior.moc.MoCEntity;
 
 import java.util.Optional;

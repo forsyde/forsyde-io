@@ -3,8 +3,6 @@ package forsyde.io.java.generator.specs;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 

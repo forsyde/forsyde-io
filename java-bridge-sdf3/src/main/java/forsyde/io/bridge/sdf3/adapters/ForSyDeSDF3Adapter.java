@@ -1,8 +1,8 @@
 package forsyde.io.bridge.sdf3.adapters;
 
-import forsyde.io.java.adapters.ModelAdapter;
-import forsyde.io.core.SystemGraph;
 import forsyde.io.bridge.sdf3.adapters.mixins.elems.Sdf3;
+import forsyde.io.core.SystemGraph;
+import forsyde.io.java.adapters.ModelAdapter;
 
 public class ForSyDeSDF3Adapter implements ModelAdapter<Sdf3> {
 

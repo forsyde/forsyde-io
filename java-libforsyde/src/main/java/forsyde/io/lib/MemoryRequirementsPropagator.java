@@ -12,13 +12,12 @@ import forsyde.io.lib.hierarchy.behavior.moc.sy.SYSignal;
 import forsyde.io.lib.hierarchy.behavior.parallel.MapV;
 import forsyde.io.lib.hierarchy.behavior.parallel.ReduceV;
 import forsyde.io.lib.hierarchy.behavior.parallel.Vectorizable;
-import forsyde.io.lib.hierarchy.behavior.parallel.VectorizableViewer;
-import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedBehaviourViewer;
 import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedDataType;
 import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedSoftwareBehaviour;
-import forsyde.io.lib.hierarchy.implementation.functional.InstrumentedSoftwareBehaviourViewer;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * This is "inference" is a simple propagator of memory requirements,

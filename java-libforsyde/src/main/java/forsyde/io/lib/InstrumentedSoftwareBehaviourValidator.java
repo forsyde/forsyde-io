@@ -5,7 +5,6 @@ import forsyde.io.core.validation.SystemGraphValidation;
 import forsyde.io.lib.hierarchy.ForSyDeHierarchy;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class InstrumentedSoftwareBehaviourValidator implements SystemGraphValidation {
     @Override

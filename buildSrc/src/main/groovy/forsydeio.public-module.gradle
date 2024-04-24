@@ -23,7 +23,6 @@ compileTestJava {
     sourceCompatibility = JavaVersion.VERSION_17
 }
 
-
 publishing {
     publications {
         mavenJava(MavenPublication) {

@@ -1,8 +1,6 @@
-import java.io.ByteArrayInputStream;
-
-import org.junit.jupiter.api.Test;
-
 import forsyde.io.bridge.forsyde.shallow.drivers.ForSyDeShallowDriver;
+
+import java.io.ByteArrayInputStream;
 
 public class WishListsAndAll {
 

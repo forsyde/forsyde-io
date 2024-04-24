@@ -1,9 +1,9 @@
 package forsyde.io.core.drivers;
 
 import forsyde.io.core.*;
+import forsyde.io.java.adapters.fiodl.ForSyDeFioDL;
 import forsyde.io.java.adapters.fiodl.ForSyDeFioDLBaseVisitor;
 import forsyde.io.java.adapters.fiodl.ForSyDeFioDLLex;
-import forsyde.io.java.adapters.fiodl.ForSyDeFioDL;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
