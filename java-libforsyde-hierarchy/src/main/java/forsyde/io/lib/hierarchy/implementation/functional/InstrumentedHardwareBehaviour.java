@@ -104,9 +104,10 @@ public interface InstrumentedHardwareBehaviour extends BehaviourEntity {
 
     /**
      * <p>
-     * This property captures the amount of hardware area required to implement this behaviour.
+     * This property captures the amount of hardware area required to implement this behaviour at FPGA elements uniformly.
      * </p>
      */
-    @Property
-    int requiredHardwareImplementationArea();
+     default long requiredFPGAHardwareImplementationArea() {
+         return resourceRequirements().getOrDefault("FPGA", Map.of()).getOrDefault("Area", 0L);
+     }
 }
