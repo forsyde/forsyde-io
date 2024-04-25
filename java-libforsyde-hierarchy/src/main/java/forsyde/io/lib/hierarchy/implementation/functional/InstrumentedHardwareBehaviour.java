@@ -5,6 +5,7 @@ import forsyde.io.core.annotations.RegisterTrait;
 import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
 import forsyde.io.lib.hierarchy.behavior.BehaviourEntity;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -110,4 +111,16 @@ public interface InstrumentedHardwareBehaviour extends BehaviourEntity {
      default long requiredFPGAHardwareImplementationArea() {
          return resourceRequirements().getOrDefault("FPGA", Map.of()).getOrDefault("Area", 0L);
      }
+
+     /**
+     * <p>
+     * This property captures the amount of hardware area required to implement this behaviour at FPGA elements uniformly.
+     * </p>
+     */
+    default void requiredFPGAHardwareImplementationArea(long area) {
+        if (!resourceRequirements().containsKey("FPGA")) {
+            resourceRequirements().put("FPGA", new HashMap<>());
+        }
+        resourceRequirements().get("FPGA").put("Area", area);
+    }
 }
