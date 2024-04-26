@@ -6,7 +6,6 @@ import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A CommunicationModulePortSpecification enriches `GenericCommunicationModule` with how ports of 
@@ -23,7 +22,17 @@ import java.util.Set;
 public interface CommunicationModulePortSpecification extends GenericCommunicationModule {
 
     /**
-     * A map of port connections. Having a switch with ports (a, b, c) could .
+     * A map of port connections. Having a switch with ports ('a', 'b', 'c') where 'a' and 'b' 
+     * are ports for external connections and 'c' connects to the physical memory.
+     * <p>
+     * The map representing would look be:
+     * <pre>{@code
+     * portConnections: {
+     *   "a": ["c"],
+     *   "b": ["c"]
+     * }
+     * }</pre>
+     * </p>
      */
     @Property
     Map<String, List<String>> portConnections();
