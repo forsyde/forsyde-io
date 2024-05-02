@@ -24,15 +24,16 @@ public interface CommunicationModulePortSpecification extends GenericCommunicati
     /**
      * A map of port connections. Having a switch with ports ('a', 'b', 'c') where 'a' and 'b' 
      * are ports for external connections and 'c' connects to the physical memory.
-     * <p>
-     * The map representing would look be:
+     * 
+     * The map representing these port connections would look like:
      * <pre>{@code
      * portConnections: {
      *   "a": ["c"],
      *   "b": ["c"]
      * }
      * }</pre>
-     * </p>
+     * 
+     * If this is not specified, it is assumed that all ports are connected to all other ports.
      */
     @Property
     Map<String, List<String>> portConnections();
