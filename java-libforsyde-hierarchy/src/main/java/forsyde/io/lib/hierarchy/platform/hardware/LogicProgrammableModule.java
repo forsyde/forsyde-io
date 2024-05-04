@@ -21,4 +21,7 @@ public interface LogicProgrammableModule extends DigitalModule {
 
     @Property
     int availableLogicArea();
+
+    @Property
+    int blockRamSizeInBits();
 }

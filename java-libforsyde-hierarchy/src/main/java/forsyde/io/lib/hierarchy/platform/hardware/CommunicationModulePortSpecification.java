@@ -22,8 +22,9 @@ import java.util.Map;
 public interface CommunicationModulePortSpecification extends GenericCommunicationModule {
 
     /**
-     * A map of port connections.
      * <p>
+     * A map of port connections.
+     * <p/>
      * Example:
      * Having a switch with ports ('a', 'b', 'c') where 'a' and 'b'
      * are ports for external connections and 'c' connects to the physical memory.
@@ -33,8 +34,7 @@ public interface CommunicationModulePortSpecification extends GenericCommunicati
      *   "a": ["c"],
      *   "b": ["c"]
      * }
-     * }
-     * </pre>
+     * }</pre>
      */
     @Property
     Map<String, List<String>> portConnections();
