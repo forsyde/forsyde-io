@@ -24,11 +24,11 @@ public interface CommunicationModulePortSpecification extends GenericCommunicati
     /**
      * <p>
      * A map of port connections.
-     * <p/>
+     * </p>
      * Example:
-     * Having a switch with ports ('a', 'b', 'c') where 'a' and 'b'
+     * Having a memory switch with ports ('a', 'b', 'c') where 'a' and 'b'
      * are ports for external connections and 'c' connects to the physical memory.
-     * The map representing would look be:
+     * The map representing this connectivity would look be:
      * <pre>{@code
      * portConnections: {
      *   "a": ["c"],
