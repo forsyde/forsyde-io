@@ -1,0 +1,40 @@
+# This workflow will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+name:  Released Java Supporting Libraries
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+env:
+    MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+    MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+    GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+    GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
+    USERNAME: ${{ github.actor }}
+    TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  deploy-java:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - id: get_version
+      uses: battila7/get-version-action@v2
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'corretto' # See 'Supported distributions' for available options
+        java-version: '17'
+    - id: localVersion
+      name: Retrieve lib version
+      run: |
+        cd ${{ github.workspace }}
+        echo "::set-output name=localVersion::$(./gradlew -q getVersion)"
+    - name: Build and publish with Gradle
+      if: ${{ steps.get_version.outputs.version-without-v == steps.localVersion.outputs.localVersion }}
+      run: |
+        cd ${{ github.workspace }}
+        ./gradlew build publish closeAndReleaseSonatypeStagingRepository

@@ -13,4 +13,5 @@ import forsyde.io.lib.hierarchy.IForSyDeHierarchy;
  */
 @RegisterTrait(IForSyDeHierarchy.class)
 public interface HardwareModule extends VertexViewer {
+
 }
