@@ -186,7 +186,6 @@ public class FiodlDriver extends ForSyDeFioDLBaseVisitor<SystemGraph> implements
     protected Vertex visitVertexDirect(ForSyDeFioDL.VertexContext ctx) throws FioDLSyntaxException {
         final Vertex newVertex = new Vertex(ctx.name.getText());
         for (Token traitToken : ctx.traits) {
-            // TODO: fix this!
             newVertex.addTraits(new OpaqueTrait(traitToken.getText()));
         }
         for (Token portToken : ctx.ports) {

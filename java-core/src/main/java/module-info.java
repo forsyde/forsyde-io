@@ -6,6 +6,7 @@ module forsyde.io.core {
 
     requires transitive org.jgrapht.core;
 
+    requires org.apache.avro;
     requires org.antlr.antlr4.runtime;
     requires jakarta.xml.bind;
     requires org.glassfish.jaxb.runtime;
