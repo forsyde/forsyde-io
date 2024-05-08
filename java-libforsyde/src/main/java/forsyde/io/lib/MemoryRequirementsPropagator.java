@@ -29,10 +29,10 @@ public class MemoryRequirementsPropagator implements SystemGraphInference {
         // first, we do the SY + SDF collection
         if (systemGraph.vertexSet().stream().anyMatch(v -> ForSyDeHierarchy.InstrumentedSoftwareBehaviour.tryView(systemGraph, v).isPresent())) {
             for (var v : systemGraph.vertexSet()) {
-                ForSyDeHierarchy.SYMap.tryView(systemGraph, v).ifPresent(this::propagate);
-                ForSyDeHierarchy.SYSignal.tryView(systemGraph, v).ifPresent(this::propagate);
-                ForSyDeHierarchy.SDFActor.tryView(systemGraph, v).ifPresent(this::propagate);
-                ForSyDeHierarchy.SDFChannel.tryView(systemGraph, v).ifPresent(this::propagate);
+                ForSyDeHierarchy.SYMap.tryView(systemGraph, v).filter(x -> ForSyDeHierarchy.InstrumentedSoftwareBehaviour.tryView(x).isEmpty()).ifPresent(this::propagate);
+                ForSyDeHierarchy.SYSignal.tryView(systemGraph, v).filter(x -> ForSyDeHierarchy.InstrumentedSoftwareBehaviour.tryView(x).isEmpty()).ifPresent(this::propagate);
+                ForSyDeHierarchy.SDFActor.tryView(systemGraph, v).filter(x -> ForSyDeHierarchy.InstrumentedSoftwareBehaviour.tryView(x).isEmpty()).ifPresent(this::propagate);
+                ForSyDeHierarchy.SDFChannel.tryView(systemGraph, v).filter(x -> ForSyDeHierarchy.InstrumentedSoftwareBehaviour.tryView(x).isEmpty()).ifPresent(this::propagate);
             }
         }
         // now the heap-based recursion can start
