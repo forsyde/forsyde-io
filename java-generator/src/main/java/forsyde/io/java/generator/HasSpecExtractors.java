@@ -142,7 +142,7 @@ public interface HasSpecExtractors {
         }
         var propTypeSpec = extractPropertyTypeSpecFromTypeMirror(processingEnv, executableElement.getReturnType());
         if (propTypeSpec != null) {
-            propSpec.type = propTypeSpec;
+            propSpec.propertyType = propTypeSpec;
         }
         return propSpec;
     }
