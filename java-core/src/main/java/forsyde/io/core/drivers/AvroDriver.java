@@ -112,6 +112,7 @@ public class AvroDriver implements ModelDriver {
             avroVBuilder.setProperties(properties);
             avroVertices.add(avroVBuilder.build());
         }
+        avroSystemGraph.setEdges(avroEdges);
         avroSystemGraph.setVertices(avroVertices);
         return avroSystemGraph;
     }
