@@ -10,15 +10,19 @@ import org.apache.avro.file.DataFileStream;
 import org.apache.avro.file.DataFileWriter;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DatumWriter;
+import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Driver that reads ForSyDe IO Avro system graph files.
@@ -31,12 +35,12 @@ public class AvroDriver implements ModelDriver {
 
     @Override
     public List<String> inputExtensions() {
-        return List.of("favro");
+        return List.of("favro", "fio.avro");
     }
 
     @Override
     public List<String> outputExtensions() {
-        return List.of("favro");
+        return List.of("favro", "fio.avro");
     }
 
     @Override
@@ -76,12 +80,40 @@ public class AvroDriver implements ModelDriver {
     @Override
     public void writeModel(SystemGraph model, OutputStream out) throws Exception {
         systemGraphFileWriter.create(forsyde.io.core.avro.SystemGraph.getClassSchema(), out);
+        var avroSystemGraph = toAvroSystemGraph(model);
+        systemGraphFileWriter.append(avroSystemGraph);
         systemGraphFileWriter.close();
     }
 
-    @Override
-    public String printModel(SystemGraph model) throws Exception {
-        return "";
+    private forsyde.io.core.avro.SystemGraph toAvroSystemGraph(SystemGraph model) {
+        var avroSystemGraph = new forsyde.io.core.avro.SystemGraph();
+        List<Vertex> avroVertices = new ArrayList<>();
+        List<forsyde.io.core.avro.EdgeInfo> avroEdges = new ArrayList<>();
+        for (var e : model.edgeSet()) {
+            var avroEBuilder = forsyde.io.core.avro.EdgeInfo.newBuilder()
+                .setSource(e.getSource())
+                .setTarget(e.getTarget());
+            e.getSourcePort().ifPresent(avroEBuilder::setSourcePort);
+            e.getTargetPort().ifPresent(avroEBuilder::setTargetPort);
+            List<CharSequence> traits = e.getTraits().stream().map(forsyde.io.core.Trait::getName).collect(Collectors.toList());
+            avroEBuilder.setTraits(traits);
+            avroEdges.add(avroEBuilder.build());
+        }
+        for (var v : model.vertexSet()) {
+            var avroVBuilder = Vertex.newBuilder().setIdentifier(v.getIdentifier());
+            List<CharSequence> ports = v.getPorts().stream().collect(Collectors.toList());
+            List<CharSequence> traits = v.getTraits().stream().map(forsyde.io.core.Trait::getName).collect(Collectors.toList());
+            avroVBuilder.setTraits(traits);
+            avroVBuilder.setPorts(ports);
+            Map<CharSequence, VertexProperty> properties = new HashMap<>();
+            for (var propK: v.getPropertiesNames()) {
+                properties.put(propK, toVertexProperty(v.getProperty(propK)));
+            }
+            avroVBuilder.setProperties(properties);
+            avroVertices.add(avroVBuilder.build());
+        }
+        avroSystemGraph.setVertices(avroVertices);
+        return avroSystemGraph;
     }
 
     private Object fromVertexProperty(VertexProperty vertexProperty) {
@@ -116,5 +148,57 @@ public class AvroDriver implements ModelDriver {
         } else {
             return vertexProperty.getValue().toString();
         }
+    }
+
+    private VertexProperty toVertexProperty(int v) {
+        return VertexProperty.newBuilder().setValue(Integer.valueOf(v)).build();
+    }
+
+    private VertexProperty toVertexProperty(long v) {
+        return VertexProperty.newBuilder().setValue(Long.valueOf(v)).build();
+    }
+
+    private VertexProperty toVertexProperty(double v) {
+        return VertexProperty.newBuilder().setValue(Double.valueOf(v)).build();
+    }
+
+    private VertexProperty toVertexProperty(boolean v) {
+        return VertexProperty.newBuilder().setValue(Boolean.valueOf(v)).build();
+    }
+
+    private VertexProperty toVertexProperty(float v) {
+        return VertexProperty.newBuilder().setValue(Float.valueOf(v)).build();
+    }
+
+    private VertexProperty toVertexProperty(Object object) {
+        var vertexProperty = new VertexProperty();
+        if (object instanceof Integer i) {
+            vertexProperty.setValue(i);
+        } else if (object instanceof Long l) {
+            vertexProperty.setValue(l);
+        } else if (object instanceof Float f) {
+            vertexProperty.setValue(f);
+        } else if (object instanceof Double d) {
+            vertexProperty.setValue(d);
+        } else if (object instanceof Boolean b) {
+            vertexProperty.setValue(b);
+        } else if (object instanceof Map<?, ?> map) {
+            var newMap = new HashMap<String, VertexProperty>();
+            // due to how avro works, the keys are always string, so there is no loss here
+            for (var k: map.keySet()) {
+                newMap.put(k.toString(), toVertexProperty(map.get(k)));
+            }
+            vertexProperty.setValue(newMap);
+        } else if (object instanceof List<?> arr) {
+            var newList = new ArrayList<VertexProperty>();
+            // due to how avro works, the keys are always string, so there is no loss here
+            for (var elem : arr) {
+                newList.add(toVertexProperty(elem));
+            }
+            vertexProperty.setValue(newList);
+        } else {
+            vertexProperty.setValue(object.toString());
+        }
+        return vertexProperty;
     }
 }

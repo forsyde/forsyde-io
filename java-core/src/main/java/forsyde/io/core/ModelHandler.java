@@ -3,7 +3,9 @@
  */
 package forsyde.io.core;
 
+import forsyde.io.core.drivers.AvroDriver;
 import forsyde.io.core.drivers.FiodlDriver;
+import forsyde.io.core.drivers.JsonAvroDriver;
 import forsyde.io.core.drivers.ModelDriver;
 import forsyde.io.core.inference.SystemGraphInference;
 import forsyde.io.core.migrations.SystemGraphMigrator;
@@ -40,39 +42,9 @@ public final class ModelHandler {
 		registerValidation(new BasicTraitsValidation());
 		// mandatory drivers
 		registerDriver(new FiodlDriver());
+		registerDriver(new AvroDriver());
+		registerDriver(new JsonAvroDriver());
 	}
-
-//	public ModelHandler(ModelDriver... extraDrivers) {
-//		// mandatory validator
-//		registesteredValidators.add(new BasicTraitsValidation());
-//		// mandatory drivers
-//		registeredDrivers.add(new FiodlDriver());
-//		// register default inferences
-////		registeredInferences.add(new PopulateTaskCommunications());
-//		// register default migrators
-////		registeredMigrators.add(new NoMoreReactiveTaskMigration());
-////        registeredMigrators.add(new TaskCallSequenceSplit());
-////		registeredMigrators.add(new SDFCombToSDFActorConversion());
-////		registeredMigrators.add(new ParallelSkeletonsNameMigrator());
-////		registeredMigrators.add(new MadeMocAndParallelPortsMultipleMigrator());
-//		// default validators
-////		registesteredValidators.add(new SDFValidator());
-//		// register default drivers
-//
-//		// register extra drivers
-//		registeredDrivers.addAll(Arrays.asList(extraDrivers));
-//		// make their
-//		for (ModelDriver driver : registeredDrivers) {
-//			final String inExtensions = "{" + String.join(",", driver.inputExtensions()) + "}";
-//			final String outExtensions = "{" + String.join(",", driver.outputExtensions()) + "}";
-//			registeredDriversInputMatchers.add(
-//					FileSystems.getDefault().getPathMatcher("glob:**." + inExtensions)
-//			);
-//			registeredDriversOutputMatchers.add(
-//					FileSystems.getDefault().getPathMatcher("glob:**." + outExtensions)
-//			);
-//		}
-//	}
 
 	public ModelHandler registerValidation(SystemGraphValidation validation) {
 		registesteredValidators.add(validation);
