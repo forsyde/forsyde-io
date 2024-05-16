@@ -7,5 +7,6 @@ edition = "2021"
 
 [dependencies]
 avro-rs.workspace = true
+flatbuffers.workspace = true
 petgraph.workspace = true
 serde.workspace = true

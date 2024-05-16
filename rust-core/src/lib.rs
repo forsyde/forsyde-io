@@ -1,8 +1,9 @@
 use std::{collections::HashMap, sync::Arc};
 
 pub mod avro;
+pub mod fbs;
 
-trait Trait: Send + Sync  {
+trait Trait: Send + Sync {
     fn get_name(&self) -> &str;
 }
 
@@ -28,7 +29,7 @@ enum VertexProperty {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct OpaqueTrait {
-    pub name: String
+    pub name: String,
 }
 
 impl Trait for OpaqueTrait {
@@ -39,9 +40,7 @@ impl Trait for OpaqueTrait {
 
 impl<T: Into<String> + ?Sized> From<T> for OpaqueTrait {
     fn from(name: T) -> Self {
-        OpaqueTrait {
-            name: name.into()
-        }
+        OpaqueTrait { name: name.into() }
     }
 }
 

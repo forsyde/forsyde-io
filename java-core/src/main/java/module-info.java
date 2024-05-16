@@ -7,12 +7,13 @@ module forsyde.io.core {
     requires transitive org.jgrapht.core;
 
     requires org.apache.avro;
+    // requires flatbuffers.java;
     requires com.fasterxml.jackson.core;
     requires org.antlr.antlr4.runtime;
     requires jakarta.xml.bind;
     requires org.glassfish.jaxb.runtime;
 
-//    requires static lombok;
+    // requires static lombok;
 
     exports forsyde.io.core;
     exports forsyde.io.java.adapters;
