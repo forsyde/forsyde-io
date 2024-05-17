@@ -1,10 +1,15 @@
 use std::{collections::HashMap, sync::Arc};
 
-pub mod avro;
-pub mod fbs;
+// pub mod avro;
+// pub mod fbs;
+pub mod fiodl;
 
 trait Trait: Send + Sync {
     fn get_name(&self) -> &str;
+
+    fn refines(&self, other: &dyn Trait) -> bool {
+        self.get_name() == other.get_name()
+    }
 }
 
 impl std::fmt::Debug for dyn Trait {

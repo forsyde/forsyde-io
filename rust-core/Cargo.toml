@@ -6,7 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-avro-rs.workspace = true
-flatbuffers.workspace = true
+# avro-rs.workspace = true
+# flatbuffers.workspace = true
+nom.workspace = true
 petgraph.workspace = true
 serde.workspace = true
