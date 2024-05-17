@@ -18,6 +18,23 @@ impl std::fmt::Debug for dyn Trait {
     }
 }
 
+pub trait VertexViewer {
+    fn get_vertex(&self) -> &Vertex;
+    fn get_system_graph(&self) -> &SystemGraph;
+    fn get_identifier(&self) -> &str {
+        &self.get_vertex().identifier
+    }
+    fn get_ports(&self) -> &[String] {
+        &self.get_vertex().ports
+    }
+    fn get_traits(&self) -> &[Arc<dyn Trait>] {
+        &self.get_vertex().traits
+    }
+    fn get_properties(&self) -> &HashMap<String, VertexProperty> {
+        &self.get_vertex().properties
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub enum VertexProperty {
     BooleanProperty(bool),
