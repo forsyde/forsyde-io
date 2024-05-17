@@ -4,7 +4,7 @@ use std::{collections::HashMap, sync::Arc};
 // pub mod fbs;
 pub mod fiodl;
 
-trait Trait: Send + Sync {
+pub trait Trait: Send + Sync {
     fn get_name(&self) -> &str;
 
     fn refines(&self, other: &dyn Trait) -> bool {
@@ -19,7 +19,7 @@ impl std::fmt::Debug for dyn Trait {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-enum VertexProperty {
+pub enum VertexProperty {
     BooleanProperty(bool),
     IntProperty(i32),
     UIntProperty(u32),
