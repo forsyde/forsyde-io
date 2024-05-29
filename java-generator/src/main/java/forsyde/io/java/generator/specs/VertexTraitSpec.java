@@ -16,9 +16,9 @@ public class VertexTraitSpec {
     public String canonicalName;
     @JsonAlias("html_description")
     public String htmlDescription = "";
-    @JsonAlias("refined_traits")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonSerialize(contentAs = VertexTraitSpec.class)
+    @JsonAlias("refined_traits")
     public Set<VertexTraitSpec> refinedTraits = new HashSet<>();
     public transient List<String> absoluteRefinedTraitNames = new ArrayList<>();
     public transient List<String> relativeRefinedTraitNames = new ArrayList<>();

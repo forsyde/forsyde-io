@@ -30,8 +30,18 @@ pub trait VertexViewer {
     fn get_traits(&self) -> &[Arc<dyn Trait>] {
         &self.get_vertex().traits
     }
-    fn get_properties(&self) -> &HashMap<String, VertexProperty> {
+    fn get_vertex_properties(&self) -> &HashMap<String, VertexProperty> {
         &self.get_vertex().properties
+    }
+    fn get_property_unchecked<E, T: TryFrom<VertexProperty, Error = E>>(&self, key: &str) -> T 
+    where
+        E: std::fmt::Debug
+    {
+        if let Some(x) = self.get_vertex_properties().get(key) {
+            T::try_from(x.clone()).unwrap()
+        } else {
+            panic!("Property {} not found", key);
+        }
     }
 }
 
@@ -47,6 +57,134 @@ pub enum VertexProperty {
     StringProperty(String),
     ArrayProperty(Vec<VertexProperty>),
     MapProperty(HashMap<String, VertexProperty>),
+}
+
+impl TryFrom<VertexProperty> for bool {
+    type Error = String;
+
+    fn try_from(value: VertexProperty) -> Result<Self, Self::Error> {
+        match value {
+            VertexProperty::BooleanProperty(v) => Ok(v),
+            _ => Err("VertexProperty is not a boolean".to_string()),
+        }
+    }
+}
+
+impl TryFrom<VertexProperty> for i32 {
+    type Error = String;
+
+    fn try_from(value: VertexProperty) -> Result<Self, Self::Error> {
+        match value {
+            VertexProperty::IntProperty(v) => Ok(v),
+            _ => Err("VertexProperty is not an integer".to_string()),
+        }
+    }
+}
+
+impl TryFrom<VertexProperty> for u32 {
+    type Error = String;
+
+    fn try_from(value: VertexProperty) -> Result<Self, Self::Error> {
+        match value {
+            VertexProperty::UIntProperty(v) => Ok(v),
+            _ => Err("VertexProperty is not an unsigned integer".to_string()),
+        }
+    }
+}
+
+impl TryFrom<VertexProperty> for i64 {
+    type Error = String;
+
+    fn try_from(value: VertexProperty) -> Result<Self, Self::Error> {
+        match value {
+            VertexProperty::LongProperty(v) => Ok(v),
+            _ => Err("VertexProperty is not a long".to_string()),
+        }
+    }
+}
+
+impl TryFrom<VertexProperty> for u64 {
+    type Error = String;
+
+    fn try_from(value: VertexProperty) -> Result<Self, Self::Error> {
+        match value {
+            VertexProperty::ULongProperty(v) => Ok(v),
+            _ => Err("VertexProperty is not an unsigned long".to_string()),
+        }
+    }
+}
+
+impl TryFrom<VertexProperty> for f32 {
+    type Error = String;
+
+    fn try_from(value: VertexProperty) -> Result<Self, Self::Error> {
+        match value {
+            VertexProperty::FloatProperty(v) => Ok(v),
+            _ => Err("VertexProperty is not a float".to_string()),
+        }
+    }
+}
+
+impl TryFrom<VertexProperty> for f64 {
+    type Error = String;
+
+    fn try_from(value: VertexProperty) -> Result<Self, Self::Error> {
+        match value {
+            VertexProperty::DoubleProperty(v) => Ok(v),
+            _ => Err("VertexProperty is not a double".to_string()),
+        }
+    }
+}
+
+impl TryFrom<VertexProperty> for String {
+    type Error = String;
+
+    fn try_from(value: VertexProperty) -> Result<Self, Self::Error> {
+        match value {
+            VertexProperty::StringProperty(v) => Ok(v),
+            _ => Err("VertexProperty is not a string".to_string()),
+        }
+    }
+}
+
+impl<T: TryFrom<VertexProperty>> TryFrom<VertexProperty> for Vec<T> 
+where 
+    String: From<<T as TryFrom<VertexProperty>>::Error> 
+{
+    type Error = String;
+
+    fn try_from(value: VertexProperty) -> Result<Self, Self::Error> {
+        match value {
+            VertexProperty::ArrayProperty(v) => {
+                let mut result = Vec::new();
+                for item in v {
+                    result.push(T::try_from(item)?);
+                }
+                Ok(result)
+            },
+            _ => Err("VertexProperty is not an array".to_string()),
+        }
+    }
+}
+
+impl<T: TryFrom<VertexProperty>> TryFrom<VertexProperty> for HashMap<String, T>
+where
+    String: From<<T as TryFrom<VertexProperty>>::Error>
+{
+    type Error = String;
+
+    fn try_from(value: VertexProperty) -> Result<Self, Self::Error> {
+        match value {
+            VertexProperty::MapProperty(v) => {
+                let mut mapping = HashMap::new();
+                for (key, item) in v {
+                    mapping.insert(key, T::try_from(item)?);
+                }
+                Ok(mapping)
+            },
+            _ => Err("VertexProperty is not a map".to_string()),
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

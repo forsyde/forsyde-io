@@ -1,14 +1,26 @@
 package forsyde.io.java.generator.specs;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Optional;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "category")   
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = forsyde.io.java.generator.specs.PropertyTypeSpec.IntegerPropertyType.class, name = "IntegerPropertyType"),
+    @JsonSubTypes.Type(value = forsyde.io.java.generator.specs.PropertyTypeSpec.RealPropertyType.class, name = "RealPropertyType") ,
+    @JsonSubTypes.Type(value = forsyde.io.java.generator.specs.PropertyTypeSpec.BooleanPropertyType.class, name = "BooleanPropertyType"),
+    @JsonSubTypes.Type(value = forsyde.io.java.generator.specs.PropertyTypeSpec.StringPropertyType.class, name = "StringPropertyType"),
+    @JsonSubTypes.Type(value = forsyde.io.java.generator.specs.PropertyTypeSpec.ArrayPropertyType.class, name = "ArrayPropertyType"),
+    @JsonSubTypes.Type(value = forsyde.io.java.generator.specs.PropertyTypeSpec.MapPropertyType.class, name = "MapPropertyType")
+})
 public abstract class PropertyTypeSpec {
 
-    abstract public String getCategory();
+    // abstract public String getCategory();
 
     public Optional<PropertyTypeSpec> getValueType() {
         if (this instanceof ArrayPropertyType arrayPropertyType) {
@@ -37,10 +49,10 @@ public abstract class PropertyTypeSpec {
             this.unsigned = unsigned;
         }
 
-        @Override
-        public String getCategory() {
-            return "Integer";
-        }
+        // @Override
+        // public String getCategory() {
+        //     return "Integer";
+        // }
     }
 
     @JsonSerialize
@@ -51,28 +63,28 @@ public abstract class PropertyTypeSpec {
             this.bits = bits;
         }
 
-        @Override
-        public String getCategory() {
-            return "Real";
-        }
+        // @Override
+        // public String getCategory() {
+        //     return "Real";
+        // }
     }
 
     @JsonSerialize
     public static class BooleanPropertyType extends PropertyTypeSpec {
 
-        @Override
-        public String getCategory() {
-            return "Boolean";
-        }
+        // @Override
+        // public String getCategory() {
+        //     return "Boolean";
+        // }
     }
 
     @JsonSerialize
     public static class StringPropertyType extends PropertyTypeSpec {
 
-        @Override
-        public String getCategory() {
-            return "String";
-        }
+        // @Override
+        // public String getCategory() {
+        //     return "String";
+        // }
     }
 
     @JsonSerialize
@@ -84,10 +96,10 @@ public abstract class PropertyTypeSpec {
             this.valueType = valueType;
         }
 
-        @Override
-        public String getCategory() {
-            return "Array";
-        }
+        // @Override
+        // public String getCategory() {
+        //     return "Array";
+        // }
 
         public void setValueType(PropertyTypeSpec valueType) {
             this.valueType = valueType;
@@ -106,10 +118,10 @@ public abstract class PropertyTypeSpec {
             this.valueType = valueType;
         }
 
-        @Override
-        public String getCategory() {
-            return "Map";
-        }
+        // @Override
+        // public String getCategory() {
+        //     return "Map";
+        // }
 
         public void setKeyType(PropertyTypeSpec keyType) {
             this.keyType = keyType;
