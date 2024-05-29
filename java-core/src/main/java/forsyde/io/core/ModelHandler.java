@@ -3,9 +3,7 @@
  */
 package forsyde.io.core;
 
-import forsyde.io.core.drivers.AvroDriver;
 import forsyde.io.core.drivers.FiodlDriver;
-import forsyde.io.core.drivers.JsonAvroDriver;
 import forsyde.io.core.drivers.ModelDriver;
 import forsyde.io.core.inference.SystemGraphInference;
 import forsyde.io.core.migrations.SystemGraphMigrator;
@@ -42,8 +40,8 @@ public final class ModelHandler {
         registerValidation(new BasicTraitsValidation());
         // mandatory drivers
         registerDriver(new FiodlDriver());
-        registerDriver(new AvroDriver());
-        registerDriver(new JsonAvroDriver());
+        // registerDriver(new AvroDriver());
+        // registerDriver(new JsonAvroDriver());
         // registerDriver(new FlatBufferDriver());
     }
 
