@@ -1,3 +1,4 @@
+use core::str;
 use std::{collections::HashMap, sync::Arc};
 
 // pub mod avro;
@@ -230,9 +231,22 @@ impl Vertex {
             properties: HashMap::new(),
         }
     }
+
+    pub fn complies(&self, t: &dyn Trait) -> bool {
+        self.traits.iter().any(|x| x.refines(t))
+    }
 }
 
 pub type SystemGraph = petgraph::graph::DiGraph<Vertex, EdgeInfo, petgraph::graph::DefaultIx>;
+
+trait TraitHierarchy {
+    fn from_name<T: Trait>(&self, _name: &str) -> Option<T> {
+        None
+    }
+    fn traits(&self) -> Vec<Arc<dyn Trait>> {
+        vec![]
+    }
+}
 
 trait ModelDriver {
     fn load_model(&self, model_path: &str) -> Result<SystemGraph, String>;
