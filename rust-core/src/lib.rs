@@ -1,5 +1,7 @@
 use core::str;
-use std::{collections::HashMap, sync::Arc};
+use std::{collections::HashMap, fmt::Display, sync::Arc};
+
+use serde::de;
 
 // pub mod avro;
 // pub mod fbs;
@@ -13,10 +15,26 @@ pub trait Trait: Send + Sync {
     }
 }
 
+impl PartialEq<dyn Trait> for dyn Trait {
+    fn eq(&self, other: &Self) -> bool {
+        self.get_name() == other.get_name()
+    }
+}
+
 impl std::fmt::Debug for dyn Trait {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Trait: {}", self.get_name())
+        write!(f, "{}", self.get_name())
     }
+}
+
+impl Display for dyn Trait {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.get_name())
+    }
+}
+
+pub trait Mergeable<T = Self, O = Self> {
+    fn merge(&self, other: &T) -> O;
 }
 
 pub trait VertexViewer {
@@ -33,16 +51,6 @@ pub trait VertexViewer {
     }
     fn get_vertex_properties(&self) -> &HashMap<String, VertexProperty> {
         &self.get_vertex().properties
-    }
-    fn get_property_unchecked<E, T: TryFrom<VertexProperty, Error = E>>(&self, key: &str) -> T 
-    where
-        E: std::fmt::Debug
-    {
-        if let Some(x) = self.get_vertex_properties().get(key) {
-            T::try_from(x.clone()).unwrap()
-        } else {
-            panic!("Property {} not found", key);
-        }
     }
 }
 
@@ -239,18 +247,101 @@ impl Vertex {
 
 pub type SystemGraph = petgraph::graph::DiGraph<Vertex, EdgeInfo, petgraph::graph::DefaultIx>;
 
-trait TraitHierarchy {
-    fn from_name<T: Trait>(&self, _name: &str) -> Option<T> {
-        None
-    }
-    fn traits(&self) -> Vec<Arc<dyn Trait>> {
-        vec![]
-    }
-}
 
-trait ModelDriver {
+pub trait ModelDriver {
     fn load_model(&self, model_path: &str) -> Result<SystemGraph, String>;
     fn read_model(&self, model: &[u8], format: &str) -> Result<SystemGraph, String>;
     fn write_model(&self, model: &SystemGraph, model_path: &str) -> Result<(), String>;
     fn print_model(&self, model: &SystemGraph, format: &str) -> Result<Vec<u8>, String>;
+}
+
+pub struct ModelHandler {
+    pub trait_converters: Vec<Box<dyn Fn(&str) -> Option<Arc<dyn Trait>>>>,
+    pub drivers: Vec<Box<dyn ModelDriver>>,
+}
+
+impl Default for ModelHandler {
+    fn default() -> Self {
+        ModelHandler {
+            trait_converters: Vec::new(),
+            drivers: vec![Box::new(fiodl::FiodlDriver)],
+        }
+    }
+}
+
+impl ModelHandler {
+    pub fn load_model(&self, model_path: &str) -> Result<SystemGraph, String> {
+        let mut last_error = Err("No driver registered".to_string());
+        for driver in &self.drivers {
+            match driver.load_model(model_path) {
+                Ok(mut model) => {
+                    for node in model.node_weights_mut() {
+                        for trait_converter in &self.trait_converters {
+                            for i in 0..node.traits.len() {
+                                let t = &node.traits[i];
+                                if let Some(trait_obj) = trait_converter(t.get_name()) {
+                                    node.traits.insert(i, trait_obj);
+                                    node.traits.remove(i + 1);
+                                }
+                            }
+                        }
+                    }
+                    return Ok(model)
+                },
+                e => {
+                    last_error = e;
+                },
+            }
+        }
+        last_error
+    }
+    pub fn read_model(&self, model: &[u8], format: &str) -> Result<SystemGraph, String> {
+        let mut last_error = Err("No driver registered".to_string());
+        for driver in &self.drivers {
+            match driver.read_model(model, format) {
+                Ok(mut model) => {
+                    for node in model.node_weights_mut() {
+                        for trait_converter in &self.trait_converters {
+                            for i in 0..node.traits.len() {
+                                let t = &node.traits[i];
+                                if let Some(trait_obj) = trait_converter(t.get_name()) {
+                                    node.traits.insert(i, trait_obj);
+                                    node.traits.remove(i + 1);
+                                }
+                            }
+                        }
+                    }
+                    return Ok(model)
+                },
+                e => {
+                    last_error = e;
+                },
+            }
+        }
+        last_error
+    }
+    pub fn write_model(&self, model: &SystemGraph, model_path: &str) -> Result<(), String> {
+        let mut last_error = Err("No driver registered".to_string());
+        for driver in &self.drivers {
+            match driver.write_model(model, model_path) {
+                Ok(_) => return Ok(()),
+                e => {
+                    last_error = e;
+                },
+            }
+        }
+        last_error
+    }
+    pub fn print_model(&self, model: &SystemGraph, format: &str) -> Result<Vec<u8>, String> {
+        let mut last_error = Err("No driver registered".to_string());
+        for driver in &self.drivers {
+            match driver.print_model(model, format) {
+                Ok(model) => return Ok(model),
+                e => {
+                    last_error = e;
+                },
+            }
+        }
+        last_error
+    }
 }
