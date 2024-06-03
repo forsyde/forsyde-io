@@ -26,7 +26,7 @@ mod tests {
                 println!("Actor {} is an SDF actor", viewer.get_identifier());
             }
             if let Some(viewer) = ForSyDeHierarchy::SDFChannelViewer::try_view(v, &system_graph) {
-                println!("Channel {} is an SDF channel", viewer.get_identifier());
+                println!("Channel {} is an SDF channel with {} initial tokens", viewer.get_identifier(), viewer.get_numInitialTokens());
                 if let Some(p) = viewer.get_producer() {
                     println!("Producer: {}", p.get_identifier());
                 }

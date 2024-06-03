@@ -3,7 +3,7 @@ use std::{collections::HashMap, sync::Arc};
 use nom::{
     branch::alt, bytes::complete::{is_not, tag, take_until, take_while}, character::complete::{alphanumeric1, char, digit1, multispace0}, combinator::{fail, opt, recognize}, error::ParseError, multi::{many0, separated_list0}, number::complete::{double, float}, sequence::{delimited, preceded, terminated, tuple}, IResult, Parser
 };
-use petgraph::visit::{EdgeRef, NodeIndexable};
+use petgraph::visit::NodeIndexable;
 
 use crate::{EdgeInfo, ModelDriver, OpaqueTrait, SystemGraph, Trait, Vertex, VertexProperty};
 
