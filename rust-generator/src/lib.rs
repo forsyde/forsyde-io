@@ -142,6 +142,107 @@ fn edge_refinement_closure(hierarchy: &TraitHierarchySpec) -> HashMap<String, Ve
 
 }
 
+fn from_canonical_name(canonical_name: &str) -> TokenStream {
+    let splitted = canonical_name.split("::").map(|x| format_ident!("{}", x));
+    quote! {
+        #(#splitted)::*
+    }
+}
+
+impl From<&PortSpec> for TokenStream {
+    fn from(value: &PortSpec) -> Self {
+        let simple_name = value.vertex_trait_name.split("::").last().unwrap_or(&value.vertex_trait_name);
+        let returned_viewer = format_ident!("{}Viewer", simple_name);
+        let port_name = &value.name;
+        let func_name = format_ident!("get_{}", &value.name);
+        let direction_ident = match (value.incoming, value.outgoing) {
+            (true, false) => from_canonical_name("petgraph::Direction::Incoming"),
+            (false, true) => from_canonical_name("petgraph::Direction::Outgoing"),
+            _ => from_canonical_name("petgraph::Undirected"),
+        };
+        let skip_if_wrong_edge = value.edge_trait_name.as_ref().map(|e| {
+            quote! {
+                if eref.weight().traits.iter().all(|t| t.get_name() != #e) {
+                    continue;
+                }
+            }
+        }).unwrap_or(quote! {  });
+        let skip_if_wrong_port = match (value.incoming, value.outgoing) {
+            (true, false) => quote! {
+                if eref.weight().target_port.as_ref().map(|x| x != #port_name).unwrap_or(false)  {
+                    continue;
+                }
+            },
+            (false, true) => quote! {
+                if eref.weight().source_port.as_ref().map(|x| x != #port_name).unwrap_or(false)  {
+                    continue;
+                }
+            },
+            (true, true) => quote! {
+                if eref.weight().source_port.as_ref().map(|x| x != #port_name).unwrap_or(false) || eref.weight().target_port.as_ref().map(|x| x != #port_name).unwrap_or(false)  {
+                    continue;
+                }
+            },
+            _ => quote! {  }
+        };
+        let edge_node_based_on_spec = if value.incoming {
+            quote! { _src_idx }
+        } else {
+            quote! { _tgt_idx }
+        };
+        match value.multiple {
+            false => {
+                quote! {
+                    fn #func_name(&self) -> Option<#returned_viewer> {
+                        let sg = self.get_system_graph();
+                        let this = self.get_vertex();
+                        let self_idx = sg.node_weights().position(|x| x.identifier == this.identifier)?;
+                        let self_vertex = petgraph::visit::NodeIndexable::from_index(sg, self_idx);
+                        for eref in sg.edges_directed(self_vertex, #direction_ident) {
+                            #skip_if_wrong_edge
+                            #skip_if_wrong_port
+                            let (_src_idx, _tgt_idx) = sg.edge_endpoints(eref.id())?;
+                            let idx = #edge_node_based_on_spec;
+                            let v = sg.node_weight(idx)?;
+                            let viewer_opt = #returned_viewer::try_view(v, sg);
+                            if viewer_opt.is_some() {
+                                return viewer_opt;
+                            }                           
+                        }
+                        None
+                    }
+                }
+            },
+            true => {
+                quote! {
+                    fn #func_name(&self) -> Vec<#returned_viewer> {
+                        let mut viewers = Vec::new();
+                        let sg = self.get_system_graph();
+                        let this = self.get_vertex();
+                        if let Some(self_idx) = sg.node_weights().position(|x| x.identifier == this.identifier) {
+                            let self_vertex = petgraph::visit::NodeIndexable::from_index(sg, self_idx);
+                            for eref in sg.edges_directed(self_vertex, #direction_ident) {
+                                #skip_if_wrong_edge
+                                #skip_if_wrong_port
+                                if let Some((_src_idx, _tgt_idx)) = sg.edge_endpoints(eref.id()) {
+                                    let idx = #edge_node_based_on_spec;
+                                    if let Some(v) = sg.node_weight(idx) {
+                                        if let Some(viewer) = #returned_viewer::try_view(v, sg) {
+                                            viewers.push(viewer);
+                                        }
+                                    }
+                                }
+                                                            
+                            }
+                        }
+                        viewers
+                    }
+                }
+            }
+        }
+    }
+}
+
 impl From<&TraitHierarchySpec> for TokenStream {
     fn from(hierarchy: &TraitHierarchySpec) -> Self {
         let hierarchy_module_ident = format_ident!("{}", hierarchy.canonical_name.split("::").last().unwrap_or(&hierarchy.canonical_name.as_str()));
@@ -209,16 +310,22 @@ impl From<&TraitHierarchySpec> for TokenStream {
                 #canonical_name => Some(std::sync::Arc::new(crate::#hierarchy_module_ident::EdgeTraits::#simple_ident) as std::sync::Arc<dyn forsyde_io_core::Trait>)
             }
         });
-        let vtraits_methods = hierarchy.vertex_traits.iter().map(|(canonical_name,refined)| {
+        let vtraits_methods = hierarchy.vertex_traits.iter().map(|(canonical_name,vtrait)| {
             let simple_name = canonical_name.split("::").last().unwrap_or(&canonical_name);
             let simple_ident = format_ident!("Is{}", simple_name);
-            let refinements = refined.refined_traits_names.iter().map(|rt| {
+            let refinements = vtrait.refined_traits_names.iter().map(|rt| {
                 let simple_name = rt.split("::").last().unwrap_or(&rt);
                 format_ident!("Is{}", simple_name)
             });
+            let ports_methods = vtrait.required_ports.iter().map(|(port_name, port_spec)| {
+                let port_code: TokenStream = port_spec.into();
+                quote! {
+                    #port_code
+                }
+            });
             quote! {
-                trait #simple_ident: forsyde_io_core::VertexViewer #(+ #refinements) *  {
-                    
+                pub trait #simple_ident: forsyde_io_core::VertexViewer #(+ #refinements) *  {
+                    #(#ports_methods)*
                 }
             }
         });
@@ -280,6 +387,8 @@ impl From<&TraitHierarchySpec> for TokenStream {
             #[allow(non_camel_case_types)]
             #[allow(non_snake_case)]
             pub mod #hierarchy_module_ident {
+                use petgraph;
+                use petgraph::visit::EdgeRef;
 
                 #[allow(dead_code)]
                 enum VertexTraits {
