@@ -80,7 +80,9 @@ public class TraitHierarchyProcessor extends AbstractProcessor implements HasSpe
                         .ifPresent(t -> {
                             if (!elementsToHierarchies.containsKey(t)) {
                                 var traitHierarchySpec = new TraitHierarchySpec();
-                                traitHierarchySpec.canonicalName = t.getQualifiedName().toString().replace(".", "::");
+                                var fullInterfaceName = t.getQualifiedName().toString().replace(".", "::");
+                                var canonicalName = t.getSimpleName().toString().startsWith("I") ? fullInterfaceName.replace(t.getSimpleName().toString(), t.getSimpleName().toString().substring(1)) : fullInterfaceName;
+                                traitHierarchySpec.canonicalName = canonicalName;
                                 elementsToHierarchies.put(t, traitHierarchySpec);
                             }
                             var traitHierarchySpec = elementsToHierarchies.get(t);

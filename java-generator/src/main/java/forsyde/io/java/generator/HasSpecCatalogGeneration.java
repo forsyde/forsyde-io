@@ -63,7 +63,7 @@ public interface HasSpecCatalogGeneration {
         output.append("\n\n");
         output.append("Required properties:").append("\n\n");
         for (var e : vertexTraitSpec.requiredProperties.entrySet()) {
-            output.append(" - **").append(e.getKey()).append("** (`").append(e.getValue().type != null ? getMarkdownDocumentation(e.getValue().type) : "Anything").append("`): ");
+            output.append(" - **").append(e.getKey()).append("** (`").append(e.getValue().propertyType != null ? getMarkdownDocumentation(e.getValue().propertyType) : "Anything").append("`): ");
             if (e.getValue().htmlDescription != null && !e.getValue().htmlDescription.isBlank()) {
                 output.append("  ").append(e.getValue().htmlDescription);
             } else {

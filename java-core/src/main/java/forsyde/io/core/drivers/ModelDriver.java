@@ -72,6 +72,11 @@ public interface ModelDriver {
 	
 	void writeModel(SystemGraph model, OutputStream out) throws Exception;
 
-	String printModel(SystemGraph model) throws Exception;
+	default String printModel(SystemGraph model) throws Exception {
+		try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+			writeModel(model, out);
+			return out.toString(StandardCharsets.UTF_8);
+		}
+	};
 
 }

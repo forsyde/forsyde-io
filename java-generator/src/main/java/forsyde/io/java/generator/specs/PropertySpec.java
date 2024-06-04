@@ -19,6 +19,7 @@ public class PropertySpec {
     public Map<String, String> initializationCode = new HashMap<>();
     @JsonAlias("default_value")
     public Optional<Object> defaultValue = Optional.empty();
-    public PropertyTypeSpec type;
+    @JsonAlias("property_type")
+    public PropertyTypeSpec propertyType;
 
 }

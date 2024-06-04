@@ -32,5 +32,7 @@ public interface HasANSICImplementations extends VertexViewer {
     default List<String> outputArgumentPorts() {return new ArrayList<>();}
 
     @Property
-    Optional<String> returnPort();
+    default String returnPort() {
+        return "void";
+    }
 }

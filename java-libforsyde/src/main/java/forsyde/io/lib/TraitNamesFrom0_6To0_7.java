@@ -113,14 +113,16 @@ public class TraitNamesFrom0_6To0_7 implements SystemGraphMigrator {
                 if (vt.getName().endsWith("InstrumentedExecutable")) {
                     var op = ForSyDeHierarchy.InstrumentedBehaviour.enforce(systemGraph, v);
                     op.computationalRequirements((Map<String, Map<String, Long>>) v.getProperty("operationRequirements"));
-                    var m = new HashMap<String, Long>();
-                    var s = v.getProperty("sizeInBits");
-                    if (s instanceof Integer) {
-                        m.put("default", ((Integer) s).longValue());
-                    } else {
-                        m.put("default", (Long) s);
+                    if (!v.hasProperty("maxSizeInBits")) {
+                        var m = new HashMap<String, Long>();
+                        var s = v.getProperty("sizeInBits");
+                        if (s instanceof Integer) {
+                            m.put("default", ((Integer) s).longValue());
+                        } else {
+                            m.put("default", (Long) s);
+                        }
+                        op.maxSizeInBits(m);
                     }
-                    op.maxSizeInBits(m);
                 }
                 if (vt.getName().endsWith("AbstractScheduler")) {
                     ForSyDeHierarchy.AbstractRuntime.enforce(systemGraph, v);

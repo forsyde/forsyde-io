@@ -53,13 +53,8 @@ public class ConverSyDeStandalone implements Callable<Integer> {
             for (final Path inputModel : filteredInput) {
                 models.add(modelHandler.loadModel(inputModel));
             }
-            final SystemGraph merged = models.stream()
-                    .reduce(new SystemGraph(), (a, b) -> {
-                        a.mergeInPlace(b);
-                        return a;
-                    });
+            final SystemGraph merged = models.stream().reduce(new SystemGraph(), SystemGraph::merge);
             // finally do the writing
-            if (outputFiles.size() == 0) outputFiles.add(new File("converted-model.forsyde.xmi"));
             for (File output : outputFiles) {
                 modelHandler.writeModel(merged, output);
             }

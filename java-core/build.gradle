@@ -48,6 +48,9 @@ dependencies {
     //implementation 'org.eclipse.xtend:org.eclipse.xtend.lib:2.25.0'
     //implementation 'commons-cli:commons-cli:1.5.0'
 
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
+    implementation "org.apache.avro:avro:1.11.1"
+    // implementation 'com.google.flatbuffers:flatbuffers-java:24.3.25'
     implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
     implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.0'
     antlr 'org.antlr:antlr4:4.10.1'

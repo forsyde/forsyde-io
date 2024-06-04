@@ -1,4 +1,5 @@
-systemgraph {  vertex Array1000OfArrayOfDouble
+systemgraph {  
+  vertex Array1000OfArrayOfDouble
   [typing::datatypes::Array]
   (innerType)
   {
