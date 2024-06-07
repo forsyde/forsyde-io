@@ -1,15 +1,18 @@
 [package]
 name = "forsyde-io-libforsyde"
-version.workspace = true
+version = "0.7.20"
 edition.workspace = true
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+readme.workspace = true
+description = "The LibForSyDe trait hierarchy and their functions, built on top of the Rust ForSyDe IO supporting library"
 
 [dependencies]
-forsyde-io-core = { path = "../rust-core" }
+forsyde-io-core = { path = "../rust-core", version = "0.7.20" }
 petgraph.workspace = true
 
 [build-dependencies]
-forsyde-io-generator = { path = "../rust-generator"}
+forsyde-io-generator = { path = "../rust-generator", version = "0.7.20" }
 serde.workspace = true
 serde_json.workspace = true
