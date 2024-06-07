@@ -6,6 +6,7 @@ repository.workspace = true
 homepage.workspace = true
 license.workspace = true
 readme.workspace = true
+description = "Code generation component for traits and others of the Rust ForSyDe IO supporting library"
 
 [dependencies]
 forsyde-io-core = { path = "../rust-core", version = "0.7.20" }
