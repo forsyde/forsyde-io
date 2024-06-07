@@ -6,6 +6,7 @@ repository.workspace = true
 homepage.workspace = true
 license.workspace = true
 readme.workspace = true
+description = "The LibForSyDe trait hierarchy and their functions, built on top of the Rust ForSyDe IO supporting library"
 
 [dependencies]
 forsyde-io-core = { path = "../rust-core", version = "0.7.20" }
