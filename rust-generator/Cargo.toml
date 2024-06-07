@@ -1,6 +1,6 @@
 [package]
 name = "forsyde-io-generator"
-version = "0.7.20"
+version.workspace = true
 edition.workspace = true
 repository.workspace = true
 homepage.workspace = true
