@@ -3,8 +3,6 @@ name = "forsyde-io-generator"
 version.workspace = true
 edition.workspace = true
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 
 [dependencies]
 forsyde-io-core = { path = "../rust-core" }
