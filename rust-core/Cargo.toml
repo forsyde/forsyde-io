@@ -6,6 +6,7 @@ repository.workspace = true
 homepage.workspace = true
 license.workspace = true
 readme.workspace = true
+description = "Core component of the Rust ForSyDe IO supporting library"
 
 [dependencies]
 # avro-rs.workspace = true
