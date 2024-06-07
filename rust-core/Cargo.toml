@@ -2,8 +2,10 @@
 name = "forsyde-io-core"
 version.workspace = true
 edition.workspace = true
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+readme.workspace = true
 
 [dependencies]
 # avro-rs.workspace = true
