@@ -1,6 +1,6 @@
 [package]
 name = "forsyde-io-libforsyde"
-version.workspace = true
+version = "0.7.20"
 edition.workspace = true
 repository.workspace = true
 homepage.workspace = true

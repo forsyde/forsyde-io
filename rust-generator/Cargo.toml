@@ -1,6 +1,6 @@
 [package]
 name = "forsyde-io-generator"
-version.workspace = true
+version = "0.7.20"
 edition.workspace = true
 repository.workspace = true
 homepage.workspace = true
@@ -8,7 +8,7 @@ license.workspace = true
 readme.workspace = true
 
 [dependencies]
-forsyde-io-core = { path = "../rust-core" }
+forsyde-io-core = { path = "../rust-core", version = "0.7.20" }
 prettyplease.workspace = true
 proc-macro2.workspace = true
 quote.workspace = true
