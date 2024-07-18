@@ -9,10 +9,11 @@ readme.workspace = true
 description = "The LibForSyDe trait hierarchy and their functions, built on top of the Rust ForSyDe IO supporting library"
 
 [dependencies]
-forsyde-io-core = { path = "../rust-core", version = "0.7.20" }
+forsyde-io-core = { path = "../rust-core", version = "0.8" }
+forsyde-io-core-macro = { path = "../rust-core-macro", version = "0.8" }
 petgraph.workspace = true
 
 [build-dependencies]
-forsyde-io-generator = { path = "../rust-generator", version = "0.7.20" }
+forsyde-io-generator = { path = "../rust-generator", version = "0.8" }
 serde.workspace = true
 serde_json.workspace = true

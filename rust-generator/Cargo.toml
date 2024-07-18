@@ -9,7 +9,7 @@ readme.workspace = true
 description = "Code generation component for traits and others of the Rust ForSyDe IO supporting library"
 
 [dependencies]
-forsyde-io-core = { path = "../rust-core", version = "0.7.20" }
+forsyde-io-core = { path = "../rust-core", version = "0.8" }
 prettyplease.workspace = true
 proc-macro2.workspace = true
 quote.workspace = true

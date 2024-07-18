@@ -6,6 +6,8 @@ use quote::format_ident;
 use quote::quote;
 use std::collections::HashMap;
 
+use syn::File as SynFile;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -30,19 +32,24 @@ pub struct PortSpec {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "category")]
 pub enum PropertySpecType {
-    IntegerPropertyType { bits: u32, unsigned: bool },
-    RealPropertyType { bits: u32 },
+    IntegerPropertyType {
+        bits: u32,
+        unsigned: bool,
+    },
+    RealPropertyType {
+        bits: u32,
+    },
     BooleanPropertyType,
     StringPropertyType,
-    ArrayPropertyType { 
+    ArrayPropertyType {
         #[serde(alias = "valueType")]
-        value_type: Box<PropertySpecType> 
+        value_type: Box<PropertySpecType>,
     },
-    MapPropertyType { 
+    MapPropertyType {
         #[serde(alias = "keyType")]
-        key_type: Box<PropertySpecType>, 
+        key_type: Box<PropertySpecType>,
         #[serde(alias = "valueType")]
-        value_type: Box<PropertySpecType> 
+        value_type: Box<PropertySpecType>,
     },
 }
 
@@ -65,14 +72,14 @@ pub struct VertexTraitSpec {
     pub canonical_name: String,
     #[serde(alias = "htmlDescription")]
     pub html_description: Option<String>,
-    #[serde(skip)] 
+    #[serde(skip)]
     pub refined_traits: Vec<VertexTraitSpec>,
     #[serde(alias = "refinedTraits")]
     pub refined_traits_names: Vec<String>,
     #[serde(alias = "requiredPorts")]
     pub required_ports: HashMap<String, PortSpec>,
     #[serde(alias = "requiredProperties")]
-    pub required_properties: HashMap<String, PropertySpec>
+    pub required_properties: HashMap<String, PropertySpec>,
 }
 
 impl PartialEq<VertexTraitSpec> for VertexTraitSpec {
@@ -87,7 +94,7 @@ pub struct EdgeTraitSpec {
     pub canonical_name: String,
     #[serde(alias = "htmlDescription")]
     pub html_description: Option<String>,
-    #[serde(skip)] 
+    #[serde(skip)]
     pub refined_traits: Vec<EdgeTraitSpec>,
     #[serde(alias = "refinedTraits")]
     pub refined_traits_names: Vec<String>,
@@ -145,7 +152,6 @@ impl From<&TraitHierarchySpec> for EdgeTraitHierachy {
     }
 }
 
-
 fn from_canonical_name(canonical_name: &str) -> TokenStream {
     let splitted = canonical_name.split("::").map(|x| format_ident!("{}", x));
     quote! {
@@ -158,41 +164,64 @@ impl From<&PropertySpecType> for TokenStream {
         match value {
             PropertySpecType::IntegerPropertyType { bits, unsigned } => {
                 if bits <= &8 {
-                    if *unsigned { quote! { u8 } } else { quote! { i8 } }
+                    if *unsigned {
+                        quote! { u8 }
+                    } else {
+                        quote! { i8 }
+                    }
                 } else if bits <= &16 {
-                    if *unsigned { quote! { u16 } } else { quote! { i16 } }
+                    if *unsigned {
+                        quote! { u16 }
+                    } else {
+                        quote! { i16 }
+                    }
                 } else if bits <= &32 {
-                    if *unsigned { quote! { u32 } } else { quote! { i32 } }
+                    if *unsigned {
+                        quote! { u32 }
+                    } else {
+                        quote! { i32 }
+                    }
                 } else if bits <= &64 {
-                    if *unsigned { quote! { u64 } } else { quote! { i64 } }
+                    if *unsigned {
+                        quote! { u64 }
+                    } else {
+                        quote! { i64 }
+                    }
                 } else {
-                    if *unsigned { quote! { u128 } } else { quote! { i128 } }
+                    if *unsigned {
+                        quote! { u128 }
+                    } else {
+                        quote! { i128 }
+                    }
                 }
-            },
+            }
             PropertySpecType::RealPropertyType { bits } => {
                 if bits <= &32 {
                     quote! { f32 }
                 } else {
                     quote! { f64 }
                 }
-            },
+            }
             PropertySpecType::BooleanPropertyType => {
                 quote! {
                     bool
                 }
-            },
+            }
             PropertySpecType::StringPropertyType => {
                 quote! {
                     String
                 }
-            },
+            }
             PropertySpecType::ArrayPropertyType { value_type } => {
                 let value_type = TokenStream::from(value_type.as_ref());
                 quote! {
                     Vec<#value_type>
                 }
-            },
-            PropertySpecType::MapPropertyType { key_type, value_type } => {
+            }
+            PropertySpecType::MapPropertyType {
+                key_type,
+                value_type,
+            } => {
                 let key_type = TokenStream::from(key_type.as_ref());
                 let value_type = TokenStream::from(value_type.as_ref());
                 quote! {
@@ -220,7 +249,11 @@ impl From<&PropertySpec> for TokenStream {
 
 impl From<&PortSpec> for TokenStream {
     fn from(value: &PortSpec) -> Self {
-        let simple_name = value.vertex_trait_name.split("::").last().unwrap_or(&value.vertex_trait_name);
+        let simple_name = value
+            .vertex_trait_name
+            .split("::")
+            .last()
+            .unwrap_or(&value.vertex_trait_name);
         let returned_viewer = format_ident!("{}Viewer", simple_name);
         let port_name = &value.name;
         let func_name = format_ident!("get_{}", &value.name);
@@ -229,13 +262,17 @@ impl From<&PortSpec> for TokenStream {
             (false, true) => from_canonical_name("petgraph::Direction::Outgoing"),
             _ => from_canonical_name("petgraph::Undirected"),
         };
-        let skip_if_wrong_edge = value.edge_trait_name.as_ref().map(|e| {
-            quote! {
-                if eref.weight().traits.iter().all(|t| t.get_name() != #e) {
-                    continue;
+        let skip_if_wrong_edge = value
+            .edge_trait_name
+            .as_ref()
+            .map(|e| {
+                quote! {
+                    if eref.weight().traits.iter().all(|t| t.get_name() != #e) {
+                        continue;
+                    }
                 }
-            }
-        }).unwrap_or(quote! {  });
+            })
+            .unwrap_or(quote! {});
         let skip_if_wrong_port = match (value.incoming, value.outgoing) {
             (true, false) => quote! {
                 if eref.weight().target_port.as_ref().map(|x| x != #port_name).unwrap_or(false)  {
@@ -252,7 +289,7 @@ impl From<&PortSpec> for TokenStream {
                     continue;
                 }
             },
-            _ => quote! {  }
+            _ => quote! {},
         };
         let edge_node_based_on_spec = if value.incoming {
             quote! { _src_idx }
@@ -276,12 +313,12 @@ impl From<&PortSpec> for TokenStream {
                             let viewer_opt = #returned_viewer::try_view(v, sg);
                             if viewer_opt.is_some() {
                                 return viewer_opt;
-                            }                           
+                            }
                         }
                         None
                     }
                 }
-            },
+            }
             true => {
                 quote! {
                     fn #func_name(&self) -> Vec<#returned_viewer> {
@@ -301,7 +338,7 @@ impl From<&PortSpec> for TokenStream {
                                         }
                                     }
                                 }
-                                                            
+
                             }
                         }
                         viewers
@@ -312,13 +349,23 @@ impl From<&PortSpec> for TokenStream {
     }
 }
 
-fn vertex_code_from_trait_hierarchy(value: &VertexTraitSpec, hierarchy: &VertexTraitHierachy) -> TokenStream {
+fn vertex_code_from_trait_hierarchy(
+    value: &VertexTraitSpec,
+    hierarchy: &VertexTraitHierachy,
+) -> TokenStream {
     let canonical_name = &value.canonical_name;
-    let simple_name = value.canonical_name.split("::").last().unwrap_or(&value.canonical_name);
+    let simple_name = value
+        .canonical_name
+        .split("::")
+        .last()
+        .unwrap_or(&value.canonical_name);
     let viewer_ident = format_ident!("{}Viewer", simple_name);
     let trait_ident = format_ident!("Is{}", simple_name);
     let mut all_refined: Vec<&VertexTraitSpec> = vec![];
-    let value_idx = hierarchy.node_indices().find(|idx| hierarchy[*idx].canonical_name == value.canonical_name).unwrap();
+    let value_idx = hierarchy
+        .node_indices()
+        .find(|idx| hierarchy[*idx].canonical_name == value.canonical_name)
+        .unwrap();
     let mut dfs = Dfs::new(hierarchy, value_idx);
     while let Some(nx) = dfs.next(&hierarchy) {
         let value = &hierarchy[nx];
@@ -328,29 +375,50 @@ fn vertex_code_from_trait_hierarchy(value: &VertexTraitSpec, hierarchy: &VertexT
     }
     all_refined.remove(0);
     let refinements = all_refined.iter().map(|rt| {
-        let simple_name = rt.canonical_name.split("::").last().unwrap_or(&rt.canonical_name);
+        let simple_name = rt
+            .canonical_name
+            .split("::")
+            .last()
+            .unwrap_or(&rt.canonical_name);
         format_ident!("Is{}", simple_name)
     });
-    let refinements_implementations = all_refined.iter().map(|rt| {
-        let simple_name = rt.canonical_name.split("::").last().unwrap_or(&rt.canonical_name);
-        let i = format_ident!("Is{}", simple_name);
-        quote! { impl<'view> #i for #viewer_ident<'view> {} }
-    }).chain(
-        std::iter::once(quote! { impl<'view> #trait_ident for #viewer_ident<'view> {} })
-    );
-    let ports_methods = value.required_ports.iter().map(|(_, port_spec)| {
-        TokenStream::from(port_spec)
-    });
-    let properties_methods = value.required_properties.iter().map(|(_, property_spec)| {
-        TokenStream::from(property_spec)
-    });
-    let html_documentation = value.html_description.as_ref().map(String::as_str).unwrap_or("")
+    let refinements_implementations = all_refined
+        .iter()
+        .map(|rt| {
+            let simple_name = rt
+                .canonical_name
+                .split("::")
+                .last()
+                .unwrap_or(&rt.canonical_name);
+            let i = format_ident!("Is{}", simple_name);
+            quote! { impl<'view> #i for #viewer_ident<'view> {} }
+        })
+        .chain(std::iter::once(
+            quote! { impl<'view> #trait_ident for #viewer_ident<'view> {} },
+        ));
+    let ports_methods = value
+        .required_ports
+        .iter()
+        .map(|(_, port_spec)| TokenStream::from(port_spec));
+    let properties_methods = value
+        .required_properties
+        .iter()
+        .map(|(_, property_spec)| TokenStream::from(property_spec));
+    let html_documentation = value
+        .html_description
+        .as_ref()
+        .map(String::as_str)
+        .unwrap_or("")
         .replace("@deprecated", "deprecated:")
         .replace("<p>", "")
         .replace("</p>", "");
-    let doc_lines = html_documentation.split("\n")
+    let doc_lines = html_documentation
+        .split("\n")
         .map(|s| format!(" {}", s.trim()));
-    let trait_msg = format!(" This struct is the generated vertex viewer for the trait `{}`.", value.canonical_name);
+    let trait_msg = format!(
+        " This struct is the generated vertex viewer for the trait `{}`.",
+        value.canonical_name
+    );
     quote! {
 
         pub trait #trait_ident: forsyde_io_core::VertexViewer #(+ #refinements) *  {
@@ -396,9 +464,26 @@ fn vertex_code_from_trait_hierarchy(value: &VertexTraitSpec, hierarchy: &VertexT
 
 impl From<&TraitHierarchySpec> for TokenStream {
     fn from(hierarchy: &TraitHierarchySpec) -> Self {
-        let hierarchy_module_ident = format_ident!("{}", hierarchy.canonical_name.split("::").last().unwrap_or(&hierarchy.canonical_name.as_str()));
-        let vertex_trait_idents: Vec<Ident> = hierarchy.vertex_traits.keys().flat_map(|s| s.split("::").last()).map(|s| format_ident!("{}Trait", s)).collect();
-        let edge_trait_idents: Vec<Ident> = hierarchy.edge_traits.keys().flat_map(|s| s.split("::").last()).map(|s| format_ident!("{}Trait", s)).collect();
+        let hierarchy_module_ident = format_ident!(
+            "{}",
+            hierarchy
+                .canonical_name
+                .split("::")
+                .last()
+                .unwrap_or(&hierarchy.canonical_name.as_str())
+        );
+        let vertex_trait_idents: Vec<Ident> = hierarchy
+            .vertex_traits
+            .keys()
+            .flat_map(|s| s.split("::").last())
+            .map(|s| format_ident!("{}Trait", s))
+            .collect();
+        let edge_trait_idents: Vec<Ident> = hierarchy
+            .edge_traits
+            .keys()
+            .flat_map(|s| s.split("::").last())
+            .map(|s| format_ident!("{}Trait", s))
+            .collect();
         let vtrait_match = hierarchy.vertex_traits.iter().map(|(canonical_name, _)| {
             let simple_name = canonical_name.split("::").last().unwrap_or(&canonical_name);
             let simple_ident = format_ident!("{}Trait", simple_name);
@@ -416,52 +501,60 @@ impl From<&TraitHierarchySpec> for TokenStream {
         let vtraits_hierarchy = VertexTraitHierachy::from(hierarchy);
         let etraits_hierarchy = EdgeTraitHierachy::from(hierarchy);
         let vtrait_refine_match = hierarchy.vertex_traits.iter().map(|(name, _)| {
-            let vt_idx = vtraits_hierarchy.node_indices().find(|idx| &vtraits_hierarchy[*idx].canonical_name == name).unwrap();
+            let vt_idx = vtraits_hierarchy
+                .node_indices()
+                .find(|idx| &vtraits_hierarchy[*idx].canonical_name == name)
+                .unwrap();
             let mut dfs = Dfs::new(&vtraits_hierarchy, vt_idx);
             let mut refined = vec![];
             while let Some(nx) = dfs.next(&vtraits_hierarchy) {
                 let value = &vtraits_hierarchy[nx];
                 refined.push(&value.canonical_name);
             }
-            let this_match = if refined.len() > 0 { quote! {
-                match other.get_name() {
-                    #(#refined => true),*,
-                    _ => false
+            let this_match = if refined.len() > 0 {
+                quote! {
+                    match other.get_name() {
+                        #(#refined => true),*,
+                        _ => false
+                    }
                 }
-            }} else {
+            } else {
                 quote! {
                     false
                 }
-            
             };
             quote! {
                 #name => #this_match
             }
         });
         let etrait_refines_match = hierarchy.edge_traits.iter().map(|(name, _)| {
-            let et_idx = etraits_hierarchy.node_indices().find(|idx| &etraits_hierarchy[*idx].canonical_name == name).unwrap();
+            let et_idx = etraits_hierarchy
+                .node_indices()
+                .find(|idx| &etraits_hierarchy[*idx].canonical_name == name)
+                .unwrap();
             let mut dfs = Dfs::new(&etraits_hierarchy, et_idx);
             let mut refined = vec![];
             while let Some(nx) = dfs.next(&etraits_hierarchy) {
                 let value = &etraits_hierarchy[nx];
                 refined.push(&value.canonical_name);
             }
-            let this_match = if refined.len() > 0 { quote! {
-                match other.get_name() {
-                    #(#refined => true),*,
-                    _ => false
+            let this_match = if refined.len() > 0 {
+                quote! {
+                    match other.get_name() {
+                        #(#refined => true),*,
+                        _ => false
+                    }
                 }
-            }} else {
+            } else {
                 quote! {
                     false
                 }
-            
             };
             quote! {
                 #name => #this_match
             }
         });
-        let etrait_match = hierarchy.edge_traits.iter().map(|(canonical_name,_)| {
+        let etrait_match = hierarchy.edge_traits.iter().map(|(canonical_name, _)| {
             let simple_name = canonical_name.split("::").last().unwrap_or(&canonical_name);
             let simple_ident = format_ident!("{}Trait", simple_name);
             quote! {
@@ -475,9 +568,10 @@ impl From<&TraitHierarchySpec> for TokenStream {
                 #canonical_name => Some(std::sync::Arc::new(crate::#hierarchy_module_ident::EdgeTraits::#simple_ident) as std::sync::Arc<dyn forsyde_io_core::Trait>)
             }
         });
-        let vtraits_code = hierarchy.vertex_traits.iter().map(|(_,vtrait)| {
-            vertex_code_from_trait_hierarchy(vtrait, &vtraits_hierarchy)
-        });
+        let vtraits_code = hierarchy
+            .vertex_traits
+            .iter()
+            .map(|(_, vtrait)| vertex_code_from_trait_hierarchy(vtrait, &vtraits_hierarchy));
         let code = quote! {
             // Automatically generated code by forsyde-io-generator: DO NOT EDIT MANUALLY
             #[allow(non_camel_case_types)]
@@ -514,7 +608,7 @@ impl From<&TraitHierarchySpec> for TokenStream {
                             }
                         }
                     }
-                
+
                 }
 
                 impl forsyde_io_core::Trait for EdgeTraits {
@@ -534,7 +628,7 @@ impl From<&TraitHierarchySpec> for TokenStream {
                             }
                         }
                     }
-                
+
                 }
 
                 pub fn trait_from_str(s: &str) -> Option<std::sync::Arc<dyn forsyde_io_core::Trait>> {
@@ -553,13 +647,14 @@ impl From<&TraitHierarchySpec> for TokenStream {
 }
 
 pub fn from_json_trait_hierarchy_to_code(hierarchy_json: &str) -> Result<String, String> {
-    let hierarchy: TraitHierarchySpec = serde_json::from_str(hierarchy_json).map_err(|e| e.to_string())?;
+    let hierarchy: TraitHierarchySpec =
+        serde_json::from_str(hierarchy_json).map_err(|e| e.to_string())?;
     generate_trait_hierarchy_code(&hierarchy)
 }
 
 pub fn generate_trait_hierarchy_code(hierarchy: &TraitHierarchySpec) -> Result<String, String> {
     let code = TokenStream::from(hierarchy);
     // println!("{}", code);
-    let code_file: syn::File = syn::parse2(code).map_err(|e| e.to_string())?;
+    let code_file: SynFile = syn::parse2(code).map_err(|e| e.to_string())?;
     Ok(prettyplease::unparse(&code_file))
 }
