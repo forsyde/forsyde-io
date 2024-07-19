@@ -11,9 +11,13 @@ pub fn register_libforsyde(model_handler: &mut ModelHandler) {
 
 make_trait_hierarchy! {
     mod TestingMod {
-        trait TestingTrait {}
+        trait AA {
 
-        trait TestingTrait2 : TestingTrait {}
+            #[property]
+            fn prop1(&self) -> u32;
+        }
+
+        trait BB : AA {}
     }
 }
 
